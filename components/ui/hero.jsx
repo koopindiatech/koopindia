@@ -44,28 +44,28 @@ const HeroSection = ({onOpenModal}) => {
 
   const testimonials = [
     {
-      name: "Rajesh Kumar",
-      company: "TechStart Solutions",
+      name: "Umair Misbah",
+      company: " EZDoors India Pvt Ltd",
       role: "Founder & CEO",
       content: "Koop India transformed our startup journey. Their comprehensive support helped us raise ₹2Cr in Series A funding.",
       rating: 5 ,
-      image: "/fevican.png" 
+      image: "umair.jpg" 
     },
     {
-      name: "Priya Sharma",
-      company: "GreenTech Innovations",
-      role: "Co-founder",
+      name: "Sarikha",
+      company: "Kiro Elvi Foods Pvt Ltd",
+      role: "Founder & CEO",
       content: "From business registration to digital marketing, their one-stop solution approach saved us months of effort.",
       rating: 5,
-      image: "/fevican.png" 
+      image: "sarikha.jpg" 
     },
     {
-      name: "Amit Patel",
-      company: "RetailNext",
-      role: "Managing Director",
+      name: "Amir Quadri",
+      company: "Foodista Spices",
+      role: "Founder & CEO",
       content: "The strategic guidance and branding solutions provided by Koop India accelerated our market entry significantly.",
       rating: 5,
-      image: "/fevican.png" 
+      image: "amir.webp" 
     }
   ];
 

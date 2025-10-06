@@ -87,7 +87,7 @@ export default function EnquiryModal({ isOpen, onClose }) {
           {/* Left Image (hidden on phones) */}
           <div className="md:w-1/2 hidden md:flex items-center justify-center bg-[#141d32]">
             <Image
-              src="/form-image.png"
+              src="/form-image.jpg"
               alt="Person"
               width={450}
               height={500}
