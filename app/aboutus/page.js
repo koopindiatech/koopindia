@@ -47,7 +47,7 @@ const AboutPage = () => {
               <span className="text-[#F97316]">Elevating Brands</span>
             </h1>
             <p className="mt-4 text-gray-300 leading-relaxed">
-              At <span className="text-[#F97316] font-semibold">Koop India</span>, we are more than just a consulting firm—we're your strategic launchpad for business success. Founded to empower Indian entrepreneurs, we offer a 360° suite of services—from registration to branding, compliance to promotion, valuation to distribution.
+              At <span className="text-[#F97316] font-semibold">Koop India</span>, we are more than just a consulting firm—we&apos;re your strategic launchpad for business success. Founded to empower Indian entrepreneurs, we offer a 360° suite of services—from registration to branding, compliance to promotion, valuation to distribution.
             </p>
           </div>
           <div className="rounded-lg overflow-hidden shadow-lg">
@@ -85,7 +85,7 @@ const AboutPage = () => {
             <p className="text-gray-200 leading-relaxed text-lg">
               Koop India is a full-spectrum business consulting and support platform
               that caters to startups, SMEs, and growing brands across India. Whether
-              you're a budding entrepreneur or a scaling enterprise, we guide you at
+              you&apos;re a budding entrepreneur or a scaling enterprise, we guide you at
               every step with expertise and dedication.
             </p>
           </div>
@@ -106,9 +106,9 @@ const AboutPage = () => {
           <div className="space-y-4 bg-[#f9fafb] p-8 rounded-xl shadow hover:shadow-lg border-l-4 border-[#F97316] transition-shadow duration-300">
             <h3 className="text-2xl font-semibold text-[#141d32]">Our Vision</h3>
             <p className="text-gray-700 leading-relaxed">
-              To be India's most trusted business launchpad, empowering every
+              To be India&apos;s most trusted business launchpad, empowering every
               entrepreneur with the tools, guidance, and support they need to succeed
-              in today's competitive market.
+              in today&apos;s competitive market.
             </p>
           </div>
         </div>
@@ -201,7 +201,7 @@ const AboutPage = () => {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Launch Your Business?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Let's turn your entrepreneurial vision into reality. Get in touch with our experts today.
+            Let&apos;s turn your entrepreneurial vision into reality. Get in touch with our experts today.
           </p>
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div className="flex items-center justify-center space-x-3">

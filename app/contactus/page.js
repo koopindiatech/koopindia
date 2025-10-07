@@ -22,7 +22,7 @@ const Page = () => {
             Contact <span className="text-[#F97316]">Us</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            We're here to help transform your business. Connect with our expert team 
+            We&apos;re here to help transform your business. Connect with our expert team 
             for personalized solutions and strategic guidance.
           </p>
         </div>
@@ -32,12 +32,12 @@ const Page = () => {
           <div className="space-y-8">
             <div>
               <h2 className="text-4xl font-bold mb-6">
-                Let's Start Your <span className="text-[#F97316]">Success Journey</span>
+                Let&apos;s Start Your <span className="text-[#F97316]">Success Journey</span>
               </h2>
               <p className="text-gray-600 text-lg mb-8 leading-relaxed">
                 Ready to unlock your business potential? Our expert consultants are standing by 
                 to provide tailored strategies that drive real results. From startup guidance 
-                to enterprise solutions, we're your trusted growth partner.
+                to enterprise solutions, we&apos;re your trusted growth partner.
               </p>
               
               {/* Enquiry Button */}

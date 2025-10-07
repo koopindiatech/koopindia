@@ -33,7 +33,7 @@ const DistributorPage = () => {
     {
       icon: <Clock className="w-8 h-8" />,
       title: "Save Time",
-      description: "Spend your time wisely by finding products for your clients faster. Don't waste time. Every minute you are not with your clients face to face someone else is.",
+      description: "Spend your time wisely by finding products for your clients faster. Do not waste time. Every minute you are not with your clients face to face someone else is.",
     },
     {
       icon: <DollarSign className="w-8 h-8" />,
@@ -297,7 +297,7 @@ const DistributorPage = () => {
             <div className="bg-white rounded-2xl p-8 shadow-xl border-2 border-[#F97316]/20">
               <h3 className="text-2xl font-bold text-[#141d32] mb-6">Ready to Start Discovering?</h3>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Join thousands of distributors who are already discovering the next big thing in consumer electronics. Don't get left behind in the innovation race.
+                Join thousands of distributors who are already discovering the next big thing in consumer electronics. Do not get left behind in the innovation race.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
@@ -370,7 +370,7 @@ const DistributorPage = () => {
             Ready to Find Your Next Top Seller?
           </h2>
           <p className="text-xl text-orange-100 mb-8 leading-relaxed">
-            Join India's premier platform connecting distributors with innovative consumer electronics brands. Register today and start discovering opportunities.
+            Join India premier platform connecting distributors with innovative consumer electronics brands. Register today and start discovering opportunities.
           </p>
           <button
            onClick={onOpenModal} 

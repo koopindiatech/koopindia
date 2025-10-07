@@ -215,7 +215,7 @@ const BrandsPage = () => {
               <h3 className="text-2xl font-bold text-[#141d32] mb-6">Ready to Launch Your Brand?</h3>
               <p className="text-gray-600 mb-8 leading-relaxed">
                 Join thousands of successful brands who have launched and scaled their 
-                businesses in India with KoopIndia's comprehensive support.
+                businesses in India with KoopIndia&apos; comprehensive support.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
@@ -291,7 +291,7 @@ const BrandsPage = () => {
             Ready to Launch Your Brand in India?
           </h2>
           <p className="text-xl text-orange-100 mb-8 leading-relaxed">
-            Don't wait! Start your business journey today with India's most trusted 
+            Don&apos;t wait! Start your business journey today with India&apos;s most trusted 
             business registration and compliance partner.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
