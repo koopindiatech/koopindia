@@ -222,7 +222,7 @@ export default function EnquiryModal({ isOpen, onClose }) {
             </form>
 
             <p className="text-[11px] sm:text-xs text-gray-500 mt-2 text-center md:text-left">
-              Signup today to claim your Discount. Get Started before it's too late!
+              Signup today to claim your Discount. Get Started before it is too late!
             </p>
 
             {/* Close Button */}
