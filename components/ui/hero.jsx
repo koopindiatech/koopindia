@@ -125,12 +125,9 @@ const HeroSection = ({onOpenModal}) => {
       <h3 className="text-xl sm:text-xl font-semibold text-[#F97316] mb-6 sm:mb-4">
         Trusted by Innovators & Founders
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-4 md:gap-6 text-white/80 sm:text-white/70">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-4 md:gap-6 text-white/80 sm:text-white/70">
         <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
           50+ Startups Guided
-        </div>
-        <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
-          ₹2Cr+ Funding
         </div>
         <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
           99% Client Satisfaction

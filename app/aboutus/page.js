@@ -210,7 +210,7 @@ const AboutPage = () => {
             </div>
             <div className="flex items-center justify-center space-x-3">
               <Phone className="w-6 h-6" />
-              <span>+91 85889 99978</span>
+              <span>+91 95998 26131</span>
             </div>
             <div className="flex items-center justify-center space-x-3">
               <MapPin className="w-6 h-6" />
