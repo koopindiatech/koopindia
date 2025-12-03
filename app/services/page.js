@@ -10,7 +10,6 @@ const packages = [
     title: "Koop Essential – Basic Package",
     subtitle: "For Starting Your Social Media Presence",
     image: "/essential.jpg",
-    price: "₹4,999 / Month",
     why: [
       "Kickstart your brand with professional profile setup",
       "Stay consistent with regular posts",
@@ -36,7 +35,6 @@ const packages = [
     title: "Koop Accelerater – Intermediate Package",
     subtitle: "For Growth & Engagement",
     image: "/accelerater.jpg",
-    price: "₹8,999 / Month",
     why: [
       "More Content, More Reach – 15 premium posts + 4 reels to maximize your visibility.",
       "Audience Engagement – Likes, comments, shares & replies to keep your audience active.",
@@ -61,7 +59,6 @@ const packages = [
     title: "Koop Dominator – Premium Package",
     subtitle: "For Maximum Reach & Brand Impact",
     image: "/dominator.jpg",
-    price: "₹11,999 / Month",
     why: [
       "Full-Fledged Presence – 25 premium posts + 6 reels every month for maximum visibility.",
       "Tailored Strategy – Content customized for Facebook, Instagram & LinkedIn to fit your brand’s tone.",
