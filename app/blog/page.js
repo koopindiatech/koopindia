@@ -67,13 +67,14 @@ export default function BlogPage() {
               key={blog.id}
               className="flex flex-col md:flex-row bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition"
             >
-              {/* Left side image */}
-              <div className="md:w-1/2 w-full h-64 md:h-auto">
-                <img
-                  src={blog.imageUrl}
-                  alt={blog.title}
-                  className="w-full h-full object-cover"
-                />
+              <div className="md:w-1/2 w-full">
+                <div className="relative w-full aspect-[16/10] overflow-hidden rounded-l-2xl md:rounded-l-2xl md:rounded-r-none">
+                  <img
+                    src={blog.imageUrl}
+                    alt={blog.title}
+                    className="absolute inset-0 w-full h-full object-contain"
+                  />
+                </div>
               </div>
 
               {/* Right side content */}
