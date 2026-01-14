@@ -68,11 +68,11 @@ export default function BlogDetailPage() {
 
       <div className="max-w-6xl mx-auto px-6 py-12">
         <h1 className="text-4xl text-gray-900 font-bold mb-3">
-          {blog.title}
+          "{blog.title}"
         </h1>
 
         <p className="text-gray-800 text-md mb-8">
-          By <strong>{blog.author}</strong> •{" "}
+          By <strong>"{blog.author}</strong>" •{" "}
           {new Date(blog.date).toDateString()}
         </p>
 

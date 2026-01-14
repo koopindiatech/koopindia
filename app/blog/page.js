@@ -95,15 +95,53 @@ export default function BlogPage() {
                 </span> */}
 
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  {blog.title}
+                  "{blog.title}"
                 </h2>
-                <p className="text-gray-600 text-sm mb-4">
-                  By <span className="font-semibold">{blog.author}</span>
+                <p className="text-gray-800 text-sm mb-4">
+                  By <span className="font-semibold">"{blog.author}"</span>
                 </p>
                 <p className="text-gray-700 text-sm mb-4 line-clamp-3">
                   {blog.description}
                 </p>
-                <Link href={`/blog/${blog.slug}`}>Continue Reading →</Link>
+               <Link
+  href={`/blog/${blog.slug}`}
+  className="
+    inline-flex
+    items-center
+    gap-1
+    text-orange-500
+    font-semibold
+    group
+  "
+>
+  Continue Reading
+  <span
+    className="
+      transition-transform
+      duration-300
+      group-hover:translate-x-1
+    "
+  >
+    →
+  </span>
+
+  <span
+    className="
+      absolute
+      bottom-0
+      left-0
+      w-full
+      h-[2px]
+      bg-orange-500
+      scale-x-0
+      origin-left
+      transition-transform
+      duration-300
+      group-hover:scale-x-100
+    "
+  />
+</Link>
+
               </div>
             </div>
           ))
