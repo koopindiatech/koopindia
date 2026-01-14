@@ -67,13 +67,25 @@ export default function BlogPage() {
               key={blog.id}
               className="flex flex-col md:flex-row bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition"
             >
-              {/* Left side image */}
-              <div className="md:w-1/2 w-full h-64 md:h-auto">
-                <img
-                  src={blog.imageUrl}
-                  alt={blog.title}
-                  className="w-full h-full object-cover"
-                />
+              <div className="md:w-1/2 w-full relative">
+                <div className="relative h-[340px] md:h-[280px] overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-gray-50 shadow-lg">
+                  {/* Image */}
+                  <img
+                    src={blog.imageUrl}
+                    alt={blog.title}
+                    className="
+                    absolute
+                    inset-0
+                    w-full
+                    h-full
+                    object-contain
+                    scale-105
+                  "
+                    />
+
+                  {/* Soft vignette for depth */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+                </div>
               </div>
 
               {/* Right side content */}
@@ -103,45 +115,43 @@ export default function BlogPage() {
                 <p className="text-gray-700 text-sm mb-4 line-clamp-3">
                   {blog.description}
                 </p>
-               <Link
-  href={`/blog/${blog.slug}`}
-  className="
-    inline-flex
-    items-center
-    gap-1
-    text-orange-500
-    font-semibold
-    group
-  "
->
-  Continue Reading
-  <span
-    className="
-      transition-transform
-      duration-300
-      group-hover:translate-x-1
-    "
-  >
-    →
-  </span>
-
-  <span
-    className="
-      absolute
-      bottom-0
-      left-0
-      w-full
-      h-[2px]
-      bg-orange-500
-      scale-x-0
-      origin-left
-      transition-transform
-      duration-300
-      group-hover:scale-x-100
-    "
-  />
-</Link>
-
+                <Link
+                  href={`/blog/${blog.slug}`}
+                  className="
+                  inline-flex
+                  items-center
+                  gap-1
+                  text-orange-500
+                  font-semibold
+                  group
+                "
+                >
+                  Continue Reading
+                  <span
+                    className="
+                    transition-transform
+                    duration-300
+                    group-hover:translate-x-1
+                  "
+                  >
+                    →
+                  </span>
+                  <span
+                    className="
+                    absolute
+                    bottom-0
+                    left-0
+                    w-full
+                    h-[2px]
+                    bg-orange-500
+                    scale-x-0
+                    origin-left
+                    transition-transform
+                    duration-300
+                    group-hover:scale-x-100
+                  "
+                  />
+                </Link>
               </div>
             </div>
           ))
