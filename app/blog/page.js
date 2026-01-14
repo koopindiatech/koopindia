@@ -67,14 +67,13 @@ export default function BlogPage() {
               key={blog.id}
               className="flex flex-col md:flex-row bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition"
             >
-              <div className="md:w-1/2 w-full">
-                <div className="relative w-full aspect-[16/10] overflow-hidden rounded-l-2xl md:rounded-l-2xl md:rounded-r-none">
-                  <img
-                    src={blog.imageUrl}
-                    alt={blog.title}
-                    className="absolute inset-0 w-full h-full object-contain"
-                  />
-                </div>
+              {/* Left side image */}
+              <div className="md:w-1/2 w-full h-64 md:h-auto">
+                <img
+                  src={blog.imageUrl}
+                  alt={blog.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
 
               {/* Right side content */}
@@ -104,12 +103,7 @@ export default function BlogPage() {
                 <p className="text-gray-700 text-sm mb-4 line-clamp-3">
                   {blog.description}
                 </p>
-                <Link
-                  href={`/blog/${blog.id}`}
-                  className="text-orange-600 font-semibold hover:underline mt-2"
-                >
-                  Continue Reading →
-                </Link>
+                <Link href={`/blog/${blog.slug}`}>Continue Reading →</Link>
               </div>
             </div>
           ))
