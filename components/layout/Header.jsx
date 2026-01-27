@@ -1,271 +1,304 @@
 "use client";
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import {Menu, X, Home, Users, Lightbulb, Settings, Phone, ChevronRight, ChevronDown, Store, Truck } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  Users,
+  Lightbulb,
+  Phone,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
-const Header = ({onOpenModal}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
+const Header = ({ onOpenModal }) => {
   const router = useRouter();
- 
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+
   const navigationItems = [
+    { name: "Home", href: "/", icon: <Home size={18} /> },
+    { name: "About Us", href: "/aboutus", icon: <Users size={18} /> },
     {
-      name: "Home",
-      href: "/",
-      icon: <Home size={20} />,
+      name: "Tech Solutions",
+      icon: <Lightbulb size={18} />,
+      dropdown: [   
+      { name: "Startups / Brands", href: "/solutions/brands" },
+      { name: "Buyers / Distributors", href: "/solutions/distributors" },
+      { name: "Website Development", href: "/tech-solutions/website-development" },
+      { name: "CRM Development", href: "/tech-solutions/crm-development" },
+      { name: "SEO Services", href: "/tech-solutions/seo" },
+      ],
     },
     {
-      name: "About Us",
-      href: "/aboutus",
-      icon: <Users size={20} />,
+      name: "Startup Consulting",
+      dropdown: [
+        { name: "Business Consulting", href: "/startup-consulting/business" },
+        { name: "Market Analysis", href: "/startup-consulting/market-analysis" },
+        { name: "Product & Margin Valuation", href: "/startup-consulting/product-valuation" },
+        { name: "Distribution Module", href: "/startup-consulting/distribution-model" },
+        { name: "Franchise Module", href: "/startup-consulting/franchise-model" },
+      ],
     },
     {
-      name: "Solutions",
-      href: "/solutions",
-      icon: <Lightbulb size={20} />,
-      hasDropdown: true,
-      dropdownItems: [
-        {
-          name: "Startups / Brands",
-          href: "/solutions/brands",
-          icon: <Store size={18} />,
-        },
-        {
-          name: "Buyers / Distributors",
-          href: "/solutions/distributors", 
-          icon: <Truck size={18} />,
-        }
-      ]
+      name: "Documentation & Compliance",
+      dropdown: [
+        { name: "GST Registration & Filing", href: "/documentation-compliance/gst-registration" },
+        { name: "Company Registration", href: "/documentation-compliance/company-registration" },
+        { name: "Trademark Registration", href: "/documentation-compliance/trademark-registration" },
+        { name: "FSSAI License", href: "/documentation-compliance/fssai-license" },
+        { name: "ISO Certification", href: "/documentation-compliance/iso-certification" },
+        { name: "Startup India Registration", href: "/documentation-compliance/startup-india-registration" },
+        { name: "Company Accounting", href: "/documentation-compliance/company-accounting" },
+        { name: "Tax & Compliance Services", href: "/documentation-compliance/tax-compliance" },
+      ],
     },
     {
-      name: "Services",
-      href: "/services",
-      icon: <Settings size={20} />,
+      name: "Bussiness Promotion",
+      dropdown: [
+        { name: "Social Media Marketing", href: "/digital-marketing/social-media" },
+        { name: "Google My Business", href: "/digital-marketing/gmb" },
+        // { name: "SEO Services", href: "/digital-marketing/seo" },
+        { name: "Logo & Graphic Design", href: "/digital-marketing/logo-design" },
+        { name: "Content Writing", href: "/digital-marketing/content-writing" },
+      ],
     },
-    {
-      name: "Contact Us",
-      href: "/contactus",
-      icon: <Phone size={20} />,
-    },
+    { name: "Contact Us", href: "/contactus", icon: <Phone size={18} /> },
   ];
 
-  const handleNavigation = (href) => {
-    router.push(href); 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
+  const handleNavigate = (href) => {
+    router.push(href);
     setIsOpen(false);
-    setIsSolutionsOpen(false);
+    setOpenDropdown(null);
+  };
+
+  const closeMobileMenu = () => {
+    setIsOpen(false);
+    setOpenDropdown(null);
   };
 
   return (
-    <div className="relative">
-      {/* Header */}
-      <header className="flex justify-between items-center px-5 py-5 bg-white/90 backdrop-blur-md shadow fixed top-0 w-full z-50">
-        {/* Logo */}
-        <div className="flex cursor-pointer items-center space-x-2">
-          <Link href="/">
-            <h1 className="text-3xl font-extrabold">
-              <span className="text-[#F97316]">koop</span>
-              <span className="text-[#112F41]">india</span>
-              <span className="text-[#F97316]">.</span>
-            </h1>
+    <>
+      <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-sm shadow-md">
+        {/* ================= DESKTOP & MOBILE HEADER BAR ================= */}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5">
+          <Link href="/" className="text-2xl sm:text-3xl font-extrabold z-[80]">
+            <span className="text-orange-500">koop</span>
+            <span className="text-slate-800">india</span>
+            <span className="text-orange-500">.</span>
           </Link>
-        </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8 font-bold text-black">
-          {navigationItems.map((item) => (
-            <div key={item.name} className="relative">
-              {item.hasDropdown ? (
-                <div className="relative group">
-                  <button
-                    className="flex items-center space-x-1 hover:text-[#F97316] transition-colors duration-200"
-                    onMouseEnter={() => setIsSolutionsOpen(true)}
-                    onMouseLeave={() => setIsSolutionsOpen(false)}
-                  >
-                    <span>{item.name}</span>
-                    <ChevronDown size={16} className={`transition-transform duration-200 ${isSolutionsOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  
-                  {/* Dropdown Menu */}
-                  <div
-                    className={`absolute top-full left-0 mt-2 w-60 bg-white rounded-xl shadow-xl border border-gray-200 transition-all duration-200 ${
-                      isSolutionsOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
-                    }`}
-                    onMouseEnter={() => setIsSolutionsOpen(true)}
-                    onMouseLeave={() => setIsSolutionsOpen(false)}
-                  >
-                    <div className="p-2">
-                      {item.dropdownItems.map((dropdownItem) => (
-                        <Link
-                          key={dropdownItem.name}
-                          href={dropdownItem.href}
-                          className="flex items-start space-x-3 p-3 rounded-lg hover:bg-[#F97316]/10 hover:text-[#F97316] transition-colors duration-200 group"
-                        >
-                          <span className="text-[#112F41] group-hover:text-[#F97316] mt-1">
-                            {dropdownItem.icon}
-                          </span>
-                          <div>
-                            <div className="font-semibold">{dropdownItem.name}</div>
-                            <div className="text-xs text-gray-500 group-hover:text-[#F97316]/70">
-                              {dropdownItem.description}
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-6 font-semibold text-gray-800">
+            {navigationItems.map((item) => (
+              <div
+                key={item.name}
+                className="relative cursor-pointer"
+                onMouseEnter={() => setOpenDropdown(item.name)}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
+                {item.dropdown ? (
+                  <>
+                    <button className="flex items-center cursor-pointer gap-1 hover:text-orange-500 transition-colors">
+                      {item.name}
+                      <ChevronDown size={16} />
+                    </button>
+
+                    <div
+                      className={`absolute top-full left-0 mt-3 w-72 bg-white rounded-xl shadow-xl border transition-all ${
+                        openDropdown === item.name
+                          ? "opacity-100 visible translate-y-0"
+                          : "opacity-0 invisible -translate-y-2"
+                      }`}
+                    >
+                      <div className="p-3 grid gap-2">
+                        {item.dropdown.map((sub) => (
+                          <Link
+                            key={sub.name}
+                            href={sub.href}
+                            className="flex items-center gap-2 p-1 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition"
+                          >
+                            <ChevronRight size={16} />
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  href={item.href}
-                  className="hover:text-[#F97316] transition-colors duration-200"
-                >
-                  {item.name}
-                </Link>
-              )}
-            </div>
-          ))}
-        </nav>
+                  </>
+                ) : (
+                  <Link href={item.href} className="hover:text-orange-500 transition-colors">
+                    {item.name}
+                  </Link>
+                )}
+              </div>
+            ))}
+          </nav>
 
-        {/* Get Started Button */}
-        <div className="hidden md:block">
+          {/* Desktop Get Started Button */}
+          <div className="hidden lg:block">
+            <button
+              onClick={onOpenModal}
+              className="bg-orange-500 hover:bg-orange-600 text-white cursor-pointer px-5 py-2 rounded font-bold transition-colors"
+            >
+              Get Started
+            </button>
+          </div>
+
+          {/* Mobile Menu Button */}
           <button
-             onClick={onOpenModal}
-            className="bg-[#F97316] hover:bg-[#c75e10] text-white font-bold px-4 py-2 rounded transition-colors duration-200 cursor-pointer"
+            onClick={() => setIsOpen(true)}
+            className="lg:hidden p-2 rounded hover:bg-gray-100 active:bg-gray-200 transition-colors z-[80]"
+            aria-label="Open menu"
           >
-            Get Started
+            <Menu size={26} />
           </button>
         </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-[#112F41] z-50 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-          onClick={() => setIsOpen(true)}
-        >
-          <Menu size={28} />
-        </button>
       </header>
 
-      {/* Overlay */}
+      {/* ================= MOBILE OVERLAY ================= */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 transition-opacity duration-300"
-          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/60 z-[100] lg:hidden animate-fadeIn"
+          onClick={closeMobileMenu}
         />
       )}
 
-      {/* Mobile Sidebar */}
-      <div
-        className={`fixed top-0 left-0 h-full w-80 sm:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-out z-40 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+      {/* ================= MOBILE SIDEBAR ================= */}
+       <aside
+        className={`fixed top-0 left-0 h-full w-[85%] max-w-[360px] bg-white z-[110] lg:hidden
+        shadow-2xl transform transition-transform duration-300 ease-out
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Sidebar Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r from-[#F97316]/5 to-[#112F41]/5">
-          <h1 className="text-2xl font-bold">
-            <span className="text-[#F97316]">koop</span>
-            <span className="text-[#112F41]">india</span>
-            <span className="text-[#F97316]">.</span>
-          </h1>
+        <div className="flex items-center justify-between px-5 py-4 border-b bg-gradient-to-r from-orange-50 to-white">
+          <span className="text-xl font-bold">
+            <span className="text-orange-500">koop</span>
+            <span className="text-slate-800">india</span>
+          </span>
           <button
-            className="text-gray-600 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition-colors duration-200 border border-gray-300 hover:border-red-300"
-            onClick={() => setIsOpen(false)}
-            title="Close Menu"
+            onClick={closeMobileMenu}
+            className="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
+            aria-label="Close menu"
           >
             <X size={24} />
           </button>
         </div>
 
-        {/* Sidebar Navigation */}
-        <nav className="flex flex-col mt-4 px-4">
-          {navigationItems.map((item) => (
-            <div key={item.name}>
-              {item.hasDropdown ? (
-                <div>
-                  <button
-                    onClick={() => setIsSolutionsOpen(!isSolutionsOpen)}
-                    className="flex items-center justify-between w-full p-4 text-left font-semibold text-gray-800 hover:bg-[#F97316]/10 hover:text-[#F97316] rounded-lg transition-all duration-200 group"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <span className="text-[#112F41] group-hover:text-[#F97316] transition-colors duration-200">
-                        {item.icon}
-                      </span>
-                      <span>{item.name}</span>
-                    </div>
-                    <ChevronDown
-                      size={18}
-                      className={`text-gray-400 group-hover:text-[#F97316] transition-all duration-200 ${
-                        isSolutionsOpen ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </button>
-                  
-                  {/* Mobile Dropdown */}
-                  <div className={`ml-4 overflow-hidden transition-all duration-200 ${
-                    isSolutionsOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                  }`}>
-                    {item.dropdownItems.map((dropdownItem) => (
+        {/* Menu Content */}
+        <div className="flex flex-col h-[calc(100%-73px)]">
+          <div className="flex-1 overflow-y-auto overscroll-contain">
+            <ul className="py-2">
+              {navigationItems.map((item) => (
+                <li key={item.name} className="border-b border-gray-100 last:border-b-0">
+                  {item.dropdown ? (
+                    <>
+                      {/* Parent with Dropdown */}
                       <button
-                        key={dropdownItem.name}
-                        onClick={() => handleNavigation(dropdownItem.href)}
-                        className="flex items-start space-x-3 w-full p-3 text-left rounded-lg hover:bg-[#F97316]/10 hover:text-[#F97316] transition-colors duration-200 group"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenDropdown(
+                            openDropdown === item.name ? null : item.name
+                          );
+                        }}
+                        className="w-full flex justify-between items-center px-5 py-4
+                        text-gray-900 font-medium active:bg-gray-50 transition-colors"
                       >
-                        <span className="text-[#112F41] group-hover:text-[#F97316] mt-1">
-                          {dropdownItem.icon}
-                        </span>
-                        <div>
-                          <div className="font-medium text-sm">{dropdownItem.name}</div>
-                          <div className="text-xs text-gray-500 group-hover:text-[#F97316]/70">
-                            {dropdownItem.description}
-                          </div>
-                        </div>
+                        <span className="text-[15px]">{item.name}</span>
+                        <ChevronDown
+                          size={20}
+                          className={`text-gray-500 transition-transform duration-200 ${
+                            openDropdown === item.name ? "rotate-180" : ""
+                          }`}
+                        />
                       </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={() => handleNavigation(item.href)}
-                  className="flex items-center justify-between w-full p-4 text-left font-semibold text-gray-800 hover:bg-[#F97316]/10 hover:text-[#F97316] rounded-lg transition-all duration-200 group"
-                >
-                  <div className="flex items-center space-x-4">
-                    <span className="text-[#112F41] group-hover:text-[#F97316] transition-colors duration-200">
-                      {item.icon}
-                    </span>
-                    <span>{item.name}</span>
-                  </div>
-                  <ChevronRight
-                    size={18}
-                    className="text-gray-400 group-hover:text-[#F97316] group-hover:translate-x-1 transition-all duration-200"
-                  />
-                </button>
-              )}
-            </div>
-          ))}
-        </nav>
 
-        {/* Sidebar Get Started */}
-        <div className="px-4 mt-8">
-          <button
-            onClick={onOpenModal}
-            className="w-full bg-[#F97316] hover:bg-[#c75e10] text-white font-bold px-6 py-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg cursor-pointer"
-          >
-            Get Started
-          </button>
-        </div>
+                      {/* Dropdown Items */}
+                      <div
+                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                          openDropdown === item.name
+                            ? "max-h-[600px] opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`}
+                      >
+                        <div className="bg-orange-50/50 py-1 px-3">
+                          {item.dropdown.map((sub) => (
+                            <button
+                              key={sub.name}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleNavigate(sub.href);
+                              }}
+                              className="block w-full text-left px-4 py-3 my-1 text-[14px]
+                              text-gray-700 hover:bg-white hover:text-orange-600
+                              rounded-lg transition-all active:scale-[0.98]"
+                            >
+                              {sub.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    // Regular Link Item
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigate(item.href);
+                      }}
+                      className="w-full flex justify-between items-center px-5 py-4
+                      text-gray-900 font-medium active:bg-gray-50 transition-colors"
+                    >
+                      <span className="text-[15px]">{item.name}</span>
+                      <ChevronRight size={20} className="text-gray-400" />
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        {/* Sidebar Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 bg-gray-50">
-          <div className="text-center">
-            <h2 className="text-lg font-bold">
-              <span className="text-[#F97316]">Koop</span>
-              <span className="text-[#112F41]">India</span>
-              <span className="text-[#F97316]">.</span>
-            </h2>
+          {/* Bottom CTA */}
+          <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                closeMobileMenu();
+                onOpenModal();
+              }}
+              className="w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700
+              text-white font-semibold py-3.5 rounded-lg shadow-md
+              transition-all active:scale-[0.98]"
+            >
+              Get Started
+            </button>
+
+            <p className="text-center text-xs text-gray-400 mt-3">
+              © 2024 KoopIndia
+            </p>
           </div>
         </div>
-      </div>
-    </div>
+      </aside>
+    </>
   );
 };
 

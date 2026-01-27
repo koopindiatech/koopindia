@@ -90,6 +90,7 @@ const BrandsPage = () => {
   ];
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-blue-50/30">
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-6 lg:px-8 bg-gradient-to-br from-white via-orange-50/20 to-slate-50/50">

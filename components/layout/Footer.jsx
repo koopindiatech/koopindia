@@ -67,10 +67,10 @@ const Footer = ({onOpenModal}) => {
       </div>
       {/* Copyright Section */}
       <div className="text-gray-700 text-center pb-5 px-4">
-        <p className="text-sm">© 2025 Koop India. All rights reserved.</p>
+        <p className="text-sm">© 2026 Koop India. All rights reserved.</p>
         <p className="text-xs mt-2">
           <Link href="/privacy" className="hover:text-[#F97316]">Privacy Policy</Link> |{" "}
-          <Link href="/termsevices" className="hover:text-[#F97316]">Terms of Service</Link>
+          <Link href="/term-services" className="hover:text-[#F97316]">Terms of Service</Link>
         </p>
       </div>
     </footer>
