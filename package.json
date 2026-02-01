@@ -15,6 +15,7 @@
     "googleapis": "^160.0.0",
     "lucide-react": "^0.540.0",
     "next": "^16.1.1",
+    "next-sitemap": "^4.2.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-icons": "^5.5.0"

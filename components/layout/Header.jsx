@@ -26,44 +26,89 @@ const Header = ({ onOpenModal }) => {
     {
       name: "Tech Solutions",
       icon: <Lightbulb size={18} />,
-      dropdown: [   
-      { name: "Startups / Brands", href: "/solutions/brands" },
-      { name: "Buyers / Distributors", href: "/solutions/distributors" },
-      { name: "Website Development", href: "/tech-solutions/website-development" },
-      { name: "CRM Development", href: "/tech-solutions/crm-development" },
-      { name: "SEO Services", href: "/tech-solutions/seo" },
+      dropdown: [
+        { name: "Startups / Brands", href: "/solutions/brands" },
+        { name: "Buyers / Distributors", href: "/solutions/distributors" },
+        {
+          name: "Website Development",
+          href: "/tech-solutions/website-development",
+        },
+        { name: "CRM Development", href: "/tech-solutions/crm-development" },
+        { name: "SEO Services", href: "/tech-solutions/seo" },
       ],
     },
     {
       name: "Startup Consulting",
       dropdown: [
         { name: "Business Consulting", href: "/startup-consulting/business" },
-        { name: "Market Analysis", href: "/startup-consulting/market-analysis" },
-        { name: "Product & Margin Valuation", href: "/startup-consulting/product-valuation" },
-        { name: "Distribution Module", href: "/startup-consulting/distribution-model" },
-        { name: "Franchise Module", href: "/startup-consulting/franchise-model" },
+        {
+          name: "Market Analysis",
+          href: "/startup-consulting/market-analysis",
+        },
+        {
+          name: "Product & Margin Valuation",
+          href: "/startup-consulting/product-valuation",
+        },
+        {
+          name: "Distribution Module",
+          href: "/startup-consulting/distribution-model",
+        },
+        {
+          name: "Franchise Module",
+          href: "/startup-consulting/franchise-model",
+        },
       ],
     },
     {
       name: "Documentation & Compliance",
       dropdown: [
-        { name: "GST Registration & Filing", href: "/documentation-compliance/gst-registration" },
-        { name: "Company Registration", href: "/documentation-compliance/company-registration" },
-        { name: "Trademark Registration", href: "/documentation-compliance/trademark-registration" },
-        { name: "FSSAI License", href: "/documentation-compliance/fssai-license" },
-        { name: "ISO Certification", href: "/documentation-compliance/iso-certification" },
-        { name: "Startup India Registration", href: "/documentation-compliance/startup-india-registration" },
-        { name: "Company Accounting", href: "/documentation-compliance/company-accounting" },
-        { name: "Tax & Compliance Services", href: "/documentation-compliance/tax-compliance" },
+        {
+          name: "GST Registration & Filing",
+          href: "/documentation-compliance/gst-registration",
+        },
+        {
+          name: "Company Registration",
+          href: "/documentation-compliance/company-registration",
+        },
+        {
+          name: "Trademark Registration",
+          href: "/documentation-compliance/trademark-registration",
+        },
+        {
+          name: "FSSAI License",
+          href: "/documentation-compliance/fssai-license",
+        },
+        {
+          name: "ISO Certification",
+          href: "/documentation-compliance/iso-certification",
+        },
+        {
+          name: "Startup India Registration",
+          href: "/documentation-compliance/startup-india-registration",
+        },
+        {
+          name: "Company Accounting",
+          href: "/documentation-compliance/company-accounting",
+        },
+        {
+          name: "Tax & Compliance Services",
+          href: "/documentation-compliance/tax-compliance",
+        },
       ],
     },
     {
       name: "Bussiness Promotion",
       dropdown: [
-        { name: "Social Media Marketing", href: "/digital-marketing/social-media" },
+        {
+          name: "Social Media Marketing",
+          href: "/digital-marketing/social-media",
+        },
         { name: "Google My Business", href: "/digital-marketing/gmb" },
         // { name: "SEO Services", href: "/digital-marketing/seo" },
-        { name: "Logo & Graphic Design", href: "/digital-marketing/logo-design" },
+        {
+          name: "Logo & Graphic Design",
+          href: "/digital-marketing/logo-design",
+        },
         { name: "Content Writing", href: "/digital-marketing/content-writing" },
       ],
     },
@@ -105,7 +150,7 @@ const Header = ({ onOpenModal }) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6 font-semibold text-gray-800">
+         <nav className="hidden lg:flex items-center gap-4 xl:gap-5 text-[15px] font-medium text-gray-800">
             {navigationItems.map((item) => (
               <div
                 key={item.name}
@@ -121,11 +166,13 @@ const Header = ({ onOpenModal }) => {
                     </button>
 
                     <div
-                      className={`absolute top-full left-0 mt-3 w-72 bg-white rounded-xl shadow-xl border transition-all ${
-                        openDropdown === item.name
-                          ? "opacity-100 visible translate-y-0"
-                          : "opacity-0 invisible -translate-y-2"
-                      }`}
+                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 
+                    bg-white rounded-xl shadow-lg border transition-all duration-200
+                    ${
+                      openDropdown === item.name
+                        ? "opacity-100 visible translate-y-0"
+                        : "opacity-0 invisible -translate-y-2"
+                    }`}
                     >
                       <div className="p-3 grid gap-2">
                         {item.dropdown.map((sub) => (
@@ -142,7 +189,10 @@ const Header = ({ onOpenModal }) => {
                     </div>
                   </>
                 ) : (
-                  <Link href={item.href} className="hover:text-orange-500 transition-colors">
+                  <Link
+                    href={item.href}
+                    className="hover:text-orange-500 transition-colors"
+                  >
                     {item.name}
                   </Link>
                 )}
@@ -150,11 +200,11 @@ const Header = ({ onOpenModal }) => {
             ))}
           </nav>
 
-          {/* Desktop Get Started Button */}
-          <div className="hidden lg:block">
+          <div className="hidden lg:block ml-4 xl:ml-8">
             <button
               onClick={onOpenModal}
-              className="bg-orange-500 hover:bg-orange-600 text-white cursor-pointer px-5 py-2 rounded font-bold transition-colors"
+              className="bg-orange-500 hover:bg-orange-600 text-white
+              cursor-pointer px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
             >
               Get Started
             </button>
@@ -180,7 +230,7 @@ const Header = ({ onOpenModal }) => {
       )}
 
       {/* ================= MOBILE SIDEBAR ================= */}
-       <aside
+      <aside
         className={`fixed top-0 left-0 h-full w-[85%] max-w-[360px] bg-white z-[110] lg:hidden
         shadow-2xl transform transition-transform duration-300 ease-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
@@ -205,7 +255,10 @@ const Header = ({ onOpenModal }) => {
           <div className="flex-1 overflow-y-auto overscroll-contain">
             <ul className="py-2">
               {navigationItems.map((item) => (
-                <li key={item.name} className="border-b border-gray-100 last:border-b-0">
+                <li
+                  key={item.name}
+                  className="border-b border-gray-100 last:border-b-0"
+                >
                   {item.dropdown ? (
                     <>
                       {/* Parent with Dropdown */}
@@ -214,7 +267,7 @@ const Header = ({ onOpenModal }) => {
                         onClick={(e) => {
                           e.stopPropagation();
                           setOpenDropdown(
-                            openDropdown === item.name ? null : item.name
+                            openDropdown === item.name ? null : item.name,
                           );
                         }}
                         className="w-full flex justify-between items-center px-5 py-4
