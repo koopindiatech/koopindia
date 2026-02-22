@@ -1,21 +1,13 @@
-"use client"
+"use client";
 import HeroSection from "@/components/ui/hero";
-import Image from "next/image";
-import EnquiryModal from "@/components/forms/EnquiryForm";
-import { useState } from "react";
+import { useModal } from "@/context/ModalContext";
 
 export default function Home() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-  return (
-      <div>
-      {/* Hero Section */}
-      <HeroSection onOpenModal={() => setIsModalOpen(true)} />
+  const { onOpenModal } = useModal();
 
-      {/* Enquiry Modal */}
-      <EnquiryModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
+  return (
+    <div>
+      <HeroSection onOpenModal={onOpenModal} />
     </div>
   );
 }

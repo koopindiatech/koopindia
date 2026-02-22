@@ -146,7 +146,7 @@ const HeroSection = ({ onOpenModal }) => {
             </Link>
             <button
               className="w-full sm:w-auto border border-[#F97316] text-[#F97316] hover:bg-[#4e4037] px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg sm:rounded font-semibold cursor-pointer"
-              onClick={onOpenModal}
+             onClick={() => onOpenModal && onOpenModal()}
             >
               Get Started →
             </button>
@@ -479,7 +479,7 @@ const HeroSection = ({ onOpenModal }) => {
       {/* ------- Section -------- */}
       <div>
         {/* CTA Section */}
-        <section className="py-20 px-6 lg:px-8 bg-gradient-to-r from-[#F97316] to-[#e5650d] text-white">
+        <section className="py-16 px-6 lg:px-8 bg-gradient-to-r from-[#F97316] to-[#e5650d] text-white">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-6">
               Ready to Transform Your Business?
@@ -492,7 +492,7 @@ const HeroSection = ({ onOpenModal }) => {
             <div className=" sm:flex-row gap-4 justify-center items-center">
               <button
                 className="bg-white text-[#F97316] px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
-                onClick={onOpenModal}
+              onClick={() => onOpenModal && onOpenModal()}
               >
                 Schedule Free Consultation
               </button>
