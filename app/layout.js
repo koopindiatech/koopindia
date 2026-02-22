@@ -8,13 +8,13 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata = {
-  title: "Koop India",
-  description: "B2B Platform by Koop India",
+  title: "Koop India | Business Launchpad for Startups & Entrepreneurs",
+  description:
+    "Koop India is a business launchpad for startups and entrepreneurs, offering expert consultation, company registration, compliance, licensing, and growth support.",
   icons: {
-    icon: "/favican.png",       
+    icon: "/favican.png",
   },
 };
-
 
 export default function RootLayout({ children }) {
   return (
