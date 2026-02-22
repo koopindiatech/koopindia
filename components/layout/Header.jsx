@@ -346,7 +346,7 @@ const Header = ({ onOpenModal }) => {
             </button>
 
             <p className="text-center text-xs text-gray-400 mt-3">
-              © 2024 KoopIndia
+              © 2026 KoopIndia
             </p>
           </div>
         </div>

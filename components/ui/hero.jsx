@@ -126,7 +126,7 @@ const HeroSection = ({ onOpenModal }) => {
     <div className="bg-[#141d32] text-white">
       {/* ------- Hero Section ------- */}
 
-      <section className="pt-20 sm:pt-20 px-6 sm:px-6 md:px-10 lg:px-15 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8 sm:gap-8 md:gap-10">
+      <section className="pt-16 px-6 sm:px-6 md:px-10 lg:px-15 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8 sm:gap-8 md:gap-10">
         <div>
           <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6 sm:mb-6">
             Empowering your Startup &<br />
@@ -188,7 +188,7 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
 
         {/* Right-side image placeholder */}
-        <div className="hidden md:block mt-8 md:mt-0">
+        <div className="hidden md:block -mt-20">
           <img
             src="dashboard-image.jpg"
             alt="Dashboard Preview"
