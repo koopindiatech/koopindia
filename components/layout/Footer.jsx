@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 import { Lightbulb } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 
@@ -31,18 +31,18 @@ const Footer = ({ onOpenModal }) => {
   }, []);
 
   return (
-    <footer className="bg-white text-[#141d32] border-t border-gray-200">
+    <footer className="bg-[#0F172A] text-[#CBD5E1] border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 md:grid-cols-5 gap-8">
         {/* Logo */}
         <div className="text-center md:text-left">
           <Link href="/">
             <h1 className="text-3xl font-extrabold">
               <span className="text-[#F97316]">koop</span>
-              <span className="text-[#141d32]">india</span>
+              <span className="text-white">india</span>
               <span className="text-[#F97316]">.</span>
             </h1>
           </Link>
-          <p className="text-gray-600 mt-3">
+          <p className="text-[#94A3B8] mt-3">
             Koop India is a business launchpad for startups and entrepreneurs,
             providing expert consultation and end-to-end support for
             registration, compliance, and growth.
@@ -264,28 +264,32 @@ const Footer = ({ onOpenModal }) => {
         <div className="text-center md:text-left">
           <h3 className="font-bold text-lg mb-4 text-[#F97316]">SOCIAL</h3>
           <ul className="space-y-2">
-            <li className="flex items-center gap-2 justify-center hover:text-[#F97316] md:justify-start">
-              <FaFacebook className="mt-[1px]" />
+            <li className="flex items-center gap-2 justify-center md:justify-start hover:text-[#F97316]">
+              <FaFacebook />{" "}
               <Link href="https://www.facebook.com/KoopIndiaa">Facebook</Link>
             </li>
-            <li className="flex items-center gap-2 justify-center hover:text-[#F97316] md:justify-start">
-              <FaInstagram className="mt-[1px]" />
+            <li className="flex items-center gap-2 justify-center md:justify-start hover:text-[#F97316]">
+              <FaInstagram />{" "}
               <Link href="https://www.instagram.com/koop_india/?hl=en">
                 Instagram
               </Link>
             </li>
-            <li className="flex items-center gap-2 justify-center hover:text-[#F97316] md:justify-start">
-              <FaLinkedin className="mt-[1px]" />
+            <li className="flex items-center gap-2 justify-center md:justify-start hover:text-[#F97316]">
+              <FaLinkedin />{" "}
               <Link href="https://www.linkedin.com/company/koop-india/">
                 LinkedIn
               </Link>
+            </li>
+            <li className="flex items-center gap-2 justify-center md:justify-start hover:text-[#F97316]">
+              <FaYoutube />
+              <Link href="https://www.youtube.com/@KoopIndia">YouTube</Link>
             </li>
           </ul>
         </div>
       </div>
 
       {/* Copyright */}
-      <div className="text-gray-700 text-center pb-5 px-4">
+      <div className="text-[#94A3B8] text-center pb-5 px-4 border-t border-white/10">
         <p className="text-sm">© 2026 Koop India. All rights reserved.</p>
         <p className="text-xs mt-2">
           <Link href="/privacy" className="hover:text-[#F97316]">

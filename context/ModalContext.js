@@ -18,7 +18,6 @@ export const ModalProvider = ({ children }) => {
     setIsOpen(false);
     sessionStorage.removeItem("enquiry_open");
 
-    // 🔁 reopen after 40 seconds (ONLY ONCE)
     clearTimeout(reopenTimerRef.current);
     reopenTimerRef.current = setTimeout(() => {
       if (!sessionStorage.getItem("enquiry_scroll_shown")) {
@@ -29,7 +28,6 @@ export const ModalProvider = ({ children }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // 🛑 HARD LOCK — scroll trigger sirf ek baar
       if (sessionStorage.getItem("enquiry_scroll_shown")) return;
 
       const scrollPosition = window.scrollY + window.innerHeight;
@@ -54,7 +52,6 @@ export const ModalProvider = ({ children }) => {
     <ModalContext.Provider value={{ onOpenModal: openModal }}>
       {children}
 
-      {/* ✅ SINGLE INSTANCE ONLY */}
       <EnquiryModal isOpen={isOpen} onClose={closeModal} />
     </ModalContext.Provider>
   );
