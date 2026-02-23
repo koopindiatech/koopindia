@@ -262,7 +262,7 @@ const Footer = ({ onOpenModal }) => {
 
         {/* Social */}
         <div className="text-center md:text-left">
-          <h3 className="font-bold text-lg mb-4 text-[#F97316]">SOCIAL</h3>
+          <h3 className="font-bold text-lg mb-4 text-[#F97316]">FOLLOW US ON</h3>
           <ul className="space-y-2">
             <li className="flex items-center gap-2 justify-center md:justify-start hover:text-[#F97316]">
               <FaFacebook />{" "}
