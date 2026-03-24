@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { addEnquiry } from "@/lib/enquiryService";
+import { usePathname } from "next/navigation"; // ← ADD KARO
+
 
 export default function EnquiryModal({ isOpen, onClose }) {
   const [form, setForm] = useState({
@@ -16,6 +18,11 @@ export default function EnquiryModal({ isOpen, onClose }) {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+    const pathname = usePathname(); // ← ADD KARO
+
+
+   if (pathname === "/services") return null; // ← ADD KARO
+  if (!isOpen) return null;
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
