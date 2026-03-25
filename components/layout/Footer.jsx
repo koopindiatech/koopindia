@@ -88,6 +88,11 @@ const Footer = ({ onOpenModal }) => {
                 About us
               </Link>
             </li>
+             <li>
+              <Link href="/services" className="hover:text-[#F97316]">
+                Our Services
+              </Link>
+            </li>
             <li>
               <Link href="/privacy" className="hover:text-[#F97316]">
                 Privacy Policy

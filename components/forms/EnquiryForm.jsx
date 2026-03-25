@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { addEnquiry } from "@/lib/enquiryService";
-import { usePathname } from "next/navigation"; // ← ADD KARO
+import { usePathname } from "next/navigation"; 
 
 
 export default function EnquiryModal({ isOpen, onClose }) {
@@ -13,15 +13,15 @@ export default function EnquiryModal({ isOpen, onClose }) {
     email: "",
     city: "",
     service: "",
+    source: "website",
   });
 
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-    const pathname = usePathname(); // ← ADD KARO
+    const pathname = usePathname(); 
 
-
-   if (pathname === "/services") return null; // ← ADD KARO
+   if (pathname === "/services") return null; 
   if (!isOpen) return null;
 
   const handleChange = (e) => {
