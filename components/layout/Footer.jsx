@@ -32,7 +32,7 @@ const Footer = ({ onOpenModal }) => {
 
   return (
     <footer className="bg-[#0F172A] text-[#CBD5E1] border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 md:grid-cols-5 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 md:grid-cols-5 gap-8">
         {/* Logo */}
         <div className="text-center md:text-left">
           <Link href="/">
