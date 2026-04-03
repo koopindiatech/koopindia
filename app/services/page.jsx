@@ -564,36 +564,54 @@ function EnquiryForm({
 
 function ReassuranceCards() {
   return (
-    <div className="mt-4 space-y-3">
-      {[
-        {
-          icon: "🏆",
-          title: "Trusted by 1,000+ Businesses",
-          sub: "Across India since 2022",
-        },
-        {
-          icon: "⚡",
-          title: "Fast Turnaround",
-          sub: "Most services done within 72 hrs",
-        },
-        {
-          icon: "💬",
-          title: "Dedicated Support",
-          sub: "WhatsApp + Call support 9AM–9PM",
-        },
-      ].map((item) => (
-        <div
-          key={item.title}
-          className="flex items-start gap-3 bg-white rounded-xl px-4 py-3 border border-gray-100 shadow-sm"
-        >
-          <span className="text-xl mt-0.5">{item.icon}</span>
-          <div>
-            <p className="text-sm font-semibold text-gray-800">{item.title}</p>
-            <p className="text-xs text-gray-400">{item.sub}</p>
-          </div>
-        </div>
-      ))}
+  <div className="mt-6 space-y-4">
+  {[
+    {
+      icon: "🏆",
+      title: "Trusted by 1,000+ Businesses",
+      sub: "Across India since 2022",
+    },
+    {
+      icon: "⚡",
+      title: "Fast Turnaround",
+      sub: "Most services done within 72 hrs",
+    },
+    {
+      icon: "💬",
+      title: "Dedicated Support",
+      sub: "WhatsApp + Call support 9AM–9PM",
+    },
+  ].map((item) => (
+    <div
+      key={item.title}
+      className="flex items-start gap-4 bg-gradient-to-r from-orange-50 to-white 
+      rounded-2xl px-5 py-4 
+      border border-orange-100 
+      shadow-md hover:shadow-lg 
+      hover:-translate-y-1 
+      transition-all duration-300 group"
+    >
+      {/* Icon */}
+      <span
+        className="text-xl flex items-center justify-center 
+        w-10 h-10 rounded-full 
+        bg-orange-100 text-orange-600 
+        group-hover:bg-orange-500 group-hover:text-white 
+        transition-all duration-300"
+      >
+        {item.icon}
+      </span>
+
+      {/* Content */}
+      <div>
+        <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition">
+          {item.title}
+        </p>
+        <p className="text-xs text-gray-500">{item.sub}</p>
+      </div>
     </div>
+  ))}
+</div>
   );
 }
 
@@ -785,18 +803,25 @@ export default function ServicesPage() {
             From compliance to growth — we handle it all so you can focus on
             what matters.
           </p>
-          <div className="flex flex-wrap justify-center gap-3 mt-6">
-            {["1000+ Businesses", "Fast Turnaround", "Expert Support"].map(
-              (t) => (
-                <span
-                  key={t}
-                  className="text-xs text-orange-500 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-full backdrop-blur-sm"
-                >
-                  ✓ {t}
-                </span>
-              ),
-            )}
-          </div>
+        <div className="flex flex-wrap justify-center gap-4 mt-8">
+  {["1000+ Businesses", "Fast Turnaround", "Expert Support"].map((t) => (
+    <span
+      key={t}
+      className="flex items-center gap-2 text-sm font-semibold text-white 
+      bg-gradient-to-r from-orange-600 to-orange-700 
+      shadow-lg shadow-orange-500/30 
+      px-4 py-2 rounded-full 
+      border border-orange-400/40 
+      hover:scale-105 hover:shadow-orange-500/50 
+      transition-all duration-300"
+    >
+      <span className="text-white bg-white/20 rounded-full px-1.5 py-0.5">
+        ✓
+      </span>
+      {t}
+    </span>
+  ))}
+</div>
         </div>
       </section>
 
