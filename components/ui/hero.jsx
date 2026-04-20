@@ -146,7 +146,7 @@ const HeroSection = ({ onOpenModal }) => {
             </Link>
             <button
               className="w-full sm:w-auto border border-[#F97316] text-[#F97316] hover:bg-[#4e4037] px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg sm:rounded font-semibold cursor-pointer"
-             onClick={() => onOpenModal && onOpenModal()}
+              onClick={() => onOpenModal && onOpenModal()}
             >
               Get Started →
             </button>
@@ -476,6 +476,75 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
       </section>
 
+      {/* Client Review Image Section */}
+      <section className="py-16 px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#141d32] mb-4">
+            Real Results. Real Client Success Stories.
+          </h2>
+
+          <p className="text-gray-600 text-md max-w-6xl mx-auto mb-10">
+            Discover how startups and businesses have transformed their journey
+            with our expert solutions. From launching ideas to scaling
+            operations, our clients trust us to deliver measurable growth and
+            long-term success.
+          </p>
+
+          <div className="grid md:grid-cols-5 gap-6">
+            {/* Review Image 1 */}
+            <div className="rounded-2xl overflow-hidden shadow-lg border">
+              <Image
+                src="/reviews/review1.jpeg"
+                alt="Client Review"
+                width={300}
+                height={100}
+                className="w-full object-cover"
+              />
+            </div>
+
+            {/* Review Image 2 */}
+            <div className="rounded-2xl overflow-hidden shadow-lg border">
+              <Image
+                src="/reviews/review2.jpeg"
+                alt="Client Review"
+                width={200}
+                height={100}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-lg border">
+              <Image
+                src="/reviews/review3.jpeg"
+                alt="Client Review"
+                width={600}
+                height={100}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+
+            <div className="rounded-2xl overflow-hidden shadow-lg border">
+              <Image
+                src="/reviews/review4.jpeg"
+                alt="Client Review"
+                width={600}
+                height={100}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+
+            <div className="rounded-2xl overflow-hidden shadow-lg border">
+              <Image
+                src="/reviews/review5.jpeg"
+                alt="Client Review"
+                width={600}
+                height={100}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ------- Section -------- */}
       <div>
         {/* CTA Section */}
@@ -492,7 +561,7 @@ const HeroSection = ({ onOpenModal }) => {
             <div className=" sm:flex-row gap-4 justify-center items-center">
               <button
                 className="bg-white text-[#F97316] px-8 py-4 rounded-lg font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
-              onClick={() => onOpenModal && onOpenModal()}
+                onClick={() => onOpenModal && onOpenModal()}
               >
                 Schedule Free Consultation
               </button>

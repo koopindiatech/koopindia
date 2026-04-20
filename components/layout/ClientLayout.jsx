@@ -31,4 +31,4 @@ export default function ClientLayout({ children }) {
       <EnquiryModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );
-}
+} 
