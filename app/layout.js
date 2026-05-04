@@ -22,7 +22,6 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 export default function RootLayout({ children }) {
   const pathname = usePathname();
 
-  // 👉 pages where you want clean layout
   const noLayoutRoutes = ["/services"];
   const hideExtras = noLayoutRoutes.includes(pathname);
 

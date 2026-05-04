@@ -60,10 +60,10 @@ export default function EnquiryModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2 sm:p-4 pb-24">
+    <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2 sm:p-3 pb-24">
       <div
         className="pointer-events-auto bg-white rounded-xl w-full max-w-md md:max-w-4xl p-4 sm:p-6 relative 
-        flex flex-col md:flex-row shadow-xl overflow-y-auto max-h-[75vh] border border-gray-300"
+        flex flex-col md:flex-row shadow-xl overflow-y-auto max-h-[72vh] border border-gray-300"
       >
         {/* Success Overlay */}
         {successMsg && (
@@ -80,8 +80,8 @@ export default function EnquiryModal({ isOpen, onClose }) {
           <Image
             src="/form-image.jpg"
             alt="Person"
-            width={450}
-            height={500}
+            width={400}
+            height={450}
             className="rounded-lg object-contain"
           />
         </div>
@@ -260,15 +260,10 @@ export default function EnquiryModal({ isOpen, onClose }) {
                   Sending...
                 </>
               ) : (
-                "SEND →"
+                "GET FREE CONSULTATION →"
               )}
             </button>
           </form>
-
-          <p className="text-[11px] sm:text-xs text-gray-500 mt-2 text-center md:text-left">
-            Signup today to claim your Discount. Get Started before it is too
-            late!
-          </p>
 
           {/* Close Button */}
           <button
