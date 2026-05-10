@@ -2,31 +2,31 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import ContactSlideForm from "./forms/ContactSlideForm"; // Path adjust karein folder structure ke hisaab se
 
 export default function FloatingContact() {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <div className="fixed right-2 bottom-1/9 z-40 flex flex-col gap-3 items-center">
-        {/* <button
+      <div className="fixed right-0 bottom-20 z-[100] flex flex-col gap-4 items-end pr-2">
+        {/* Contact Us Sidebar Button */}
+        <button
           onClick={() => setOpen(true)}
-          className="fixed top-4/6 -translate-y-1/2 z-40
-         bg-[#0072b1] text-white px-2 py-1 rounded-lg
+          className="fixed top-5/7 -translate-y-1/2 z-40
+         bg-orange-600 text-white px-3 py-2 rounded-lg
           rotate-180  font-medium tracking-wide cursor-pointer"
           style={{ writingMode: "vertical-rl" }}
         >
           Contact Us
-        </button> */}
+        </button>
 
-        {/* <a href="tel:+917782069184">
-          <Image src="/call4.png" alt="Call" width={34} height={34} />
-        </a> */}
-
+        {/* WhatsApp Link */}
         <a
           href="https://wa.me/9891233311"
           target="_blank"
           rel="noopener noreferrer"
+          className="hover:scale-110 transition-transform"
         >
           <Image
             src="/whatsapp-image.png"
@@ -37,7 +37,8 @@ export default function FloatingContact() {
         </a>
       </div>
 
-      {/* <ContactSlideForm open={open} onClose={() => setOpen(false)} /> */}
+      {/* Sidebar Form Component */}
+      <ContactSlideForm open={open} onClose={() => setOpen(false)} />
     </>
   );
 }
