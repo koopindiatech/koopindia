@@ -5,63 +5,53 @@ import EnquiryModal from "@/components/forms/EnquiryForm";
 
 const ModalContext = createContext();
 
-const NO_MODAL_PAGES = ["/services"]; // ← jitne pages chahiye add karo
+const NO_MODAL_PAGES = ["/services"]; 
 
 export const ModalProvider = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const reopenTimerRef = useRef(null);
   const pathname = usePathname();
 
-  // Jab bhi pathname change ho aur services page ho — modal force close karo
-  useEffect(() => {
-    if (NO_MODAL_PAGES.includes(pathname)) {
-      setIsOpen(false); // ← directly state set karo, openModal bypass karo
-    }
-  }, [pathname]);
-
+  // Modal Open karne ka function
   const openModal = () => {
     if (NO_MODAL_PAGES.includes(pathname)) return;
-    if (NO_MODAL_PAGES.includes(window.location.pathname)) return; // ← double check
-    if (sessionStorage.getItem("enquiry_open")) return;
-    sessionStorage.setItem("enquiry_open", "true");
     setIsOpen(true);
   };
 
   const closeModal = () => {
     setIsOpen(false);
-    sessionStorage.removeItem("enquiry_open");
+    // 40 seconds baad firse dikhane ka timer (optional logic)
     clearTimeout(reopenTimerRef.current);
     reopenTimerRef.current = setTimeout(() => {
-      if (!localStorage.getItem("enquiry_scroll_shown")) {
-        openModal();
-      }
+        if (!NO_MODAL_PAGES.includes(pathname)) {
+            setIsOpen(true);
+        }
     }, 40000);
   };
 
+  // Auto-scroll logic yahan handle ho rahi hai
   useEffect(() => {
     if (NO_MODAL_PAGES.includes(pathname)) return;
 
     const handleScroll = () => {
-      if (localStorage.getItem("enquiry_scroll_shown")) return;
       const scrollPosition = window.scrollY + window.innerHeight;
       const pageHeight = document.documentElement.scrollHeight;
+      
+      // 50% scroll hone par modal khulega
       if (scrollPosition >= pageHeight * 0.5) {
-        localStorage.setItem("enquiry_scroll_shown", "true");
-        openModal();
+        setIsOpen(true);
         window.removeEventListener("scroll", handleScroll);
       }
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      clearTimeout(reopenTimerRef.current);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
   return (
     <ModalContext.Provider value={{ onOpenModal: openModal }}>
       {children}
+      {/* Ek hi global modal poore app ke liye */}
       <EnquiryModal isOpen={isOpen} onClose={closeModal} />
     </ModalContext.Provider>
   );

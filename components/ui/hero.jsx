@@ -126,26 +126,33 @@ const HeroSection = ({ onOpenModal }) => {
     <div className="bg-[#141d32] text-white">
       {/* ------- Hero Section ------- */}
 
-      <section className="pt-16 px-6 sm:px-6 md:px-10 lg:px-15 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8 sm:gap-8 md:gap-10">
+      <section
+        className="pt-16 px-6 sm:px-6 md:px-10 lg:px-15 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8 sm:gap-8 md:gap-10 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/bg-image1.png')",
+        }} 
+      >
         <div>
           <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6 sm:mb-6">
-            Empowering your Startup &<br />
+            Empowering Businesses to Start ,
             <span className="text-[#F97316] text-3xl sm:text-3xl md:text-4xl lg:text-5xl">
-              Business with us
+              Grow & Succeed
             </span>
           </h1>
           <p className="text-lg sm:text-lg mb-8 sm:mb-6">
-            Koop India helps startups to launch, grow, and scale with the right
-            solutions, strategies, and guidance.
+            Koop India helps GST Registration, Trademark Registration, FSSAI
+            License, Website Development & Complete Business Solutions — all in
+            one place.
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 md:gap-10 mb-8 sm:mb-8">
-            <Link href="#solution">
-              <button className="w-full sm:w-auto bg-[#F97316] text-white px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg sm:rounded font-semibold cursor-pointer">
-                Explore Solutions →
+          
+              <button className="w-full sm:w-auto bg-[#F97316] text-white px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg  font-semibold cursor-pointer"
+                            onClick={() => onOpenModal && onOpenModal()}>
+                Talk To Experts →
               </button>
-            </Link>
+         
             <button
-              className="w-full sm:w-auto border border-[#F97316] text-[#F97316] hover:bg-[#4e4037] px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg sm:rounded font-semibold cursor-pointer"
+              className="w-full sm:w-auto border border-[#F97316] text-[#F97316] hover:bg-[#4e4037] px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg  font-semibold cursor-pointer"
               onClick={() => onOpenModal && onOpenModal()}
             >
               Get Started →
@@ -190,9 +197,9 @@ const HeroSection = ({ onOpenModal }) => {
         {/* Right-side image placeholder */}
         <div className="hidden md:block -mt-20">
           <img
-            src="dashboard-image.jpg"
+            src="dash-image2.png"
             alt="Dashboard Preview"
-            className="rounded-2xl shadow-2xl border border-gray-300 w-full h-auto"
+            className=" w-full h-auto"
           />
         </div>
       </section>
@@ -472,75 +479,6 @@ const HeroSection = ({ onOpenModal }) => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Client Review Image Section */}
-      <section className="py-16 px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#141d32] mb-4">
-            Real Results. Real Client Success Stories.
-          </h2>
-
-          <p className="text-gray-600 text-md max-w-6xl mx-auto mb-10">
-            Discover how startups and businesses have transformed their journey
-            with our expert solutions. From launching ideas to scaling
-            operations, our clients trust us to deliver measurable growth and
-            long-term success.
-          </p>
-
-          <div className="grid md:grid-cols-5 gap-6">
-            {/* Review Image 1 */}
-            <div className="rounded-2xl overflow-hidden shadow-lg border">
-              <Image
-                src="/reviews/review1.jpeg"
-                alt="Client Review"
-                width={300}
-                height={100}
-                className="w-full object-cover"
-              />
-            </div>
-
-            {/* Review Image 2 */}
-            <div className="rounded-2xl overflow-hidden shadow-lg border">
-              <Image
-                src="/reviews/review2.jpeg"
-                alt="Client Review"
-                width={200}
-                height={100}
-                className="w-full h-auto object-cover"
-              />
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-lg border">
-              <Image
-                src="/reviews/review3.jpeg"
-                alt="Client Review"
-                width={600}
-                height={100}
-                className="w-full h-auto object-cover"
-              />
-            </div>
-
-            <div className="rounded-2xl overflow-hidden shadow-lg border">
-              <Image
-                src="/reviews/review4.jpeg"
-                alt="Client Review"
-                width={600}
-                height={100}
-                className="w-full h-auto object-cover"
-              />
-            </div>
-
-            <div className="rounded-2xl overflow-hidden shadow-lg border">
-              <Image
-                src="/reviews/review5.jpeg"
-                alt="Client Review"
-                width={600}
-                height={100}
-                className="w-full h-auto object-cover"
-              />
-            </div>
           </div>
         </div>
       </section>

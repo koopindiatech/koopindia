@@ -2,16 +2,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { addEnquiry } from "@/lib/enquiryService";
-import { usePathname } from "next/navigation"; 
-
+import { usePathname } from "next/navigation";
 
 export default function EnquiryModal({ isOpen, onClose }) {
   const [form, setForm] = useState({
     name: "",
     company: "",
     mobile: "",
-    email: "",
-    city: "",
     service: "",
     source: "website",
   });
@@ -19,9 +16,9 @@ export default function EnquiryModal({ isOpen, onClose }) {
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-    const pathname = usePathname(); 
+  const pathname = usePathname();
 
-   if (pathname === "/services") return null; 
+  if (pathname === "/services") return null;
   if (!isOpen) return null;
 
   const handleChange = (e) => {
@@ -40,8 +37,6 @@ export default function EnquiryModal({ isOpen, onClose }) {
         name: "",
         company: "",
         mobile: "",
-        email: "",
-        city: "",
         service: "",
       });
 
@@ -57,134 +52,134 @@ export default function EnquiryModal({ isOpen, onClose }) {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-2 sm:p-3 pb-24">
-      <div
-        className="pointer-events-auto bg-white rounded-xl w-full max-w-md md:max-w-4xl p-4 sm:p-6 relative 
-        flex flex-col md:flex-row shadow-xl overflow-y-auto max-h-[72vh] border border-gray-300"
-      >
+    // Background Overlay - Solid dark without blur
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      {/* Main Container */}
+      <div className="bg-white rounded-lg w-full max-w-4xl relative flex flex-col md:flex-row shadow-2xl overflow-hidden border border-gray-100">
         {/* Success Overlay */}
         {successMsg && (
-          <div className="absolute inset-0 flex items-center justify-center z-10 bg-white/90">
-            <div className="text-center">
-              <h3 className="text-lg font-bold">Thank You!</h3>
-              <p className="text-sm">{successMsg}</p>
+          <div className="absolute inset-0 flex items-center justify-center z-50 bg-white/95 transition-all">
+            <div className="text-center p-6">
+              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800">Thank You!</h3>
+              <p className="text-gray-600 mt-2">{successMsg}</p>
             </div>
           </div>
         )}
 
-        {/* Left Image */}
-        <div className="md:w-1/2 hidden md:flex items-center justify-center bg-[#141d32]">
-          <Image
-            src="/form-image.jpg"
-            alt="Person"
-            width={400}
-            height={450}
-            className="rounded-lg object-contain"
-          />
+        {/* LEFT IMAGE - Adjusted Height & Fitting */}
+        <div className="md:w-[55%] hidden md:block relative bg-[#f8fafc] border-r border-gray-100">
+          <div className="absolute inset-0 p-0 flex items-center justify-center">
+            <div className="relative w-full h-[85%]">
+              {" "}
+              {/* Image height limited to 85% of container */}
+              <Image
+                src="/koopindia-popup-image.png"
+                alt="Business Solutions"
+                fill
+                className="object-contain" // Changed to object-contain so image is not stretched
+                priority
+              />
+            </div>
+          </div>
+          {/* Subtle logo or text on image side if needed */}
         </div>
 
-        {/* Right Form */}
-        <div className="md:w-1/2 w-full px-2 sm:px-6 flex flex-col justify-center">
-          <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-800 text-center md:text-left">
-            Unlocking <span className="text-[#F97316]">Your Business</span>{" "}
-            Potential
-          </h2>
-          <p className="mb-4 text-gray-600 text-xs sm:text-sm text-center md:text-left">
-            Empowering Startups & Businesses with expert strategies and
-            actionable solutions tailored for growth.
-          </p>
+        {/* RIGHT FORM - Clean 45% Width */}
+        <div className="md:w-[45%] w-full p-4 flex flex-col justify-center bg-white relative">
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-400 cursor-pointer hover:text-orange-500 transition-colors p-1 z-10"
+          >
+            <svg
+              className="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
 
-          {/* Error Message */}
+          <div className="mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 leading-tight">
+              Build Your <span className="text-[#F97316]">Success Story</span>
+            </h2>
+            <p className="mt-2 text-gray-500 text-sm leading-relaxed">
+              Join with{" "}
+              <span className="font-semibold text-gray-700">
+                Koop India for{" "}
+              </span>{" "}
+              expert business solutions.
+            </p>
+          </div>
+
           {errorMsg && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-5 w-5 text-red-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm text-red-800">{errorMsg}</p>
-                </div>
-              </div>
+            <div className="mb-4 p-2 bg-red-50 border-l-4 border-red-500 text-red-700 text-xs">
+              {errorMsg}
             </div>
           )}
 
-          <form className="space-y-3" onSubmit={handleSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <input
               type="text"
               name="name"
               placeholder="Full Name"
               value={form.name}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md 
-                  focus:outline-none focus:ring-2 focus:ring-[#F97316] text-gray-700 text-sm"
+              className="w-full px-4 py-3 border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97316]/20 focus:border-[#F97316] transition-all text-gray-700 text-sm"
               required
               disabled={isSubmitting}
             />
-            <input
-              type="text"
-              name="company"
-              placeholder="Company Name"
-              value={form.company}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md 
-                  focus:outline-none focus:ring-2 focus:ring-[#F97316] text-gray-700 text-sm"
-              required
-              disabled={isSubmitting}
-            />
+
             <input
               type="tel"
               name="mobile"
               placeholder="Mobile Number"
               value={form.mobile}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md 
-                  focus:outline-none focus:ring-2 focus:ring-[#F97316] text-gray-700 text-sm"
-              required
-              disabled={isSubmitting}
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md 
-                  focus:outline-none focus:ring-2 focus:ring-[#F97316] text-gray-700 text-sm"
-              required
-              disabled={isSubmitting}
-            />
-            <input
-              type="text"
-              name="city"
-              placeholder="City"
-              value={form.city}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md 
-                  focus:outline-none focus:ring-2 focus:ring-[#F97316] text-gray-700 text-sm"
+              className="w-full px-4 py-3 border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97316]/20 focus:border-[#F97316] transition-all text-gray-700 text-sm"
               required
               disabled={isSubmitting}
             />
 
-            {/* Dropdown */}
+            <input
+              type="text"
+              name="company"
+              placeholder="Company Name"
+              value={form.company}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97316]/20 focus:border-[#F97316] transition-all text-gray-700 text-sm"
+              required
+              disabled={isSubmitting}
+            />
+
             <select
               name="service"
               value={form.service}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md 
-                  focus:outline-none focus:ring-2 focus:ring-[#F97316] text-gray-700 text-sm"
+              className="w-full px-4 py-3 border border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F97316]/20 focus:border-[#F97316] transition-all text-gray-600 bg-white text-sm"
               required
               disabled={isSubmitting}
             >
@@ -202,76 +197,19 @@ export default function EnquiryModal({ isOpen, onClose }) {
               <option value="Social Media Marketing">
                 Social Media Marketing
               </option>
-              <option value="SEO Services">SEO Services</option>
-              <option value="CRM Development">CRM Development</option>
-              <option value="Startup Consulting">Startup Consulting</option>
-              <option value="Business Consulting">Business Consulting</option>
-              <option value="Distribution / Franchise Model">
-                Distribution / Franchise Model
-              </option>
               <option value="FSSAI License">FSSAI License</option>
               <option value="ISO Certification">ISO Certification</option>
-              <option value="Startup India Registration">
-                Startup India Registration
-              </option>
-              <option value="Tax & Compliance Services">
-                Tax & Compliance Services
-              </option>
-              <option value="Google My Business">
-                Google My Business (GMB)
-              </option>
-              <option value="Logo & Graphic Design">
-                Logo & Graphic Design
-              </option>
               <option value="Other Services">Other Services</option>
             </select>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-[#F97316] to-orange-500 text-white py-2 sm:py-3 rounded-md 
-                  cursor-pointer font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl 
-                  hover:from-orange-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-[1.02]
-                  disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
+              className="w-full bg-[#F97316] hover:bg-orange-600 text-white cursor-pointer py-4 rounded-xl font-bold text-sm shadow-lg shadow-orange-100 transition-all active:scale-[0.98] disabled:opacity-70 mt-2"
             >
-              {isSubmitting ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Sending...
-                </>
-              ) : (
-                "GET FREE CONSULTATION →"
-              )}
+              {isSubmitting ? "Processing..." : "GET FREE CONSULTATION →"}
             </button>
           </form>
-
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-1 right-2 text-gray-700 cursor-pointer hover:text-red-500 text-3xl sm:text-3xl font-bold z-20"
-          >
-            ×
-          </button>
         </div>
       </div>
     </div>

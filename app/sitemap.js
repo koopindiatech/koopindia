@@ -31,11 +31,6 @@ export default function sitemap() {
       priority: 0.5,
     },
     {
-      url: `${baseUrl}/termservices`,
-      lastModified,
-      priority: 0.5,
-    },
-    {
       url: `${baseUrl}/solutions`,
       lastModified,
       priority: 0.9,

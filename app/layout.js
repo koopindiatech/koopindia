@@ -1,41 +1,33 @@
-"use client";
-
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "@/components/layout/ClientLayout";
+import ExtrasWrapper from "@/components/layout/ExtrasWrapper";
 import { ModalProvider } from "@/context/ModalContext";
-import FloatingContact from "@/components/FloatingComponent";
-import { usePathname } from "next/navigation";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-// export const metadata = {
-//   title: "Koop India | Business Launchpad for Startups & Entrepreneurs",
-//   description:
-//     "Koop India is a business launchpad for startups and entrepreneurs, offering expert consultation, company registration, compliance, licensing, and growth support.",
-//   icons: {
-//     icon: "/favican.png",
-//   },
-// };
+export const metadata = {
+  title: "Koop India | Business Launchpad for Startups & Entrepreneurs",
+  description:
+    "Koop India is a business launchpad for startups and entrepreneurs, offering expert consultation, company registration, compliance, licensing, and growth support.",
+  icons: {
+    icon: "/favican.png",
+  },
+};
 
 export default function RootLayout({ children }) {
-  const pathname = usePathname();
-
-  const noLayoutRoutes = ["/services"];
-  const hideExtras = noLayoutRoutes.includes(pathname);
-
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ModalProvider>
+          {/* ClientLayout handles Header, Footer and Scroll Modal */}
+          <ClientLayout>
+            {children}
+          </ClientLayout>
           
-          {/* Header/Footer handled inside */}
-          <ClientLayout>{children}</ClientLayout>
-
-          {/* Hide floating contact also */}
-          {!hideExtras && <FloatingContact />}
-
+          {/* ExtrasWrapper handles pathname-based FloatingContact visibility */}
+          <ExtrasWrapper />
         </ModalProvider>
       </body>
     </html>
