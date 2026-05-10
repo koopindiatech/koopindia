@@ -20,6 +20,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+         <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-KD68V3ZG"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <ModalProvider>
           {/* ClientLayout handles Header, Footer and Scroll Modal */}
           <ClientLayout>

@@ -1037,46 +1037,46 @@ const FSSAILicensePage = () => {
               />
 
               {/* ══ REVIEW SCHEMA ══ */}
-<script
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "ProfessionalService",
-      "name": "Koop India",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "reviewCount": "500"
-      }
-    }),
-  }}
-/>
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "ProfessionalService",
+                    name: "Koop India",
+                    aggregateRating: {
+                      "@type": "AggregateRating",
+                      ratingValue: "4.9",
+                      reviewCount: "500",
+                    },
+                  }),
+                }}
+              />
 
-{/* ══ BREADCRUMB SCHEMA ══ */}
-<script
-  type="application/ld+json"
-  dangerouslySetInnerHTML={{
-    __html: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://www.koopindia.com"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "FSSAI Registration Consultant Delhi",
-          "item": "https://www.koopindia.com/documentation-compliance/fssai-license"
-        }
-      ]
-    }),
-  }}
-/>
+              {/* ══ BREADCRUMB SCHEMA ══ */}
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                  __html: JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    itemListElement: [
+                      {
+                        "@type": "ListItem",
+                        position: 1,
+                        name: "Home",
+                        item: "https://www.koopindia.com",
+                      },
+                      {
+                        "@type": "ListItem",
+                        position: 2,
+                        name: "FSSAI Registration Consultant Delhi",
+                        item: "https://www.koopindia.com/documentation-compliance/fssai-license",
+                      },
+                    ],
+                  }),
+                }}
+              />
             </div>
           </div>
         </section>
