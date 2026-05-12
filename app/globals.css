@@ -31,3 +31,26 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-350px * 3 - 3rem)); } /* Adjust based on card width and gap */
+}
+
+.animate-scroll {
+  display: flex;
+  width: max-content;
+  animation: scroll 45s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused; /* User jab mouse le jaye toh ruk jaye */
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}

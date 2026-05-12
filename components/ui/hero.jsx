@@ -1,14 +1,23 @@
 "use client";
 import React from "react";
-import { Rocket, Target, Zap, CheckCircle, Star } from "lucide-react";
+import {
+  Rocket,
+  Target,
+  Zap,
+  CheckCircle,
+  Star,
+  Share2,
+  Database,
+} from "lucide-react";
 import Link from "next/link";
-import { Brain, Palette, FileText, Box } from "lucide-react";
 import Footer from "../layout/Footer";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 const HeroSection = ({ onOpenModal }) => {
   const [showAllServices, setShowAllServices] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
   const carouselRef = useRef(null);
 
   const scrollLeft = () => {
@@ -87,33 +96,54 @@ const HeroSection = ({ onOpenModal }) => {
   // const Services = showAllServices ? servicesData : servicesData.slice(0, 4);
   // const doubledServices = [...services, ...services];
 
-  const testimonials = [
+  const reviews = [
+    {
+      name: "Tayyiba Naturals",
+      role: "Founder",
+      company: "Health & Wellness",
+      content:
+        "As a startup founder, working with Koop India was a great decision. They simplified registrations, GST, and compliance, allowing us to focus on growth. Clear communication and timely delivery.",
+      rating: 5,
+    },
+    {
+      name: "Rishikesh Herbs Natural",
+      role: "Client",
+      company: "Natural Products",
+      content:
+        "I connected with koop india through fb ads, koop india did all documents related work for my company. Best supporting team, on time delivery, anyone can trust on it.",
+      rating: 5,
+    },
+    {
+      name: "Gaurav ZRB",
+      role: "Client",
+      company: "Small Business",
+      content:
+        "Koop india bahut achha kaam karte hain. Maine GST Register karaya tha jo ki bahut jaldi kar diya. Paise bhi sahi liye. Mai koop india ko refer karta hoon.",
+      rating: 5,
+    },
     {
       name: "Umair Misbah",
-      company: " EZDoors India Pvt Ltd",
       role: "Founder & CEO",
+      company: "EZDoors India Pvt Ltd",
       content:
-        "Koop India transformed our startup journey. Their comprehensive support helped us raise ₹2Cr in Series A funding.",
+        "One stop solution for the Startup. From business registration to digital marketing, their approach saved us months of effort.",
       rating: 5,
-      image: "umair.jpg",
     },
     {
       name: "Sarikha",
+      role: "Founder & CEO",
       company: "Kiro Elvi Foods Pvt Ltd",
-      role: "Founder & CEO",
-      content:
-        "From business registration to digital marketing, their one-stop solution approach saved us months of effort.",
-      rating: 5,
-      image: "sarikha.jpg",
-    },
-    {
-      name: "Amir Quadri",
-      company: "Foodista Spices",
-      role: "Founder & CEO",
       content:
         "The strategic guidance and branding solutions provided by Koop India accelerated our market entry significantly.",
       rating: 5,
-      image: "amir.webp",
+    },
+    {
+      name: "Amir Quadri",
+      role: "Founder & CEO",
+      company: "Foodista Spices",
+      content:
+        "Excellent service and deep industry knowledge. Their team handled our compliance and marketing with utmost professionalism.",
+      rating: 5,
     },
   ];
 
@@ -122,90 +152,176 @@ const HeroSection = ({ onOpenModal }) => {
     setIsOpen(false);
   };
 
+  const slides = [
+    {
+      title: "Empowering Businesses to",
+      highlight: "Start, Grow & Succeed",
+      desc: "Koop India helps GST Registration, Trademark, FSSAI & Complete Business Solutions — all in one place.",
+      img: "/dash-image2.png",
+      bg: "/bg-image1.png",
+      icons: [
+        { label: "Launch", icon: <Rocket size={20} /> },
+        { label: "Grow", icon: <Target size={20} /> },
+        { label: "Scale", icon: <Zap size={20} /> },
+      ],
+    },
+    {
+      title: "Custom Solutions for",
+      highlight: "Website & CRM Development",
+      desc: "Automate your sales and operations with our custom CRM tools and high-performance business websites.",
+      img: "/dash-image3.png", // CRM specific image
+      bg: "/bg-image1.png",
+      icons: [
+        { label: "Design", icon: <Share2 size={20} /> },
+        { label: "Develop", icon: <Database size={20} /> },
+        { label: "Automate", icon: <Zap size={20} /> },
+      ],
+    },
+    {
+      title: "Scale Your Brand with",
+      highlight: "Social Media Marketing",
+      desc: "Get more leads and better reach with targeted Meta Ads, Google Ads, and creative content strategies.",
+      img: "/dash-image4.png", // Marketing specific image
+      bg: "/bg-image1.png",
+      icons: [
+        { label: "Viral", icon: <Rocket size={20} /> },
+        { label: "Ads", icon: <Target size={20} /> },
+        { label: "Leads", icon: <Zap size={20} /> },
+      ],
+    },
+  ];
+
+  // Auto-scroll logic (Har 5 second mein change hoga)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTab((prev) => (prev + 1) % slides.length);
+    }, 7000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const allReviews = [...reviews, ...reviews];
+
   return (
     <div className="bg-[#141d32] text-white">
       {/* ------- Hero Section ------- */}
 
-      <section
-        className="pt-16 px-6 sm:px-6 md:px-10 lg:px-15 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8 sm:gap-8 md:gap-10 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/bg-image1.png')",
-        }} 
-      >
-        <div>
-          <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6 sm:mb-6">
-            Empowering Businesses to Start ,
-            <span className="text-[#F97316] text-3xl sm:text-3xl md:text-4xl lg:text-5xl">
-              Grow & Succeed
-            </span>
-          </h1>
-          <p className="text-lg sm:text-lg mb-8 sm:mb-6">
-            Koop India helps GST Registration, Trademark Registration, FSSAI
-            License, Website Development & Complete Business Solutions — all in
-            one place.
-          </p>
-          <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 md:gap-10 mb-8 sm:mb-8">
-          
-              <button className="w-full sm:w-auto bg-[#F97316] text-white px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg  font-semibold cursor-pointer"
-                            onClick={() => onOpenModal && onOpenModal()}>
-                Talk To Experts →
-              </button>
-         
-            <button
-              className="w-full sm:w-auto border border-[#F97316] text-[#F97316] hover:bg-[#4e4037] px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg  font-semibold cursor-pointer"
-              onClick={() => onOpenModal && onOpenModal()}
+      <div className="relative overflow-hidden bg-[#0a1128]">
+        <AnimatePresence mode="wait">
+          <motion.section
+            key={activeTab}
+            // Smooth Background Fade Effect
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            className="px-6 md:px-10 lg:px-16 py-0 grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] items-center gap-0 min-h-[600px] bg-cover bg-center relative"
+            style={{
+              backgroundImage: `url(${slides[activeTab].bg})`,
+            }}
+          >
+            {/* Left Content Animation */}
+            <motion.div
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="animate-fadeIn z-10 py-10"
             >
-              Get Started →
-            </button>
-          </div>
+              {/* Animated Badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6">
+                <span className="flex h-2 w-2 rounded-full bg-[#F97316] animate-pulse"></span>
+                <span className="text-xs font-medium text-gray-200 tracking-wider uppercase">
+                  {activeTab === 0
+                    ? "Global Certification Partner"
+                    : activeTab === 1
+                      ? "Next-Gen Tech Solutions"
+                      : "Digital Growth Experts"}
+                </span>
+              </div>
 
-          {/* Action Cards */}
-          <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-3 md:gap-4 mb-10 sm:mb-8 md:mb-10">
-            <div className="flex items-center gap-3 sm:gap-2 bg-white text-[#141d32] px-6 sm:px-4 md:px-6 py-4 sm:py-2.5 md:py-3 rounded-xl shadow hover:bg-gray-100 border border-[#F97316]">
-              <Rocket size={20} className="sm:w-5 sm:h-5" />
-              <span className="font-semibold text-lg sm:text-base">Launch</span>
-            </div>
-            <div className="flex items-center gap-3 sm:gap-2 bg-white text-[#141d32] px-6 sm:px-4 md:px-6 py-4 sm:py-2.5 md:py-3 rounded-xl shadow hover:bg-gray-100 border border-[#F97316]">
-              <Target size={20} className="sm:w-5 sm:h-5" />
-              <span className="font-semibold text-lg sm:text-base">Grow</span>
-            </div>
-            <div className="flex items-center gap-3 sm:gap-2 bg-white text-[#141d32] px-6 sm:px-4 md:px-6 py-4 sm:py-2.5 md:py-3 rounded-xl shadow hover:bg-gray-100 border border-[#F97316]">
-              <Zap size={20} className="sm:w-5 sm:h-5" />
-              <span className="font-semibold text-lg sm:text-base">Scale</span>
-            </div>
-          </div>
+              <h1 className="text-4xl md:text-5xl font-extrabold leading-[1.1] mb-6 tracking-tight">
+                {slides[activeTab].title} <br />
+                <span className="text-[#F97316]">
+                  {slides[activeTab].highlight}
+                </span>
+              </h1>
 
-          {/* Trust Section */}
-          <div className="bg-white/5 p-6 sm:p-5 md:p-6 rounded-2xl sm:rounded-2xl shadow-lg border border-white/10">
-            <h3 className="text-xl sm:text-xl font-semibold text-[#F97316] mb-6 sm:mb-4">
-              Trusted by Innovators & Founders
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-4 md:gap-6 text-white/80 sm:text-white/70">
-              <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
-                50+ Startups Guided
+              <p className="text-lg text-gray-200 mb-8 max-w-2xl leading-relaxed opacity-90">
+                {slides[activeTab].desc}
+              </p>
+
+              <div className="flex flex-wrap gap-4 mb-12">
+                {/* Talk To Experts Button */}
+                <button
+                  className="bg-[#F97316] text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:scale-105 transition-all cursor-pointer"
+                  onClick={onOpenModal} // Direct call karein
+                >
+                  Talk To Experts →
+                </button>
+
+                {/* Start Now Button */}
+                <button
+                  className="border border-white/40 text-white px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-[#0a1128] transition-all cursor-pointer"
+                  onClick={onOpenModal} // Direct call karein
+                >
+                  Start Now
+                </button>
               </div>
-              <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
-                99% Client Satisfaction
+
+              {/* Action Cards */}
+              <div className="flex flex-wrap gap-3">
+                {slides[activeTab].icons.map((item, i) => (
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 + i * 0.1 }}
+                    key={i}
+                    className="flex items-center gap-2.5 bg-white text-[#141d32] px-5 py-3 rounded-xl shadow-2xl font-bold border-b-4 border-[#F97316]"
+                  >
+                    <span className="text-[#F97316]">{item.icon}</span>
+                    <span className="text-sm font-bold tracking-tight">
+                      {item.label}
+                    </span>
+                  </motion.div>
+                ))}
               </div>
-              <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
-                24x7 Founder Support
-              </div>
-            </div>
-          </div>
+            </motion.div>
+
+            {/* Right Image Animation */}
+            <motion.div
+              initial={{ x: 100, opacity: 0, scale: 0.9 }}
+              animate={{ x: 0, opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="hidden md:flex justify-end items-center relative h-full"
+            >
+              <img
+                src={slides[activeTab].img}
+                alt="Service Preview"
+                className={`
+            w-[120%] max-w-none h-auto object-contain drop-shadow-2xl ml-[-10%] lg:ml-[-25%]
+            ${activeTab === 1 ? "mt-1" : "mt-0"}
+          `}
+              />
+            </motion.div>
+          </motion.section>
+        </AnimatePresence>
+
+        {/* Slider Dots */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveTab(i)}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                activeTab === i
+                  ? "w-12 bg-[#F97316]"
+                  : "w-4 bg-white/20 hover:bg-white/40"
+              }`}
+            />
+          ))}
         </div>
-
-        {/* Right-side image placeholder */}
-        <div className="hidden md:block -mt-20">
-          <img
-            src="dash-image2.png"
-            alt="Dashboard Preview"
-            className=" w-full h-auto"
-          />
-        </div>
-      </section>
-
+      </div>
       {/* About Section */}
-      <section className="py-20 px-6 lg:px-8 bg-white">
+      <section className="py-16 px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -422,58 +538,61 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 px-6 lg:px-8 bg-[#141d32] text-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">What Our Clients Say</h2>
-            <p className="text-xl text-gray-300">
-              Success stories from entrepreneurs who transformed their
-              businesses with us
-            </p>
-          </div>
+      <section className="py-16 bg-[#0a1128] overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 mb-16 text-center">
+          <h2 className="text-4xl font-bold text-white mb-4">
+            What Our Clients Say
+          </h2>
+          <p className="text-orange-400">
+            Success stories from entrepreneurs who built their brand with us
+          </p>
+        </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+        {/* Infinite Scroll Container */}
+        <div className="flex">
+          <div className="animate-scroll flex gap-8">
+            {allReviews.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-white/5 border border-white/10 p-8 rounded-xl backdrop-blur-sm"
+                className="w-[350px] bg-white text-gray-800 p-8 rounded-2xl relative pt-16 shadow-2xl flex-shrink-0"
               >
-                <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-5 h-5 text-[#F97316] fill-current"
-                    />
-                  ))}
+                {/* Google Logo */}
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white p-2 rounded-full shadow-lg border border-gray-100">
+                  <img
+                    src="google-image.png"
+                    alt="Google"
+                    className="w-16 h-16"
+                  />
                 </div>
-                <p className="text-gray-300 mb-6 leading-relaxed">
+
+                {/* Review Content */}
+                <p className="text-gray-600 mb-8 text-md italic leading-relaxed min-h-[100px]">
                   "{testimonial.content}"
                 </p>
-                <div className="border-t border-white/10 pt-4">
-                  <div className="flex items-center space-x-4">
-                    {/* Client Image */}
-                    <div className="flex-shrink-0">
-                      <img
-                        src={testimonial.image || `/client-${index + 1}.jpg`}
-                        alt={testimonial.name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-[#F97316]/20"
-                        onError={(e) => {
-                          // Fallback to a placeholder if image doesn't exist
-                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.name)}&background=F97316&color=fff&size=48`;
-                        }}
-                      />
-                    </div>
 
-                    {/* Client Info */}
-                    <div className="flex-1">
-                      <div className="font-bold">{testimonial.name}</div>
-                      <div className="text-[#F97316] text-sm">
+                {/* Client Info */}
+                <div className="border-t border-gray-100 pt-6">
+                  <div className="flex justify-between items-start">
+                    <div className="max-w-[180px]">
+                      <div className="font-black text-lg uppercase leading-tight">
+                        {testimonial.name}
+                      </div>
+                      <div className="text-[#F97316] text-xs font-bold uppercase mt-1">
                         {testimonial.role}
                       </div>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-gray-400 text-[10px] font-semibold mt-1 uppercase">
                         {testimonial.company}
                       </div>
+                    </div>
+
+                    {/* Stars */}
+                    <div className="flex space-x-0.5">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-4 h-4 text-[#F97316] fill-current"
+                        />
+                      ))}
                     </div>
                   </div>
                 </div>
