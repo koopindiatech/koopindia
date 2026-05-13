@@ -32,8 +32,7 @@ const SectionHeading = ({ tag, title, accent }) => (
   <div className="mb-10">
     {tag && <Tag>{tag}</Tag>}
     <h2 className="text-2xl md:text-3xl font-bold text-[#141D32] leading-snug">
-      {title}{" "}
-      {accent && <span className="text-orange-500">{accent}</span>}
+      {title} {accent && <span className="text-orange-500">{accent}</span>}
     </h2>
   </div>
 );
@@ -127,7 +126,8 @@ const CompanyAccountingServicesPage = () => {
     <>
       <Head>
         <title>
-          Company Accounting Services in India | Bookkeeping & Compliance | Koop India
+          Company Accounting Services in India | Bookkeeping & Compliance | Koop
+          India
         </title>
         <meta
           name="description"
@@ -140,17 +140,18 @@ const CompanyAccountingServicesPage = () => {
         />
         {/* Google Font */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap"
           rel="stylesheet"
         />
       </Head>
 
-     
-
       <div className="overflow-x-hidden">
-
         {/*  HERO  */}
         <section className="relative py-14 px-5 bg-gradient-to-br from-[#0A1020] via-[#0F172A] to-[#141D32] text-white overflow-hidden hero-grid">
           {/* decorative orange glow */}
@@ -174,9 +175,10 @@ const CompanyAccountingServicesPage = () => {
 
             <p className="fade-up delay-3 max-w-2xl mx-auto text-gray-300 text-base leading-relaxed mb-8">
               Keep your finances accurate, compliant, and audit-ready with{" "}
-              <span className="text-white font-semibold">Koop India</span>. End-to-end
-              accounting for startups, MSMEs, and growing businesses—so you can focus on
-              scaling while our experts handle the numbers.
+              <span className="text-white font-semibold">Koop India</span>.
+              End-to-end accounting for startups, MSMEs, and growing
+              businesses—so you can focus on scaling while our experts handle
+              the numbers.
             </p>
 
             <div className="fade-up delay-3 flex flex-wrap justify-center gap-3">
@@ -196,7 +198,12 @@ const CompanyAccountingServicesPage = () => {
 
             {/* trust badges */}
             <div className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-gray-500">
-              {["Tally Certified", "GST Compliant", "ISO Process Standards", "MSME Specialists"].map((b) => (
+              {[
+                "Tally Certified",
+                "GST Compliant",
+                "ISO Process Standards",
+                "MSME Specialists",
+              ].map((b) => (
                 <span key={b} className="flex items-center gap-1.5">
                   <CheckCircle className="w-3.5 h-3.5 text-orange-500" /> {b}
                 </span>
@@ -215,9 +222,10 @@ const CompanyAccountingServicesPage = () => {
                 accent="Accounting Services?"
               />
               <p className="text-gray-500 leading-relaxed mb-8 text-sm">
-                Company accounting covers day-to-day bookkeeping, statutory compliance,
-                tax coordination, and financial reporting. Proper accounting gives your
-                business the foundation to grow confidently.
+                Company accounting covers day-to-day bookkeeping, statutory
+                compliance, tax coordination, and financial reporting. Proper
+                accounting gives your business the foundation to grow
+                confidently.
               </p>
               <div className="space-y-3">
                 {[
@@ -246,7 +254,9 @@ const CompanyAccountingServicesPage = () => {
                   key={label}
                   className="bg-gradient-to-br from-[#0F172A] to-[#1E2A45] text-white rounded-2xl p-6 card-hover"
                 >
-                  <div className="text-2xl font-bold text-orange-500 mb-1">{num}</div>
+                  <div className="text-2xl font-bold text-orange-500 mb-1">
+                    {num}
+                  </div>
                   <div className="text-xs text-gray-400">{label}</div>
                 </div>
               ))}
@@ -270,11 +280,16 @@ const CompanyAccountingServicesPage = () => {
                 >
                   <div className="flex items-center gap-3 mb-5">
                     <span className="text-xl">{emoji}</span>
-                    <h3 className="font-semibold text-[#141D32] text-sm">{title}</h3>
+                    <h3 className="font-semibold text-[#141D32] text-sm">
+                      {title}
+                    </h3>
                   </div>
                   <div className={`grid ${wide ? "sm:grid-cols-3" : ""} gap-2`}>
                     {items.map((s) => (
-                      <div key={s} className="flex items-start gap-2 text-sm text-gray-500">
+                      <div
+                        key={s}
+                        className="flex items-start gap-2 text-sm text-gray-500"
+                      >
                         <ChevronRight className="w-3.5 h-3.5 text-orange-500 mt-0.5 flex-shrink-0" />
                         {s}
                       </div>
@@ -305,7 +320,9 @@ const CompanyAccountingServicesPage = () => {
                   <div className="text-orange-500 text-xs font-bold tracking-widest uppercase mb-3">
                     Step {String(i + 1).padStart(2, "0")}
                   </div>
-                  <div className="text-sm text-gray-300 leading-snug">{step}</div>
+                  <div className="text-sm text-gray-300 leading-snug">
+                    {step}
+                  </div>
                   <div className="absolute bottom-5 right-5 text-white/5 text-5xl font-black select-none">
                     {i + 1}
                   </div>
@@ -333,16 +350,36 @@ const CompanyAccountingServicesPage = () => {
               />
               <div className="space-y-4">
                 {[
-                  { t: "Accurate Classification", d: "Income & expenses categorized precisely per accounting standards." },
-                  { t: "Timely Reconciliations", d: "Bank, GST, and TDS reconciliations done on schedule." },
-                  { t: "Audit-Ready Books", d: "Always prepared for statutory audits without last-minute scrambles." },
-                  { t: "Data Confidentiality", d: "Strict controls and NDA-backed data handling protocols." },
-                  { t: "Cost Optimization Advisory", d: "Insights to help you reduce unnecessary expenditure." },
+                  {
+                    t: "Accurate Classification",
+                    d: "Income & expenses categorized precisely per accounting standards.",
+                  },
+                  {
+                    t: "Timely Reconciliations",
+                    d: "Bank, GST, and TDS reconciliations done on schedule.",
+                  },
+                  {
+                    t: "Audit-Ready Books",
+                    d: "Always prepared for statutory audits without last-minute scrambles.",
+                  },
+                  {
+                    t: "Data Confidentiality",
+                    d: "Strict controls and NDA-backed data handling protocols.",
+                  },
+                  {
+                    t: "Cost Optimization Advisory",
+                    d: "Insights to help you reduce unnecessary expenditure.",
+                  },
                 ].map(({ t, d }) => (
-                  <div key={t} className="flex gap-4 p-4 rounded-xl border border-gray-100 bg-[#F8F9FC]">
+                  <div
+                    key={t}
+                    className="flex gap-4 p-4 rounded-xl border border-gray-100 bg-[#F8F9FC]"
+                  >
                     <CheckCircle className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm font-semibold text-[#141D32]">{t}</div>
+                      <div className="text-sm font-semibold text-[#141D32]">
+                        {t}
+                      </div>
                       <div className="text-xs text-gray-500 mt-0.5">{d}</div>
                     </div>
                   </div>
@@ -354,16 +391,22 @@ const CompanyAccountingServicesPage = () => {
             <div className="bg-gradient-to-br from-[#0F172A] to-[#1E2A45] text-white rounded-3xl p-10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 rounded-full blur-2xl" />
               <div className="relative">
-                <div className="text-5xl text-orange-500 font-black mb-4">"</div>
+                <div className="text-5xl text-orange-500 font-black mb-4">
+                  "
+                </div>
                 <p className="text-lg text-gray-200 leading-relaxed mb-6">
                   We don't just maintain books—we help founders make better
                   financial decisions.
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">K</div>
+                  <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-sm">
+                    K
+                  </div>
                   <div>
                     <div className="text-sm font-semibold">Koop India Team</div>
-                    <div className="text-xs text-gray-400">Accounting & Compliance Experts</div>
+                    <div className="text-xs text-gray-400">
+                      Accounting & Compliance Experts
+                    </div>
                   </div>
                 </div>
               </div>
@@ -398,30 +441,41 @@ const CompanyAccountingServicesPage = () => {
         </section>
 
         {/* CTA  */}
-        <section className="relative py-16 px-5 bg-gradient-to-br from-[#0A1020] via-[#0F172A] to-[#141D32] text-white overflow-hidden hero-grid">
+        <section className="relative py-16 px-5 bg-[#eb680a] text-[#141D32] overflow-hidden">
+          {/* Soft background glow for depth */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-[500px] h-[200px] bg-orange-500/8 rounded-full blur-3xl" />
+            <div className="w-[600px] h-[300px] bg-white/20 rounded-full blur-3xl" />
           </div>
+
           <div className="relative max-w-3xl mx-auto text-center">
-            <p className="text-orange-500 text-xs font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#141D32] text-xs font-bold uppercase tracking-[0.2em] mb-4">
               Get Started Today
             </p>
-            <h2 className="serif text-3xl md:text-4xl lg:text-5xl font-normal mb-4 leading-tight">
-              Professional Accounting,<br />
-              <span className="text-orange-500">Zero Hassle</span>
+
+            <h2 className=" text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+              Professional Accounting,
+              <br />
+              <span className="text-white">Zero Hassle</span>
             </h2>
-            <p className="text-gray-400 mb-8 text-sm leading-relaxed max-w-lg mx-auto">
-              Stop worrying about errors, deadlines, and compliance. Let our experts
-              handle your books while you grow your business.
+
+            <p className="text-[#141D32]/80 mb-8 text-base leading-relaxed max-w-lg mx-auto font-medium">
+              Stop worrying about errors, deadlines, and compliance. Let our
+              experts handle your books while you grow your business.
             </p>
+
             <div className="flex flex-wrap justify-center gap-3">
               <button
                 onClick={onOpenModal}
-                className="bg-orange-500 hover:bg-orange-600 cursor-pointer active:scale-95 transition-all px-8 py-3.5 rounded-xl font-semibold text-sm inline-flex items-center gap-2 shadow-xl shadow-orange-500/30"
+                className="bg-[#141D32] text-white cursor-pointer hover:bg-[#0A1020] cursor-pointer active:scale-95 transition-all px-8 py-4 rounded-xl font-bold text-sm inline-flex items-center gap-2 shadow-2xl shadow-black/20"
               >
                 Free Accounting Consultation <ArrowRight className="w-4 h-4" />
               </button>
             </div>
+
+            {/* Small trust indicator */}
+            <p className="mt-8 text-xs text-[#141D32]/60 font-semibold uppercase tracking-widest">
+              Trusted by 100+ Businesses
+            </p>
           </div>
         </section>
 
