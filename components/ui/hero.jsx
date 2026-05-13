@@ -205,6 +205,93 @@ const HeroSection = ({ onOpenModal }) => {
     <div className="bg-[#141d32] text-white">
       {/* ------- Hero Section ------- */}
 
+      {/* <section
+        className="pt-16 px-6 sm:px-6 md:px-10 lg:px-15 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8 sm:gap-8 md:gap-10 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/bg-image1.png')",
+        }}
+      >
+        <div>
+          <h1 className="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6 sm:mb-6">
+            Empowering Businesses to Start ,
+            <span className="text-[#F97316] text-3xl sm:text-3xl md:text-4xl lg:text-5xl">
+              Grow & Succeed
+            </span>
+          </h1>
+
+          <p className="text-lg sm:text-lg mb-8 sm:mb-6">
+            Koop India helps GST Registration, Trademark Registration, FSSAI
+            License, Website Development & Complete Business Solutions — all in
+            one place.
+          </p>
+
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 md:gap-10 mb-8 sm:mb-8">
+            <button
+              className="w-full sm:w-auto bg-[#F97316] text-white px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg  font-semibold cursor-pointer"
+              onClick={() => onOpenModal && onOpenModal()}
+            >
+              Talk To Experts →
+            </button>
+
+            <button
+              className="w-full sm:w-auto border border-[#F97316] text-[#F97316] hover:bg-[#4e4037] px-8 sm:px-6 py-4 sm:py-3 text-lg sm:text-base rounded-lg  font-semibold cursor-pointer"
+              onClick={() => onOpenModal && onOpenModal()}
+            >
+              Get Started →
+            </button>
+          </div>
+
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-3 md:gap-4 mb-10 sm:mb-8 md:mb-10">
+            <div className="flex items-center gap-3 sm:gap-2 bg-white text-[#141d32] px-6 sm:px-4 md:px-6 py-4 sm:py-2.5 md:py-3 rounded-xl shadow hover:bg-gray-100 border border-[#F97316]">
+              <Rocket size={20} className="sm:w-5 sm:h-5" />
+
+              <span className="font-semibold text-lg sm:text-base">Launch</span>
+            </div>
+
+            <div className="flex items-center gap-3 sm:gap-2 bg-white text-[#141d32] px-6 sm:px-4 md:px-6 py-4 sm:py-2.5 md:py-3 rounded-xl shadow hover:bg-gray-100 border border-[#F97316]">
+              <Target size={20} className="sm:w-5 sm:h-5" />
+
+              <span className="font-semibold text-lg sm:text-base">Grow</span>
+            </div>
+
+            <div className="flex items-center gap-3 sm:gap-2 bg-white text-[#141d32] px-6 sm:px-4 md:px-6 py-4 sm:py-2.5 md:py-3 rounded-xl shadow hover:bg-gray-100 border border-[#F97316]">
+              <Zap size={20} className="sm:w-5 sm:h-5" />
+
+              <span className="font-semibold text-lg sm:text-base">Scale</span>
+            </div>
+          </div>
+
+
+          <div className="bg-white/5 p-6 sm:p-5 md:p-6 rounded-2xl sm:rounded-2xl shadow-lg border border-white/10">
+            <h3 className="text-xl sm:text-xl font-semibold text-[#F97316] mb-6 sm:mb-4">
+              Trusted by Innovators & Founders
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-4 md:gap-6 text-white/80 sm:text-white/70">
+              <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
+                50+ Startups Guided
+              </div>
+
+              <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
+                99% Client Satisfaction
+              </div>
+
+              <div className="p-4 sm:p-3 md:p-4 rounded-xl sm:rounded-xl bg-white/10 text-base sm:text-sm md:text-base text-center font-medium sm:font-normal">
+                24x7 Founder Support
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden md:block -mt-20">
+          <img
+            src="dash-image2.png"
+            alt="Dashboard Preview"
+            className=" w-full h-auto"
+          />
+        </div>
+      </section> */}
+
       <div className="relative overflow-hidden bg-[#0a1128]">
         <AnimatePresence mode="wait">
           <motion.section
@@ -324,64 +411,61 @@ const HeroSection = ({ onOpenModal }) => {
       <section className="py-16 px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Content Column */}
             <div>
               <h2 className="text-4xl font-bold text-[#141d32] mb-6">
-                About Koop India
+                Your Complete Business Growth Partner
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                India's most trusted business launchpad, empowering
-                entrepreneurs with comprehensive solutions for sustainable
-                growth.
+              <p className="text-xl text-gray-600 mb-6 font-medium">
+                Koop India is your one-stop solution to start, manage, and grow
+                your business with ease.
               </p>
               <p className="text-gray-700 mb-8 leading-relaxed">
-                Koop India is a full-spectrum business consulting and support
-                platform that caters to startups, SMEs, and growing brands
-                across India. We provide everything from company registration to
-                scaling operations, ensuring your business succeeds in today's
-                competitive market.
+                We don’t just offer services—we build businesses. From company
+                registration and legal compliance to website development and
+                digital growth, we provide everything you need under one roof.
+                Whether you're a startup or an established brand, our
+                expert-driven solutions help you move faster and scale smarter.
               </p>
 
-              <div className="grid grid-cols-2 gap-6 mb-8">
+              {/* Feature Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div>
-                  <h4 className="font-bold text-[#141d32] mb-2">Our Mission</h4>
-                  <p className="text-sm text-gray-600">
-                    To simplify entrepreneurship by providing reliable,
-                    efficient business solutions that fuel innovation and
-                    growth.
-                  </p>
+                  <h4 className="font-bold text-[#141d32] mb-3 flex items-center">
+                    <span className="text-[#F97316] mr-2">💼</span> What We Do
+                  </h4>
+                  <ul className="text-sm text-gray-600 space-y-2">
+                    <li>• Business Registration (GST, Trademark, FSSAI)</li>
+                    <li>• Website & E-commerce Development</li>
+                    <li>• Branding & Digital Marketing</li>
+                    <li>• Growth Strategy & Consulting</li>
+                  </ul>
                 </div>
                 <div>
-                  <h4 className="font-bold text-[#141d32] mb-2">Our Vision</h4>
-                  <p className="text-sm text-gray-600">
-                    To be India's leading business ecosystem that transforms
-                    every entrepreneurial dream into reality.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-8">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-[#F97316]">100+</div>
-                  <div className="text-sm text-gray-600">Clients Served</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-[#F97316]">98%</div>
-                  <div className="text-sm text-gray-600">Success Rate</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-[#F97316]">24/7</div>
-                  <div className="text-sm text-gray-600">Support</div>
+                  <h4 className="font-bold text-[#141d32] mb-3 flex items-center">
+                    <span className="text-[#F97316] mr-2">🎯</span> Why Choose
+                    Us?
+                  </h4>
+                  <ul className="text-sm text-gray-600 space-y-2">
+                    <li>• End-to-End Solutions</li>
+                    <li>• Affordable & Transparent Pricing</li>
+                    <li>• Expert Guidance at Every Step</li>
+                    <li>• Fast & Hassle-Free Process</li>
+                  </ul>
                 </div>
               </div>
             </div>
 
+            {/* Image Column */}
             <div className="relative">
-              <div className="bg-gradient-to-br from-[#F97316]/10 to-transparent p-8 rounded-2xl">
-                <img
-                  src="/about1.jpeg"
-                  alt="Koop India Team"
-                  className="rounded-xl shadow-lg w-full h-auto"
-                />
+              <div className="bg-gradient-to-br from-[#F97316]/10 to-transparent rounded-2xl">
+                <div className="relative">
+                  <img
+                    src="/about-image1.jpeg"
+                    alt="Koop India Business Growth"
+                    className="rounded-xl shadow-2xl w-full h-auto object-cover"
+                  />
+                </div>
               </div>
             </div>
           </div>

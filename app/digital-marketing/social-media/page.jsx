@@ -145,23 +145,35 @@ const SocialMediaMarketingPage = () => {
           </div>
         </section>
 
-        {/* ================= CTA ================= */}
-        <section className="py-20 px-5 bg-gradient-to-r from-[#0F172A] to-[#141D32] text-white text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6">
-            Grow Your Brand on Social Media
-          </h2>
+       {/* ================= CTA ================= */}
+<section className="py-16 px-5 bg-[#F97316] text-center relative overflow-hidden">
+  {/* Subtle background pattern for texture */}
+  <div className="absolute inset-0 opacity-10 pointer-events-none">
+  
+  </div>
 
-          <p className="text-gray-300 mb-8">
-            📲 Start your social media growth journey with Koop India today.
-          </p>
+  <div className="relative z-10">
+    <h2 className="text-3xl md:text-4xl font-extrabold text-[#141D32] mb-6">
+      Grow Your Brand on Social Media
+    </h2>
 
-          <button
-            onClick={onOpenModal}
-            className="bg-[#F97316] px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2 hover:bg-orange-600"
-          >
-            Start Social Media Marketing <ArrowRight />
-          </button>
-        </section>
+    <p className="text-white text-lg font-medium mb-8 max-w-2xl mx-auto">
+      📲 Start your social media growth journey with Koop India today and 
+      reach your target audience effectively.
+    </p>
+
+    <button
+      onClick={onOpenModal}
+      className="bg-[#141D32] text-white cursor-pointer px-10 py-4 rounded-xl font-bold inline-flex items-center gap-2 hover:bg-[#0F172A] transition-all shadow-xl hover:shadow-black/20 transform hover:-translate-y-1"
+    >
+      Start Social Media Marketing <ArrowRight size={20} />
+    </button>
+    
+    <p className="mt-6 text-[#141D32]/80 text-sm font-semibold uppercase tracking-widest">
+      Results Driven • Expert Managed • Fast Growth
+    </p>
+  </div>
+</section>
 
         {/* ================= ENQUIRY MODAL ================= */}
         <EnquiryModal isOpen={isOpen} onClose={onCloseModal} />

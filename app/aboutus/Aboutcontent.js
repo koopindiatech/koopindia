@@ -52,7 +52,7 @@ const AboutPage = () => {
           </div>
           <div className="rounded-lg overflow-hidden shadow-lg">
             <Image
-              src="/about1.jpeg"
+              src="/about-image2.jpeg"
               alt="Koop India Journey"
               width={600} height={400}
               className="object-cover hover:scale-105 transition-transform duration-500"
