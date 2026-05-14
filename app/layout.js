@@ -24,8 +24,8 @@ export default function RootLayout({ children }) {
       <head>
         <meta
           http-equiv="Content-Security-Policy"
-          content="script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net;"
-        ></meta>
+          content="script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://www.google-analytics.com; img-src 'self' https://www.facebook.com https://www.googletagmanager.com;"
+        />
         {/* Google Tag Manager */}
         <Script id="gtm-script" strategy="afterInteractive">
           {`
