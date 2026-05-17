@@ -4,6 +4,7 @@ import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import Image from "next/image"; // 🔥 Next.js Image कंपोनेंट इम्पोर्ट किया
 
 export default function BlogPage() {
   const [blogs, setBlogs] = useState([]);
@@ -11,12 +12,24 @@ export default function BlogPage() {
 
   useEffect(() => {
     const fetchBlogs = async () => {
-      const querySnapshot = await getDocs(collection(db, "blogs"));
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setBlogs(data);
+      try {
+        const querySnapshot = await getDocs(collection(db, "blogs"));
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        // लेटेस्ट ब्लॉग्स को सबसे ऊपर सॉर्ट करना
+        const sortedBlogs = data.sort((a, b) => {
+          const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.date || 0);
+          const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.date || 0);
+          return dateB - dateA;
+        });
+
+        setBlogs(sortedBlogs);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      }
     };
     fetchBlogs();
   }, []);
@@ -31,8 +44,7 @@ export default function BlogPage() {
   });
 
   return (
-    <div>
-      {/* Hero Section */}
+    <div className="bg-slate-50 min-h-screen">
       <section className="bg-gradient-to-r from-[#141d32] via-[#1c2545] to-[#141d32] text-white py-13">
         <div className="max-w-6xl mx-auto px-4 text-center space-y-6">
           <h1 className="text-4xl font-extrabold">
@@ -59,106 +71,88 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Blog List */}
-      <div className="max-w-6xl mx-auto py-12 px-6 space-y-10">
+      {/* SECOND SECTION: Grid View */}
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6">
         {filteredBlogs.length > 0 ? (
-          filteredBlogs.map((blog) => (
-            <div
-              key={blog.id}
-              className="flex flex-col md:flex-row bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition"
-            >
-              <div className="md:w-1/2 w-full relative">
-                <div className="relative h-[340px] md:h-[280px] overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-gray-50 shadow-lg">
-                  {/* Image */}
-                  <img
-                    src={blog.imageUrl}
-                    alt={blog.title}
-                    className="
-                    absolute
-                    inset-0
-                    w-full
-                    h-full
-                    object-contain
-                    scale-105
-                  "
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+            {filteredBlogs.map((blog) => (
+              <Link
+                href={`/blog/${blog.slug}`}
+                key={blog.id}
+                className="flex flex-col bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-slate-200/60 group cursor-pointer"
+              >
+                {/* Upper Image Section */}
+                <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-100">
+                  
+                  {blog.imageUrl ? (
+                    <Image
+                      src={blog.imageUrl}
+                      alt={blog.title || "Blog Image"}
+                      fill
+                      sizes="(max-w-768px) 100vw, 600px"
+                      priority
+                      className="object-cover object-center transform group-hover:scale-[1.03] transition-transform duration-500"
                     />
+                  ) : (
+                    <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400">
+                      No Image Available
+                    </div>
+                  )}
+                  
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent" />
 
-                  {/* Soft vignette for depth */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+                  {/* Date Badge */}
+                  <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl p-2.5 text-center shadow-md min-w-[55px] border border-slate-100 z-10">
+                    <p className="text-lg font-black text-slate-800 leading-none">
+                      {blog.date ? new Date(blog.date).getDate() : "17"}
+                    </p>
+                    <p className="text-[11px] font-bold text-slate-500 uppercase mt-1 tracking-wider">
+                      {blog.date ? new Date(blog.date).toLocaleString("default", { month: "short" }) : "MAY"}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Right side content */}
-              <div className="md:w-1/2 w-full p-8 flex flex-col justify-center relative">
-                {/* Date badge */}
-                <div className="absolute top-6 right-6 bg-gray-100 rounded-md px-3 py-1 text-center shadow-lg">
-                  <p className="text-lg font-bold text-gray-800">
-                    {new Date(blog.date).getDate()}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(blog.date).toLocaleString("default", {
-                      month: "short",
-                    })}
-                  </p>
+                {/* Lower Content Section */}
+                <div className="p-6 sm:p-7 flex flex-col flex-1 justify-between bg-white">
+                  <div>
+                    {blog.seo?.focusKeywords?.[0] && (
+                      <span className="inline-block text-[11px] font-bold tracking-wider text-[#F97316] uppercase bg-orange-50 px-2.5 py-1 rounded-md mb-3">
+                        {blog.seo.focusKeywords[0]}
+                      </span>
+                    )}
+
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 tracking-tight line-clamp-2 group-hover:text-[#F97316] transition-colors duration-200">
+                      {blog.title}
+                    </h2>
+                    
+                    <p className="text-slate-500 text-xs font-medium mb-4">
+                      By <span className="font-semibold text-slate-700">{blog.author || "Team Koop India"}</span>
+                    </p>
+                    
+                    <p className="text-slate-600 text-sm leading-relaxed mb-6 line-clamp-3">
+                      {blog.description}
+                    </p>
+                  </div>
+
+                  {/* Clean Animated Link Text */}
+                  <div className="pt-2">
+                    <span className="inline-flex items-center gap-1.5 text-[#F97316] font-bold text-sm tracking-wide group-hover:text-orange-600">
+                      Continue Reading
+                      <span className="transform group-hover:translate-x-1 transition-transform duration-200 text-base">
+                        →
+                      </span>
+                    </span>
+                  </div>
                 </div>
-
-                {/* <span className="inline-block bg-[#F97316] text-white text-xs font-semibold px-3 py-1 rounded mb-3 w-fit">
-                  DISTRIBUTION
-                </span> */}
-
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  "{blog.title}"
-                </h2>
-                <p className="text-gray-800 text-sm mb-4">
-                  By <span className="font-semibold">"{blog.author}"</span>
-                </p>
-                <p className="text-gray-700 text-sm mb-4 line-clamp-3">
-                  {blog.description}
-                </p>
-                <Link
-                  href={`/blog/${blog.slug}`}
-                  className="
-                  inline-flex
-                  items-center
-                  gap-1
-                  text-orange-500
-                  font-semibold
-                  group
-                "
-                >
-                  Continue Reading
-                  <span
-                    className="
-                    transition-transform
-                    duration-300
-                    group-hover:translate-x-1
-                  "
-                  >
-                    →
-                  </span>
-                  <span
-                    className="
-                    absolute
-                    bottom-0
-                    left-0
-                    w-full
-                    h-[2px]
-                    bg-orange-500
-                    scale-x-0
-                    origin-left
-                    transition-transform
-                    duration-300
-                    group-hover:scale-x-100
-                  "
-                  />
-                </Link>
-              </div>
-            </div>
-          ))
+              </Link>
+            ))}
+          </div>
         ) : (
-          <p className="text-center text-gray-500">
-            No results found for “{searchQuery}”
-          </p>
+          <div className="text-center py-16 bg-slate-100 rounded-2xl border border-slate-200">
+            <p className="text-base text-slate-500 font-medium">
+              No results found for “{searchQuery}”
+            </p>
+          </div>
         )}
       </div>
     </div>
