@@ -31,6 +31,11 @@ export default function EnquiryModal({ isOpen, onClose }) {
 
     try {
       await addEnquiry(form);
+
+      if (typeof window !== "undefined" && window.fbq) {
+        window.fbq("track", "Lead");
+      }
+
       setSuccessMsg("Your enquiry has been sent successfully!");
       setErrorMsg("");
       setForm({

@@ -27,6 +27,11 @@ export default function FloatingContact() {
           target="_blank"
           rel="noopener noreferrer"
           className="hover:scale-110 transition-transform"
+          onClick={() => {
+            if (typeof window !== "undefined" && window.fbq) {
+              window.fbq("track", "Contact");
+            }
+          }}
         >
           <Image
             src="/whatsapp-image.png"
