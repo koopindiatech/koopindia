@@ -169,7 +169,7 @@ const HeroSection = ({ onOpenModal }) => {
       title: "Custom Solutions for",
       highlight: "Website & CRM Development",
       desc: "Automate your sales and operations with our custom CRM tools and high-performance business websites.",
-      img: "/dash-image3.png", // CRM specific image
+      img: "/website-banner.png", // CRM specific image
       bg: "/bg-image1.png",
       icons: [
         { label: "Design", icon: <Share2 size={20} /> },
