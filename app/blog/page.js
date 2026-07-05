@@ -95,7 +95,7 @@ export default function BlogPage() {
                   key={blog.id}
                   className="flex flex-col bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-slate-200/60 group cursor-pointer"
                 >
-                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-100">
+                  <div className="relative w-full aspect-video sm:aspect-[16/10] overflow-hidden bg-slate-50">
                     {blog.imageUrl ? (
                       <Image
                         src={blog.imageUrl}
@@ -103,7 +103,7 @@ export default function BlogPage() {
                         fill
                         sizes="(max-w-768px) 100vw, 600px"
                         priority
-                        className="object-cover object-center transform group-hover:scale-[1.03] transition-transform duration-500"
+                        className="object-contain object-center transform group-hover:scale-[1.03] transition-transform duration-500"
                       />
                     ) : (
                       <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400">
