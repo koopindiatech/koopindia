@@ -41,12 +41,12 @@ function LegacyBlockRenderer({ blocks }) {
                 {block.value.split("\n").map((item, i) => item.trim() && <li key={i} dangerouslySetInnerHTML={{ __html: renderFormattedText(item) }} />)}
               </ol>
             );
-          case "image":
-            return (
-              <div key={block.id} className="my-6 relative w-full aspect-[16/7.5] md:aspect-[16/7] rounded-xl overflow-hidden shadow-md border border-slate-100 bg-slate-50">
-                <Image src={block.value} alt="Blog inline illustration" fill sizes="(max-w-6xl) 100vw, 800px" className="object-cover object-center" />
-              </div>
-            );
+            case "image":
+              return (
+                <div key={block.id} className="my-6 relative w-full aspect-[16/10] md:aspect-[16/9] rounded-xl overflow-hidden shadow-md border border-slate-100 bg-slate-50">
+                  <Image src={block.value} alt="Blog inline illustration" fill sizes="(max-w-6xl) 100vw, 800px" className="object-cover object-center" />
+                </div>
+              );
           default:
             return null;
         }
@@ -152,7 +152,7 @@ export default function BlogDetailPage() {
       {/* ── Cover Image ── */}
       {blog.imageUrl && (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 my-8">
-          <div className="relative aspect-[16/7] md:aspect-[21/9] w-full overflow-hidden rounded-2xl shadow-xl border border-slate-100 bg-slate-50">
+          <div className="relative h-[320px] sm:h-[420px] md:h-[520px] w-full overflow-hidden rounded-2xl shadow-xl border border-slate-100 bg-slate-50">
             <Image
               src={blog.imageUrl}
               alt={blog.title}

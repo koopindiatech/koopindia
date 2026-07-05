@@ -95,7 +95,7 @@ export default function BlogPage() {
                   key={blog.id}
                   className="flex flex-col bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-slate-200/60 group cursor-pointer"
                 >
-                  <div className="relative w-full aspect-[16/7.5] overflow-hidden bg-slate-100">
+                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-100">
                     {blog.imageUrl ? (
                       <Image
                         src={blog.imageUrl}
