@@ -13,9 +13,7 @@ export default function FloatingContact() {
         {/* Contact Us Sidebar Button */}
         <button
           onClick={() => setOpen(true)}
-          className="fixed top-5/7 -translate-y-1/2 z-40
-         bg-orange-600 text-white px-3 py-2 rounded-lg
-          rotate-180  font-medium tracking-wide cursor-pointer"
+          className="bg-orange-600 text-white px-3 py-2 rounded-lg rotate-180 font-medium tracking-wide cursor-pointer"
           style={{ writingMode: "vertical-rl" }}
         >
           Contact Us

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { CheckCircle2, ChevronDown, ArrowRight, Clock, Shield, FileText, Users, Building2, Briefcase, Star, Phone, Mail, MapPin, BadgeCheck, Zap, TrendingUp, Lock } from "lucide-react";
 
-// ✅ Apna existing EnquiryModal aur useModal import karo
 import EnquiryModal from "@/components/forms/EnquiryForm";
 import { useModal } from "@/context/ModalContext";
 
@@ -28,9 +27,8 @@ function FaqItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
     <div
-      className={`border rounded-xl overflow-hidden transition-all duration-300 ${
-        open ? "border-orange-200 bg-orange-50/40" : "border-slate-200 bg-white"
-      }`}
+      className={`border rounded-xl overflow-hidden transition-all duration-300 ${open ? "border-orange-200 bg-orange-50/40" : "border-slate-200 bg-white"
+        }`}
     >
       <button
         onClick={() => setOpen(!open)}
@@ -40,15 +38,13 @@ function FaqItem({ q, a }) {
           {q}
         </span>
         <ChevronDown
-          className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 ${
-            open ? "rotate-180 text-orange-500" : "text-slate-400"
-          }`}
+          className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 ${open ? "rotate-180 text-orange-500" : "text-slate-400"
+            }`}
         />
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ${
-          open ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ${open ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <p className="px-6 pb-5 text-sm text-slate-600 leading-relaxed">{a}</p>
       </div>
@@ -57,11 +53,90 @@ function FaqItem({ q, a }) {
 }
 
 export default function CompanyRegistration() {
-  // ✅ Sirf yahi chahiye — koi local modalOpen state nahi
   const { isOpen, onOpenModal, onCloseModal } = useModal();
+
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "LegalService",
+    "name": "Koop India - Company Registration Consultant",
+    "description": "Best Company Registration Consultant in India offering Online Private Limited Company Registration, GST, and Business Compliance Services.",
+    "areaServed": ["Noida", "Delhi", "Gurugram", "Ghaziabad", "Faridabad", "Bengaluru", "Mumbai", "Pune", "Hyderabad", "Bhubaneswar", "India"],
+    "serviceType": ["Private Limited Company Registration Online", "Company Registration with GST", "Company Registration and Trademark Services", "Company Registration for Startups", "ROC Compliance Services", "Annual Compliance Services"],
+    "provider": {
+      "@type": "Organization",
+      "name": "Koop India"
+    }
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Which structure is best for a startup looking to raise funding?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A Private Limited Company is the only structure that allows equity investment from VCs, angel investors, and institutional funds. If raising money is part of your plan, Private Limited Company Registration Online is the right choice. It also qualifies for DPIIT Startup India recognition."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I register a company using my home address?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. Your home address is perfectly valid as a registered office address. You'll need to provide an electricity bill or bank statement for the property. As the best company registration consultant in Noida and Delhi NCR, we guide you through this process seamlessly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the minimum capital I need to register a company?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "There is no statutory minimum paid-up capital for Private Limited, OPC, or LLP under current Indian law. We offer affordable company registration services in India regardless of your capital size."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if MCA rejects my company name?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your brand is protected and name approval goes smoothly."
+        }
+      }
+    ]
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://koopindia.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Documentation & Compliance",
+        "item": "https://koopindia.com/documentation-compliance"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Company Registration Consultant",
+        "item": "https://koopindia.com/documentation-compliance/company-registration"
+      }
+    ]
+  };
 
   return (
     <div className="font-sans text-slate-700 bg-white antialiased">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
       <section className="relative bg-[#0F172A] overflow-hidden">
 
@@ -88,12 +163,11 @@ export default function CompanyRegistration() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-white leading-[1.15] tracking-tight mb-5">
-                Start Your Business<br />
-                in India —{" "}
-                <span className="text-orange-400">The Right Way</span>
+                Top <span className="text-orange-400">Company Registration</span><br />
+                Consultant in India
               </h1>
               <p className="text-slate-400 text-base leading-relaxed mb-8 max-w-lg">
-                Private Limited · OPC · LLP · Partnership Firm. End-to-end expert support by real CA &amp; CS professionals. 100% online, no office visits, no hidden charges.
+                Looking for the best company registration consultant in Noida or Delhi NCR? We offer 100% online private limited company registration, OPC, LLP, and startup compliance services with no hidden charges.
               </p>
 
               <div className="flex flex-wrap gap-3 mb-10">
@@ -154,16 +228,16 @@ export default function CompanyRegistration() {
             <div>
               <Tag>What Is This?</Tag>
               <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-5 leading-tight tracking-tight">
-                Company Registration in India — <span className="text-orange-500">Explained Simply</span>
+                Online Company Registration Services — <span className="text-orange-500">Explained Simply</span>
               </h2>
               <p className="text-slate-600 text-sm leading-relaxed mb-5">
-                Registering a company in India means officially incorporating your business as a separate legal entity under the Ministry of Corporate Affairs (MCA). Once registered, your company can open bank accounts, sign contracts, hire employees, raise funds, and operate legally.
+                Registering a company in India means officially incorporating your business as a separate legal entity under the Ministry of Corporate Affairs (MCA). As a leading online company registration consultant, we ensure your business is legally ready to open bank accounts, sign contracts, and raise funds.
               </p>
               <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                India recognises several business structures — Private Limited Company, One Person Company, Limited Liability Partnership, and Partnership Firm — each with different ownership rules, compliance requirements, and tax implications. Choosing the right structure is the most important first decision.
+                India recognises several business structures — Private Limited Company, One Person Company, Limited Liability Partnership, and Partnership Firm — each with different ownership rules, compliance requirements, and tax implications. We specialize in company registration for startups, helping you choose the right structure as your first crucial decision.
               </p>
               <p className="text-slate-600 text-sm leading-relaxed">
-                At <strong className="text-[#0F172A]">Koop India</strong>, we walk you through this choice with a free expert consultation, then handle every step of the process — from name approval and document preparation to MCA filing and delivery of your Certificate of Incorporation.
+                At <strong className="text-[#0F172A]">Koop India</strong>, we walk you through this choice with a free expert consultation, then handle every step of the process — from name approval and document preparation to MCA compliance services and delivery of your Certificate of Incorporation.
               </p>
             </div>
 
@@ -665,6 +739,144 @@ export default function CompanyRegistration() {
         </div>
       </section>
 
+      {/* --- NEW BUSINESS COMPLIANCE SECTION --- */}
+      <section className="py-16 px-6 bg-white border-y border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-14 items-center mb-16">
+            <div>
+              <Tag>Business Compliance</Tag>
+              <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-5 leading-tight tracking-tight">
+                Running A Business Is Hard. <br /><span className="text-orange-500">Compliance Shouldn’t Be.</span>
+              </h2>
+              <p className="text-slate-600 text-sm leading-relaxed mb-6">
+                India’s Complete Business Compliance Solution — GST, TDS, PF, ESIC, ROC, Audit Support, Accounting & ITR. All in One Place. Outsource Your Business Compliance. Stay Focused on Growth.
+              </p>
+
+              <ul className="space-y-3 mb-8">
+                <Check>Trusted by 10,000+ Businesses</Check>
+                <Check>4.5 Star Rating on Google</Check>
+                <Check>Fast. Affordable. Reliable.</Check>
+              </ul>
+              <button onClick={onOpenModal} className="inline-flex items-center gap-2 bg-[#0F172A] cursor-pointer text-white hover:bg-slate-800 text-sm font-semibold px-7 py-3.5 rounded-xl transition-all duration-200">
+                Talk to Our Expert <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="relative">
+              <img src="/images/business_compliance.png" alt="Business Compliance Services" className="rounded-2xl shadow-2xl w-full" />
+            </div>
+          </div>
+
+          {/* Vendors vs Us */}
+          <div className="bg-slate-50 rounded-3xl p-8 md:p-12 mb-16 border border-slate-100">
+            <div className="text-center mb-10">
+              <h3 className="text-2xl font-bold text-[#0F172A] mb-4">Still Managing Compliance with Multiple Vendors?</h3>
+              <p className="text-slate-500 text-sm">One for GST, Another for TDS, Someone else for PF/ESIC = Missed deadlines & Heavy penalties.</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="relative hidden md:block">
+                <img src="/images/online_process.png" alt="Company Registration with GST" className="rounded-2xl shadow-xl w-full max-w-sm mx-auto" />
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold text-[#0F172A] mb-5">With Koop India, you get:</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    "GST Filing", "TDS Returns", "PF & ESIC Compliance", "ROC Filings",
+                    "ITR Filing", "Accounting", "Legal Support (ODR)", "Audit Support"
+                  ].map((feature, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing */}
+          <div className="text-center mb-12">
+            <Tag>Transparent Pricing</Tag>
+            <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">Professional Services <span className="text-orange-500">Plans</span></h2>
+            <p className="text-slate-500 text-xs">* Excluding Govt. fees</p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-8 mb-16">
+            {/* Starter Plan */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-orange-200 transition-colors">
+              <h3 className="text-xl font-bold text-[#0F172A] mb-2">Starter Plan</h3>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-3xl font-bold text-orange-500">₹2,999</span>
+                <span className="text-slate-500 text-sm">/month</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                <Check>Business Compliance</Check>
+                <Check>ITR (1/year)</Check>
+                <Check>Accounting</Check>
+                <Check>Dedicated Manager</Check>
+              </ul>
+              <button onClick={onOpenModal} className="w-full bg-slate-50 cursor-pointer hover:bg-slate-100 text-slate-800 font-semibold py-3 rounded-xl transition-colors border border-slate-200">Contact Now</button>
+            </div>
+
+            {/* Growth Plan */}
+            <div className="bg-[#0F172A] rounded-3xl p-8 relative transform md:-translate-y-4 shadow-2xl">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-orange-500 to-orange-400 text-white text-[10px] font-bold uppercase tracking-wider px-4 py-1.5 rounded-full">
+                Most Popular
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Growth Plan</h3>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-3xl font-bold text-orange-400">₹4,999</span>
+                <span className="text-slate-400 text-sm">/month</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                {["GST Filing (monthly)", "ITR (business + director)", "ROC Compliance", "TDS Filing", "Audit Support", "PF & ESIC", "Dedicated Manager", "Accounting"].map((f, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 text-orange-400 flex-shrink-0" />
+                    <span className="text-sm text-slate-300">{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <button onClick={onOpenModal} className="w-full cursor-pointer bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition-colors">Contact Now</button>
+            </div>
+
+            {/* Pro Plan */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-orange-200 transition-colors">
+              <h3 className="text-xl font-bold text-[#0F172A] mb-2">Pro Plan</h3>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-3xl font-bold text-orange-500">₹7,999</span>
+                <span className="text-slate-500 text-sm">/month</span>
+              </div>
+              <ul className="space-y-4 mb-8">
+                <Check>Everything in Growth</Check>
+                <Check>Tax Planning</Check>
+                <Check>Notice Handling</Check>
+                <Check>Dedicated Manager</Check>
+                <Check>Priority Support</Check>
+              </ul>
+              <button onClick={onOpenModal} className="w-full cursor-pointer bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold py-3 rounded-xl transition-colors border border-slate-200">Contact Now</button>
+            </div>
+          </div>
+
+          {/* Advantage */}
+          <div className="grid md:grid-cols-4 gap-6 text-center border-t border-slate-100 pt-16">
+            {[
+              { title: "English & Hindi", sub: "Customer Support Available" },
+              { title: "Experienced Team", sub: "Handling your accounts" },
+              { title: "Free Compliance", sub: "Annual Drafting" },
+              { title: "Statutory Audit", sub: "With Audit Fees Included" }
+            ].map((item, i) => (
+              <div key={i}>
+                <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BadgeCheck className="w-5 h-5 text-orange-500" />
+                </div>
+                <h4 className="font-bold text-[#0F172A] text-sm mb-1">{item.title}</h4>
+                <p className="text-xs text-slate-500">{item.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="pb-14 px-6">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14">
@@ -679,15 +891,15 @@ export default function CompanyRegistration() {
 
           <div className="space-y-3">
             {[
-              { q: "Which structure is best for a startup looking to raise funding?", a: "A Private Limited Company is the only structure that allows equity investment from VCs, angel investors, and institutional funds. If raising money is part of your plan — even 2–3 years from now — Pvt Ltd is the right choice. It also qualifies for DPIIT Startup India recognition, giving you tax exemptions and easier compliance." },
-              { q: "Can I register a company using my home address?", a: "Absolutely. Your home address is perfectly valid as a registered office address. You'll need to provide an electricity bill or bank statement for the property and a No-Objection Certificate if you don't own it. Many founders start with a home address and change it after they get an office." },
-              { q: "Do I need to be physically present anywhere during registration?", a: "No. The entire process is 100% online. You'll need to e-sign some documents using your Aadhaar-linked OTP or DSC — which we'll set up for you. No notary visits, no government office trips, nothing physical required." },
-              { q: "What is the minimum capital I need to register a company?", a: "There is no statutory minimum paid-up capital for Private Limited, OPC, or LLP under current Indian law. You can register with even ₹1 in authorised capital, though ₹1 lakh is common in practice. Note that authorised capital affects stamp duty in some states, which is why we advise you before choosing it." },
-              { q: "How do I know if I need GST registration after incorporating?", a: "GST registration is compulsory if your business: (1) has annual turnover above ₹20 lakhs (₹10 lakhs in special category states), (2) makes inter-state supplies, (3) sells on e-commerce platforms, or (4) exports goods or services. If you're below the threshold, it's optional — but many businesses register voluntarily for input tax credit benefits." },
-              { q: "Can a Non-Resident Indian or foreign national be a director?", a: "Yes. NRIs and foreign nationals can be directors or shareholders of Indian companies. However, at least one director must be a Resident Indian (someone who has stayed in India for at least 182 days in the previous financial year). Foreign directors need notarised and apostilled copies of their passport and address proof." },
-              { q: "What happens if MCA rejects my company name?", a: "Name rejections happen occasionally — usually because the name is too similar to an existing trademark or company, or contains restricted words. We do a thorough availability check before filing to minimise this risk. If a rejection does occur, we provide alternate name suggestions and re-file at no extra charge." },
-              { q: "What ongoing compliance is required after registration?", a: "For a Private Limited Company: annual ROC filings (AOC-4 and MGT-7), statutory audit, minimum 4 board meetings, ITR filing, GST returns if applicable, and Director KYC (DIR-3). For LLP: Form 11 and Form 8 annually, plus ITR. Koop India offers annual compliance packages that cover all of these under a single fixed fee." },
-              { q: "How soon can I open a bank account after getting my incorporation certificate?", a: "Immediately. Most banks process current account applications for new companies within 2–5 working days once you submit the Certificate of Incorporation, MOA/AOA, PAN, and KYC of directors. We'll guide you through exactly what each bank needs." },
+              { q: "Which structure is best for a startup looking to raise funding?", a: "A Private Limited Company is the only structure that allows equity investment from VCs, angel investors, and institutional funds. If raising money is part of your plan, Private Limited Company Registration Online is the right choice. It also qualifies for DPIIT Startup India recognition." },
+              { q: "Can I register a company using my home address?", a: "Absolutely. Your home address is perfectly valid as a registered office address. You'll need to provide an electricity bill or bank statement for the property. As the best company registration consultant in Noida and Delhi NCR, we guide you through this process seamlessly." },
+              { q: "Do I need to be physically present anywhere during registration?", a: "No. The entire process is 100% online. As an online company registration consultant, we handle everything digitally. You'll need to e-sign some documents using your Aadhaar-linked OTP or DSC." },
+              { q: "What is the minimum capital I need to register a company?", a: "There is no statutory minimum paid-up capital for Private Limited, OPC, or LLP under current Indian law. We offer affordable company registration services in India regardless of your capital size." },
+              { q: "How do I know if I need GST registration after incorporating?", a: "GST registration is compulsory if your business turnover crosses threshold limits or if you sell online. We provide company registration with GST as a bundled service for a seamless start." },
+              { q: "Can a Non-Resident Indian or foreign national be a director?", a: "Yes. NRIs and foreign nationals can be directors or shareholders of Indian companies. However, at least one director must be a Resident Indian." },
+              { q: "What happens if MCA rejects my company name?", a: "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your brand is protected and name approval goes smoothly." },
+              { q: "What ongoing compliance is required after registration?", a: "For a Private Limited Company: annual ROC filings, statutory audit, ITR, and GST. As your dedicated corporate compliance consultant, Koop India offers annual compliance services that cover all of these under a single fixed fee." },
+              { q: "How soon can I open a bank account after getting my incorporation certificate?", a: "Immediately. Most banks process current account applications for new companies within 2–5 working days once you submit the Certificate of Incorporation." },
             ].map((item, i) => (
               <FaqItem key={i} q={item.q} a={item.a} />
             ))}
@@ -695,39 +907,94 @@ export default function CompanyRegistration() {
         </div>
       </section>
 
-      <section className="py-16 px-6 bg-[#0F172A] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
-          style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,.4) 1px, transparent 1px)", backgroundSize: "28px 28px" }}
-        />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-orange-500/8 blur-[100px] pointer-events-none" />
+      {/* --- SEO KEYWORDS SECTION --- */}
+      <section className="py-12 px-6 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-lg font-bold text-[#0F172A]">Our Specialised Services & Consulting Locations</h3>
+            <p className="text-sm text-slate-500 mt-2">Trusted business compliance and registration consultants across India.</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2">
+            {[
+              "Company Registration Consultant in India",
+              "Best Company Registration Consultant in Noida",
+              "Private Limited Company Registration Online",
+              "Register Private Limited Company in India",
+              "Company Registration with GST",
+              "Company Registration and Trademark Services",
+              "Company Registration for Startups",
+              "Online Company Registration Consultant",
+              "Affordable Company Registration Services India",
+              "Company Registration Consultant Near Me",
+              "Company Registration Consultant in Noida",
+              "Company Registration Consultant in Delhi",
+              "Company Registration Consultant in Gurugram",
+              "Company Registration Consultant in Ghaziabad",
+              "Company Registration Consultant in Faridabad",
+              "Company Registration Consultant in Bengaluru",
+              "Company Registration Consultant in Mumbai",
+              "Company Registration Consultant in Pune",
+              "Company Registration Consultant in Hyderabad",
+              "Company Registration Consultant in Bhubaneswar",
+              "Company Registration Consultant",
+              "Company Compliance Consultant",
+              "Business Compliance Services",
+              "Online Company Registration",
+              "ROC Compliance Services",
+              "Annual Compliance Services",
+              "Corporate Compliance Consultant",
+              "Startup Compliance Consultant",
+              "Company Registration Services",
+              "MCA Compliance Consultant"
+            ].map((kw, i) => (
+              <span key={i} className="text-[11px] text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-full hover:border-orange-300 hover:text-orange-600 transition-colors cursor-default">
+                {kw}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <div className="relative max-w-2xl mx-auto text-center">
-          <span className="inline-block bg-orange-500/15 border border-orange-500/25 text-orange-300 text-[11px] font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+      <section className="py-20 px-6 bg-gradient-to-br from-orange-500 via-orange-400 to-orange-600 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white/10 blur-[80px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-orange-800/20 blur-[60px] pointer-events-none" />
+        <div
+          className="absolute inset-0 opacity-[0.06] pointer-events-none"
+          style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.5) 1px,transparent 1px)", backgroundSize: "30px 30px" }}
+        />
+
+        <div className="relative max-w-3xl mx-auto text-center">
+          <span className="inline-block bg-white/20 border border-white/30 text-white text-[11px] font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
             Get Started Today
           </span>
-          <h2 className="text-4xl font-bold text-white mb-5 tracking-tight leading-tight">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-5 tracking-tight leading-tight">
             Ready to Make Your Business<br />
-            <span className="text-orange-400">Officially Official?</span>
+            <span className="text-[#0F172A]">Officially Official?</span>
           </h2>
-          <p className="text-slate-400 text-sm leading-relaxed mb-10">
-            Book a free 15-minute consultation with our CA/CS team. No commitments, no sales pressure — just honest advice on the best structure for your business and a clear quote.
+          <p className="text-orange-100 text-base leading-relaxed mb-10 max-w-xl mx-auto">
+            Book a free 15-minute consultation with our CA/CS team. No commitments, no sales pressure — just honest advice on the best structure for your business.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-           
-            {/* ✅ onOpenModal */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
             <button
               onClick={onOpenModal}
-              className="inline-flex items-center cursor-pointer justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 whitespace-nowrap shadow-lg shadow-orange-500/30"
+              className="inline-flex items-center cursor-pointer justify-center gap-2 bg-[#0F172A] hover:bg-slate-900 text-white text-sm font-bold px-8 py-4 rounded-xl transition-all duration-200 whitespace-nowrap shadow-xl"
             >
               Book Free Call <ArrowRight className="w-4 h-4" />
             </button>
+            <button
+              onClick={onOpenModal}
+              className="inline-flex items-center cursor-pointer justify-center gap-2 bg-white/20 hover:bg-white/30 border border-white/40 text-white text-sm font-semibold px-8 py-4 rounded-xl transition-all duration-200 whitespace-nowrap"
+            >
+              Talk to Expert
+            </button>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 text-slate-500 text-xs">
+          <div className="flex flex-wrap items-center justify-center gap-6 text-white/80 text-xs">
             {["No spam — ever", "Free, zero-obligation advice", "Response within 2 hours"].map((t, i) => (
               <span key={i} className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                 {t}
               </span>
             ))}

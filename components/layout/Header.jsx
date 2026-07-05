@@ -97,7 +97,7 @@ const Header = ({ onOpenModal }) => {
       ],
     },
     {
-      name: "Bussiness Promotion",
+      name: "Business Promotion",
       dropdown: [
         {
           name: "Social Media Marketing",
@@ -142,7 +142,7 @@ const Header = ({ onOpenModal }) => {
     <>
       <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-sm shadow-md">
         {/* ================= DESKTOP & MOBILE HEADER BAR ================= */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5">
+        <div className="flex items-center justify-between gap-4 xl:gap-8 px-4 sm:px-6 py-4 sm:py-5">
           <Link href="/" className="text-2xl sm:text-3xl font-extrabold z-[80]">
             <span className="text-orange-500">koop</span>
             <span className="text-slate-800">india</span>

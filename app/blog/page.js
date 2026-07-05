@@ -1,36 +1,29 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react"; // पैजिनेशन के लिए आइकन्स
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
 export default function BlogPage() {
   const [blogs, setBlogs] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   
-  // 🔥 पैजिनेशन स्टेट्स
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 14;
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "blogs"));
+        // orderBy createdAt desc — matches how BlogPanel saves data
+        const q = query(collection(db, "blogs"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
         const data = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
-        // लेटेस्ट ब्लॉग्स को सबसे ऊपर सॉर्ट करना
-        const sortedBlogs = data.sort((a, b) => {
-          const dateA = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.date || 0);
-          const dateB = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.date || 0);
-          return dateB - dateA;
-        });
-
-        setBlogs(sortedBlogs);
+        setBlogs(data);
       } catch (error) {
         console.error("Error fetching blogs:", error);
       }
@@ -38,7 +31,6 @@ export default function BlogPage() {
     fetchBlogs();
   }, []);
 
-  // जब भी यूजर कुछ सर्च करे, पैजिनेशन वापस पेज 1 पर रीसेट हो जाए
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
@@ -135,6 +127,17 @@ export default function BlogPage() {
                   {/* Lower Content Section */}
                   <div className="p-6 sm:p-7 flex flex-col flex-1 justify-between bg-white">
                     <div>
+                    {/* Categories */}
+                      {blog.categories?.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {blog.categories.slice(0, 2).map((cat, i) => (
+                            <span key={i} className="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">
+                              {cat}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
                       {blog.seo?.focusKeywords?.[0] && (
                         <span className="inline-block text-[11px] font-bold tracking-wider text-[#F97316] uppercase bg-orange-50 px-2.5 py-1 rounded-md mb-3">
                           {blog.seo.focusKeywords[0]}
