@@ -140,7 +140,7 @@ const features = [
 const services = [
   {
     name: "Company Registration",
-    href: "/documentation-compliance/company-registration",
+    href: "/documentation-compliance/company-registration-services",
     icon: Building2,
     color: "from-blue-500 to-cyan-400",
     lightBg: "#eff6ff",

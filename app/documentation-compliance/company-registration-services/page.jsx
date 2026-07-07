@@ -127,7 +127,7 @@ export default function CompanyRegistration() {
         "@type": "ListItem",
         "position": 3,
         "name": "Company Registration Consultant",
-        "item": "https://koopindia.com/documentation-compliance/company-registration"
+        "item": "https://koopindia.com/documentation-compliance/company-registration-services"
       }
     ]
   };

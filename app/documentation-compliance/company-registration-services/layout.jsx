@@ -20,7 +20,7 @@ export const metadata = {
   openGraph: {
     title: "Top Company Registration Consultant in India",
     description: "Looking for the best company registration consultant in Noida or Delhi NCR? Koop India offers 100% online private limited company registration.",
-    url: "https://koopindia.com/documentation-compliance/company-registration",
+    url: "https://koopindia.com/documentation-compliance/company-registration-services",
     siteName: "Koop India",
     images: [
       {
@@ -40,7 +40,7 @@ export const metadata = {
     images: ["/images/business_compliance.png"],
   },
   alternates: {
-    canonical: "https://koopindia.com/documentation-compliance/company-registration"
+    canonical: "https://koopindia.com/documentation-compliance/company-registration-services"
   }
 };
 

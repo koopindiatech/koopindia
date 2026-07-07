@@ -8,6 +8,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/documentation-compliance/company-registration",
+        destination: "/documentation-compliance/company-registration-services",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

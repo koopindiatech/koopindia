@@ -37,7 +37,7 @@ const HeroSection = ({ onOpenModal }) => {
     },
     {
       img: "/services/company-registration.jpeg",
-      link: "/documentation-compliance/company-registration",
+      link: "/documentation-compliance/company-registration-services",
       alt: "Company Registration Services",
     },
     {

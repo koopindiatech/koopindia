@@ -86,7 +86,7 @@ export default function sitemap() {
       priority: 0.85,
     },
     {
-      url: `${baseUrl}/documentation-compliance/company-registration`,
+      url: `${baseUrl}/documentation-compliance/company-registration-services`,
       lastModified,
       priority: 0.8,
     },

@@ -68,7 +68,7 @@ const Header = ({ onOpenModal }) => {
         },
         {
           name: "Company Registration",
-          href: "/documentation-compliance/company-registration",
+          href: "/documentation-compliance/company-registration-services",
         },
         {
           name: "Trademark Registration",

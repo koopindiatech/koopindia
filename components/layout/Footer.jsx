@@ -199,7 +199,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/documentation-compliance/company-registration"
+                  href="/documentation-compliance/company-registration-services"
                   className="hover:text-[#F97316]"
                 >
                   Company Registration
