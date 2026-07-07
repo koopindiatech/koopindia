@@ -1,6 +1,14 @@
 export const metadata = {
   title: "Top Company Registration Consultant in India | Best Services in Noida",
   description: "Looking for the best company registration consultant in Noida or Delhi NCR? Koop India offers 100% online private limited company registration, OPC, LLP, and startup compliance services with no hidden charges.",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
   keywords: [
     "Company Registration Consultant in India",
     "Best Company Registration Consultant in Noida",
