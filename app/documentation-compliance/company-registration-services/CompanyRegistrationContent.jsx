@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Head from "next/head";
 import { CheckCircle2, ChevronDown, ArrowRight, Clock, Shield, FileText, Users, Building2, Briefcase, Star, Phone, Mail, MapPin, BadgeCheck, Zap, TrendingUp, Lock } from "lucide-react";
 
 import EnquiryModal from "@/components/forms/EnquiryForm";
@@ -58,13 +59,52 @@ export default function CompanyRegistration() {
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "LegalService",
-    "name": "Koop India - Company Registration Consultant",
-    "description": "Best Company Registration Consultant in India offering Online Private Limited Company Registration, GST, and Business Compliance Services.",
-    "areaServed": ["Noida", "Delhi", "Gurugram", "Ghaziabad", "Faridabad", "Bengaluru", "Mumbai", "Pune", "Hyderabad", "Bhubaneswar", "India"],
-    "serviceType": ["Private Limited Company Registration Online", "Company Registration with GST", "Company Registration and Trademark Services", "Company Registration for Startups", "ROC Compliance Services", "Annual Compliance Services"],
+    "name": "Koop India - Best Company Registration Consultant in Noida & Delhi NCR",
+    "description": "Best Company Registration Consultant in Noida, Delhi, Gurugram & across India. Online Private Limited Company Registration, GST, ROC Compliance & Business Compliance Services at affordable rates.",
+    "url": "https://koopindia.com/documentation-compliance/company-registration-services",
+    "telephone": "+91-9599826131",
+    "areaServed": [
+      { "@type": "City", "name": "Noida" },
+      { "@type": "City", "name": "Delhi" },
+      { "@type": "City", "name": "Gurugram" },
+      { "@type": "City", "name": "Ghaziabad" },
+      { "@type": "City", "name": "Faridabad" },
+      { "@type": "City", "name": "Bengaluru" },
+      { "@type": "City", "name": "Mumbai" },
+      { "@type": "City", "name": "Pune" },
+      { "@type": "City", "name": "Hyderabad" },
+      { "@type": "City", "name": "Bhubaneswar" },
+      { "@type": "Country", "name": "India" }
+    ],
+    "serviceType": [
+      "Company Registration Consultant",
+      "Private Limited Company Registration Online",
+      "Company Registration with GST",
+      "Company Registration and Trademark Services",
+      "Company Registration for Startups",
+      "ROC Compliance Services",
+      "Annual Compliance Services",
+      "Online Company Registration",
+      "Affordable Company Registration Services India",
+      "MCA Compliance Consultant",
+      "Business Compliance Services",
+      "Startup Compliance Consultant"
+    ],
     "provider": {
       "@type": "Organization",
-      "name": "Koop India"
+      "name": "Koop India",
+      "url": "https://koopindia.com"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Company Registration Services",
+      "itemListElement": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Private Limited Company Registration" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "One Person Company (OPC) Registration" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "LLP Registration" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Partnership Firm Registration" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "ROC Annual Compliance" } }
+      ]
     }
   };
 
@@ -103,6 +143,54 @@ export default function CompanyRegistration() {
           "@type": "Answer",
           "text": "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your brand is protected and name approval goes smoothly."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the best company registration consultant in Noida?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Koop India is widely regarded as the best company registration consultant in Noida and Delhi NCR. We offer 100% online Private Limited Company Registration, OPC, LLP, and GST registration with CA/CS support, transparent processes, and same-day document collection."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I register a Private Limited Company online in India?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "To register a Private Limited Company online in India: (1) Choose a unique company name and get it approved by MCA. (2) Obtain DSC and DIN for all directors. (3) File the SPICe+ form with MOA and AOA. (4) Receive your Certificate of Incorporation with CIN. Koop India handles this entire process online — no office visits needed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I register a company with GST at the same time?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Koop India offers combined company registration with GST service. Once your Certificate of Incorporation is issued, we immediately file for GST registration so your business is fully ready to operate — both legally incorporated and GST-compliant."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What are ROC compliance requirements after company registration?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "After company registration, mandatory ROC compliance includes: (1) Filing MGT-7 (Annual Return) by November 29. (2) Filing AOC-4 (Financial Statements) by October 29. (3) Holding AGM within 6 months of financial year end. (4) Statutory audit by a Chartered Accountant. Koop India's ROC compliance services ensure you never miss a deadline."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Koop India a company registration consultant in Delhi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Koop India serves as a company registration consultant in Delhi, Noida, Gurugram, Ghaziabad, Faridabad and all major cities across India. Our services are 100% online, so you can register your company from anywhere — no physical visit required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between a company compliance consultant and a CA?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A company compliance consultant (like Koop India) handles end-to-end business compliance — ROC filings, GST returns, TDS, payroll compliance, and annual returns. A CA typically focuses on accounting and taxation. Koop India has both CAs and CSs on team, giving you a one-stop solution for all business compliance."
+        }
       }
     ]
   };
@@ -126,7 +214,7 @@ export default function CompanyRegistration() {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "Company Registration Consultant",
+        "name": "Company Registration Consultant in Noida & Delhi",
         "item": "https://koopindia.com/documentation-compliance/company-registration-services"
       }
     ]
@@ -134,6 +222,31 @@ export default function CompanyRegistration() {
 
   return (
     <div className="font-sans text-slate-700 bg-white antialiased">
+      <Head>
+        <title>Best Company Registration Consultant in Noida & Delhi | Private Limited Company Registration Online | Koop India</title>
+        <meta
+          name="description"
+          content="Looking for the best company registration consultant in Noida, Delhi, or Gurugram? Koop India offers 100% online Private Limited Company Registration, OPC, LLP, ROC Compliance & GST Registration. Expert CA/CS team. No hidden charges."
+        />
+        <meta
+          name="keywords"
+          content="Company Registration Consultant in Noida, Best Company Registration Consultant in Noida, Company Registration Consultant in Delhi, Private Limited Company Registration Online, Register Private Limited Company in India, Company Registration with GST, Online Company Registration Consultant, Affordable Company Registration Services India, Company Registration Consultant Near Me, Company Registration for Startups, ROC Compliance Services, Annual Compliance Services, Business Compliance Services, Company Compliance Consultant, Startup Compliance Consultant, MCA Compliance Consultant, Company Registration Consultant in Gurugram, Company Registration Consultant in Ghaziabad"
+        />
+        <meta name="robots" content="index, follow" />
+        <meta name="author" content="Koop India" />
+        <link rel="canonical" href="https://koopindia.com/documentation-compliance/company-registration-services" />
+        <meta property="og:title" content="Best Company Registration Consultant in Noida & Delhi | Koop India" />
+        <meta
+          property="og:description"
+          content="100% online Private Limited Company Registration in India. Expert company registration consultant in Noida, Delhi NCR & all major cities. CA/CS supervised. No hidden charges."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://koopindia.com/documentation-compliance/company-registration-services" />
+        <meta property="og:site_name" content="Koop India" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Best Company Registration Consultant in Noida & Delhi | Koop India" />
+        <meta name="twitter:description" content="100% online Private Limited Company Registration. Expert consultant in Noida, Delhi, Gurugram & all India. Contact Koop India today." />
+      </Head>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
@@ -163,11 +276,11 @@ export default function CompanyRegistration() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-white leading-[1.15] tracking-tight mb-5">
-                Top <span className="text-orange-400">Company Registration</span><br />
-                Consultant in India
+                <span className="text-orange-400">Company Registration</span><br />
+                Consultant in Delhi
               </h1>
               <p className="text-slate-400 text-base leading-relaxed mb-8 max-w-lg">
-                Looking for the best company registration consultant in Noida or Delhi NCR? We offer 100% online private limited company registration, OPC, LLP, and startup compliance services with no hidden charges.
+                India's most trusted company registration consultant for Noida, Delhi, Gurugram &amp; all major cities. 100% online Private Limited Company Registration, OPC, LLP, ROC Compliance &amp; GST — handled by CA/CS experts with no hidden charges.
               </p>
 
               <div className="flex flex-wrap gap-3 mb-10">
@@ -228,7 +341,7 @@ export default function CompanyRegistration() {
             <div>
               <Tag>What Is This?</Tag>
               <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-5 leading-tight tracking-tight">
-                Online Company Registration Services — <span className="text-orange-500">Explained Simply</span>
+                Online Company Registration Services —{" "}<span className="text-orange-500">How It Works in India</span>
               </h2>
               <p className="text-slate-600 text-sm leading-relaxed mb-5">
                 Registering a company in India means officially incorporating your business as a separate legal entity under the Ministry of Corporate Affairs (MCA). As a leading online company registration consultant, we ensure your business is legally ready to open bank accounts, sign contracts, and raise funds.
@@ -268,7 +381,7 @@ export default function CompanyRegistration() {
           <div className="text-center mb-14">
             <Tag>Entity Types</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">
-              Which Structure Is <span className="text-orange-500">Right for You?</span>
+              Private Limited Company Registration —{" "}<span className="text-orange-500">Choose the Right Structure</span>
             </h2>
             <p className="text-slate-500 text-sm max-w-xl mx-auto leading-relaxed">
               Each business structure has its own rules, advantages, and compliance levels. Here's an honest breakdown to help you decide.
@@ -284,7 +397,7 @@ export default function CompanyRegistration() {
                   <Building2 className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#0F172A] text-base">Private Limited Company</h3>
+                  <h3 className="font-bold text-[#0F172A] text-base">Private Limited Company Registration Online</h3>
                   <p className="text-xs text-orange-600 font-medium">Best for startups &amp; scaling businesses</p>
                 </div>
               </div>
@@ -310,7 +423,7 @@ export default function CompanyRegistration() {
                   <Users className="w-5 h-5 text-slate-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#0F172A] text-base">One Person Company (OPC)</h3>
+                  <h3 className="font-bold text-[#0F172A] text-base">One Person Company (OPC) Registration</h3>
                   <p className="text-xs text-slate-500 font-medium">Best for solo founders &amp; freelancers</p>
                 </div>
               </div>
@@ -336,7 +449,7 @@ export default function CompanyRegistration() {
                   <Briefcase className="w-5 h-5 text-slate-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#0F172A] text-base">Limited Liability Partnership</h3>
+                  <h3 className="font-bold text-[#0F172A] text-base">Limited Liability Partnership (LLP) Registration</h3>
                   <p className="text-xs text-slate-500 font-medium">Best for professionals &amp; service firms</p>
                 </div>
               </div>
@@ -362,7 +475,7 @@ export default function CompanyRegistration() {
                   <FileText className="w-5 h-5 text-slate-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#0F172A] text-base">Partnership Firm</h3>
+                  <h3 className="font-bold text-[#0F172A] text-base">Partnership Firm Registration in India</h3>
                   <p className="text-xs text-slate-500 font-medium">Best for small &amp; family businesses</p>
                 </div>
               </div>
@@ -404,7 +517,7 @@ export default function CompanyRegistration() {
           <div className="text-center mb-14">
             <Tag>How It Works</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">
-              6 Steps to Your <span className="text-orange-500">Certificate of Incorporation</span>
+              Register Private Limited Company in India —{" "}<span className="text-orange-500">6 Simple Steps</span>
             </h2>
             <p className="text-slate-500 text-sm max-w-xl mx-auto">
               We handle 90% of the work. You only need to share your documents and sign where required.
@@ -446,7 +559,7 @@ export default function CompanyRegistration() {
           <div className="text-center mb-14">
             <Tag>Documents Required</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">
-              What Do You <span className="text-orange-500">Need to Provide?</span>
+              Company Registration with GST —{" "}<span className="text-orange-500">Documents You Need</span>
             </h2>
             <p className="text-slate-500 text-sm max-w-xl mx-auto">
               The checklist is simpler than you think. Most documents you already have. We'll tell you exactly what format is needed.
@@ -532,7 +645,7 @@ export default function CompanyRegistration() {
               Registration Packages
             </span>
             <h2 className="text-3xl font-bold text-white mt-4 mb-3 tracking-tight">
-              What's Included in Your <span className="text-orange-400">Package</span>
+              Affordable Company Registration Services —{" "}<span className="text-orange-400">What's Included</span>
             </h2>
             <p className="text-slate-400 text-sm max-w-xl mx-auto leading-relaxed">
               Our package covers all professional charges in a single, transparent quote. Contact us for an exact quote.
@@ -594,7 +707,7 @@ export default function CompanyRegistration() {
           <div className="text-center mb-14">
             <Tag>After Incorporation</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">
-              Annual Compliance — <span className="text-orange-500">What Comes Next</span>
+              ROC Compliance Services —{" "}<span className="text-orange-500">Annual Filing After Registration</span>
             </h2>
             <p className="text-slate-500 text-sm max-w-xl mx-auto leading-relaxed">
               Registration is just the beginning. Staying compliant keeps your company active and avoids penalties. Koop India can manage all of this for you with an annual compliance package.
@@ -680,7 +793,7 @@ export default function CompanyRegistration() {
           <div className="text-center mb-14">
             <Tag>Why Koop India</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">
-              We're Not Just a Portal — <span className="text-orange-500">We're Your Partners</span>
+              Company Registration Consultant in Delhi —{" "}<span className="text-orange-500">Why Choose Koop India?</span>
             </h2>
             <p className="text-slate-500 text-sm max-w-xl mx-auto">
               Over 5,000 founders, freelancers, and growing businesses have trusted Koop India. Here's why they keep coming back.
@@ -713,7 +826,7 @@ export default function CompanyRegistration() {
           <div className="text-center mb-14">
             <Tag>Client Stories</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">
-              What Founders Say <span className="text-orange-500">About Koop India</span>
+              Startup Compliance Consultant —{" "}<span className="text-orange-500">Founders Trust Koop India</span>
             </h2>
           </div>
 
@@ -751,7 +864,7 @@ export default function CompanyRegistration() {
             <div>
               <Tag>Business Compliance</Tag>
               <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-5 leading-tight tracking-tight">
-                Running A Business Is Hard. <br /><span className="text-orange-500">Compliance Shouldn’t Be.</span>
+                Business Compliance Services in India.<br /><span className="text-orange-500">All-in-One. Expert-Managed.</span>
               </h2>
               <p className="text-slate-600 text-sm leading-relaxed mb-6">
                 India’s Complete Business Compliance Solution — GST, TDS, PF, ESIC, ROC, Audit Support, Accounting & ITR. All in One Place. Outsource Your Business Compliance. Stay Focused on Growth.
@@ -994,6 +1107,140 @@ export default function CompanyRegistration() {
                 {t}
               </span>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── LOCAL SEO: CITY TARGETING SECTION ── */}
+      <section className="py-16 px-6 bg-slate-50 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="inline-block bg-orange-50 text-orange-600 text-[11px] font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full border border-orange-100 mb-4">
+              Pan-India Service
+            </span>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-3">
+              Company Registration Consultant{" "}
+              <span className="text-orange-500">in Delhi</span>
+            </h2>
+            <p className="text-slate-500 text-sm max-w-2xl mx-auto leading-relaxed mb-5">
+              Serving founders & businesses across Delhi NCR and all major cities in India — 100% online, CA/CS supervised, no office visits needed.
+            </p>
+            {/* City Pills Sub-heading */}
+            <div className="flex flex-wrap justify-center gap-2">
+              {[
+                { label: "Noida", hot: true },
+                { label: "Gurugram", hot: true },
+                { label: "Delhi NCR", hot: true },
+                { label: "Faridabad", hot: false },
+                { label: "Ghaziabad", hot: false },
+                { label: "Greater Noida", hot: false },
+                { label: "Bengaluru", hot: false },
+                { label: "Mumbai", hot: false },
+                { label: "Pune", hot: false },
+                { label: "Hyderabad", hot: false },
+                { label: "Bhubaneswar", hot: false },
+                { label: "All India", hot: false },
+              ].map(({ label, hot }) => (
+                <span
+                  key={label}
+                  className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
+                    hot
+                      ? "bg-orange-500 text-white border-orange-500"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-500"
+                  }`}
+                >
+                  {hot && <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse inline-block" />}
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-10">
+            {[
+              { city: "Noida", tag: "⭐ Top Rated" },
+              { city: "Delhi", tag: "⭐ Top Rated" },
+              { city: "Gurugram", tag: "" },
+              { city: "Ghaziabad", tag: "" },
+              { city: "Faridabad", tag: "" },
+              { city: "Bengaluru", tag: "" },
+              { city: "Mumbai", tag: "" },
+              { city: "Pune", tag: "" },
+              { city: "Hyderabad", tag: "" },
+              { city: "Bhubaneswar", tag: "" },
+            ].map(({ city, tag }, i) => (
+              <div
+                key={i}
+                className="bg-white border border-slate-200 rounded-xl p-4 text-center hover:border-orange-300 hover:shadow-md transition-all duration-200 group"
+              >
+                <MapPin className="w-4 h-4 text-orange-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+                <p className="text-sm font-semibold text-[#0F172A]">
+                  Company Registration
+                </p>
+                <p className="text-xs text-orange-500 font-bold mt-0.5">
+                  Consultant in {city}
+                </p>
+                {tag && (
+                  <span className="inline-block text-[9px] font-bold bg-orange-50 text-orange-500 px-2 py-0.5 rounded-full mt-1">
+                    {tag}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white border border-orange-100 rounded-2xl p-6 md:p-8">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-lg font-bold text-[#0F172A] mb-3">
+                  Why Choose Koop India as Your{" "}
+                  <span className="text-orange-500">Company Registration Consultant?</span>
+                </h3>
+                <div className="space-y-3">
+                  {[
+                    { title: "Best Company Registration Consultant in Noida", desc: "Serving Noida, Greater Noida & Delhi NCR entrepreneurs since 2022 with 5,000+ registrations." },
+                    { title: "Private Limited Company Registration Online", desc: "100% digital process — no office visits, no waiting. Certificate of Incorporation in 7 days." },
+                    { title: "Company Registration with GST", desc: "Get your company + GSTIN in a single bundled service. Fully compliant from Day 1." },
+                    { title: "Affordable Company Registration Services India", desc: "Transparent, all-inclusive packages. No hidden charges. Flexible EMI for startups." },
+                    { title: "ROC & Annual Compliance Services", desc: "End-to-end compliance — MGT-7, AOC-4, GST returns, TDS, audit & more." },
+                  ].map(({ title, desc }, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <CheckCircle2 className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-[#0F172A]">{title}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] rounded-2xl p-6 text-white">
+                <h4 className="text-base font-bold text-orange-400 mb-4">Quick Company Registration Facts</h4>
+                <div className="space-y-3">
+                  {[
+                    ["Service Area", "All India — Online"],
+                    ["Best Known For", "Noida & Delhi NCR"],
+                    ["Process", "100% Online, No Office Visit"],
+                    ["Turnaround", "7–10 Working Days"],
+                    ["Structures", "Pvt Ltd, OPC, LLP, Partnership"],
+                    ["Compliance", "ROC, GST, TDS, ITR"],
+                    ["Team", "CA + CS Supervised"],
+                    ["Clients Served", "5,000+ Businesses"],
+                  ].map(([label, value], i) => (
+                    <div key={i} className="flex justify-between items-center border-b border-white/10 pb-2 last:border-0 last:pb-0 text-xs">
+                      <span className="text-slate-400">{label}</span>
+                      <span className="text-white font-semibold text-right">{value}</span>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={onOpenModal}
+                  className="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-colors cursor-pointer text-sm"
+                >
+                  Get Free Consultation →
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
