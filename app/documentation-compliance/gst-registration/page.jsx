@@ -433,7 +433,7 @@ const GSTRegistrationPage = () => {
         </title>
         <meta
           name="description"
-          content="Apply for GST Registration online in India with Koop India. ✓ 7–10 Days GSTIN ✓ Expert Guided ✓ Starting ₹2,999. Get help with documents, filing, query handling & post-registration compliance."
+          content="Apply for GST Registration online in India with Koop India. ✓ 7–10 Days GSTIN ✓ Expert Guided ✓ 100% Online. Get help with documents, filing, query handling & post-registration compliance."
         />
         <meta name="robots" content="index, follow" />
         <meta
@@ -450,7 +450,7 @@ const GSTRegistrationPage = () => {
         />
         <meta
           property="og:description"
-          content="Fast, expert-guided GST Registration starting at ₹2,999. Documents, procedure, fees & GSTIN issuance — all handled by Koop India."
+          content="Fast, expert-guided GST Registration. Documents, procedure, fees & GSTIN issuance — all handled by Koop India."
         />
         <meta property="og:type" content="website" />
         <meta

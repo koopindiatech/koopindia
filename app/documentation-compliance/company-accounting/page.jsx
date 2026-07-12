@@ -247,7 +247,7 @@ const CompanyAccountingServicesPage = () => {
               {[
                 { num: "500+", label: "Businesses Served" },
                 { num: "99%", label: "Compliance Rate" },
-                { num: "₹1,999", label: "Starting / Month" },
+                { num: "4.9★", label: "Client Rating" },
                 { num: "5+", label: "Years Experience" },
               ].map(({ num, label }) => (
                 <div

@@ -41,7 +41,7 @@ const faqs = [
   },
   {
     q: "What is the cost of ISO Certification in India?",
-    a: "ISO Certification starts at ₹2,999* with Koop India. Final pricing depends on the type of ISO standard (9001, 14001, 22000, 45001, etc.), number of employees, and scope of your business activities. We offer transparent, no-hidden-charge pricing. Contact us for an exact quote.",
+    a: "ISO Certification pricing depends on the type of ISO standard (9001, 14001, 22000, 45001, etc.), number of employees, and scope of your business activities. Koop India offers transparent, no-hidden-charge pricing. Contact us for an exact quote tailored to your business.",
   },
   {
     q: "Is ISO Certification mandatory in India?",
@@ -291,7 +291,7 @@ const ISOCertificationPage = () => {
         </title>
         <meta
           name="description"
-          content="Get ISO Certification in India with Koop India. ISO 9001, ISO 14001, ISO 22000, ISO 45001 & more. Expert consultants, fast 7–15 day approval, 100% online. Starting ₹2,999."
+          content="Get ISO Certification in India with Koop India. ISO 9001, ISO 14001, ISO 22000, ISO 45001 & more. Expert consultants, fast 7–15 day approval, 100% online. Contact us for a quote."
         />
         <meta
           name="keywords"
@@ -304,7 +304,7 @@ const ISOCertificationPage = () => {
         />
         <meta
           property="og:description"
-          content="Get ISO Certified in 7–15 days. ISO 9001, 14001, 22000, 45001 & more. 100% online, starting ₹2,999."
+          content="Get ISO Certified in 7–15 days. ISO 9001, 14001, 22000, 45001 & more. 100% online. Contact us for a custom quote."
         />
         <meta property="og:type" content="website" />
         <link

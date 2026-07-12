@@ -15,56 +15,48 @@ const categories = [
       {
         title: "GST Registration & Filing",
         slug: "gst-registration",
-        price: "₹999",
         desc: "Quick GST number with end-to-end filing support.",
         inForm: true,
       },
       {
         title: "Company Registration",
         slug: "company-registration",
-        price: "₹2,499",
         desc: "Pvt Ltd, OPC, or LLP — registered in days.",
         inForm: true,
       },
       {
         title: "Trademark Registration",
         slug: "trademark-registration",
-        price: "₹1,499",
         desc: "Protect your brand identity legally.",
         inForm: true,
       },
       {
         title: "FSSAI License",
         slug: "fssai-license",
-        price: "₹1,299",
         desc: "Mandatory food business licensing made easy.",
         inForm: true,
       },
       {
         title: "ISO Certification",
         slug: "iso-certification",
-        price: "₹4,999",
         desc: "Boost credibility with international standards.",
         inForm: true,
       },
       {
         title: "Company Accounting",
         slug: "company-accounting",
-        price: "₹2,999/mo",
         desc: "End-to-end bookkeeping and accounting services.",
         inForm: true,
       },
       {
         title: "Startup India Registration",
         slug: "startup-india-registration",
-        price: "₹3,499",
         desc: "Get DPIIT recognition and unlock govt. benefits.",
         inForm: true,
       },
       {
         title: "Tax Compliance",
         slug: "tax-compliance",
-        price: "₹1,999/yr",
         desc: "ITR filing, advance tax, and TDS compliance.",
         inForm: true,
       },
@@ -82,21 +74,18 @@ const categories = [
       {
         title: "Website Development",
         slug: "website-development",
-        price: "₹9,999",
         desc: "Fast, modern websites built to convert.",
         inForm: true,
       },
       {
         title: "CRM Development",
         slug: "crm-development",
-        price: "₹19,999",
         desc: "Custom CRM tailored to your workflow.",
         inForm: false,
       },
       {
         title: "SEO",
         slug: "seo",
-        price: "₹2,999/mo",
         desc: "Climb Google rankings with proven strategies.",
         inForm: false,
       },
@@ -114,28 +103,24 @@ const categories = [
       {
         title: "Content Writing",
         slug: "content-writing",
-        price: "₹499/article",
         desc: "SEO-optimised blogs, copies & web content.",
         inForm: false,
       },
       {
         title: "Google My Business",
         slug: "gmb",
-        price: "₹999/mo",
         desc: "Rank higher in local Google searches.",
         inForm: false,
       },
       {
         title: "Logo Design",
         slug: "logo-design",
-        price: "₹1,499",
         desc: "Memorable logos that make you stand out.",
         inForm: false,
       },
       {
         title: "Social Media Management",
         slug: "social-media",
-        price: "₹3,999/mo",
         desc: "Consistent presence across all platforms.",
         inForm: true,
       },
@@ -153,14 +138,12 @@ const categories = [
       {
         title: "Business Consulting",
         slug: "business",
-        price: "₹2,999",
         desc: "Expert guidance to build & scale your idea.",
         inForm: true,
       },
       {
         title: "Market Analysis",
         slug: "market-analysis",
-        price: "₹4,999",
         desc: "Data-driven insights on your target market.",
         inForm: false,
       },
@@ -670,14 +653,14 @@ function ServiceCategory({ cat, onConsult }) {
               </p>
             </div>
 
-            {/* Request Consultation — only scrolls to form, no auto-select */}
+            {/* Contact / Get Quote button — opens enquiry form */}
             <button
               type="button"
               onClick={() => onConsult()}
               className="consult-btn mt-1 flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all"
               style={{ background: `${cat.accent}15`, color: cat.accent }}
             >
-              Request Consultation
+              Get Quote
               <svg
                 width="12"
                 height="12"

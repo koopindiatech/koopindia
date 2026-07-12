@@ -203,7 +203,7 @@ export default function CompanyRegistration() {
             <div className="grid grid-cols-2 gap-4">
               {[
                 { num: "5,000+", label: "Companies Registered", sub: "Across India" },
-                { num: "₹9,999", label: "Starting Price", sub: "All-inclusive" },
+                { num: "7 Days", label: "Avg. Turnaround", sub: "Fast & efficient" },
                 { num: "100%", label: "Online Process", sub: "No office visits" },
                 { num: "4.9 ★", label: "Client Rating", sub: "Verified reviews" },
               ].map((s, i) => (
@@ -529,30 +529,35 @@ export default function CompanyRegistration() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
             <span className="inline-block bg-orange-500/15 border border-orange-500/25 text-orange-300 text-[11px] font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full">
-              Transparent Pricing
+              Registration Packages
             </span>
             <h2 className="text-3xl font-bold text-white mt-4 mb-3 tracking-tight">
-              Simple, Honest Fees — <span className="text-orange-400">No Surprises</span>
+              What's Included in Your <span className="text-orange-400">Package</span>
             </h2>
             <p className="text-slate-400 text-sm max-w-xl mx-auto leading-relaxed">
-              Our pricing covers government fees + professional charges in a single transparent quote. We explain every line item before you pay.
+              Our package covers all professional charges in a single, transparent quote. Contact us for an exact quote.
             </p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-4 mb-10">
             {[
-              { type: "Private Limited", price: "₹9,999", note: "Most popular" },
-              { type: "One Person Company", price: "₹9,999", note: "Solo founders" },
-              { type: "LLP", price: "₹9,999", note: "Professionals" },
-              { type: "Partnership Firm", price: "₹4,999", note: "Quick setup" },
+              { type: "Private Limited", note: "Most popular" },
+              { type: "One Person Company", note: "Solo founders" },
+              { type: "LLP", note: "Professionals" },
+              { type: "Partnership Firm", note: "Quick setup" },
             ].map((p, i) => (
               <div
                 key={i}
                 className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center hover:bg-orange-500/8 hover:border-orange-500/25 transition-all duration-200"
               >
-                <div className="text-slate-400 text-xs mb-2 font-medium">{p.type}</div>
-                <div className="text-orange-400 text-3xl font-bold font-mono mb-1">{p.price}<span className="text-lg">*</span></div>
-                <div className="text-slate-500 text-xs">{p.note}</div>
+                <div className="text-slate-400 text-xs mb-3 font-medium">{p.type}</div>
+                <div className="text-slate-500 text-xs mb-4">{p.note}</div>
+                <button
+                  onClick={onOpenModal}
+                  className="w-full bg-orange-500/20 hover:bg-orange-500 text-orange-300 hover:text-white text-xs font-semibold py-2 px-3 rounded-xl transition-all duration-200 cursor-pointer"
+                >
+                  Get Quote
+                </button>
               </div>
             ))}
           </div>
@@ -578,7 +583,7 @@ export default function CompanyRegistration() {
               ))}
             </div>
             <p className="mt-6 text-slate-600 text-xs">
-              * Indicative starting price. Final cost depends on authorised share capital and applicable state stamp duty. We'll give you an exact quote after a 15-minute consultation — no obligations.
+              * Final cost depends on authorised share capital and applicable state stamp duty. Contact us for an exact quote — no obligations.
             </p>
           </div>
         </div>
@@ -796,26 +801,23 @@ export default function CompanyRegistration() {
 
           {/* Pricing */}
           <div className="text-center mb-12">
-            <Tag>Transparent Pricing</Tag>
-            <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">Professional Services <span className="text-orange-500">Plans</span></h2>
-            <p className="text-slate-500 text-xs">* Excluding Govt. fees</p>
+            <Tag>Professional Plans</Tag>
+            <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">Annual Compliance <span className="text-orange-500">Plans</span></h2>
+            <p className="text-slate-500 text-xs">Contact us to get a custom quote tailored for your business needs.</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 mb-16">
             {/* Starter Plan */}
             <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-orange-200 transition-colors">
               <h3 className="text-xl font-bold text-[#0F172A] mb-2">Starter Plan</h3>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-3xl font-bold text-orange-500">₹2,999</span>
-                <span className="text-slate-500 text-sm">/month</span>
-              </div>
+              <p className="text-slate-400 text-sm mb-6">For small businesses & proprietorships</p>
               <ul className="space-y-4 mb-8">
                 <Check>Business Compliance</Check>
                 <Check>ITR (1/year)</Check>
                 <Check>Accounting</Check>
                 <Check>Dedicated Manager</Check>
               </ul>
-              <button onClick={onOpenModal} className="w-full bg-slate-50 cursor-pointer hover:bg-slate-100 text-slate-800 font-semibold py-3 rounded-xl transition-colors border border-slate-200">Contact Now</button>
+              <button onClick={onOpenModal} className="w-full bg-slate-50 cursor-pointer hover:bg-slate-100 text-slate-800 font-semibold py-3 rounded-xl transition-colors border border-slate-200">Contact for Pricing</button>
             </div>
 
             {/* Growth Plan */}
@@ -824,10 +826,7 @@ export default function CompanyRegistration() {
                 Most Popular
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Growth Plan</h3>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-3xl font-bold text-orange-400">₹4,999</span>
-                <span className="text-slate-400 text-sm">/month</span>
-              </div>
+              <p className="text-slate-400 text-sm mb-6">For Pvt Ltd / LLP with active operations</p>
               <ul className="space-y-4 mb-8">
                 {["GST Filing (monthly)", "ITR (business + director)", "ROC Compliance", "TDS Filing", "Audit Support", "PF & ESIC", "Dedicated Manager", "Accounting"].map((f, i) => (
                   <li key={i} className="flex items-start gap-3">
@@ -836,16 +835,13 @@ export default function CompanyRegistration() {
                   </li>
                 ))}
               </ul>
-              <button onClick={onOpenModal} className="w-full cursor-pointer bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition-colors">Contact Now</button>
+              <button onClick={onOpenModal} className="w-full cursor-pointer bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition-colors">Contact for Pricing</button>
             </div>
 
             {/* Pro Plan */}
             <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-orange-200 transition-colors">
               <h3 className="text-xl font-bold text-[#0F172A] mb-2">Pro Plan</h3>
-              <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-3xl font-bold text-orange-500">₹7,999</span>
-                <span className="text-slate-500 text-sm">/month</span>
-              </div>
+              <p className="text-slate-400 text-sm mb-6">For high-growth companies with complex needs</p>
               <ul className="space-y-4 mb-8">
                 <Check>Everything in Growth</Check>
                 <Check>Tax Planning</Check>
@@ -853,7 +849,7 @@ export default function CompanyRegistration() {
                 <Check>Dedicated Manager</Check>
                 <Check>Priority Support</Check>
               </ul>
-              <button onClick={onOpenModal} className="w-full cursor-pointer bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold py-3 rounded-xl transition-colors border border-slate-200">Contact Now</button>
+              <button onClick={onOpenModal} className="w-full cursor-pointer bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold py-3 rounded-xl transition-colors border border-slate-200">Contact for Pricing</button>
             </div>
           </div>
 
