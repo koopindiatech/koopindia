@@ -1,10 +1,42 @@
 "use client";
-import React from "react";
-import EnquiryModal from "@/components/forms/EnquiryForm";
+import React, { useState } from "react";
+import { addEnquiry } from "@/lib/enquiryService";
 import { useModal } from "@/context/ModalContext";
 
 const Page = () => {
-  const { isOpen, onOpenModal, onCloseModal } = useModal();
+  const { onOpenModal } = useModal();
+  const [form, setForm] = useState({
+    name: "",
+    mobile: "",
+    company: "",
+    service: "",
+    source: "website",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMsg("");
+    try {
+      await addEnquiry(form);
+      if (typeof window !== "undefined" && window.fbq) {
+        window.fbq("track", "Lead");
+      }
+      setSuccessMsg("Thank you! Our team will contact you shortly.");
+      setForm({ name: "", mobile: "", company: "", service: "", source: "website" });
+      setTimeout(() => setSuccessMsg(""), 5000);
+    } catch (err) {
+      console.error(err);
+      setErrorMsg("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const branches = [
     {
@@ -18,11 +50,11 @@ const Page = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-br from-white to-gray-50 text-[#141d32] px-6 md:px-8 py-20">
+    <section className="bg-gradient-to-br from-white to-gray-50 text-[#141d32] px-6 md:px-8 py-14">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
             Contact <span className="text-[#F97316]">Us</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -39,7 +71,7 @@ const Page = () => {
                 Let&apos;s Start Your{" "}
                 <span className="text-[#F97316]">Success Journey</span>
               </h2>
-              <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+              <p className="text-gray-600 text-md mb-8 leading-relaxed">
                 Ready to unlock your business potential? Our expert consultants
                 are standing by to provide tailored strategies that drive real
                 results. From startup guidance to enterprise solutions,
@@ -49,7 +81,7 @@ const Page = () => {
               {/* Enquiry Button */}
               <button
                 onClick={onOpenModal}
-                className="bg-gradient-to-r from-[#F97316] to-orange-500 text-white px-8 py-4 rounded-xl 
+                className="bg-gradient-to-r from-[#F97316] to-orange-500 text-white px-8 py-3 rounded-xl 
                 font-semibold text-lg shadow-xl hover:shadow-2xl hover:from-orange-600 hover:to-orange-600 
                 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3 cursor-pointer"
               >
@@ -168,7 +200,7 @@ const Page = () => {
             </div>
           </div>
 
-          {/* Right Side - Visual Element */}
+          {/* Right Side - Contact Form */}
           <div className="relative">
             <div className="bg-gradient-to-br from-[#141d32] to-gray-800 rounded-2xl p-8 text-white relative overflow-hidden">
               {/* Background Pattern */}
@@ -179,106 +211,92 @@ const Page = () => {
               </div>
 
               <div className="relative z-10">
-                <h3 className="text-3xl font-bold mb-6">Why Choose Us?</h3>
+                <h3 className="text-2xl font-bold mb-1">Get Free Consultation</h3>
+                <p className="text-gray-400 text-sm mb-6">Fill in the details and we&apos;ll call you back</p>
 
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-6 h-6 bg-[#F97316] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <svg
-                        className="w-4 h-4 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">
-                        Expert Consultation
-                      </h4>
-                      <p className="text-gray-300 text-sm">
-                        Professional guidance from industry experts
-                      </p>
-                    </div>
+                {successMsg && (
+                  <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm font-medium text-center">
+                    ✅ {successMsg}
                   </div>
+                )}
+                {errorMsg && (
+                  <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+                    {errorMsg}
+                  </div>
+                )}
 
-                  <div className="flex items-start space-x-4">
-                    <div className="w-6 h-6 bg-[#F97316] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <svg
-                        className="w-4 h-4 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">Tailored Solutions</h4>
-                      <p className="text-gray-300 text-sm">
-                        Customized strategies for your unique needs
-                      </p>
-                    </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Full Name"
+                      value={form.name}
+                      onChange={handleChange}
+                      required
+                      disabled={isSubmitting}
+                      className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#F97316] transition-colors placeholder:text-gray-500 w-full"
+                    />
+                    <input
+                      type="tel"
+                      name="mobile"
+                      placeholder="Mobile Number"
+                      value={form.mobile}
+                      onChange={handleChange}
+                      required
+                      disabled={isSubmitting}
+                      className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#F97316] transition-colors placeholder:text-gray-500 w-full"
+                    />
                   </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="w-6 h-6 bg-[#F97316] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <svg
-                        className="w-4 h-4 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">Proven Results</h4>
-                      <p className="text-gray-300 text-sm">
-                        Track record of successful transformations
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="w-6 h-6 bg-[#F97316] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <svg
-                        className="w-4 h-4 text-white"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-1">24/7 Support</h4>
-                      <p className="text-gray-300 text-sm">
-                        Round-the-clock assistance when you need it
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                  <input
+                    type="text"
+                    name="company"
+                    placeholder="Company / Business Name"
+                    value={form.company}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#F97316] transition-colors placeholder:text-gray-500"
+                  />
+                  <select
+                    name="service"
+                    value={form.service}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                    className="w-full bg-[#141d32] border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-[#F97316] transition-colors"
+                  >
+                    <option value="" disabled>Looking For</option>
+                    <option value="GST Registration &amp; Filing">GST Registration &amp; Filing</option>
+                    <option value="Company Registration">Company Registration</option>
+                    <option value="Trademark Registration">Trademark Registration</option>
+                    <option value="Website Development">Website Development</option>
+                    <option value="Social Media Marketing">Social Media Marketing</option>
+                    <option value="FSSAI License">FSSAI License</option>
+                    <option value="ISO Certification">ISO Certification</option>
+                    <option value="Seller Onboarding">Seller Onboarding</option>
+                    <option value="Other Services">Other Services</option>
+                  </select>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#F97316] hover:bg-orange-600 disabled:opacity-70 text-white font-bold py-3.5 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-orange-500/20 mt-1"
+                  >
+                    {isSubmitting ? "Submitting..." : (
+                      <>
+                        Submit Enquiry
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </form>
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/10">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-[#F97316]">
-                      100+
-                    </div>
+                    <div className="text-2xl font-bold text-[#F97316]">100+</div>
                     <div className="text-sm text-gray-300">Happy Clients</div>
                   </div>
                   <div className="text-center">
@@ -291,7 +309,6 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <EnquiryModal isOpen={isOpen} onClose={onCloseModal} />
     </section>
   );
 };

@@ -472,112 +472,346 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
       </section>
 
-      {/* ------- Solutions Section ------- */}
-
-      <section
-        id="solution"
-        className="bg-[#141d32] text-white py-16 md:px-8 scroll-mt-24"
-      >
+      {/* ------- SME Overview Section ------- */}
+      <section className="w-full py-12 px-4 md:px-8" style={{ background: "#0F1F3D" }}>
         <div className="max-w-6xl mx-auto">
+
+          {/* Wrapper: cards + connector columns */}
+          <div className="hidden lg:grid items-center" style={{ gridTemplateColumns: "1fr 48px 320px 48px 1fr" }}>
+
+            {/* ── LEFT CARD ── */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col" style={{ minHeight: "380px" }}>
+              <div className="bg-orange-500 px-5 pt-5 pb-6 flex flex-col gap-3">
+                <div className="bg-white rounded-full flex items-center gap-2 px-3 py-2">
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2"/><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <span className="text-gray-400 text-sm">Search Services</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-extrabold text-xl leading-tight">Business Setup</h3>
+                  <p className="text-orange-100 text-xs mt-1 leading-snug">All your essential business services<br />under one roof.</p>
+                </div>
+                <div className="grid grid-cols-4 gap-1 mt-1">
+                  {[
+                    { icon: "📄", label: "GST\nRegistration" },
+                    { icon: "🏢", label: "Company\nRegistration" },
+                    { icon: "®️", label: "Trademark\nRegistration" },
+                    { icon: "📋", label: "FSSAI\nRegistration" },
+                  ].map(({ icon, label }) => (
+                    <div key={label} className="flex flex-col items-center text-center gap-1">
+                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg">{icon}</div>
+                      <span className="text-white text-[9px] leading-tight whitespace-pre-line">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex-1 bg-white px-5 py-4 flex flex-col justify-end gap-2">
+                <div className="h-2 bg-gray-100 rounded-full w-4/5" />
+                <div className="h-2 bg-gray-100 rounded-full w-3/5" />
+                <div className="h-2 bg-gray-100 rounded-full w-4/5 mt-1" />
+              </div>
+            </div>
+
+            {/* ── CONNECTOR LEFT → CENTER ── */}
+            <div className="flex items-center justify-center w-full h-full">
+              <svg width="48" height="16" viewBox="0 0 48 16" preserveAspectRatio="none" className="w-full">
+                <line x1="6" y1="8" x2="42" y2="8" stroke="#F97316" strokeWidth="2" strokeDasharray="5 4"/>
+                <circle cx="6" cy="8" r="5" fill="#F97316"/>
+                <circle cx="42" cy="8" r="5" fill="#F97316"/>
+              </svg>
+            </div>
+
+            {/* ── CENTER CARD (taller / elevated) ── */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col py-7 px-6" style={{ minHeight: "420px", marginTop: "-20px", marginBottom: "-20px" }}>
+              <div className="flex flex-col items-start mb-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
+                    <text x="1" y="28" fontSize="27" fontWeight="900" fill="#1E3A5F">k</text>
+                    <path d="M17 19 L27 7" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round"/>
+                    <polygon points="27,7 21,9 26,14" fill="#F97316"/>
+                  </svg>
+                  <span style={{ fontWeight: 900, fontSize: "22px", color: "#1E3A5F", letterSpacing: "-0.5px" }}>
+                    koopindia<span style={{ color: "#F97316" }}>.</span>
+                  </span>
+                </div>
+                <p className="text-orange-500 font-bold text-sm tracking-wide">Launch. Scale. Lead.</p>
+              </div>
+              <div className="flex flex-col gap-1 mt-1">
+                {[
+                  { icon: "🏛️", color: "#1E3A5F", label: "Business Registration & Compliance" },
+                  { icon: "📢", color: "#F97316", label: "Branding & Digital Marketing" },
+                  { icon: "💻", color: "#1E3A5F", label: "Website & Software Development" },
+                  { icon: "🧑‍💼", color: "#F97316", label: "Startup & Business Consulting" },
+                  { icon: "📈", color: "#1E3A5F", label: "End-to-End Growth Solutions" },
+                ].map(({ icon, color, label }) => (
+                  <div key={label} className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-gray-50 transition-colors cursor-default">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-base" style={{ background: color }}>
+                      {icon}
+                    </div>
+                    <span className="font-semibold text-[#1E3A5F] text-sm leading-snug">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── CONNECTOR CENTER → RIGHT ── */}
+            <div className="flex items-center justify-center w-full h-full">
+              <svg width="48" height="16" viewBox="0 0 48 16" preserveAspectRatio="none" className="w-full">
+                <line x1="6" y1="8" x2="42" y2="8" stroke="#F97316" strokeWidth="2" strokeDasharray="5 4"/>
+                <circle cx="6" cy="8" r="5" fill="#F97316"/>
+                <circle cx="42" cy="8" r="5" fill="#F97316"/>
+              </svg>
+            </div>
+
+            {/* ── RIGHT CARD ── */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col" style={{ minHeight: "380px" }}>
+              <div className="bg-orange-500 px-5 pt-5 pb-4 flex flex-col gap-3 relative overflow-hidden">
+                <div className="absolute right-3 top-3 flex flex-col items-end gap-1 opacity-80">
+                  <div className="flex gap-1.5">
+                    <span className="text-white/70 text-lg">🎯</span>
+                    <span className="text-white/70 text-lg">📊</span>
+                  </div>
+                  <span className="text-3xl">🚀</span>
+                  <span className="text-white/60 text-sm">🌐</span>
+                </div>
+                <div className="bg-white rounded-full flex items-center gap-2 px-3 py-2 w-4/5">
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2"/><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <span className="text-gray-400 text-sm">Search Solutions</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-extrabold text-xl leading-tight">Digital Growth</h3>
+                  <p className="text-orange-100 text-xs mt-1 leading-snug w-3/5">Powerful solutions to grow your business online.</p>
+                </div>
+                <div className="grid grid-cols-4 gap-1 mt-1">
+                  {[
+                    { icon: "🖥️", label: "Website\nDevelopment" },
+                    { icon: "🔍", label: "SEO\nServices" },
+                    { icon: "👍", label: "Social Media\nMarketing" },
+                    { icon: "⚙️", label: "CRM\nSoftware" },
+                  ].map(({ icon, label }) => (
+                    <div key={label} className="flex flex-col items-center text-center gap-1">
+                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg">{icon}</div>
+                      <span className="text-white text-[9px] leading-tight whitespace-pre-line">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex-1 bg-white px-5 py-4 flex flex-col justify-end gap-2">
+                <div className="h-2 bg-gray-100 rounded-full w-4/5" />
+                <div className="h-2 bg-gray-100 rounded-full w-3/5" />
+                <div className="h-2 bg-gray-100 rounded-full w-4/5 mt-1" />
+              </div>
+            </div>
+
+          </div>
+
+          {/* Mobile: stacked vertically */}
+          <div className="flex lg:hidden flex-col gap-6">
+            {/* Left card */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
+              <div className="bg-orange-500 px-5 pt-5 pb-6 flex flex-col gap-3">
+                <div className="bg-white rounded-full flex items-center gap-2 px-3 py-2">
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2"/><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <span className="text-gray-400 text-sm">Search Services</span>
+                </div>
+                <h3 className="text-white font-extrabold text-xl">Business Setup</h3>
+                <p className="text-orange-100 text-xs">All your essential business services under one roof.</p>
+                <div className="grid grid-cols-4 gap-1">
+                  {[
+                    { icon: "📄", label: "GST\nRegistration" },
+                    { icon: "🏢", label: "Company\nRegistration" },
+                    { icon: "®️", label: "Trademark\nRegistration" },
+                    { icon: "📋", label: "FSSAI\nRegistration" },
+                  ].map(({ icon, label }) => (
+                    <div key={label} className="flex flex-col items-center text-center gap-1">
+                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg">{icon}</div>
+                      <span className="text-white text-[9px] leading-tight whitespace-pre-line">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-white px-5 py-4 flex flex-col gap-2">
+                <div className="h-2 bg-gray-100 rounded-full w-4/5" />
+                <div className="h-2 bg-gray-100 rounded-full w-3/5" />
+              </div>
+            </div>
+            {/* Center card */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl px-6 py-7">
+              <div className="flex items-center gap-2 mb-1">
+                <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+                  <text x="1" y="28" fontSize="27" fontWeight="900" fill="#1E3A5F">k</text>
+                  <path d="M17 19 L27 7" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round"/>
+                  <polygon points="27,7 21,9 26,14" fill="#F97316"/>
+                </svg>
+                <span style={{ fontWeight: 900, fontSize: "20px", color: "#1E3A5F" }}>
+                  koopindia<span style={{ color: "#F97316" }}>.</span>
+                </span>
+              </div>
+              <p className="text-orange-500 font-bold text-sm mb-4">Launch. Scale. Lead.</p>
+              <div className="flex flex-col gap-1">
+                {[
+                  { icon: "🏛️", color: "#1E3A5F", label: "Business Registration & Compliance" },
+                  { icon: "📢", color: "#F97316", label: "Branding & Digital Marketing" },
+                  { icon: "💻", color: "#1E3A5F", label: "Website & Software Development" },
+                  { icon: "🧑‍💼", color: "#F97316", label: "Startup & Business Consulting" },
+                  { icon: "📈", color: "#1E3A5F", label: "End-to-End Growth Solutions" },
+                ].map(({ icon, color, label }) => (
+                  <div key={label} className="flex items-center gap-3 py-2 px-2 rounded-xl">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: color }}>{icon}</div>
+                    <span className="font-semibold text-[#1E3A5F] text-sm">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* Right card */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
+              <div className="bg-orange-500 px-5 pt-5 pb-4 flex flex-col gap-3 relative overflow-hidden">
+                <div className="absolute right-3 top-3 opacity-70">
+                  <span className="text-3xl">🚀</span>
+                </div>
+                <div className="bg-white rounded-full flex items-center gap-2 px-3 py-2 w-4/5">
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2"/><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <span className="text-gray-400 text-sm">Search Solutions</span>
+                </div>
+                <h3 className="text-white font-extrabold text-xl">Digital Growth</h3>
+                <p className="text-orange-100 text-xs">Powerful solutions to grow your business online.</p>
+                <div className="grid grid-cols-4 gap-1">
+                  {[
+                    { icon: "🖥️", label: "Website\nDevelopment" },
+                    { icon: "🔍", label: "SEO\nServices" },
+                    { icon: "👍", label: "Social Media\nMarketing" },
+                    { icon: "⚙️", label: "CRM\nSoftware" },
+                  ].map(({ icon, label }) => (
+                    <div key={label} className="flex flex-col items-center text-center gap-1">
+                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg">{icon}</div>
+                      <span className="text-white text-[9px] leading-tight whitespace-pre-line">{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="bg-white px-5 py-4 flex flex-col gap-2">
+                <div className="h-2 bg-gray-100 rounded-full w-4/5" />
+                <div className="h-2 bg-gray-100 rounded-full w-3/5" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ------- Solutions Section ------- */}
+      <section id="solution" className="py-16 px-4 md:px-8 scroll-mt-24" style={{ background: "#F8F9FF" }}>
+        <div className="max-w-6xl mx-auto">
+
           {/* Heading */}
-          <h1 className="text-4xl font-extrabold text-center mb-14 tracking-wide">
-            OUR CORE SOLUTIONS
-          </h1>
+          <div className="text-center mb-12">
+            <span className="inline-block bg-orange-500/10 text-orange-500 font-bold text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-orange-500/20 mb-4">
+              What We Offer
+            </span>
+            <h2 className="text-4xl font-extrabold text-[#141d32] tracking-tight">
+              Our Core <span className="text-orange-500">Solutions</span>
+            </h2>
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto text-sm">
+              Everything your business needs to launch, grow and scale — under one roof.
+            </p>
+          </div>
 
-          {/* Grid Layout */}
-          <div className="grid md:grid-cols-2 gap-10">
-            {/* Strategic Business Solutions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-transform duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl bg-orange-500 text-white w-12 h-12 flex items-center justify-center rounded-full">
-                  ♟
-                </span>
-                <h2 className="text-xl font-bold text-[#141d32]">
-                  Strategic Business Solutions
-                </h2>
+          {/* Grid */}
+          <div className="grid md:grid-cols-2 gap-6">
+
+            {/* Card 1 — Strategic Business */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-orange-500 rounded-l-2xl" />
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center text-2xl shadow-md shadow-orange-200 flex-shrink-0">
+                  ♟️
+                </div>
+                <h3 className="text-lg font-bold text-[#141d32] leading-snug">Strategic Business Solutions</h3>
               </div>
-              <p className="text-gray-600 mb-3">
-                Market insights & strategies designed for sustainable business
-                growth.
+              <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+                Market insights & strategies designed for sustainable business growth.
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li>Business Consulting</li>
-                <li>Market Research & Analysis</li>
-                <li>Product & Margin Valuation</li>
-                <li>Distribution & Franchise Consultancy</li>
+              <ul className="space-y-2">
+                {["Business Consulting", "Market Research & Analysis", "Product & Margin Valuation", "Distribution & Franchise Consultancy"].map(item => (
+                  <li key={item} className="flex items-center gap-2 text-sm text-[#141d32]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Creative & Branding Solutions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-transform duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl bg-orange-500 text-white w-12 h-12 flex items-center justify-center rounded-full">
+            {/* Card 2 — Creative & Branding */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-[#141d32] rounded-l-2xl" />
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#141d32] flex items-center justify-center text-2xl shadow-md shadow-slate-200 flex-shrink-0">
                   💡
-                </span>
-                <h2 className="text-xl font-bold text-[#141d32]">
-                  Creative & Branding Solutions
-                </h2>
+                </div>
+                <h3 className="text-lg font-bold text-[#141d32] leading-snug">Creative & Branding Solutions</h3>
               </div>
-              <p className="text-gray-600 mb-3">
-                Build a strong brand identity with compelling designs & creative
-                assets.
+              <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+                Build a strong brand identity with compelling designs & creative assets.
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li>Logo & Brand Identity Design</li>
-                <li>Product Packaging Design</li>
-                <li>Marketing Collaterals</li>
-                <li>Social Media Creative Designs</li>
+              <ul className="space-y-2">
+                {["Logo & Brand Identity Design", "Product Packaging Design", "Marketing Collaterals", "Social Media Creative Designs"].map(item => (
+                  <li key={item} className="flex items-center gap-2 text-sm text-[#141d32]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#141d32] flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Digital Growth Solutions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-transform duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl bg-orange-500 text-white w-12 h-12 flex items-center justify-center rounded-full">
+            {/* Card 3 — Digital Growth */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-[#141d32] rounded-l-2xl" />
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#141d32] flex items-center justify-center text-2xl shadow-md shadow-slate-200 flex-shrink-0">
                   📈
-                </span>
-                <h2 className="text-xl font-bold text-[#141d32]">
-                  Digital Growth Solutions
-                </h2>
+                </div>
+                <h3 className="text-lg font-bold text-[#141d32] leading-snug">Digital Growth Solutions</h3>
               </div>
-              <p className="text-gray-600 mb-3">
-                Drive performance & generate quality leads with digital
-                marketing.
+              <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+                Drive performance & generate quality leads with digital marketing.
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li>Social Media Marketing</li>
-                <li>Search Engine Optimization (SEO)</li>
-                <li>Google & Meta Ads Management</li>
-                <li>Website Design & Development</li>
+              <ul className="space-y-2">
+                {["Social Media Marketing", "Search Engine Optimization (SEO)", "Google & Meta Ads Management", "Website Design & Development"].map(item => (
+                  <li key={item} className="flex items-center gap-2 text-sm text-[#141d32]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#141d32] flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Tech & Automation Solutions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-transform duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl bg-orange-500 text-white w-12 h-12 flex items-center justify-center rounded-full">
+            {/* Card 4 — Tech & Automation */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-orange-500 rounded-l-2xl" />
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center text-2xl shadow-md shadow-orange-200 flex-shrink-0">
                   ⚙️
-                </span>
-                <h2 className="text-xl font-bold text-[#141d32]">
-                  Tech & Automation Solutions
-                </h2>
+                </div>
+                <h3 className="text-lg font-bold text-[#141d32] leading-snug">Tech & Automation Solutions</h3>
               </div>
-              <p className="text-gray-600 mb-3">
-                Automate workflows & improve efficiency with smart tech
-                solutions.
+              <p className="text-gray-500 text-sm mb-4 leading-relaxed">
+                Automate workflows & improve efficiency with smart tech solutions.
               </p>
-              <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li>CRM Software Development</li>
-                <li>ERP for Business Automation</li>
-                <li>E-commerce Store Setup</li>
-                <li>Data Analytics & Reporting Tools</li>
+              <ul className="space-y-2">
+                {["CRM Software Development", "ERP for Business Automation", "E-commerce Store Setup", "Data Analytics & Reporting Tools"].map(item => (
+                  <li key={item} className="flex items-center gap-2 text-sm text-[#141d32]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
               </ul>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* ------- Services Section ------- */}
+
       <section className="bg-white">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <h2 className="text-4xl font-extrabold text-center text-black mb-12">

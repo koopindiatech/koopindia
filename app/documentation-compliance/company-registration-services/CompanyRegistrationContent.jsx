@@ -584,7 +584,7 @@ export default function CompanyRegistration() {
               </ul>
               <div className="mt-5 p-3 bg-amber-50 border border-amber-100 rounded-lg">
                 <p className="text-xs text-amber-700 leading-relaxed">
-                  📌 For foreign directors: notarised and apostilled copies of passport and address proof are required.
+                   For foreign directors: notarised and apostilled copies of passport and address proof are required.
                 </p>
               </div>
             </div>
@@ -604,12 +604,12 @@ export default function CompanyRegistration() {
               </ul>
               <div className="mt-5 p-3 bg-green-50 border border-green-100 rounded-lg">
                 <p className="text-xs text-green-700 leading-relaxed">
-                  ✅ You can use your home address as the registered office — perfectly legal and very common for new companies.
+                   You can use your home address as the registered office — perfectly legal and very common for new companies.
                 </p>
               </div>
               <div className="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-lg">
                 <p className="text-xs text-blue-700 leading-relaxed">
-                  💡 Virtual office addresses are also accepted. We can help you get one if needed.
+                   Virtual office addresses are also accepted. We can help you get one if needed.
                 </p>
               </div>
             </div>
@@ -630,7 +630,7 @@ export default function CompanyRegistration() {
               </ul>
               <div className="mt-5 p-3 bg-orange-50 border border-orange-100 rounded-lg">
                 <p className="text-xs text-orange-700 leading-relaxed">
-                  ✨ All legal documents — MOA, AOA, LLP Agreement — are drafted professionally by Koop India's CA/CS team. You don't need to arrange these.
+                   All legal documents — MOA, AOA, LLP Agreement — are drafted professionally by Koop India's CA/CS team. You don't need to arrange these.
                 </p>
               </div>
             </div>
