@@ -504,10 +504,20 @@ const HeroSection = ({ onOpenModal }) => {
                   ))}
                 </div>
               </div>
-              <div className="flex-1 bg-white px-5 py-4 flex flex-col justify-end gap-2">
-                <div className="h-2 bg-gray-100 rounded-full w-4/5" />
-                <div className="h-2 bg-gray-100 rounded-full w-3/5" />
-                <div className="h-2 bg-gray-100 rounded-full w-4/5 mt-1" />
+              <div className="flex-1 bg-white px-5 py-4 flex flex-col justify-between gap-3">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Quick Start</p>
+                <div className="flex flex-col gap-2">
+                  {[
+                    { icon: "✅", text: "100% Online Process" },
+                    { icon: "⚡", text: "Same Day Registration" },
+                    { icon: "🔒", text: "Govt. Certified Experts" },
+                  ].map(({ icon, text }) => (
+                    <div key={text} className="flex items-center gap-2 bg-orange-50 rounded-lg px-3 py-1.5">
+                      <span className="text-sm">{icon}</span>
+                      <span className="text-xs font-bold text-gray-700">{text}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -523,14 +533,11 @@ const HeroSection = ({ onOpenModal }) => {
             {/* ── CENTER CARD (taller / elevated) ── */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col py-7 px-6" style={{ minHeight: "420px", marginTop: "-20px", marginBottom: "-20px" }}>
               <div className="flex flex-col items-start mb-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
-                    <text x="1" y="28" fontSize="27" fontWeight="900" fill="#1E3A5F">k</text>
-                    <path d="M17 19 L27 7" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round"/>
-                    <polygon points="27,7 21,9 26,14" fill="#F97316"/>
-                  </svg>
-                  <span style={{ fontWeight: 900, fontSize: "22px", color: "#1E3A5F", letterSpacing: "-0.5px" }}>
-                    koopindia<span style={{ color: "#F97316" }}>.</span>
+                <div className="flex items-center mb-1">
+                  <span className="text-[26px] font-extrabold tracking-tight">
+                    <span className="text-orange-500">koop</span>
+                    <span className="text-[#1E3A5F]">india</span>
+                    <span className="text-orange-500">.</span>
                   </span>
                 </div>
                 <p className="text-orange-500 font-bold text-sm tracking-wide">Launch. Scale. Lead.</p>
@@ -595,10 +602,20 @@ const HeroSection = ({ onOpenModal }) => {
                   ))}
                 </div>
               </div>
-              <div className="flex-1 bg-white px-5 py-4 flex flex-col justify-end gap-2">
-                <div className="h-2 bg-gray-100 rounded-full w-4/5" />
-                <div className="h-2 bg-gray-100 rounded-full w-3/5" />
-                <div className="h-2 bg-gray-100 rounded-full w-4/5 mt-1" />
+              <div className="flex-1 bg-white px-5 py-4 flex flex-col justify-between gap-3">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Results We Deliver</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { value: "500+", label: "Websites Built" },
+                    { value: "10x", label: "Avg. ROI" },
+                    { value: "24/7", label: "Support" },
+                  ].map(({ value, label }) => (
+                    <div key={label} className="flex flex-col items-center bg-orange-50 rounded-xl py-2 px-1">
+                      <span className="text-orange-500 font-extrabold text-base leading-tight">{value}</span>
+                      <span className="text-[9px] text-gray-500 font-semibold text-center leading-tight mt-0.5">{label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 

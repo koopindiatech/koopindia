@@ -64,6 +64,11 @@ const Footer = ({ onOpenModal }) => {
               </Link>
             </li>
             <li>
+              <Link href="/seller-onboarding" className="hover:text-[#F97316]">
+                Seller Onboarding
+              </Link>
+            </li>
+            <li>
               <button
                 onClick={onOpenModal}
                 className="hover:text-[#F97316] cursor-pointer"
@@ -112,6 +117,11 @@ const Footer = ({ onOpenModal }) => {
             className="h-40 pr-2 overflow-y-scroll no-scrollbar"
           >
             <ul className="space-y-2">
+              <li>
+                <Link href="/seller-onboarding" className="hover:text-[#F97316]">
+                  Seller Onboarding
+                </Link>
+              </li>
               <li>
                 <Link href="/solutions/brands" className="hover:text-[#F97316]">
                   Startups / Brands

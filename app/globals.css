@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  padding-top: 80px; /* Header height */
+  padding-top: 68px; /* Header height */
 }
 
 :root {
