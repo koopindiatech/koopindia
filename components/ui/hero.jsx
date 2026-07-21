@@ -47,7 +47,7 @@ const HeroSection = ({ onOpenModal }) => {
     },
     {
       img: "/services/gst-registration.jpeg",
-      link: "/documentation-compliance/gst-registration",
+      link: "/gst-registration",
       alt: "GST Registration Services",
     },
     {
@@ -473,7 +473,7 @@ const HeroSection = ({ onOpenModal }) => {
       </section>
 
       {/* ------- SME Overview Section ------- */}
-      <section className="w-full py-12 px-4 md:px-8" style={{ background: "#0F1F3D" }}>
+      <section className="w-full py-22 px-4 md:px-8" style={{ background: "#0F1F3D" }}>
         <div className="max-w-6xl mx-auto">
 
           {/* Wrapper: cards + connector columns */}

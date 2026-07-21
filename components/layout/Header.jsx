@@ -36,7 +36,7 @@ const Header = ({ onOpenModal }) => {
       light: "bg-orange-50",
       accent: "text-orange-600",
       dropdown: [
-        { name: "GST Registration & Filing", href: "/documentation-compliance/gst-registration", icon: <FileCheck size={15} /> },
+        { name: "GST Registration & Filing", href: "/gst-registration", icon: <FileCheck size={15} /> },
         { name: "Trademark Registration", href: "/documentation-compliance/trademark-registration", icon: <FileCheck size={15} /> },
         { name: "FSSAI License", href: "/documentation-compliance/fssai-license", icon: <FileCheck size={15} /> },
         { name: "ISO Certification", href: "/documentation-compliance/iso-certification", icon: <FileCheck size={15} /> },

@@ -15,6 +15,11 @@ const nextConfig = {
         destination: "/documentation-compliance/company-registration-services",
         permanent: true,
       },
+      {
+        source: "/documentation-compliance/gst-registration",
+        destination: "/gst-registration",
+        permanent: true,
+      },
     ];
   },
 };

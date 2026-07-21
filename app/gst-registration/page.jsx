@@ -1,4 +1,4 @@
-import GSTContent from "./GSTContent";
+import GSTContent from "../documentation-compliance/gst-registration/GSTContent";
 
 /* ─────────────────────────────────────────────────────────────
    STRUCTURED DATA – Service + FAQPage + LocalBusiness
@@ -6,7 +6,7 @@ import GSTContent from "./GSTContent";
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: "GST Registration Service in Delhi",
+  name: "GST Registration Consultant in Delhi",
   provider: {
     "@type": "LocalBusiness",
     name: "Koop India",
@@ -83,7 +83,7 @@ const faqSchema = {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   METADATA – 20+ targeted keywords, city-specific H1 intent
+   METADATA – 25+ targeted keywords, city-specific, high-intent
 ───────────────────────────────────────────────────────────── */
 export const metadata = {
   title:
@@ -138,7 +138,7 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Hidden SEO H1 visible to Googlebot – City-targeted, high-intent */}
+      {/* Hidden SEO H1 – crawlable, city-targeted */}
       <h1 className="sr-only">
         GST Registration Consultant in Delhi – Online GST Number in 7 Days |
         Koop India

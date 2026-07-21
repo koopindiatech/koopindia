@@ -91,9 +91,9 @@ export default function sitemap() {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/documentation-compliance/gst-registration`,
+      url: `${baseUrl}/gst-registration`,
       lastModified,
-      priority: 0.8,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/documentation-compliance/fssai-license`,

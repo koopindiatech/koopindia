@@ -201,7 +201,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/documentation-compliance/gst-registration"
+                  href="/gst-registration"
                   className="hover:text-[#F97316]"
                 >
                   GST Registration
