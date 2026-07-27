@@ -37,6 +37,18 @@ import {
 /* ─── FAQ DATA ─── */
 const faqs = [
   {
+    q: "Who is the best GST registration consultant in Delhi?",
+    a: "Koop India is one of the most trusted GST registration consultants in Delhi, Noida, and Gurugram. We offer 100% online GST registration with CA-supervised filing, error-free documentation, and GSTIN delivery in 7–10 working days. Over 10,000 businesses registered pan-India.",
+  },
+  {
+    q: "How much does GST registration cost in Delhi?",
+    a: "GST registration through the government portal (gst.gov.in) is free. Professional consultant fees in Delhi like Koop India start from ₹2,999 and include expert consultation, document verification, error-free filing, query handling, and GSTIN delivery.",
+  },
+  {
+    q: "Can I get GST registration online from Delhi without visiting any office?",
+    a: "Yes. GST registration in Delhi is 100% online through the GST portal. Koop India handles everything digitally — document collection, GST REG-01 filing, Aadhaar OTP authentication, and query responses. No physical visit required. GSTIN delivered in 7–10 working days.",
+  },
+  {
     q: "What is GST Registration and who needs it?",
     a: "GST Registration is a mandatory process for businesses dealing in goods or services in India once their aggregate turnover crosses ₹40 lakhs (goods) or ₹20 lakhs (services). It's also mandatory for e-commerce operators, inter-state sellers, casual taxable persons, and those liable under RCM regardless of turnover.",
   },
@@ -45,8 +57,8 @@ const faqs = [
     a: "The threshold limit is ₹40 lakhs for businesses dealing in goods and ₹20 lakhs for service providers. For special category states (North-Eastern states, Himachal Pradesh, Uttarakhand), the limits are ₹20 lakhs (goods) and ₹10 lakhs (services).",
   },
   {
-    q: "How long does GST registration take?",
-    a: "With complete and correct documents, GST registration typically takes 7–10 working days. Koop India's expert team ensures error-free submission, which significantly reduces the chances of delays or queries from the department.",
+    q: "How long does GST registration take in Delhi, Noida or Gurugram?",
+    a: "With complete and correct documents, GST registration in Delhi, Noida, or Gurugram typically takes 7–10 working days. Koop India's expert team ensures error-free submission, which significantly reduces the chances of delays or queries from the department.",
   },
   {
     q: "What is a GSTIN and what does it look like?",
@@ -55,6 +67,10 @@ const faqs = [
   {
     q: "Is GST registration free of cost from the government?",
     a: "Yes, applying for GST registration on the government portal (www.gst.gov.in) is free. However, professional service fees like those charged by Koop India cover expert consultation, documentation, error-free filing, query handling, and follow-ups—saving you time, errors, and potential penalties.",
+  },
+  {
+    q: "Is Koop India a GST registration consultant in Noida and Gurugram?",
+    a: "Yes. Koop India is a trusted GST registration consultant in Noida, Gurugram, Ghaziabad, Faridabad, Greater Noida and all major Indian cities. Whether you are in Noida Sectors 18, 62, or Gurugram's Cyber City — the entire process is 100% online, no office visit needed.",
   },
   {
     q: "Can I cancel my GST registration if my business closes?",
@@ -69,8 +85,8 @@ const faqs = [
     a: "The Composition Scheme is a simplified tax scheme for small businesses with annual turnover below ₹1.5 crore (₹75 lakhs for some states). Taxpayers pay a fixed percentage of turnover (1–5% depending on business type), file returns quarterly, and cannot collect GST from customers or claim ITC.",
   },
   {
-    q: "Do e-commerce sellers need GST registration?",
-    a: "Yes. All sellers on e-commerce platforms like Amazon, Flipkart, Meesho, Myntra, etc., are mandatorily required to register for GST regardless of turnover. The e-commerce operator may also withhold TCS (Tax Collected at Source) from payments made to sellers.",
+    q: "Do e-commerce sellers in Delhi need GST registration?",
+    a: "Yes. All sellers on e-commerce platforms like Amazon, Flipkart, Meesho, Myntra, etc., including those operating from Delhi, Noida or Gurugram, are mandatorily required to register for GST regardless of turnover.",
   },
   {
     q: "What is Input Tax Credit (ITC) and how does GST registration help?",
@@ -403,15 +419,16 @@ const GSTContent = () => {
         <section className="bg-gradient-to-br from-[#0F172A] to-[#1E3A5F] text-white py-14 px-5">
           <div className="max-w-7xl mx-auto">
             <p className="text-orange-400 font-semibold text-sm uppercase tracking-widest mb-3">
-              #1 GST Registration Consultant in Delhi & NCR
+              #1 GST Registration Consultant in Delhi, Noida &amp; Gurugram
             </p>
-            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
-              Online GST Registration in India —{" "}
-              <span className="text-[#F97316]">Get Your GSTIN in 7 Days</span>
-            </h1>
-            <p className="text-gray-300 text-lg max-w-3xl mb-8 leading-relaxed">
-              Expert-assisted <strong className="text-white">GST Registration online</strong> for businesses, startups, freelancers & e-commerce sellers across India. Error-free documentation, fast GSTIN issuance & complete post-registration compliance support.
+            <h2 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+              GST Registration Consultant in Delhi{" "}
+              <span className="text-[#F97316]">| Compliance Expert</span>
+            </h2>
+            <p className="text-gray-300 text-lg max-w-3xl mb-6 leading-relaxed">
+              Delhi's most trusted <strong className="text-white">GST registration consultant</strong> — 100% online GST registration in Delhi, Noida, Gurugram &amp; all of India. Expert CA-supervised filing, error-free documentation &amp; complete post-registration compliance. Get your GSTIN in 7–10 working days.
             </p>
+
             <div className="flex flex-wrap gap-4 mb-8">
               {[
                 "✅ 100% Online Process",
@@ -420,6 +437,37 @@ const GSTContent = () => {
                 "📞 Free Consultation",
               ].map(badge => (
                 <span key={badge} className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm font-semibold text-white">{badge}</span>
+              ))}
+            </div>
+            {/* Hero CTA button */}
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={onOpenModal}
+                className="bg-[#F97316] hover:bg-orange-600 text-white font-bold px-7 py-3.5 rounded-xl inline-flex items-center gap-2 transition-all duration-200 shadow-lg shadow-orange-900/30 text-sm"
+              >
+                Apply for GST Registration <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════════════ TRUST STATS STRIP ══════════════════ */}
+        <section className="bg-white border-b border-slate-100 py-8 px-5">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+              {[
+                { end: 10000, suffix: "+", label: "Businesses Registered", sub: "Pan-India" },
+                { end: 98, suffix: "%", label: "First-Time Approval", sub: "Error-free filing" },
+                { end: 7, suffix: " Days", label: "Avg. GSTIN Delivery", sub: "Working days" },
+                { end: 4.9, suffix: "/5 ⭐", label: "Client Rating", sub: "1,200+ Reviews" },
+              ].map(({ end, suffix, label, sub }, i) => (
+                <div key={i} className="py-2">
+                  <div className="text-2xl md:text-3xl font-extrabold text-[#F97316] mb-1">
+                    {end === 4.9 ? "4.9/5 ⭐" : <AnimatedCounter end={end} suffix={suffix} />}
+                  </div>
+                  <p className="text-[#141D32] font-semibold text-sm">{label}</p>
+                  <p className="text-gray-400 text-xs">{sub}</p>
+                </div>
               ))}
             </div>
           </div>
@@ -1378,6 +1426,107 @@ const GSTContent = () => {
           </div>
         </section>
 
+        {/* ══════════════════ CITY TARGETING SECTION ══════════════════ */}
+        <section className="py-14 px-5 bg-slate-50 border-t border-slate-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-10">
+              <span className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4" style={{ background: "#fff7ed", color: "#F97316", border: "1px solid #fed7aa" }}>
+                Pan-India Service
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-[#141D32] mb-3">
+                GST Registration Consultant in{" "}
+                <span className="text-[#F97316]">Delhi, Noida &amp; Gurugram</span>
+              </h2>
+              <p className="text-gray-500 text-sm max-w-2xl mx-auto leading-relaxed mb-6">
+                Koop India is a leading GST registration consultant in Delhi, Noida &amp; Gurugram — serving businesses, startups, freelancers &amp; e-commerce sellers across Delhi NCR and all of India. 100% online, CA-supervised, no office visits needed.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {[
+                  { label: "Delhi", hot: true },
+                  { label: "Noida", hot: true },
+                  { label: "Gurugram", hot: true },
+                  { label: "Ghaziabad", hot: false },
+                  { label: "Faridabad", hot: false },
+                  { label: "Greater Noida", hot: false },
+                  { label: "Mumbai", hot: false },
+                  { label: "Bengaluru", hot: false },
+                  { label: "Hyderabad", hot: false },
+                  { label: "All India", hot: false },
+                ].map(({ label, hot }) => (
+                  <span key={label} className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${ hot ? "bg-[#F97316] text-white border-[#F97316]" : "bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-500" }`}>
+                    {hot && <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse inline-block" />}
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Delhi rich content */}
+            <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 md:p-8 mb-6">
+              <h3 className="text-lg font-bold text-[#141D32] mb-3">
+                GST Registration Consultant in <span className="text-[#F97316]">Delhi</span> — Why Businesses Choose Koop India
+              </h3>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                Delhi is India's commercial capital with lakhs of businesses, freelancers, and startups registering under GST every year. Whether you are in Connaught Place, Karol Bagh, Lajpat Nagar, Dwarka, Rohini, Saket, or any part of Delhi — Koop India makes GST registration fast, online, and completely hassle-free.
+              </p>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                As a specialist <strong className="text-[#141D32]">GST registration consultant in Delhi</strong>, we handle everything — document collection, GST REG-01 filing, Aadhaar OTP, query resolution, and GSTIN delivery. Our CA-supervised team ensures 98%+ first-time approval.
+              </p>
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {[
+                  "GST Registration for Proprietorship Delhi",
+                  "GST Registration for Private Limited Delhi",
+                  "GST Registration for LLP Delhi",
+                  "GST Registration for E-commerce Sellers Delhi",
+                  "GST Registration for Startups Delhi",
+                  "Voluntary GST Registration Delhi",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 bg-white border border-orange-100 rounded-xl p-3">
+                    <CheckCircle className="w-4 h-4 text-[#F97316] flex-shrink-0" />
+                    <p className="text-xs font-semibold text-[#141D32]">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Noida & Gurugram */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6">
+                <h3 className="text-base font-bold text-[#141D32] mb-2">
+                  GST Registration Consultant in <span className="text-[#F97316]">Noida</span>
+                </h3>
+                <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                  Noida's thriving startup and IT ecosystem — from Sector 18, 62, Techzone to Expressway — needs fast, reliable GST registration. Koop India is the trusted GST registration consultant in Noida for proprietorships, startups, e-commerce sellers, and Private Limited companies. 100% online, GSTIN in 7 days.
+                </p>
+                <ul className="space-y-1.5">
+                  {["GST Registration Noida", "E-commerce GST Noida", "Startup GST Registration Noida", "GST + Company Registration Noida"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs text-gray-600">
+                      <CheckCircle className="w-3.5 h-3.5 text-[#F97316] flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-2xl p-6">
+                <h3 className="text-base font-bold text-[#141D32] mb-2">
+                  GST Registration Consultant in <span className="text-[#F97316]">Gurugram</span>
+                </h3>
+                <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                  Gurugram (Gurgaon) — India's corporate hub with businesses in Cyber City, DLF, Golf Course Road, Udyog Vihar, and Sohna Road. Koop India is a leading GST registration consultant in Gurugram, providing fast and affordable GST registrations for companies, freelancers, and MSMEs. 100% online process.
+                </p>
+                <ul className="space-y-1.5">
+                  {["GST Registration Gurugram", "MSME GST Gurugram", "Freelancer GST Registration Gurgaon", "GST Filing Support Gurugram"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs text-gray-600">
+                      <CheckCircle className="w-3.5 h-3.5 text-[#F97316] flex-shrink-0" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ══════════════════ FAQ ══════════════════ */}
         <section className="pb-16 px-5">
           <div className="max-w-4xl mx-auto">
@@ -1386,17 +1535,59 @@ const GSTContent = () => {
                 Common Questions
               </span>
               <h2 className="text-3xl md:text-4xl font-extrabold text-[#141D32] mt-2">
-                Frequently Asked{" "}
-                <span className="text-[#F97316]">Questions</span>
+                GST Registration in Delhi —{" "}
+                <span className="text-[#F97316]">Common Questions</span>
               </h2>
               <p className="text-gray-500 mt-3">
-                Everything you need to know about GST Registration in India
+                Answers to the most common questions from Delhi, Noida &amp; Gurugram businesses about GST registration.
               </p>
             </div>
 
             <div>
               {faqs.map((faq, i) => (
                 <FAQItem key={i} q={faq.q} a={faq.a} index={i} />
+              ))}
+            </div>
+          </div>
+        </section>
+        {/* ══════════════════ SEO KEYWORD PILLS ══════════════════ */}
+        <section className="py-10 px-5 bg-slate-50 border-t border-slate-200">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-6">
+              <h3 className="text-base font-bold text-[#141D32]">Our GST Registration Services &amp; Locations</h3>
+              <p className="text-xs text-gray-500 mt-1">Trusted GST registration consultant in Delhi, Noida, Gurugram &amp; across India.</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-2">
+              {[
+                "GST Registration Consultant in Delhi",
+                "Best GST Consultant in Delhi",
+                "Online GST Registration Delhi",
+                "GST Number Registration Delhi",
+                "GST Registration Near Me Delhi",
+                "GST Registration Consultant in Noida",
+                "GST Registration Consultant in Gurugram",
+                "GST Registration Consultant in Gurgaon",
+                "GST Registration Consultant in Ghaziabad",
+                "GST Registration Consultant in Faridabad",
+                "GST Registration Consultant in Greater Noida",
+                "GST Registration for Proprietorship Delhi",
+                "GST Registration for Private Limited Delhi",
+                "GST Registration for LLP Delhi",
+                "GST Registration for Startups Delhi",
+                "GST Registration for E-commerce Sellers",
+                "GST Registration for Freelancers Delhi",
+                "Voluntary GST Registration Delhi",
+                "Composition Scheme GST Registration",
+                "GSTIN Registration India",
+                "GST Filing Services Delhi",
+                "GST Return Filing Delhi",
+                "GST Compliance Services Delhi",
+                "GST Consultant Near Me",
+                "Online GST Registration India 2025",
+              ].map((kw, i) => (
+                <span key={i} className="text-[11px] text-gray-500 bg-white border border-slate-200 px-3 py-1.5 rounded-full hover:border-orange-300 hover:text-orange-600 transition-colors cursor-default">
+                  {kw}
+                </span>
               ))}
             </div>
           </div>
