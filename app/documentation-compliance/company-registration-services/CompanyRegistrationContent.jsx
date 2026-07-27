@@ -59,16 +59,18 @@ export default function CompanyRegistration() {
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "LegalService",
-    "name": "Koop India - Best Company Registration Consultant in Noida & Delhi NCR",
-    "description": "Best Company Registration Consultant in Noida, Delhi, Gurugram & across India. Online Private Limited Company Registration, GST, ROC Compliance & Business Compliance Services at affordable rates.",
+    "name": "Koop India - Company Registration Consultant in Delhi, Noida & Gurugram",
+    "description": "Expert company registration consultant in Delhi — Private Limited Company, OPC, LLP & GST registration online. Koop India's CA/CS team delivers 100% online company registration in Delhi with zero hidden charges and 7-day turnaround. Also serving Noida & Gurugram.",
     "url": "https://koopindia.com/documentation-compliance/company-registration-services",
     "telephone": "+91-9599826131",
+    "priceRange": "₹₹",
     "areaServed": [
-      { "@type": "City", "name": "Noida" },
       { "@type": "City", "name": "Delhi" },
+      { "@type": "City", "name": "Noida" },
       { "@type": "City", "name": "Gurugram" },
       { "@type": "City", "name": "Ghaziabad" },
       { "@type": "City", "name": "Faridabad" },
+      { "@type": "City", "name": "Greater Noida" },
       { "@type": "City", "name": "Bengaluru" },
       { "@type": "City", "name": "Mumbai" },
       { "@type": "City", "name": "Pune" },
@@ -77,18 +79,22 @@ export default function CompanyRegistration() {
       { "@type": "Country", "name": "India" }
     ],
     "serviceType": [
-      "Company Registration Consultant",
+      "Company Registration Consultant in Delhi",
+      "Company Registration Consultant in Noida",
+      "Company Registration Consultant in Gurugram",
       "Private Limited Company Registration Online",
       "Company Registration with GST",
       "Company Registration and Trademark Services",
-      "Company Registration for Startups",
+      "Company Registration for Startups in Delhi",
       "ROC Compliance Services",
       "Annual Compliance Services",
       "Online Company Registration",
       "Affordable Company Registration Services India",
       "MCA Compliance Consultant",
       "Business Compliance Services",
-      "Startup Compliance Consultant"
+      "Startup Compliance Consultant",
+      "LLP Registration in Delhi",
+      "OPC Registration Delhi"
     ],
     "provider": {
       "@type": "Organization",
@@ -97,13 +103,14 @@ export default function CompanyRegistration() {
     },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": "Company Registration Services",
+      "name": "Company Registration Services in Delhi NCR",
       "itemListElement": [
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Private Limited Company Registration" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Private Limited Company Registration in Delhi" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "One Person Company (OPC) Registration" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "LLP Registration" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "LLP Registration in Delhi" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Partnership Firm Registration" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "ROC Annual Compliance" } }
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "ROC Annual Compliance" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Company Registration with GST" } }
       ]
     }
   };
@@ -114,6 +121,30 @@ export default function CompanyRegistration() {
     "mainEntity": [
       {
         "@type": "Question",
+        "name": "Who is the best company registration consultant in Delhi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Koop India is widely regarded as the best company registration consultant in Delhi, Noida, and Gurugram. We offer 100% online Private Limited Company Registration, OPC, LLP, and GST registration with CA/CS support, transparent pricing, and 7-day turnaround. Serving Delhi NCR businesses since 2022 with 5,000+ registrations."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does company registration cost in Delhi?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Company registration cost in Delhi depends on the entity type (Pvt Ltd, OPC, LLP), authorised share capital, and applicable state stamp duty. Koop India offers all-inclusive, transparent packages with no hidden charges. Contact us for a custom quote for Delhi company registration — typically starting from ₹6,999 for basic packages."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I register a company online from Delhi without visiting any office?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, absolutely. Company registration in Delhi is 100% online through the MCA portal. As a trusted online company registration consultant in Delhi, Koop India handles everything digitally — name approval, DSC, DIN, SPICe+ filing, MOA/AOA drafting — no office visits required. Your Certificate of Incorporation is delivered digitally."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Which structure is best for a startup looking to raise funding?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -122,10 +153,10 @@ export default function CompanyRegistration() {
       },
       {
         "@type": "Question",
-        "name": "Can I register a company using my home address?",
+        "name": "Can I register a company using my home address in Delhi or Noida?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Absolutely. Your home address is perfectly valid as a registered office address. You'll need to provide an electricity bill or bank statement for the property. As the best company registration consultant in Noida and Delhi NCR, we guide you through this process seamlessly."
+          "text": "Yes. Your home address in Delhi, Noida, Gurugram or anywhere in India is perfectly valid as a registered office address. You'll need to provide an electricity bill or bank statement for the property. As an experienced company registration consultant in Delhi NCR, we guide you through this process seamlessly."
         }
       },
       {
@@ -142,14 +173,6 @@ export default function CompanyRegistration() {
         "acceptedAnswer": {
           "@type": "Answer",
           "text": "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your brand is protected and name approval goes smoothly."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the best company registration consultant in Noida?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Koop India is widely regarded as the best company registration consultant in Noida and Delhi NCR. We offer 100% online Private Limited Company Registration, OPC, LLP, and GST registration with CA/CS support, transparent processes, and same-day document collection."
         }
       },
       {
@@ -178,10 +201,10 @@ export default function CompanyRegistration() {
       },
       {
         "@type": "Question",
-        "name": "Is Koop India a company registration consultant in Delhi?",
+        "name": "Is Koop India a company registration consultant in Gurugram?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Koop India serves as a company registration consultant in Delhi, Noida, Gurugram, Ghaziabad, Faridabad and all major cities across India. Our services are 100% online, so you can register your company from anywhere — no physical visit required."
+          "text": "Yes. Koop India serves as a company registration consultant in Gurugram, Delhi, Noida, Ghaziabad, Faridabad and all major cities across India. Our services are 100% online, so businesses in Gurugram's Cyber City, DLF, and Golf Course Road can register their company from anywhere — no physical visit required."
         }
       },
       {
@@ -214,7 +237,7 @@ export default function CompanyRegistration() {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "Company Registration Consultant in Noida & Delhi",
+        "name": "Company Registration Consultant in Delhi, Noida & Gurugram",
         "item": "https://koopindia.com/documentation-compliance/company-registration-services"
       }
     ]
@@ -235,17 +258,17 @@ export default function CompanyRegistration() {
         <meta name="robots" content="index, follow" />
         <meta name="author" content="Koop India" />
         <link rel="canonical" href="https://koopindia.com/documentation-compliance/company-registration-services" />
-        <meta property="og:title" content="Best Company Registration Consultant in Noida & Delhi | Koop India" />
+        <meta property="og:title" content="Company Registration Consultant in Delhi, Noida & Gurugram | Koop India" />
         <meta
           property="og:description"
-          content="100% online Private Limited Company Registration in India. Expert company registration consultant in Noida, Delhi NCR & all major cities. CA/CS supervised. No hidden charges."
+          content="Trusted company registration consultant in Delhi, Noida, Gurugram & across India. 100% online Private Limited Company Registration, OPC, LLP, GST. CA/CS supervised. No hidden charges."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://koopindia.com/documentation-compliance/company-registration-services" />
         <meta property="og:site_name" content="Koop India" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Best Company Registration Consultant in Noida & Delhi | Koop India" />
-        <meta name="twitter:description" content="100% online Private Limited Company Registration. Expert consultant in Noida, Delhi, Gurugram & all India. Contact Koop India today." />
+        <meta name="twitter:title" content="Company Registration Consultant in Delhi, Noida & Gurugram | Koop India" />
+        <meta name="twitter:description" content="100% online company registration in Delhi, Noida, Gurugram & across India. Private Limited, OPC, LLP, GST. CA/CS supervised. Contact Koop India today." />
       </Head>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
@@ -269,7 +292,7 @@ export default function CompanyRegistration() {
           <div className="flex items-center gap-2 mb-8">
             <span className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/25 text-orange-300 text-xs font-medium px-4 py-1.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-              India's Most Trusted Registration Partner
+              Delhi's Most Trusted Company Registration &amp; Compliance Experts
             </span>
           </div>
 
@@ -277,10 +300,11 @@ export default function CompanyRegistration() {
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-white leading-[1.15] tracking-tight mb-5">
                 <span className="text-orange-400">Company Registration</span><br />
-                Consultant in Delhi
+                Consultant in Delhi<span className="text-slate-400"> |</span><br />
+                <span className="text-orange-300 text-3xl md:text-4xl">Compliance Expert</span>
               </h1>
               <p className="text-slate-400 text-base leading-relaxed mb-8 max-w-lg">
-                India's most trusted company registration consultant for Noida, Delhi, Gurugram &amp; all major cities. 100% online Private Limited Company Registration, OPC, LLP, ROC Compliance &amp; GST — handled by CA/CS experts with no hidden charges.
+                Delhi's most trusted company registration consultant for Private Limited Company, OPC, LLP &amp; Partnership Firm registration. 100% online process, CA/CS expert team, zero hidden charges. Certificate of Incorporation delivered in 7 days — serving Delhi, Noida &amp; Gurugram.
               </p>
 
               <div className="flex flex-wrap gap-3 mb-10">
@@ -793,10 +817,10 @@ export default function CompanyRegistration() {
           <div className="text-center mb-14">
             <Tag>Why Koop India</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">
-              Company Registration Consultant in Delhi —{" "}<span className="text-orange-500">Why Choose Koop India?</span>
+              Best Company Registration Consultant in Delhi —{" "}<span className="text-orange-500">Why Choose Koop India?</span>
             </h2>
             <p className="text-slate-500 text-sm max-w-xl mx-auto">
-              Over 5,000 founders, freelancers, and growing businesses have trusted Koop India. Here's why they keep coming back.
+              Over 5,000 founders, freelancers, and growing businesses across Delhi, Noida &amp; Gurugram have trusted Koop India. Here's why they keep coming back.
             </p>
           </div>
 
@@ -991,24 +1015,27 @@ export default function CompanyRegistration() {
           <div className="text-center mb-14">
             <Tag>FAQ</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">
-              Questions We Get <span className="text-orange-500">All the Time</span>
+              Company Registration in Delhi —{" "}<span className="text-orange-500">Common Questions</span>
             </h2>
             <p className="text-slate-500 text-sm">
-              Answers to the most common questions from founders before they register.
+              Answers to the most common questions from Delhi, Noida &amp; Gurugram founders before they register.
             </p>
           </div>
 
           <div className="space-y-3">
             {[
-              { q: "Which structure is best for a startup looking to raise funding?", a: "A Private Limited Company is the only structure that allows equity investment from VCs, angel investors, and institutional funds. If raising money is part of your plan, Private Limited Company Registration Online is the right choice. It also qualifies for DPIIT Startup India recognition." },
-              { q: "Can I register a company using my home address?", a: "Absolutely. Your home address is perfectly valid as a registered office address. You'll need to provide an electricity bill or bank statement for the property. As the best company registration consultant in Noida and Delhi NCR, we guide you through this process seamlessly." },
-              { q: "Do I need to be physically present anywhere during registration?", a: "No. The entire process is 100% online. As an online company registration consultant, we handle everything digitally. You'll need to e-sign some documents using your Aadhaar-linked OTP or DSC." },
-              { q: "What is the minimum capital I need to register a company?", a: "There is no statutory minimum paid-up capital for Private Limited, OPC, or LLP under current Indian law. We offer affordable company registration services in India regardless of your capital size." },
-              { q: "How do I know if I need GST registration after incorporating?", a: "GST registration is compulsory if your business turnover crosses threshold limits or if you sell online. We provide company registration with GST as a bundled service for a seamless start." },
-              { q: "Can a Non-Resident Indian or foreign national be a director?", a: "Yes. NRIs and foreign nationals can be directors or shareholders of Indian companies. However, at least one director must be a Resident Indian." },
+              { q: "Who is the best company registration consultant in Delhi?", a: "Koop India is one of the most trusted company registration consultants in Delhi, Noida, and Gurugram. We offer 100% online Private Limited Company Registration, OPC, LLP, and GST with CA/CS support, transparent pricing, and 7-day turnaround. Over 5,000 businesses registered across Delhi NCR." },
+              { q: "How much does company registration cost in Delhi?", a: "Company registration cost in Delhi depends on the entity type (Pvt Ltd, OPC, LLP), authorised share capital, and applicable state stamp duty. Koop India offers all-inclusive, transparent packages. Contact us for a custom quote — no hidden charges, no surprises." },
+              { q: "Can I register a company online from Delhi without visiting any office?", a: "Yes. Company registration in Delhi is 100% online through the MCA portal. Koop India handles everything digitally — name approval, DSC, DIN, SPICe+ filing, MOA/AOA drafting. No office visits required. Your Certificate of Incorporation is delivered digitally within 7–10 working days." },
+              { q: "Which structure is best for a startup in Delhi looking to raise funding?", a: "A Private Limited Company is the only structure that allows equity investment from VCs, angel investors, and institutional funds. If raising money is part of your plan, Private Limited Company Registration Online is the right choice. It also qualifies for DPIIT Startup India recognition." },
+              { q: "Can I register a company using my home address in Delhi or Noida?", a: "Absolutely. Your home address in Delhi, Noida, Gurugram or anywhere in India is perfectly valid as a registered office address. You'll need to provide an electricity bill or bank statement for the property. We guide you through this process seamlessly." },
+              { q: "Do I need to be physically present anywhere during company registration in Delhi?", a: "No. The entire process is 100% online. As an online company registration consultant in Delhi, we handle everything digitally. You'll need to e-sign some documents using your Aadhaar-linked OTP or DSC." },
+              { q: "What is the minimum capital I need to register a company in India?", a: "There is no statutory minimum paid-up capital for Private Limited, OPC, or LLP under current Indian law. We offer affordable company registration services in Delhi, Noida, and across India regardless of your capital size." },
+              { q: "Can I get GST registration along with company registration in Delhi?", a: "Yes. Koop India offers combined company registration with GST service in Delhi and across India. Once your Certificate of Incorporation is issued, we immediately file for GST registration so your business is fully ready to operate." },
+              { q: "Is Koop India a company registration consultant in Gurugram?", a: "Yes. Koop India serves as a trusted company registration consultant in Gurugram, Delhi, Noida, Ghaziabad, Faridabad and all major cities. Businesses in Gurugram's Cyber City and DLF areas can register their company 100% online — no physical visit required." },
+              { q: "What ongoing compliance is required after company registration in Delhi?", a: "For a Private Limited Company registered in Delhi: annual ROC filings (AOC-4, MGT-7), statutory audit, ITR, and GST returns. As your dedicated corporate compliance consultant, Koop India offers annual compliance packages covering all of these under a single fixed fee." },
               { q: "What happens if MCA rejects my company name?", a: "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your brand is protected and name approval goes smoothly." },
-              { q: "What ongoing compliance is required after registration?", a: "For a Private Limited Company: annual ROC filings, statutory audit, ITR, and GST. As your dedicated corporate compliance consultant, Koop India offers annual compliance services that cover all of these under a single fixed fee." },
-              { q: "How soon can I open a bank account after getting my incorporation certificate?", a: "Immediately. Most banks process current account applications for new companies within 2–5 working days once you submit the Certificate of Incorporation." },
+              { q: "How soon can I open a bank account after company registration in Delhi?", a: "Immediately. Most banks in Delhi and NCR process current account applications for new companies within 2–5 working days once you submit the Certificate of Incorporation." },
             ].map((item, i) => (
               <FaqItem key={i} q={item.q} a={item.a} />
             ))}
@@ -1020,32 +1047,35 @@ export default function CompanyRegistration() {
       <section className="py-12 px-6 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
-            <h3 className="text-lg font-bold text-[#0F172A]">Our Specialised Services & Consulting Locations</h3>
-            <p className="text-sm text-slate-500 mt-2">Trusted business compliance and registration consultants across India.</p>
+            <h3 className="text-lg font-bold text-[#0F172A]">Our Specialised Services &amp; Consulting Locations</h3>
+            <p className="text-sm text-slate-500 mt-2">Trusted company registration consultants in Delhi, Noida, Gurugram &amp; across India.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-2">
             {[
-              "Company Registration Consultant in India",
+              "Company Registration Consultant in Delhi",
+              "Best Company Registration Consultant in Delhi",
+              "Company Registration Consultant in Noida",
               "Best Company Registration Consultant in Noida",
+              "Company Registration Consultant in Gurugram",
+              "Company Registration Consultant in Delhi NCR",
+              "Company Registration Online Delhi",
+              "Private Limited Company Registration in Delhi",
               "Private Limited Company Registration Online",
               "Register Private Limited Company in India",
               "Company Registration with GST",
               "Company Registration and Trademark Services",
-              "Company Registration for Startups",
+              "Company Registration for Startups in Delhi",
               "Online Company Registration Consultant",
               "Affordable Company Registration Services India",
               "Company Registration Consultant Near Me",
-              "Company Registration Consultant in Noida",
-              "Company Registration Consultant in Delhi",
-              "Company Registration Consultant in Gurugram",
               "Company Registration Consultant in Ghaziabad",
               "Company Registration Consultant in Faridabad",
+              "Company Registration Consultant in Greater Noida",
               "Company Registration Consultant in Bengaluru",
               "Company Registration Consultant in Mumbai",
               "Company Registration Consultant in Pune",
               "Company Registration Consultant in Hyderabad",
               "Company Registration Consultant in Bhubaneswar",
-              "Company Registration Consultant",
               "Company Compliance Consultant",
               "Business Compliance Services",
               "Online Company Registration",
@@ -1054,7 +1084,10 @@ export default function CompanyRegistration() {
               "Corporate Compliance Consultant",
               "Startup Compliance Consultant",
               "Company Registration Services",
-              "MCA Compliance Consultant"
+              "MCA Compliance Consultant",
+              "LLP Registration in Delhi",
+              "OPC Registration Delhi",
+              "Startup India Registration Delhi"
             ].map((kw, i) => (
               <span key={i} className="text-[11px] text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-full hover:border-orange-300 hover:text-orange-600 transition-colors cursor-default">
                 {kw}
@@ -1119,18 +1152,18 @@ export default function CompanyRegistration() {
               Pan-India Service
             </span>
             <h2 className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-3">
-              Company Registration Consultant{" "}
-              <span className="text-orange-500">in Delhi</span>
+              Company Registration Consultant in{" "}
+              <span className="text-orange-500">Delhi, Noida &amp; Gurugram</span>
             </h2>
             <p className="text-slate-500 text-sm max-w-2xl mx-auto leading-relaxed mb-5">
-              Serving founders & businesses across Delhi NCR and all major cities in India — 100% online, CA/CS supervised, no office visits needed.
+              Koop India is a leading company registration consultant in Delhi, Noida &amp; Gurugram — serving founders &amp; businesses across Delhi NCR and all major cities in India. 100% online, CA/CS supervised, no office visits needed.
             </p>
             {/* City Pills Sub-heading */}
             <div className="flex flex-wrap justify-center gap-2">
               {[
+                { label: "Delhi", hot: true },
                 { label: "Noida", hot: true },
                 { label: "Gurugram", hot: true },
-                { label: "Delhi NCR", hot: true },
                 { label: "Faridabad", hot: false },
                 { label: "Ghaziabad", hot: false },
                 { label: "Greater Noida", hot: false },
@@ -1158,16 +1191,16 @@ export default function CompanyRegistration() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-10">
             {[
+              { city: "Delhi", tag: "⭐ #1 Rated" },
               { city: "Noida", tag: "⭐ Top Rated" },
-              { city: "Delhi", tag: "⭐ Top Rated" },
-              { city: "Gurugram", tag: "" },
+              { city: "Gurugram", tag: "⭐ Top Rated" },
               { city: "Ghaziabad", tag: "" },
               { city: "Faridabad", tag: "" },
+              { city: "Greater Noida", tag: "" },
               { city: "Bengaluru", tag: "" },
               { city: "Mumbai", tag: "" },
               { city: "Pune", tag: "" },
               { city: "Hyderabad", tag: "" },
-              { city: "Bhubaneswar", tag: "" },
             ].map(({ city, tag }, i) => (
               <div
                 key={i}
@@ -1189,20 +1222,87 @@ export default function CompanyRegistration() {
             ))}
           </div>
 
+          {/* Delhi-specific rich content block */}
+          <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 md:p-8 mb-8">
+            <h3 className="text-xl font-bold text-[#0F172A] mb-3">
+              Company Registration Consultant in <span className="text-orange-500">Delhi</span> — Why Businesses Trust Koop India
+            </h3>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">
+              Delhi is India's commercial capital — home to thousands of startups, MSMEs, and established enterprises registered every year. Whether you are in Connaught Place, Saket, Dwarka, Rohini, Preet Vihar, Lajpat Nagar, or any other part of Delhi, Koop India makes company registration fast, simple, and completely online.
+            </p>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">
+              As a specialist <strong className="text-[#0F172A]">company registration consultant in Delhi</strong>, we help entrepreneurs register Private Limited Companies, One Person Companies (OPC), LLPs, and Partnership Firms under the Ministry of Corporate Affairs (MCA). Our CA/CS team handles name approval, DSC, DIN, SPICe+ form filing, MOA/AOA drafting, and GST registration — all in one seamless service.
+            </p>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {[
+                { title: "Private Limited Company in Delhi", desc: "Ideal for startups &amp; businesses seeking investors" },
+                { title: "OPC Registration Delhi", desc: "Best for solo entrepreneurs &amp; consultants" },
+                { title: "LLP Registration Delhi", desc: "Preferred by CA firms, law firms &amp; professionals" },
+                { title: "GST Registration Delhi", desc: "Bundled with company registration for fast compliance" },
+                { title: "ROC Compliance Delhi", desc: "Annual return, audit &amp; statutory filings managed" },
+                { title: "Startup India (DPIIT) Delhi", desc: "Recognition &amp; tax benefits for early-stage startups" },
+              ].map(({ title, desc }, i) => (
+                <div key={i} className="flex items-start gap-2 bg-white border border-orange-100 rounded-xl p-3">
+                  <CheckCircle2 className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-[#0F172A]">{title}</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5" dangerouslySetInnerHTML={{ __html: desc }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Gurugram & Noida content blocks */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+              <h3 className="text-base font-bold text-[#0F172A] mb-2">
+                Company Registration Consultant in <span className="text-orange-500">Noida</span>
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                Noida is home to India's fastest-growing startup ecosystem — from Sector 18 and 62 to Techzone and Expressway. Koop India is the most trusted company registration consultant in Noida, having helped 2,000+ Noida founders register their businesses. We offer Private Limited, OPC, and LLP registrations with GST bundled — all 100% online.
+              </p>
+              <ul className="space-y-1.5">
+                {["Private Limited Company in Noida", "OPC Registration Noida", "LLP Registration Noida", "GST + Company Registration Noida"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-xs text-slate-600">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+              <h3 className="text-base font-bold text-[#0F172A] mb-2">
+                Company Registration Consultant in <span className="text-orange-500">Gurugram</span>
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                Gurugram (Gurgaon) — India's corporate hub with companies from Fortune 500s to high-growth startups in Cyber City, DLF, Golf Course Road, and Udyog Vihar. Koop India is a leading company registration consultant in Gurugram, providing fast and affordable Private Limited, LLP, and OPC registration with complete compliance support.
+              </p>
+              <ul className="space-y-1.5">
+                {["Private Limited Company in Gurugram", "LLP Registration Gurugram", "GST + Company Registration Gurgaon", "Annual Compliance Gurugram"].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-xs text-slate-600">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
           <div className="bg-white border border-orange-100 rounded-2xl p-6 md:p-8">
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h3 className="text-lg font-bold text-[#0F172A] mb-3">
                   Why Choose Koop India as Your{" "}
-                  <span className="text-orange-500">Company Registration Consultant?</span>
+                  <span className="text-orange-500">Company Registration Consultant in Delhi?</span>
                 </h3>
                 <div className="space-y-3">
                   {[
-                    { title: "Best Company Registration Consultant in Noida", desc: "Serving Noida, Greater Noida & Delhi NCR entrepreneurs since 2022 with 5,000+ registrations." },
-                    { title: "Private Limited Company Registration Online", desc: "100% digital process — no office visits, no waiting. Certificate of Incorporation in 7 days." },
-                    { title: "Company Registration with GST", desc: "Get your company + GSTIN in a single bundled service. Fully compliant from Day 1." },
-                    { title: "Affordable Company Registration Services India", desc: "Transparent, all-inclusive packages. No hidden charges. Flexible EMI for startups." },
-                    { title: "ROC & Annual Compliance Services", desc: "End-to-end compliance — MGT-7, AOC-4, GST returns, TDS, audit & more." },
+                    { title: "Best Company Registration Consultant in Delhi & Noida", desc: "Serving Delhi, Noida, Gurugram & all of Delhi NCR since 2022 with 5,000+ registrations completed." },
+                    { title: "Private Limited Company Registration Online in Delhi", desc: "100% digital process — no office visits, no waiting. Certificate of Incorporation in 7 days." },
+                    { title: "Company Registration with GST in Delhi NCR", desc: "Get your company + GSTIN in a single bundled service. Fully compliant from Day 1." },
+                    { title: "Affordable Company Registration Services in Delhi", desc: "Transparent, all-inclusive packages. No hidden charges. Flexible options for startups." },
+                    { title: "ROC & Annual Compliance Services Delhi", desc: "End-to-end compliance — MGT-7, AOC-4, GST returns, TDS, audit & more." },
                   ].map(({ title, desc }, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <CheckCircle2 className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
@@ -1215,11 +1315,11 @@ export default function CompanyRegistration() {
                 </div>
               </div>
               <div className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] rounded-2xl p-6 text-white">
-                <h4 className="text-base font-bold text-orange-400 mb-4">Quick Company Registration Facts</h4>
+                <h4 className="text-base font-bold text-orange-400 mb-4">Company Registration in Delhi — Quick Facts</h4>
                 <div className="space-y-3">
                   {[
-                    ["Service Area", "All India — Online"],
-                    ["Best Known For", "Noida & Delhi NCR"],
+                    ["Primary Service Area", "Delhi, Noida, Gurugram"],
+                    ["Also Serving", "All India — 100% Online"],
                     ["Process", "100% Online, No Office Visit"],
                     ["Turnaround", "7–10 Working Days"],
                     ["Structures", "Pvt Ltd, OPC, LLP, Partnership"],
