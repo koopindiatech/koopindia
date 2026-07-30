@@ -26,6 +26,11 @@ export default function sitemap() {
       priority: 0.5,
     },
     {
+      url: `${baseUrl}/terms-and-conditions`,
+      lastModified,
+      priority: 0.5,
+    },
+    {
       url: `${baseUrl}/term-services`,
       lastModified,
       priority: 0.5,

@@ -103,6 +103,11 @@ const Footer = ({ onOpenModal }) => {
                 Privacy Policy
               </Link>
             </li>
+            <li>
+              <Link href="/terms-and-conditions" className="hover:text-[#F97316]">
+                Terms & Conditions
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -311,8 +316,8 @@ const Footer = ({ onOpenModal }) => {
             Privacy Policy
           </Link>{" "}
           |{" "}
-          <Link href="/term-services" className="hover:text-[#F97316]">
-            Terms of Service
+          <Link href="/terms-and-conditions" className="hover:text-[#F97316]">
+            Terms & Conditions
           </Link>
         </p>
       </div>
