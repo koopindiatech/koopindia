@@ -18,7 +18,7 @@ const FranchiseModulePage = () => {
         </title>
         <meta
           name="description"
-          content="Koop India offers end-to-end franchise development services to help brands build, launch & scale profitable franchise models across India."
+          content="Koop India offers end-to-end franchise development services to help buyers build, launch & scale profitable franchise models across India."
         />
         <meta name="robots" content="index, follow" />
         <link
@@ -37,7 +37,7 @@ const FranchiseModulePage = () => {
             </h1>
 
             <p className="max-w-4xl mx-auto text-gray-300 mb-8 leading-relaxed">
-              Koop India’s Franchise Module helps brands convert their business
+              Koop India’s Franchise Module helps buyers convert their business
               model into a scalable, profitable, and legally compliant franchise
               system.
             </p>
@@ -57,7 +57,7 @@ const FranchiseModulePage = () => {
             <p className="text-gray-600 leading-relaxed mb-6">
               We design structured franchise strategies that allow businesses to
               expand rapidly without heavy capital investment while maintaining
-              brand consistency, operational control, and profitability.
+              buyer consistency, operational control, and profitability.
             </p>
 
             <p className="text-gray-600 leading-relaxed">
@@ -72,17 +72,17 @@ const FranchiseModulePage = () => {
         <section className="pb-16 px-5 bg-slate-50">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-[#141D32] mb-6">
-              Why <span className="text-[#F97316]">Franchising</span> Works for Growing Brands
+              Why <span className="text-[#F97316]">Franchising</span> Works for Growing Buyers
             </h2>
 
             <p className="text-gray-600 leading-relaxed mb-6">
-              Franchising allows brands to scale faster using partner capital
+              Franchising allows buyers to scale faster using partner capital
               while leveraging local market knowledge and entrepreneurial
               commitment of franchise owners.
             </p>
 
             <p className="text-gray-600 leading-relaxed">
-              With the right franchise structure, brands can achieve rapid
+              With the right franchise structure, buyers can achieve rapid
               geographic expansion while minimizing operational and financial
               risk.
             </p>
@@ -127,7 +127,7 @@ const FranchiseModulePage = () => {
             <p className="text-gray-600 max-w-3xl mx-auto">
               Our franchise modules are designed to balance aggressive expansion
               with operational discipline—ensuring franchisees succeed while
-              protecting brand value and margins.
+              protecting buyer value and margins.
             </p>
           </div>
         </section>
@@ -141,12 +141,12 @@ const FranchiseModulePage = () => {
 
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-sm">
               {[
-                "Retail & consumer brands",
+                "Retail & consumer buyers",
                 "Food & beverage businesses",
                 "Service-based businesses",
                 "Education & training institutes",
-                "Healthcare & wellness brands",
-                "D2C brands looking for offline expansion",
+                "Healthcare & wellness buyers",
+                "D2C buyers looking for offline expansion",
               ].map((item, i) => (
                 <div key={i} className="bg-slate-50 p-6 rounded-2xl border">
                   <ShieldCheck className="w-6 h-6 text-[#F97316] mb-2 mx-auto" />

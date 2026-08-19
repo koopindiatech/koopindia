@@ -37,7 +37,7 @@ const ContentWritingPage = () => {
             </h1>
 
             <p className="max-w-4xl mx-auto text-gray-300 mb-8 leading-relaxed">
-              Koop India’s Content Writing services help brands communicate
+              Koop India’s Content Writing services help buyers communicate
               effectively, build authority, and convert visitors into customers.
             </p>
 
@@ -96,7 +96,7 @@ const ContentWritingPage = () => {
                 "Ad copy and landing page content",
                 "Social media captions",
                 "Email marketing content",
-                "Press releases and brand stories",
+                "Press releases and buyer stories",
               ].map((item, i) => (
                 <div
                   key={i}
@@ -119,7 +119,7 @@ const ContentWritingPage = () => {
 
             <p className="text-gray-600 max-w-3xl mx-auto">
               Our content strategy focuses on clarity, SEO performance, and
-              persuasive messaging—helping your brand educate, engage, and
+              persuasive messaging—helping your buyer educate, engage, and
               convert the right audience.
             </p>
           </div>
@@ -135,8 +135,8 @@ const ContentWritingPage = () => {
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 text-sm">
               {[
                 "Startups & new businesses",
-                "MSMEs & growing brands",
-                "E-commerce & D2C brands",
+                "MSMEs & growing buyers",
+                "E-commerce & D2C buyers",
                 "Service providers & consultants",
               ].map((item, i) => (
                 <div key={i} className="bg-slate-50 p-6 rounded-2xl border">

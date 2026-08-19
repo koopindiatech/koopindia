@@ -5,7 +5,24 @@ import EnquiryModal from "@/components/forms/EnquiryForm";
 
 const ModalContext = createContext();
 
-const NO_MODAL_PAGES = ["/services"]; 
+const STATIC_ROUTES_MODAL = [
+  "/", "/aboutus", "/blog", "/contactus", "/digital-marketing",
+  "/documentation-compliance", "/gst-registration", "/marketplace",
+  "/privacy", "/seller-onboarding", "/services", "/solutions",
+  "/startup-consulting", "/tech-solutions", "/term-services",
+  "/terms-and-conditions", "/termsevices",
+];
+
+function isSellerPage(path) {
+  if (!path) return false;
+  const isKnownStatic = STATIC_ROUTES_MODAL.some(r => path === r || path.startsWith(r + "/"));
+  const isKnownPrefix = path.startsWith("/adminpanel") || path.startsWith("/sellers") || path.startsWith("/marketplace") || path.startsWith("/api");
+  return !isKnownStatic && !isKnownPrefix;
+}
+
+const NO_MODAL_PAGES = ["/services"];
+const isNoModal = (path) => NO_MODAL_PAGES.includes(path) || path.startsWith("/adminpanel") || isSellerPage(path);
+
 
 export const ModalProvider = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +31,7 @@ export const ModalProvider = ({ children }) => {
 
   // Modal Open karne ka function
   const openModal = () => {
-    if (NO_MODAL_PAGES.includes(pathname)) return;
+    if (isNoModal(pathname)) return;
     setIsOpen(true);
   };
 
@@ -23,7 +40,7 @@ export const ModalProvider = ({ children }) => {
     // 40 seconds baad firse dikhane ka timer (optional logic)
     clearTimeout(reopenTimerRef.current);
     reopenTimerRef.current = setTimeout(() => {
-        if (!NO_MODAL_PAGES.includes(pathname)) {
+        if (!isNoModal(pathname)) {
             setIsOpen(true);
         }
     }, 40000);
@@ -31,7 +48,7 @@ export const ModalProvider = ({ children }) => {
 
   // Auto-scroll logic yahan handle ho rahi hai
   useEffect(() => {
-    if (NO_MODAL_PAGES.includes(pathname)) return;
+    if (isNoModal(pathname)) return;
 
     const handleScroll = () => {
       const scrollPosition = window.scrollY + window.innerHeight;

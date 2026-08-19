@@ -46,7 +46,7 @@ const SEOServicesPage = () => {
             <p className="max-w-4xl mx-auto text-gray-300 mb-8">
               <b>Koop India’s SEO services</b> are designed to increase your
               website visibility, organic traffic, and high-intent business
-              leads—so your brand shows up when customers are searching.
+              leads—so your buyer shows up when customers are searching.
             </p>
 
             {/* <button

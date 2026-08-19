@@ -37,7 +37,7 @@ const MarketAnalysisPage = () => {
             </h1>
 
             <p className="max-w-4xl mx-auto text-gray-300 mb-8 leading-relaxed">
-              Koop India’s Market Analysis services help brands make informed
+              Koop India’s Market Analysis services help buyers make informed
               decisions by providing actionable insights into industry trends,
               customer behavior, and competitive dynamics.
             </p>

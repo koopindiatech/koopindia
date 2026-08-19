@@ -18,7 +18,7 @@ const LogoGraphicDesignPage = () => {
         </title>
         <meta
           name="description"
-          content="Koop India offers professional logo design & graphic design services to build strong brand identity & marketing creatives."
+          content="Koop India offers professional logo design & graphic design services to build strong buyer identity & marketing creatives."
         />
         <meta name="robots" content="index, follow" />
         <link
@@ -37,8 +37,8 @@ const LogoGraphicDesignPage = () => {
             </h1>
 
             <p className="max-w-4xl mx-auto text-gray-300 mb-8 leading-relaxed">
-              Koop India’s Logo & Graphic Design services help brands create a
-              strong visual identity that builds trust, recognition, and brand
+              Koop India’s Logo & Graphic Design services help buyers create a
+              strong visual identity that builds trust, recognition, and buyer
               recall.
             </p>
 
@@ -55,30 +55,30 @@ const LogoGraphicDesignPage = () => {
         <section className="py-16 px-5">
           <div className="max-w-6xl mx-auto">
             <p className="text-gray-600 leading-relaxed mb-6">
-              We design professional, modern, and scalable brand assets that
+              We design professional, modern, and scalable buyer assets that
               reflect your business vision and market positioning.
             </p>
 
             <p className="text-gray-600 leading-relaxed">
-              Our creative solutions enhance brand consistency across digital
+              Our creative solutions enhance buyer consistency across digital
               platforms, print media, packaging, and offline marketing
               touchpoints.
             </p>
           </div>
         </section>
 
-        {/* ================= WHY BRANDING ================= */}
+        {/* ================= WHY BUYERING ================= */}
         <section className="pb-16 px-5 bg-slate-50">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-[#141D32] mb-6">
-              Why <span className="text-[#F97316]">Visual Branding</span> Matters
+              Why <span className="text-[#F97316]">Visual Buyering</span> Matters
             </h2>
 
             <p className="text-gray-600 leading-relaxed">
-              Strong visual identity improves brand credibility, customer
-              trust, and marketing effectiveness. Consistent branding helps
+              Strong visual identity improves buyer credibility, customer
+              trust, and marketing effectiveness. Consistent buyering helps
               customers recognize your business instantly and builds long-term
-              brand recall.
+              buyer recall.
             </p>
           </div>
         </section>
@@ -92,13 +92,13 @@ const LogoGraphicDesignPage = () => {
 
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 text-sm">
               {[
-                "Logo design and brand identity creation",
+                "Logo design and buyer identity creation",
                 "Social media creatives",
                 "Marketing collaterals (brochures, flyers, banners)",
                 "Website graphics and UI elements",
                 "Product packaging designs",
                 "Ad creatives",
-                "Brand guideline documentation",
+                "Buyer guideline documentation",
               ].map((item, i) => (
                 <div
                   key={i}
@@ -121,7 +121,7 @@ const LogoGraphicDesignPage = () => {
 
             <p className="text-gray-600 max-w-3xl mx-auto">
               Our design approach focuses on clarity, consistency, and
-              scalability—ensuring your brand looks professional across every
+              scalability—ensuring your buyer looks professional across every
               platform and marketing channel.
             </p>
           </div>
@@ -136,9 +136,9 @@ const LogoGraphicDesignPage = () => {
 
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 text-sm">
               {[
-                "Startups & new brands",
+                "Startups & new buyers",
                 "Growing businesses & MSMEs",
-                "E-commerce & D2C brands",
+                "E-commerce & D2C buyers",
                 "Manufacturers & service providers",
               ].map((item, i) => (
                 <div key={i} className="bg-slate-50 p-6 rounded-2xl border">
@@ -153,7 +153,7 @@ const LogoGraphicDesignPage = () => {
         {/* ================= CTA ================= */}
         <section className="py-20 px-5 bg-gradient-to-r from-[#0F172A] to-[#141D32] text-white text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-6">
-            Create a Powerful Brand Identity
+            Create a Powerful Buyer Identity
           </h2>
 
           <p className="text-gray-300 mb-8">
@@ -164,7 +164,7 @@ const LogoGraphicDesignPage = () => {
             onClick={onOpenModal}
             className="bg-[#F97316] px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2 hover:bg-orange-600"
           >
-            Start Brand Design <ArrowRight />
+            Start Buyer Design <ArrowRight />
           </button>
         </section>
 

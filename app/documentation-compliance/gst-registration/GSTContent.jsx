@@ -431,10 +431,10 @@ const GSTContent = () => {
 
             <div className="flex flex-wrap gap-4 mb-8">
               {[
-                "✅ 100% Online Process",
-                "⚡ GSTIN in 7–10 Working Days",
-                "🔒 CA-Supervised Experts",
-                "📞 Free Consultation",
+                "100% Online Process",
+                "GSTIN in 7–10 Working Days",
+                "CA-Supervised Experts",
+                "Free Consultation",
               ].map(badge => (
                 <span key={badge} className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm font-semibold text-white">{badge}</span>
               ))}
@@ -1453,7 +1453,7 @@ const GSTContent = () => {
                   { label: "Hyderabad", hot: false },
                   { label: "All India", hot: false },
                 ].map(({ label, hot }) => (
-                  <span key={label} className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${ hot ? "bg-[#F97316] text-white border-[#F97316]" : "bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-500" }`}>
+                  <span key={label} className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${hot ? "bg-[#F97316] text-white border-[#F97316]" : "bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-500"}`}>
                     {hot && <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse inline-block" />}
                     {label}
                   </span>

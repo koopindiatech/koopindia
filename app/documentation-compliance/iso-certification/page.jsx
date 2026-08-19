@@ -481,7 +481,7 @@ const ISOCertificationPage = () => {
                   },
                   {
                     icon: <Award className="w-4 h-4" />,
-                    text: "Strengthen brand credibility & market positioning",
+                    text: "Strengthen buyer credibility & market positioning",
                   },
                   {
                     icon: <ShieldCheck className="w-4 h-4" />,

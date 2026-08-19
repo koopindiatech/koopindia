@@ -38,7 +38,7 @@ const BusinessConsultingPage = () => {
 
             <p className="max-w-4xl mx-auto text-gray-300 mb-8 leading-relaxed">
               At <b>Koop India</b>, we provide end-to-end Business Consulting
-              services to help startups, MSMEs, and growing brands build a
+              services to help startups, MSMEs, and growing buyers build a
               strong foundation and scale sustainably. Our consulting solutions
               are designed to solve real business challenges and create
               long-term growth opportunities.

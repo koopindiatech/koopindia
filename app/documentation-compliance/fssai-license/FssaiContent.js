@@ -607,7 +607,7 @@ const FSSAILicensePage = () => {
                   </p>
                   {[
                     "Operate legally and avoid government penalties up to ₹5 lakh",
-                    "Build consumer trust & brand credibility in the market",
+                    "Build consumer trust & buyer credibility in the market",
                     "Sell on Swiggy, Zomato, Amazon, Flipkart & modern trade",
                     "Appoint distributors, dealers & franchise partners",
                     "Required for Shop & Establishment and GST registration",

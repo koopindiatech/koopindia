@@ -6,7 +6,7 @@ import EnquiryModal from "@/components/forms/EnquiryForm";
 
 import Image from "next/image";
 
-const BrandsPage = () => {
+const BuyersPage = () => {
    const { isOpen, onOpenModal, onCloseModal } = useModal();
 
   const solutions = [
@@ -19,7 +19,7 @@ const BrandsPage = () => {
     {
       icon: <Award className="w-8 h-8" />,
       title: "Trademark & IP Protection",
-      description: "Protect your brand identity with comprehensive trademark and intellectual property services",
+      description: "Protect your buyer identity with comprehensive trademark and intellectual property services",
       features: ["Trademark Registration", "Copyright Protection", "Design Registration", "Patent Filing"]
     },
     {
@@ -30,9 +30,9 @@ const BrandsPage = () => {
     },
     {
       icon: <Globe className="w-8 h-8" />,
-      title: "Digital Marketing & Branding",
-      description: "Build your brand presence online with comprehensive digital marketing solutions",
-      features: ["Website Development", "Social Media Marketing", "SEO & Content", "Brand Identity Design"]
+      title: "Digital Marketing & Buyering",
+      description: "Build your buyer presence online with comprehensive digital marketing solutions",
+      features: ["Website Development", "Social Media Marketing", "SEO & Content", "Buyer Identity Design"]
     },
     {
       icon: <Users className="w-8 h-8" />,
@@ -60,7 +60,7 @@ const BrandsPage = () => {
   ];
 
   const stats = [
-    { number: "100+", label: "Brands Registered" },
+    { number: "100+", label: "Buyers Registered" },
     { number: "99%", label: "Success Rate" },
     { number: "48 Hrs", label: "Average Processing" },
     { number: "24/7", label: "Expert Support" }
@@ -69,7 +69,7 @@ const BrandsPage = () => {
   const services = [
     {
       title: "Legal & Compliance",
-      description: "Complete legal setup for your brand",
+      description: "Complete legal setup for your buyer",
       color: "from-blue-500 to-blue-600"
     },
     {
@@ -99,14 +99,14 @@ const BrandsPage = () => {
             <div className="text-[#141d32]">
               {/* <div className="flex items-center space-x-2 mb-4">
                 <Store className="w-8 h-8 text-[#F97316]" />
-                <span className="text-[#F97316] font-semibold">Solutions for Brands</span>
+                <span className="text-[#F97316] font-semibold">Solutions for Buyers</span>
               </div> */}
               <h1 className="text-5xl lg:text-5xl font-bold mb-6">
-                Launch Your <span className="text-[#F97316]">Brand</span> in India
+                Launch Your <span className="text-[#F97316]">Buyer</span> in India
               </h1>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                 From company registration to digital marketing, KoopIndia provides complete 
-                business solutions to help your brand succeed in the Indian market.
+                business solutions to help your buyer succeed in the Indian market.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
@@ -160,10 +160,10 @@ const BrandsPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-[#141d32] mb-4">
-              Complete Brand Solutions for Indian Market
+              Complete Buyer Solutions for Indian Market
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Everything your brand needs to establish and grow in India - from legal compliance 
+              Everything your buyer needs to establish and grow in India - from legal compliance 
               to digital marketing, all under one roof.
             </p>
           </div>
@@ -200,7 +200,7 @@ const BrandsPage = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-4xl font-bold text-[#141d32] mb-8">
-                Why Indian <span className="text-[#F97316]">Brands</span> Choose Us
+                Why Indian <span className="text-[#F97316]">Buyers</span> Choose Us
               </h2>
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
@@ -213,9 +213,9 @@ const BrandsPage = () => {
             </div>
             
             <div className="bg-white rounded-2xl p-8 shadow-xl border-2 border-[#F97316]/20">
-              <h3 className="text-2xl font-bold text-[#141d32] mb-6">Ready to Launch Your Brand?</h3>
+              <h3 className="text-2xl font-bold text-[#141d32] mb-6">Ready to Launch Your Buyer?</h3>
               <p className="text-gray-600 mb-8 leading-relaxed">
-                Join thousands of successful brands who have launched and scaled their 
+                Join thousands of successful buyers who have launched and scaled their 
                 businesses in India with KoopIndia&apos; comprehensive support.
               </p>
               <div className="space-y-4">
@@ -233,7 +233,7 @@ const BrandsPage = () => {
                 </div>
               </div>
               {/* <button className="w-full mt-8 bg-[#F97316] hover:bg-orange-600 text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
-                Get Free Brand Consultation
+                Get Free Buyer Consultation
               </button> */}
             </div>
           </div>
@@ -279,7 +279,7 @@ const BrandsPage = () => {
                 4
               </div>
               <h3 className="text-xl font-bold text-[#141d32] mb-2">Launch</h3>
-              <p className="text-gray-600">Your brand is ready to operate legally in India</p>
+              <p className="text-gray-600">Your buyer is ready to operate legally in India</p>
             </div>
           </div>
         </div>
@@ -289,7 +289,7 @@ const BrandsPage = () => {
       <section className="py-20 px-6 lg:px-8 bg-[#F97316]">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-4">
-            Ready to Launch Your Brand in India?
+            Ready to Launch Your Buyer in India?
           </h2>
           <p className="text-xl text-orange-100 mb-8 leading-relaxed">
             Don&apos;t wait! Start your business journey today with India&apos;s most trusted 
@@ -309,4 +309,4 @@ const BrandsPage = () => {
   );
 };
 
-export default BrandsPage;
+export default BuyersPage;

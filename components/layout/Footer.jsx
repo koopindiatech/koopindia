@@ -128,8 +128,8 @@ const Footer = ({ onOpenModal }) => {
                 </Link>
               </li>
               <li>
-                <Link href="/solutions/brands" className="hover:text-[#F97316]">
-                  Startups / Brands
+                <Link href="/solutions/buyers" className="hover:text-[#F97316]">
+                  Startups / Buyers
                 </Link>
               </li>
               <li>

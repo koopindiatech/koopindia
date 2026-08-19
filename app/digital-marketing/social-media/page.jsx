@@ -14,11 +14,11 @@ const SocialMediaMarketingPage = () => {
       {/* ================= SEO META ================= */}
       <Head>
         <title>
-          Social Media Marketing Services for Startups & Brands | Koop India
+          Social Media Marketing Services for Startups & Buyers | Koop India
         </title>
         <meta
           name="description"
-          content="Koop India offers result-driven social media marketing services to build brand visibility, engagement & lead generation on Facebook, Instagram & LinkedIn."
+          content="Koop India offers result-driven social media marketing services to build buyer visibility, engagement & lead generation on Facebook, Instagram & LinkedIn."
         />
         <meta name="robots" content="index, follow" />
         <link
@@ -38,7 +38,7 @@ const SocialMediaMarketingPage = () => {
 
             <p className="max-w-4xl mx-auto text-gray-300 mb-8 leading-relaxed">
               Koop India’s Social Media Marketing services help startups, MSMEs,
-              and growing brands build a strong digital presence, engage their
+              and growing buyers build a strong digital presence, engage their
               audience, and generate high-quality business leads.
             </p>
 
@@ -60,7 +60,7 @@ const SocialMediaMarketingPage = () => {
             </p>
 
             <p className="text-gray-600 leading-relaxed">
-              Our focus is on increasing brand visibility, building trust, and
+              Our focus is on increasing buyer visibility, building trust, and
               converting followers into customers across platforms like
               Facebook, Instagram, LinkedIn, and YouTube.
             </p>
@@ -154,7 +154,7 @@ const SocialMediaMarketingPage = () => {
 
   <div className="relative z-10">
     <h2 className="text-3xl md:text-4xl font-extrabold text-[#141D32] mb-6">
-      Grow Your Brand on Social Media
+      Grow Your Buyer on Social Media
     </h2>
 
     <p className="text-white text-lg font-medium mb-8 max-w-2xl mx-auto">

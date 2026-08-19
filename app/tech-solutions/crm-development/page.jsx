@@ -23,7 +23,7 @@ const CRMDevelopmentPage = () => {
         </title>
         <meta
           name="description"
-          content="Koop India offers custom CRM development services to manage leads, sales pipelines, customer data & automation for startups, brands & growing businesses."
+          content="Koop India offers custom CRM development services to manage leads, sales pipelines, customer data & automation for startups, buyers & growing businesses."
         />
         <meta name="robots" content="index, follow" />
         <link
@@ -45,7 +45,7 @@ const CRMDevelopmentPage = () => {
             </p>
             <p className="max-w-4xl mx-auto text-gray-300 mb-8">
               <b>Koop India</b> develops customized CRM systems that help
-              startups, brands, and sales teams manage leads, track follow-ups,
+              startups, buyers, and sales teams manage leads, track follow-ups,
               and streamline business operations.
             </p>
 

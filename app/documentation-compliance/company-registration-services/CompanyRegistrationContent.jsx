@@ -172,7 +172,7 @@ export default function CompanyRegistration() {
         "name": "What happens if MCA rejects my company name?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your brand is protected and name approval goes smoothly."
+          "text": "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your buyer is protected and name approval goes smoothly."
         }
       },
       {
@@ -433,7 +433,7 @@ export default function CompanyRegistration() {
                 <Check>No minimum paid-up capital required</Check>
                 <Check>Can accept VC / Angel investment</Check>
                 <Check>Eligible for Startup India recognition</Check>
-                <Check>Strong brand credibility &amp; legal standing</Check>
+                <Check>Strong buyer credibility &amp; legal standing</Check>
               </ul>
               <div className="grid grid-cols-2 gap-3 pt-4 border-t border-orange-100">
                 <div><div className="text-xs text-slate-400 mb-0.5">Registration time</div><div className="text-sm font-semibold text-slate-700">7–10 working days</div></div>
@@ -1034,7 +1034,7 @@ export default function CompanyRegistration() {
               { q: "Can I get GST registration along with company registration in Delhi?", a: "Yes. Koop India offers combined company registration with GST service in Delhi and across India. Once your Certificate of Incorporation is issued, we immediately file for GST registration so your business is fully ready to operate." },
               { q: "Is Koop India a company registration consultant in Gurugram?", a: "Yes. Koop India serves as a trusted company registration consultant in Gurugram, Delhi, Noida, Ghaziabad, Faridabad and all major cities. Businesses in Gurugram's Cyber City and DLF areas can register their company 100% online — no physical visit required." },
               { q: "What ongoing compliance is required after company registration in Delhi?", a: "For a Private Limited Company registered in Delhi: annual ROC filings (AOC-4, MGT-7), statutory audit, ITR, and GST returns. As your dedicated corporate compliance consultant, Koop India offers annual compliance packages covering all of these under a single fixed fee." },
-              { q: "What happens if MCA rejects my company name?", a: "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your brand is protected and name approval goes smoothly." },
+              { q: "What happens if MCA rejects my company name?", a: "Name rejections happen occasionally due to trademark similarities. We offer combined company registration and trademark services to ensure your buyer is protected and name approval goes smoothly." },
               { q: "How soon can I open a bank account after company registration in Delhi?", a: "Immediately. Most banks in Delhi and NCR process current account applications for new companies within 2–5 working days once you submit the Certificate of Incorporation." },
             ].map((item, i) => (
               <FaqItem key={i} q={item.q} a={item.a} />

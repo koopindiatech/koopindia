@@ -41,7 +41,7 @@ export default function sitemap() {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/solutions/brands`,
+      url: `${baseUrl}/solutions/buyers`,
       lastModified,
       priority: 0.9,
     },

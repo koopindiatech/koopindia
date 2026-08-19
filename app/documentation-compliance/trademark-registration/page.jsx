@@ -46,7 +46,7 @@ import {
 const faqs = [
   {
     q: "What is Trademark Registration and who should apply?",
-    a: "Trademark Registration is the legal process of protecting your brand name, logo, tagline, or any unique identifier under the Trade Marks Act, 1999 in India. Any individual, startup, company, LLP, or partnership firm that wants exclusive legal rights over their brand identity should apply. It's especially critical for businesses planning to scale, franchise, or expand into new markets.",
+    a: "Trademark Registration is the legal process of protecting your buyer name, logo, tagline, or any unique identifier under the Trade Marks Act, 1999 in India. Any individual, startup, company, LLP, or partnership firm that wants exclusive legal rights over their buyer identity should apply. It's especially critical for businesses planning to scale, franchise, or expand into new markets.",
   },
   {
     q: "What is the difference between ™ and ® symbols?",
@@ -58,7 +58,7 @@ const faqs = [
   },
   {
     q: "What are Trademark Classes and how do I choose the right one?",
-    a: "Trademarks are registered under 45 classes—Classes 1–34 cover goods and Classes 35–45 cover services. Choosing the correct class is critical because protection is class-specific. For example, a food brand should file under Class 30 or 43. Koop India's experts analyze your business and recommend the most appropriate classes to maximize protection.",
+    a: "Trademarks are registered under 45 classes—Classes 1–34 cover goods and Classes 35–45 cover services. Choosing the correct class is critical because protection is class-specific. For example, a food buyer should file under Class 30 or 43. Koop India's experts analyze your business and recommend the most appropriate classes to maximize protection.",
   },
   {
     q: "What happens if my Trademark Application gets an Objection?",
@@ -89,8 +89,8 @@ const faqs = [
 const trademarkTypes = [
   {
     type: "Word Mark",
-    desc: "Protects brand names, business names, product names in standard text form.",
-    who: "Brand names like 'Koop', 'Tata', 'Zomato'",
+    desc: "Protects buyer names, business names, product names in standard text form.",
+    who: "Buyer names like 'Koop', 'Tata', 'Zomato'",
     icon: Type,
     color: "#F97316",
     itcLabel: "Broadest Protection",
@@ -99,7 +99,7 @@ const trademarkTypes = [
   },
   {
     type: "Logo / Device Mark",
-    desc: "Protects stylized logos, symbols, artistic designs used as brand identifiers.",
+    desc: "Protects stylized logos, symbols, artistic designs used as buyer identifiers.",
     who: "Logos, icons, and unique graphic symbols",
     icon: Image,
     color: "#8b5cf6",
@@ -110,7 +110,7 @@ const trademarkTypes = [
   {
     type: "Composite Mark",
     desc: "Protects a combination of words and logos together as a single mark.",
-    who: "Word + Logo combined branding",
+    who: "Word + Logo combined buyering",
     icon: Palette,
     color: "#0ea5e9",
     itcLabel: "Combined Rights",
@@ -119,7 +119,7 @@ const trademarkTypes = [
   },
   {
     type: "Tagline / Slogan",
-    desc: "Protects distinctive slogans and advertising phrases tied to your brand.",
+    desc: "Protects distinctive slogans and advertising phrases tied to your buyer.",
     who: "'Just Do It', 'Connecting India' style phrases",
     icon: Megaphone,
     color: "#10b981",
@@ -129,7 +129,7 @@ const trademarkTypes = [
   },
   {
     type: "Series Mark",
-    desc: "Multiple related marks filed together. Cost-effective for brand families.",
+    desc: "Multiple related marks filed together. Cost-effective for buyer families.",
     who: "Product lines with similar naming patterns",
     icon: Tag,
     color: "#ec4899",
@@ -161,7 +161,7 @@ const whyRegisterData = [
   },
   {
     icon: TrendingUp,
-    title: "Brand Asset Creation",
+    title: "Buyer Asset Creation",
     desc: "A registered trademark is a valuable IP asset that can be sold, licensed, or franchised to generate revenue.",
     color: "from-violet-500 to-purple-400",
     lightBg: "#f5f3ff",
@@ -171,7 +171,7 @@ const whyRegisterData = [
   {
     icon: Globe,
     title: "E-Commerce Ready",
-    desc: "Mandatory for Amazon Brand Registry, Flipkart Brand Store, and other platform brand protections.",
+    desc: "Mandatory for Amazon Buyer Registry, Flipkart Buyer Store, and other platform buyer protections.",
     color: "from-emerald-500 to-teal-400",
     lightBg: "#f0fdf4",
     tag: "Mandatory",
@@ -324,7 +324,7 @@ const features = [
   {
     icon: Globe,
     title: "International TM Filing",
-    desc: "Madrid Protocol filings for protection in 130+ countries. Expand your brand globally.",
+    desc: "Madrid Protocol filings for protection in 130+ countries. Expand your buyer globally.",
     color: "from-pink-500 to-rose-400",
     bg: "from-pink-50 to-rose-50",
   },
@@ -387,7 +387,7 @@ const schema = {
   serviceType: "Trademark Registration",
   areaServed: "IN",
   description:
-    "Professional Trademark Registration in India. Expert help with search, filing TM-A, objection handling, opposition, and registration certificate. End-to-end brand protection.",
+    "Professional Trademark Registration in India. Expert help with search, filing TM-A, objection handling, opposition, and registration certificate. End-to-end buyer protection.",
 };
 
 const faqSchema = {
@@ -421,12 +421,12 @@ const TrademarkRegistrationPage = () => {
         </title>
         <meta
           name="description"
-          content="Register your Trademark in India with Koop India. ✓ Trademark Search ✓ TM-A Filing ✓ Objection Handling ✓ Registration Certificate. Protect your brand name, logo & tagline. Expert IP attorneys."
+          content="Register your Trademark in India with Koop India. ✓ Trademark Search ✓ TM-A Filing ✓ Objection Handling ✓ Registration Certificate. Protect your buyer name, logo & tagline. Expert IP attorneys."
         />
         <meta name="robots" content="index, follow" />
         <meta
           name="keywords"
-          content="trademark registration India, trademark registration online, trademark filing, TM registration, brand registration India, trademark search India, trademark objection, trademark certificate, IP registration India 2025"
+          content="trademark registration India, trademark registration online, trademark filing, TM registration, buyer registration India, trademark search India, trademark objection, trademark certificate, IP registration India 2025"
         />
         <link
           rel="canonical"
@@ -438,7 +438,7 @@ const TrademarkRegistrationPage = () => {
         />
         <meta
           property="og:description"
-          content="End-to-end Trademark Registration in India. Expert search, filing, objection handling & certification. Protect your brand legally."
+          content="End-to-end Trademark Registration in India. Expert search, filing, objection handling & certification. Protect your buyer legally."
         />
         <meta property="og:type" content="website" />
         <script
@@ -497,7 +497,7 @@ const TrademarkRegistrationPage = () => {
                 </h1>
 
                 <p className="text-gray-300 text-base leading-relaxed mb-8 max-w-lg">
-                  Protect your brand name, logo, tagline & packaging with a legally registered trademark. 
+                  Protect your buyer name, logo, tagline & packaging with a legally registered trademark. 
                   End-to-end filing, objection handling & certification by Koop India's IP experts.
                 </p>
 
@@ -555,7 +555,7 @@ const TrademarkRegistrationPage = () => {
                     <span className="text-[#F97316] font-bold text-sm">Did You Know?</span>
                   </div>
                   <p className="text-gray-300 text-xs leading-relaxed">
-                    An unregistered brand can be legally copied by competitors. Trademark registration gives you 
+                    An unregistered buyer can be legally copied by competitors. Trademark registration gives you 
                     the exclusive right to use your mark and take legal action against infringers anywhere in India.
                   </p>
                 </div>
@@ -579,7 +579,7 @@ const TrademarkRegistrationPage = () => {
                 <p className="text-gray-600 leading-relaxed mb-5">
                   A <strong>Trademark</strong> is any unique sign, symbol, word, phrase, logo, design, 
                   packaging shape, or combination thereof that distinguishes your goods or services from 
-                  those of competitors. It is the cornerstone of your brand identity.
+                  those of competitors. It is the cornerstone of your buyer identity.
                 </p>
                 <p className="text-gray-600 leading-relaxed mb-6">
                   Under the <strong>Trade Marks Act, 1999</strong>, once registered with the Trade Marks 
@@ -617,11 +617,11 @@ const TrademarkRegistrationPage = () => {
                 </h3>
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   {[
-                    { icon: Type, label: "Brand Name", desc: "Your company or product name" },
+                    { icon: Type, label: "Buyer Name", desc: "Your company or product name" },
                     { icon: Image, label: "Logo / Device", desc: "Artistic symbols and icons" },
                     { icon: Megaphone, label: "Tagline / Slogan", desc: "Distinctive phrases" },
                     { icon: Package, label: "Product Packaging", desc: "Unique shape/trade dress" },
-                    { icon: Palette, label: "Brand Label", desc: "Labels with artistic work" },
+                    { icon: Palette, label: "Buyer Label", desc: "Labels with artistic work" },
                     { icon: Fingerprint, label: "Sound Mark", desc: "Distinctive audio jingles" },
                   ].map(({ icon: Icon, label, desc }, i) => (
                     <div
@@ -692,7 +692,7 @@ const TrademarkRegistrationPage = () => {
                 </span>
               </h2>
               <p className="text-gray-500 mt-4 max-w-xl mx-auto text-sm">
-                Your brand is your most valuable business asset. Protect it before someone else does.
+                Your buyer is your most valuable business asset. Protect it before someone else does.
               </p>
             </div>
 
@@ -851,7 +851,7 @@ const TrademarkRegistrationPage = () => {
                   <User className="w-6 h-6 text-[#F97316]" />
                 </div>
                 <h3 className="font-bold text-[#141D32] mb-4">Individual / Proprietor</h3>
-                {["PAN Card of Applicant", "Aadhaar Card", "Passport-size Photograph", "Brand Name / Logo File (JPEG)", "Signed TM-48 Authorization"].map((doc, i) => (
+                {["PAN Card of Applicant", "Aadhaar Card", "Passport-size Photograph", "Buyer Name / Logo File (JPEG)", "Signed TM-48 Authorization"].map((doc, i) => (
                   <p key={i} className="flex items-start gap-2 text-sm text-gray-600 mb-2">
                     <CheckCircle className="w-4 h-4 text-[#F97316] mt-0.5 flex-shrink-0" /> {doc}
                   </p>
@@ -867,7 +867,7 @@ const TrademarkRegistrationPage = () => {
                   <Users className="w-6 h-6 text-[#F97316]" />
                 </div>
                 <h3 className="font-bold text-[#141D32] mb-4">Partnership / LLP</h3>
-                {["Firm / LLP PAN Card", "Partnership Deed / LLP Agreement", "PAN & Aadhaar of Partners", "Brand Logo (High-res JPEG)", "Authorization Letter / TM-48", "MSME Certificate (if applicable)"].map((doc, i) => (
+                {["Firm / LLP PAN Card", "Partnership Deed / LLP Agreement", "PAN & Aadhaar of Partners", "Buyer Logo (High-res JPEG)", "Authorization Letter / TM-48", "MSME Certificate (if applicable)"].map((doc, i) => (
                   <p key={i} className="flex items-start gap-2 text-sm text-gray-600 mb-2">
                     <CheckCircle className="w-4 h-4 text-[#F97316] mt-0.5 flex-shrink-0" /> {doc}
                   </p>
@@ -880,7 +880,7 @@ const TrademarkRegistrationPage = () => {
                   <Building2 className="w-6 h-6 text-[#F97316]" />
                 </div>
                 <h3 className="font-bold text-[#141D32] mb-4">Private / Public Company</h3>
-                {["Company PAN Card", "Certificate of Incorporation", "MOA & AOA", "PAN & Aadhaar of Directors", "Board Resolution / PoA", "Brand Logo (JPEG format)", "Signed TM-48 by Authorized Signatory"].map((doc, i) => (
+                {["Company PAN Card", "Certificate of Incorporation", "MOA & AOA", "PAN & Aadhaar of Directors", "Board Resolution / PoA", "Buyer Logo (JPEG format)", "Signed TM-48 by Authorized Signatory"].map((doc, i) => (
                   <p key={i} className="flex items-start gap-2 text-sm text-gray-600 mb-2">
                     <CheckCircle className="w-4 h-4 text-[#F97316] mt-0.5 flex-shrink-0" /> {doc}
                   </p>
@@ -970,11 +970,11 @@ const TrademarkRegistrationPage = () => {
           style={{ background: "linear-gradient(135deg, #0F172A 0%, #141D32 60%, #1a1f3a 100%)" }}
         >
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            Secure Your Brand with{" "}
+            Secure Your Buyer with{" "}
             <span className="text-[#F97316]">Trademark Registration</span>
           </h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            Don't let a competitor claim your brand name. Get expert trademark filing done in 1–2 days. 
+            Don't let a competitor claim your buyer name. Get expert trademark filing done in 1–2 days. 
             Use ™ immediately and get full ® protection after registration.
           </p>
           <button
@@ -1014,7 +1014,7 @@ const TrademarkRegistrationPage = () => {
                 for Trademark Registration?
               </h2>
               <p className="text-gray-500 mt-4 max-w-xl mx-auto text-sm">
-                Trusted by 10,000+ businesses across India for brand protection.
+                Trusted by 10,000+ businesses across India for buyer protection.
               </p>
             </div>
 
@@ -1113,7 +1113,7 @@ const TrademarkRegistrationPage = () => {
             Register Your Trademark Today
           </h2>
           <p className="text-gray-300 mb-8 max-w-xl mx-auto text-sm">
-            Your brand is your identity. Protect it legally before a competitor does. 
+            Your buyer is your identity. Protect it legally before a competitor does. 
             Get expert trademark registration done with Koop India.
           </p>
           <div className="flex flex-wrap justify-center gap-4">

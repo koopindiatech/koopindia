@@ -328,7 +328,7 @@ const WebsiteDevelopmentPage = () => {
               {[
                 {
                   icon: Layout,
-                  title: "Business & Brand Websites",
+                  title: "Business & Buyer Websites",
                   desc: "Professional corporate sites that establish credibility and showcase your services effectively",
                 },
                 {
@@ -466,7 +466,7 @@ const WebsiteDevelopmentPage = () => {
                 <ul className="space-y-4">
                   {[
                     "Generate qualified leads with strategic CTAs & forms",
-                    "Build instant brand credibility with professional design",
+                    "Build instant buyer credibility with professional design",
                     "Amplify digital marketing ROI with conversion-optimized pages",
                     "Track sales funnel performance with integrated analytics",
                     "Scale seamlessly as your business grows & evolves",
@@ -501,7 +501,7 @@ const WebsiteDevelopmentPage = () => {
                         desc: "Intuitive navigation that guides visitors to action",
                       },
                       {
-                        title: "Brand-Aligned",
+                        title: "Buyer-Aligned",
                         desc: "Visual identity that reinforces your unique value",
                       },
                       {

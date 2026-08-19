@@ -14,6 +14,7 @@ import Footer from "../layout/Footer";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import HomeMarketSection, { HomeLatestSellers, HomeLatestBuyers } from "./HomeMarketSection";
 
 const HeroSection = ({ onOpenModal }) => {
   const [showAllServices, setShowAllServices] = useState(false);
@@ -134,7 +135,7 @@ const HeroSection = ({ onOpenModal }) => {
       role: "Founder & CEO",
       company: "Kiro Elvi Foods Pvt Ltd",
       content:
-        "The strategic guidance and branding solutions provided by Koop India accelerated our market entry significantly.",
+        "The strategic guidance and buyering solutions provided by Koop India accelerated our market entry significantly.",
       rating: 5,
     },
     {
@@ -178,7 +179,7 @@ const HeroSection = ({ onOpenModal }) => {
       ],
     },
     {
-      title: "Scale Your Brand with",
+      title: "Scale Your Buyer with",
       highlight: "Social Media Marketing",
       desc: "Get more leads and better reach with targeted Meta Ads, Google Ads, and creative content strategies.",
       img: "/dash-image4.png", // Marketing specific image
@@ -352,6 +353,16 @@ const HeroSection = ({ onOpenModal }) => {
                 >
                   Start Now
                 </button>
+
+                {/* NEW: Explore Buyer Directory Button */}
+                {/* <a
+                  href="/marketplace"
+                  className="flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/30 text-white px-6 py-3 rounded-lg font-bold hover:bg-white hover:text-[#0a1128] transition-all cursor-pointer group"
+                >
+                  <span className="text-lg">🏪</span>
+                  <span>Explore Buyers Directory</span>
+                  <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+                </a> */}
               </div>
 
               {/* Action Cards */}
@@ -424,7 +435,7 @@ const HeroSection = ({ onOpenModal }) => {
                 We don’t just offer services—we build businesses. From company
                 registration and legal compliance to website development and
                 digital growth, we provide everything you need under one roof.
-                Whether you're a startup or an established brand, our
+                Whether you're a startup or an established buyer, our
                 expert-driven solutions help you move faster and scale smarter.
               </p>
 
@@ -437,7 +448,7 @@ const HeroSection = ({ onOpenModal }) => {
                   <ul className="text-sm text-gray-600 space-y-2">
                     <li>• Business Registration (GST, Trademark, FSSAI)</li>
                     <li>• Website & E-commerce Development</li>
-                    <li>• Branding & Digital Marketing</li>
+                    <li>• Buyering & Digital Marketing</li>
                     <li>• Growth Strategy & Consulting</li>
                   </ul>
                 </div>
@@ -471,6 +482,9 @@ const HeroSection = ({ onOpenModal }) => {
           </div>
         </div>
       </section>
+
+      {/* ------- Latest Sellers + Search Bar ------- */}
+      {/* <HomeLatestSellers /> */}
 
       {/* ------- SME Overview Section ------- */}
       <section className="w-full py-22 px-4 md:px-8" style={{ background: "#0F1F3D" }}>
@@ -545,7 +559,7 @@ const HeroSection = ({ onOpenModal }) => {
               <div className="flex flex-col gap-1 mt-1">
                 {[
                   { icon: "🏛️", color: "#1E3A5F", label: "Business Registration & Compliance" },
-                  { icon: "📢", color: "#F97316", label: "Branding & Digital Marketing" },
+                  { icon: "📢", color: "#F97316", label: "Buyering & Digital Marketing" },
                   { icon: "💻", color: "#1E3A5F", label: "Website & Software Development" },
                   { icon: "🧑‍💼", color: "#F97316", label: "Startup & Business Consulting" },
                   { icon: "📈", color: "#1E3A5F", label: "End-to-End Growth Solutions" },
@@ -667,7 +681,7 @@ const HeroSection = ({ onOpenModal }) => {
               <div className="flex flex-col gap-1">
                 {[
                   { icon: "🏛️", color: "#1E3A5F", label: "Business Registration & Compliance" },
-                  { icon: "📢", color: "#F97316", label: "Branding & Digital Marketing" },
+                  { icon: "📢", color: "#F97316", label: "Buyering & Digital Marketing" },
                   { icon: "💻", color: "#1E3A5F", label: "Website & Software Development" },
                   { icon: "🧑‍💼", color: "#F97316", label: "Startup & Business Consulting" },
                   { icon: "📈", color: "#1E3A5F", label: "End-to-End Growth Solutions" },
@@ -715,6 +729,9 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
       </section>
 
+      {/* ------- Latest Buyers ------- */}
+      {/* <HomeLatestBuyers /> */}
+
       {/* ------- Solutions Section ------- */}
       <section id="solution" className="py-16 px-4 md:px-8 scroll-mt-24" style={{ background: "#F8F9FF" }}>
         <div className="max-w-6xl mx-auto">
@@ -757,20 +774,20 @@ const HeroSection = ({ onOpenModal }) => {
               </ul>
             </div>
 
-            {/* Card 2 — Creative & Branding */}
+            {/* Card 2 — Creative & Buyering */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-[#141d32] rounded-l-2xl" />
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-[#141d32] flex items-center justify-center text-2xl shadow-md shadow-slate-200 flex-shrink-0">
                   💡
                 </div>
-                <h3 className="text-lg font-bold text-[#141d32] leading-snug">Creative & Branding Solutions</h3>
+                <h3 className="text-lg font-bold text-[#141d32] leading-snug">Creative & Buyering Solutions</h3>
               </div>
               <p className="text-gray-500 text-sm mb-4 leading-relaxed">
-                Build a strong brand identity with compelling designs & creative assets.
+                Build a strong buyer identity with compelling designs & creative assets.
               </p>
               <ul className="space-y-2">
-                {["Logo & Brand Identity Design", "Product Packaging Design", "Marketing Collaterals", "Social Media Creative Designs"].map(item => (
+                {["Logo & Buyer Identity Design", "Product Packaging Design", "Marketing Collaterals", "Social Media Creative Designs"].map(item => (
                   <li key={item} className="flex items-center gap-2 text-sm text-[#141d32]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#141d32] flex-shrink-0" />
                     {item}
@@ -827,6 +844,7 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
       </section>
 
+
       {/* ------- Services Section ------- */}
 
       <section className="bg-white">
@@ -879,7 +897,7 @@ const HeroSection = ({ onOpenModal }) => {
             What Our Clients Say
           </h2>
           <p className="text-orange-400">
-            Success stories from entrepreneurs who built their brand with us
+            Success stories from entrepreneurs who built their buyer with us
           </p>
         </div>
 

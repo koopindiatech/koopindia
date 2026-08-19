@@ -11,13 +11,13 @@ const packages = [
     subtitle: "For Starting Your Social Media Presence",
     image: "/essential.jpg",
     why: [
-      "Kickstart your brand with professional profile setup",
+      "Kickstart your buyer with professional profile setup",
       "Stay consistent with regular posts",
       "Creative first impression with eye-catching designs",
       "Simple, effective & budget-friendly",
       "Dedicated team support for your queries",
       "Tailored content that matches your industry & audience",
-      "Analytics-driven approach to track your brand growth",
+      "Analytics-driven approach to track your buyer growth",
     ],
     deliverables: [
       { label: "Number of Posts", value: "8 Posts per Month" },
@@ -29,7 +29,7 @@ const packages = [
       { label: "Feedback Sharing", value: "Monthly Performance Report" },
     ],
     highlight:
-      "With Koop Essential, your brand gets the perfect launchpad on social media – professional, consistent & engaging.",
+      "With Koop Essential, your buyer gets the perfect launchpad on social media – professional, consistent & engaging.",
   },
   {
     title: "Koop Accelerater – Intermediate Package",
@@ -39,7 +39,7 @@ const packages = [
       "More Content, More Reach – 15 premium posts + 4 reels to maximize your visibility.",
       "Audience Engagement – Likes, comments, shares & replies to keep your audience active.",
       "Growth Tracking – Bi-weekly reports for clear insights on performance.",
-      "Stronger Branding – Advanced captions, hashtags & keyword strategy for better discovery.",
+      "Stronger Buyering – Advanced captions, hashtags & keyword strategy for better discovery.",
       "Professional Presence – Focused on Facebook, Instagram & LinkedIn for credibility & impact.",
     ],
     deliverables: [
@@ -53,18 +53,18 @@ const packages = [
       { label: "Performance Report", value: "Bi-Weekly Growth & Engagement Report" },
     ],
     highlight:
-      "With Koop Accelerater, your brand takes the leap from just existing to actively growing – building relationships, creating impact, and becoming memorable.",
+      "With Koop Accelerater, your buyer takes the leap from just existing to actively growing – building relationships, creating impact, and becoming memorable.",
   },
   {
     title: "Koop Dominator – Premium Package",
-    subtitle: "For Maximum Reach & Brand Impact",
+    subtitle: "For Maximum Reach & Buyer Impact",
     image: "/dominator.jpg",
     why: [
       "Full-Fledged Presence – 25 premium posts + 6 reels every month for maximum visibility.",
-      "Tailored Strategy – Content customized for Facebook, Instagram & LinkedIn to fit your brand’s tone.",
+      "Tailored Strategy – Content customized for Facebook, Instagram & LinkedIn to fit your buyer’s tone.",
       "Community Building – Replies, comments & DMs handled to build a loyal audience.",
       "Detailed Analytics – Weekly performance reports for growth tracking.",
-      "Premium Branding – Consistency + creativity = long-term brand recall.",
+      "Premium Buyering – Consistency + creativity = long-term buyer recall.",
     ],
     deliverables: [
       { label: "Number of Posts", value: "25 Posts per Month" },
@@ -78,7 +78,7 @@ const packages = [
       { label: "Strategy Call", value: "1:1 Monthly Strategy Session" },
     ],
     highlight:
-      "With Koop Dominator, your brand doesn’t just grow – it leads, inspires & impacts. This package is for businesses who want to be seen as an authority in their industry.",
+      "With Koop Dominator, your buyer doesn’t just grow – it leads, inspires & impacts. This package is for businesses who want to be seen as an authority in their industry.",
   },
 ];
 
@@ -162,7 +162,7 @@ const Page = () => {
             Together
           </h2>
           <p className="text-lg mb-10 text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Partner with Koop India and unlock your brand’s full potential with
+            Partner with Koop India and unlock your buyer’s full potential with
             strategies designed for consistency, creativity, and measurable
             growth.
           </p>

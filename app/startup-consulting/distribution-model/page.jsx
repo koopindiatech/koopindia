@@ -18,7 +18,7 @@ const DistributionModulePage = () => {
         </title>
         <meta
           name="description"
-          content="Koop India offers structured distribution modules to help brands build, manage & scale distributor and dealer networks across India."
+          content="Koop India offers structured distribution modules to help buyers build, manage & scale distributor and dealer networks across India."
         />
         <meta name="robots" content="index, follow" />
         <link
@@ -38,7 +38,7 @@ const DistributionModulePage = () => {
 
             <p className="max-w-4xl mx-auto text-gray-300 mb-8 leading-relaxed">
               Koop India’s Distribution Module is a structured framework that
-              helps brands build and scale their distributor, dealer, and
+              helps buyers build and scale their distributor, dealer, and
               channel partner network efficiently.
             </p>
 
@@ -75,7 +75,7 @@ const DistributionModulePage = () => {
             </h2>
 
             <p className="text-gray-600 leading-relaxed">
-              We help brands expand faster while reducing channel conflict,
+              We help buyers expand faster while reducing channel conflict,
               improving distributor motivation, and eliminating operational
               inefficiencies across the supply chain.
             </p>
@@ -119,7 +119,7 @@ const DistributionModulePage = () => {
 
             <p className="text-gray-600 max-w-3xl mx-auto">
               Our distribution modules are designed to balance aggressive
-              expansion with structured controls—so brands can grow across
+              expansion with structured controls—so buyers can grow across
               regions without losing visibility, pricing discipline, or channel
               harmony.
             </p>

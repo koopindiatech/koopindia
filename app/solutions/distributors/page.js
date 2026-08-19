@@ -38,7 +38,7 @@ const DistributorPage = () => {
     {
       icon: <DollarSign className="w-8 h-8" />,
       title: "Save Money", 
-      description: "Even though the hefty price tag is mainly for brands to pay to attend a trade show, distributors also pay their fair share. On average, a distributor pays ₹2.5-4 lakhs for flights, hotels and meals to visit a single trade show.",
+      description: "Even though the hefty price tag is mainly for buyers to pay to attend a trade show, distributors also pay their fair share. On average, a distributor pays ₹2.5-4 lakhs for flights, hotels and meals to visit a single trade show.",
     }
   ];
 
@@ -58,7 +58,7 @@ const DistributorPage = () => {
     {
       icon: <MessageCircle className="w-12 h-12" />,
       title: "Start A Conversation",
-      description: "Start a conversation with the brand of interest. Once there is a mutual interest, start discussing the possibilities of volume, shipping, retailers, certification, marketing and more.",
+      description: "Start a conversation with the buyer of interest. Once there is a mutual interest, start discussing the possibilities of volume, shipping, retailers, certification, marketing and more.",
       step: 3
     },
     {
@@ -73,12 +73,12 @@ const DistributorPage = () => {
     {
       icon: <Shield className="w-6 h-6" />,
       title: "Rigorous Qualification Process",
-      description: "We qualify each member, both brands and distributors. Our pre-qualification process ensures every member is a verified potential business partner."
+      description: "We qualify each member, both buyers and distributors. Our pre-qualification process ensures every member is a verified potential business partner."
     },
     {
       icon: <Star className="w-6 h-6" />,
       title: "Access to Exclusive Network", 
-      description: "With more than 14 years experience working with the best in class brands and distributors around the world, we only select the best members on Koop India."
+      description: "With more than 14 years experience working with the best in class buyers and distributors around the world, we only select the best members on Koop India."
     },
     {
       icon: <Globe className="w-6 h-6" />,
@@ -88,7 +88,7 @@ const DistributorPage = () => {
   ];
 
   const stats = [
-    { number: "100+", label: "Verified Brands" },
+    { number: "100+", label: "Verified Buyers" },
     { number: "1000+", label: "Active Distributors" },
     { number: "50+", label: "Product Categories" },
     { number: "25+", label: "States Covered" }
@@ -101,13 +101,13 @@ const DistributorPage = () => {
       color: "from-blue-500 to-blue-600"
     },
     {
-      title: "Verified Brands",
+      title: "Verified Buyers",
       description: "Access pre-qualified companies",
       color: "from-green-500 to-green-600"
     },
     {
       title: "Direct Connection",
-      description: "Connect with brands directly",
+      description: "Connect with buyers directly",
       color: "from-purple-500 to-purple-600"
     },
     {
@@ -133,10 +133,10 @@ const DistributorPage = () => {
                 </h1>
               </div>
               <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-                Find Innovative <span className="text-[#F97316]">Brands</span> to Distribute
+                Find Innovative <span className="text-[#F97316]">Buyers</span> to Distribute
               </h2>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Discover consumer electronics innovative brands with Koop India. We select the best market-ready brands with great traction to help you find your next top seller!
+                Discover consumer electronics innovative buyers with Koop India. We select the best market-ready buyers with great traction to help you find your next top seller!
               </p>
               <button  
                onClick={onOpenModal}
@@ -214,7 +214,7 @@ const DistributorPage = () => {
               How Does It <span className="text-[#F97316]">Work?</span>
             </h2>
             <p className="text-xl text-gray-600">
-              Simple steps to connect with innovative brands and build successful partnerships
+              Simple steps to connect with innovative buyers and build successful partnerships
             </p>
           </div>
 
@@ -276,12 +276,12 @@ const DistributorPage = () => {
                 Access Your Dashboard <span className="text-[#F97316]">Anywhere</span>
               </h2>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Connect with brands directly through your personal dashboard. Manage partnerships, track conversations, and discover new opportunities on the go with our mobile-optimized platform.
+                Connect with buyers directly through your personal dashboard. Manage partnerships, track conversations, and discover new opportunities on the go with our mobile-optimized platform.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-6 h-6 text-[#F97316]" />
-                  <span className="text-gray-700 text-lg">Real-time brand notifications</span>
+                  <span className="text-gray-700 text-lg">Real-time buyer notifications</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="w-6 h-6 text-[#F97316]" />
@@ -302,7 +302,7 @@ const DistributorPage = () => {
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Star className="w-5 h-5 text-[#F97316]" />
-                  <span className="text-gray-700">Access to vetted brands</span>
+                  <span className="text-gray-700">Access to vetted buyers</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Users className="w-5 h-5 text-[#F97316]" />
@@ -343,14 +343,14 @@ const DistributorPage = () => {
                 2
               </div>
               <h3 className="text-xl font-bold text-[#141d32] mb-2">Discover</h3>
-              <p className="text-gray-600">Browse vetted innovative brands</p>
+              <p className="text-gray-600">Browse vetted innovative buyers</p>
             </div>
             <div className="text-center group">
               <div className="w-16 h-16 bg-[#F97316] rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 3
               </div>
               <h3 className="text-xl font-bold text-[#141d32] mb-2">Connect</h3>
-              <p className="text-gray-600">Start conversations with brands</p>
+              <p className="text-gray-600">Start conversations with buyers</p>
             </div>
             <div className="text-center group">
               <div className="w-16 h-16 bg-[#F97316] rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -370,7 +370,7 @@ const DistributorPage = () => {
             Ready to Find Your Next Top Seller?
           </h2>
           <p className="text-xl text-orange-100 mb-8 leading-relaxed">
-            Join India premier platform connecting distributors with innovative consumer electronics brands. Register today and start discovering opportunities.
+            Join India premier platform connecting distributors with innovative consumer electronics buyers. Register today and start discovering opportunities.
           </p>
           <button
            onClick={onOpenModal} 

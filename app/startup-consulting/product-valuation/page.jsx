@@ -18,7 +18,7 @@ const ProductMarginValuationPage = () => {
         </title>
         <meta
           name="description"
-          content="Koop India helps brands with product pricing, cost analysis, distributor margins, profitability forecasting & ROI optimization."
+          content="Koop India helps buyers with product pricing, cost analysis, distributor margins, profitability forecasting & ROI optimization."
         />
         <meta name="robots" content="index, follow" />
         <link
@@ -38,7 +38,7 @@ const ProductMarginValuationPage = () => {
 
             <p className="max-w-4xl mx-auto text-gray-300 mb-8 leading-relaxed">
               Koop India’s Product & Margin Valuation services are designed to
-              help brands achieve sustainable profitability while remaining
+              help buyers achieve sustainable profitability while remaining
               competitive in the market.
             </p>
 

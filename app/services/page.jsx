@@ -27,7 +27,7 @@ const categories = [
       {
         title: "Trademark Registration",
         slug: "trademark-registration",
-        desc: "Protect your brand identity legally.",
+        desc: "Protect your buyer identity legally.",
         inForm: true,
       },
       {

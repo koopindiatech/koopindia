@@ -49,7 +49,7 @@ const termsData = [
   {
     num: 9,
     title: "Marketing & Promotional Services",
-    content: <>Marketing, branding, social media management, SEO, advertising, lead generation, and promotional activities are provided on a best-effort basis. Koop India does not guarantee any specific number of leads, sales, distributors, revenue, website traffic, rankings, or return on investment (ROI). Campaign performance depends on market conditions, product quality, pricing, competition, audience response, and third-party advertising platforms.</>
+    content: <>Marketing, buyering, social media management, SEO, advertising, lead generation, and promotional activities are provided on a best-effort basis. Koop India does not guarantee any specific number of leads, sales, distributors, revenue, website traffic, rankings, or return on investment (ROI). Campaign performance depends on market conditions, product quality, pricing, competition, audience response, and third-party advertising platforms.</>
   },
   {
     num: 10,

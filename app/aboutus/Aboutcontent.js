@@ -21,7 +21,7 @@ const AboutPage = () => {
   ];
 
   const whyChooseUs = [
-    "All-in-one business solution—from legal to branding under one roof.",
+    "All-in-one business solution—from legal to buyering under one roof.",
     "Dedicated experts delivering specialist support across services.",
     "Startup-focused, affordable pricing.",
     "Pan-India support with execution across regions.", 
@@ -44,10 +44,10 @@ const AboutPage = () => {
           <div>
             <h1 className="text-5xl font-extrabold leading-tight">
               Empowering Startups • Enabling Growth •{" "}
-              <span className="text-[#F97316]">Elevating Brands</span>
+              <span className="text-[#F97316]">Elevating Buyers</span>
             </h1>
             <p className="mt-4 text-gray-300 leading-relaxed">
-              At <span className="text-[#F97316] font-semibold">Koop India</span>, we are more than just a consulting firm—we&apos;re your strategic launchpad for business success. Founded to empower Indian entrepreneurs, we offer a 360° suite of services—from registration to branding, compliance to promotion, valuation to distribution.
+              At <span className="text-[#F97316] font-semibold">Koop India</span>, we are more than just a consulting firm—we&apos;re your strategic launchpad for business success. Founded to empower Indian entrepreneurs, we offer a 360° suite of services—from registration to buyering, compliance to promotion, valuation to distribution.
             </p>
           </div>
           <div className="rounded-lg overflow-hidden shadow-lg">
@@ -84,7 +84,7 @@ const AboutPage = () => {
             <h2 className="text-3xl font-bold text-[#F97316]">Who We Are</h2>
             <p className="text-gray-200 leading-relaxed text-lg">
               Koop India is a full-spectrum business consulting and support platform
-              that caters to startups, SMEs, and growing brands across India. Whether
+              that caters to startups, SMEs, and growing buyers across India. Whether
               you&apos;re a budding entrepreneur or a scaling enterprise, we guide you at
               every step with expertise and dedication.
             </p>

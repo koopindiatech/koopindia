@@ -31,7 +31,7 @@ const schemaData = {
   "@type": "Service",
   name: "Seller Onboarding Services — Amazon, Flipkart, JioMart, Myntra",
   description:
-    "Complete marketplace seller registration and onboarding for Amazon, Flipkart, JioMart, Myntra and more. Product listing, catalog creation, GST guidance, brand registry and account management.",
+    "Complete marketplace seller registration and onboarding for Amazon, Flipkart, JioMart, Myntra and more. Product listing, catalog creation, GST guidance, buyer registry and account management.",
   provider: { "@type": "Organization", name: "Koop India", url: "https://koopindia.com" },
   areaServed: { "@type": "Country", name: "India" },
   serviceType: [
@@ -63,7 +63,7 @@ const faqSchema = {
       name: "What documents are required for Flipkart seller registration?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Flipkart seller registration requires GST Certificate, PAN Card, Cancelled Cheque, Bank Account Details, Aadhaar Card, Email ID, Mobile Number, and Business Address Proof. Brand Authorization Letter is also required for branded products.",
+        text: "Flipkart seller registration requires GST Certificate, PAN Card, Cancelled Cheque, Bank Account Details, Aadhaar Card, Email ID, Mobile Number, and Business Address Proof. Buyer Authorization Letter is also required for buyered products.",
       },
     },
     {
@@ -163,7 +163,7 @@ export default function SellerOnboarding() {
     { icon: <Store className="w-5 h-5" />, label: "Seller Registration" },
     { icon: <UserCheck className="w-5 h-5" />, label: "Account Setup" },
     { icon: <FileText className="w-5 h-5" />, label: "GST Guidance" },
-    { icon: <Award className="w-5 h-5" />, label: "Brand Registry" },
+    { icon: <Award className="w-5 h-5" />, label: "Buyer Registry" },
     { icon: <Shield className="w-5 h-5" />, label: "Trademark Support" },
     { icon: <List className="w-5 h-5" />, label: "Product Listing" },
     { icon: <BookOpen className="w-5 h-5" />, label: "Catalog Creation" },
@@ -206,7 +206,7 @@ export default function SellerOnboarding() {
     "Mobile Number",
     "Business Address Proof",
     "Trademark (Optional)",
-    "Brand Authorization (If Applicable)",
+    "Buyer Authorization (If Applicable)",
   ];
 
   const packages = [
@@ -665,7 +665,7 @@ export default function SellerOnboarding() {
                     "PAN India Reach",
                     "Easy Logistics",
                     "Millions of Customers",
-                    "Brand Visibility",
+                    "Buyer Visibility",
                     "Faster Sales Growth",
                     "Inventory Management",
                     "Secure Payments",

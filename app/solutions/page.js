@@ -13,7 +13,7 @@ export default function SolutionsPage() {
           At <span className="text-orange-500 font-semibold">Koop India</span>, 
           we go beyond consultancy — we partner with organizations to design, 
           build, and implement strategies that drive measurable results.  
-          From strategic planning to creative branding, digital growth, and 
+          From strategic planning to creative buyering, digital growth, and 
           automation, our solutions are built to empower your business in an 
           ever-changing marketplace.
         </p>
@@ -44,17 +44,17 @@ export default function SolutionsPage() {
             </ul>
           </div>
 
-          {/* Creative & Branding Solutions */}
+          {/* Creative & Buyering Solutions */}
           <div className="bg-white rounded-2xl shadow-lg p-6 text-gray-800 border-t-4 border-orange-500">
             <h3 className="text-2xl font-bold text-orange-500 mb-3">
-              💡 Creative & Branding Solutions
+              💡 Creative & Buyering Solutions
             </h3>
             <p className="mb-4">
-              Distinct brand identity and engaging creatives to connect with
+              Distinct buyer identity and engaging creatives to connect with
               your audience.
             </p>
             <ul className="list-disc list-inside space-y-1">
-              <li>Logo & Brand Identity Design</li>
+              <li>Logo & Buyer Identity Design</li>
               <li>Product Packaging Design</li>
               <li>Marketing Collaterals (Brochures, Catalogues, Posters)</li>
               <li>Social Media Creative Designs</li>
