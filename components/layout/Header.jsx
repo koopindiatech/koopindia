@@ -53,7 +53,7 @@ const Header = ({ onOpenModal }) => {
         { name: "Website Development", href: "/tech-solutions/website-development", icon: <Globe size={15} /> },
         { name: "CRM Development", href: "/tech-solutions/crm-development", icon: <MonitorSmartphone size={15} /> },
         { name: "SEO Services", href: "/tech-solutions/seo", icon: <Search size={15} /> },
-        { name: "Social Media Marketing", href: "/digital-marketing/social-media", icon: <Share2 size={15} /> },
+        { name: "Social Media Marketing", href: "/digital-marketing/social-media-marketing", icon: <Share2 size={15} /> },
         { name: "Logo & Graphic Design", href: "/digital-marketing/logo-design", icon: <Palette size={15} /> },
         { name: "Content Writing", href: "/digital-marketing/content-writing", icon: <PenLine size={15} /> },
         { name: "Google My Business", href: "/digital-marketing/gmb", icon: <MapPin size={15} /> },

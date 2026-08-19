@@ -20,6 +20,11 @@ const nextConfig = {
         destination: "/gst-registration",
         permanent: true,
       },
+      {
+        source: "/digital-marketing/social-media",
+        destination: "/digital-marketing/social-media-marketing",
+        permanent: true,
+      },
     ];
   },
 };

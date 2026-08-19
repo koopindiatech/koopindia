@@ -63,7 +63,7 @@ const HeroSection = ({ onOpenModal }) => {
     },
     {
       img: "/services/socialmedia-marketing.jpeg",
-      link: "/digital-marketing/social-media",
+      link: "/digital-marketing/social-media-marketing",
       alt: "Social Media Marketing Services",
     },
     {

@@ -246,7 +246,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/digital-marketing/social-media"
+                  href="/digital-marketing/social-media-marketing"
                   className="hover:text-[#F97316]"
                 >
                   Social Media Marketing

@@ -132,7 +132,7 @@ export default function sitemap() {
     },
 
     {
-      url: `${baseUrl}/digital-marketing/social-media`,
+      url: `${baseUrl}/digital-marketing/social-media-marketing`,
       lastModified,
       priority: 0.75,
     },
