@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Store, Plus, Search, Globe, Edit2, Trash2, PauseCircle, PlayCircle, X,
   Phone, Package, ExternalLink, MoreVertical, Check, Building2, Palette,
@@ -96,7 +96,7 @@ const blank = () => ({
 
 const SECTIONS = [
   { id: "identity", label: "Identity", icon: Building2, desc: "Business type, name & contact" },
-  { id: "buyering", label: "Buyering", icon: Palette, desc: "Logo & buyer colors" },
+  { id: "branding", label: "Colors & Logo", icon: Palette, desc: "Logo & brand colors" },
   { id: "hero", label: "Hero Section", icon: ImageIcon, desc: "Banner, headline & product images" },
   { id: "about", label: "About & Vision", icon: FileText, desc: "Story, mission & values" },
   { id: "products", label: "Products", icon: Package, desc: "Categories & product catalog" },
@@ -105,6 +105,16 @@ const SECTIONS = [
   { id: "certifications", label: "Certifications", icon: Shield, desc: "Quality certificates" },
   { id: "contact", label: "Contact & Social", icon: Phone, desc: "Address, contact & social" },
   { id: "publish", label: "Publish", icon: Rocket, desc: "Footer badges" },
+];
+
+const CATEGORIES = [
+  "Spices & Masala", "FMCG & Grocery", "Agriculture & Farming", "Food & Beverages",
+  "Dairy & Dairy Products", "Packaged Foods", "Snacks & Namkeen", "Edible Oils",
+  "Health & Wellness", "Ayurvedic & Herbal", "Pharmaceuticals", "Chemicals & Fertilizers",
+  "Textile & Garments", "Electronics & Hardware", "Construction Materials",
+  "Machinery & Equipment", "Furniture & Interiors", "Automotive Parts",
+  "Handicrafts & Gifts", "Stationery & Paper", "Plastics & Rubber",
+  "Export & Import", "Other",
 ];
 
 /* ─── Tailwind helpers ─── */
@@ -176,6 +186,8 @@ export default function SellersPage() {
   const [form, setForm] = useState(blank());
   const [editing, setEditing] = useState(null);
   const [step, setStep] = useState(0);
+  const [activeSection, setActiveSection] = useState("section-identity");
+  const scrollRef = useRef(null);
   const [saving, setSaving] = useState(false);
   const [menuId, setMenuId] = useState(null);
   const [delId, setDelId] = useState(null);
@@ -183,6 +195,25 @@ export default function SellersPage() {
   const [uploadStatus, setUploadStatus] = useState({});
   /* true while ANY image is currently uploading — prevents saving with empty URL */
   const isUploading = Object.values(uploadStatus).some((s) => s === "uploading");
+
+  /* ── Scroll-spy: highlight active section as user scrolls ── */
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const sectionIds = ["section-identity", "section-about", "section-products", "section-contact"];
+    const observers = [];
+    sectionIds.forEach(id => {
+      const el = container.querySelector(`#${id}`);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+        { root: container, rootMargin: "-30% 0px -60% 0px", threshold: 0 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach(o => o.disconnect());
+  }, [formOpen]); // re-attach when form opens
 
   /* ── Load from Firestore ── */
   useEffect(() => {
@@ -195,6 +226,7 @@ export default function SellersPage() {
     };
     load();
   }, []);
+
 
   /* ─── Upload file to Firebase Storage → return permanent URL ─── */
   const uploadToStorage = (file, path, uiKey) => new Promise((resolve, reject) => {
@@ -409,7 +441,7 @@ export default function SellersPage() {
                   <div className="p-5 flex-1 flex flex-col gap-4">
                     <div className="flex items-start gap-3">
                       {s.logoUrl
-                        ? <img src={getImg(s.logoUrl)} alt="" className="w-12 h-12 rounded-xl object-contain border border-gray-100 flex-shrink-0" />
+                        ? <img src={getImg(s.logoUrl)} alt="" className="h-12 w-auto max-w-[100px] object-contain flex-shrink-0" />
                         : <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-base flex-shrink-0" style={{ backgroundColor: color }}>{ini(s.name)}</div>
                       }
                       <div className="flex-1 min-w-0">
@@ -492,113 +524,87 @@ export default function SellersPage() {
             </div>
           </div>
 
-          {/* Studio Layout */}
-          <div className="flex flex-1 overflow-hidden">
-            {/* Sidebar Nav */}
-            <div className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-gray-100 pt-6 pb-10 px-4 gap-1 sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-3">Sections</p>
-              {[
-                { id: 0, icon: "🏠", label: "Buyer Identity", desc: "Name, colors, logo" },
-                { id: 1, icon: "ℹ️", label: "About & Vision", desc: "Story, mission, team" },
-                { id: 2, icon: "📦", label: "Products", desc: "Catalog & categories" },
-                { id: 3, icon: "📞", label: "Contact & Social", desc: "Contact info, links" },
-              ].map(t => (
-                <button key={t.id} type="button" onClick={() => setStep(t.id)}
-                  className={`w-full text-left px-3 py-3 rounded-xl transition-all duration-150 group ${step === t.id
-                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
-                      : "hover:bg-gray-50 text-gray-700"
-                    }`}>
-                  <div className="flex items-center gap-3">
-                    <span className="text-base">{t.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-bold truncate ${step === t.id ? "text-white" : "text-gray-800"}`}>{t.label}</p>
-                      <p className={`text-[10px] truncate mt-0.5 ${step === t.id ? "text-indigo-200" : "text-gray-400"}`}>{t.desc}</p>
-                    </div>
-                    {step === t.id && <Check size={14} className="text-indigo-200 flex-shrink-0" />}
-                  </div>
-                </button>
-              ))}
+          {/* Studio Layout — full width, no sidebar */}
+          <div className="flex flex-col flex-1 overflow-hidden">
 
-              <div className="mt-auto pt-6 border-t border-gray-100 space-y-2">
-                <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.name.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer">
-                  <Save size={13} /> {isUploading ? "Wait for upload..." : "Save as Draft"}
-                </button>
-                <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.name.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-md disabled:opacity-40 cursor-pointer">
-                  <Rocket size={13} /> {saving ? "Publishing..." : isUploading ? "Uploading..." : "Publish Live"}
-                </button>
+            {/* ── Sticky Top Section Nav (horizontal) ── */}
+            <div className="bg-white border-b border-gray-100 sticky top-[57px] z-20 flex-shrink-0">
+              <div className="max-w-5xl mx-auto px-5 sm:px-8">
+                <div className="flex items-center gap-1 py-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                  {[
+                    { id: "section-identity", icon: "🏠", label: "Identity & Branding" },
+                    { id: "section-about", icon: "ℹ️", label: "About & Vision" },
+                    { id: "section-products", icon: "📦", label: "Products" },
+                    { id: "section-contact", icon: "📞", label: "Contact & Social" },
+                  ].map((t, idx) => (
+                    <button key={t.id} type="button"
+                      onClick={() => scrollRef.current?.querySelector(`#${t.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                      className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer ${
+                        activeSection === t.id
+                          ? "bg-indigo-600 text-white shadow-md"
+                          : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                      }`}>
+                      <span>{t.icon}</span>
+                      <span>{t.label}</span>
+                      {activeSection === t.id && <Check size={12} className="text-indigo-200" />}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Mobile Tabs */}
-            <div className="flex lg:hidden border-b border-gray-100 bg-white overflow-x-auto sticky top-[57px] z-20 w-full flex-shrink-0">
-              {[
-                { id: 0, icon: "🏠", label: "Identity" },
-                { id: 1, icon: "ℹ️", label: "About" },
-                { id: 2, icon: "📦", label: "Products" },
-                { id: 3, icon: "📞", label: "Contact" },
-              ].map(t => (
-                <button key={t.id} type="button" onClick={() => setStep(t.id)}
-                  className={`flex-shrink-0 px-5 py-3.5 text-left border-b-2 transition-all ${step === t.id ? "border-indigo-600 bg-white" : "border-transparent hover:bg-gray-50"
-                    }`}>
-                  <p className={`text-xs font-black ${step === t.id ? "text-indigo-700" : "text-gray-500"}`}>{t.label}</p>
-                </button>
-              ))}
-            </div>
+            {/* Form Body — all sections scrollable */}
+            <div className="flex-1 overflow-y-auto" ref={scrollRef}>
+              <div className="max-w-5xl mx-auto p-5 sm:p-8 space-y-10">
 
-            {/* Form Body */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="max-w-3xl mx-auto p-5 sm:p-8 space-y-6">
-
-                {/* ══ BUYER IDENTITY TAB ══ */}
-                {step === 0 && (
-                  <div className="space-y-6">
-                    {/* Basic Buyer Info */}
+                {/* ══ IDENTITY & BRANDING ══ */}
+                <div id="section-identity" className="space-y-6 scroll-mt-6">
+                    {/* Company Identity */}
                     <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
                         <div>
-                          <h3 className="text-sm font-black text-gray-900">Buyer Identity</h3>
+                          <h3 className="text-sm font-black text-gray-900">Company Identity</h3>
                           <p className="text-[11px] text-gray-400 font-medium">Core details about your business</p>
                         </div>
                       </div>
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
-                            <label className={fieldLabel}>Buyer / Business Name *</label>
-                            <input type="text" value={form.name} onChange={e => sf("name", e.target.value)} placeholder="e.g. Nayana Masala" className={inp} />
+                            <label className={fieldLabel}>Company Name *</label>
+                            <input type="text" value={form.name} onChange={e => sf("name", e.target.value)} placeholder="e.g. Nayana Masala Pvt Ltd" className={inp} />
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
-                            <input type="text" value={form.category} onChange={e => sf("category", e.target.value)} placeholder="e.g. Spices & Masala" className={inp} />
+                            <select value={form.category} onChange={e => sf("category", e.target.value)} className={inp}>
+                              <option value="">Select Category...</option>
+                              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
                           </div>
                         </div>
                         <div>
                           <label className={fieldLabel}>Business Type</label>
-                          <div className="flex gap-3">
-                            {[{ v: "product", label: "🛒 Product Buyer" }, { v: "service", label: "🏢 Service Buyer" }].map(o => (
-                              <button key={o.v} type="button" onClick={() => sf("type", o.v)}
-                                className={`flex-1 py-3 rounded-xl border-2 font-bold text-sm transition-all duration-150 cursor-pointer ${form.type === o.v ? "border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm" : "border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300"
-                                  }`}>{o.label}
-                              </button>
-                            ))}
-                          </div>
+                          <select value={form.type} onChange={e => sf("type", e.target.value)} className={inp}>
+                            <option value="">Select Business Type...</option>
+                            <option value="manufacturer">🏭 Manufacturer</option>
+                            <option value="brand_owner">🏷️ Brand Owner</option>
+                            <option value="importer">🌍 Importer</option>
+                          </select>
                         </div>
                       </div>
                     </div>
 
-                    {/* Buyering Colors */}
+                    {/* Brand Colors & Logo */}
                     <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
                         <div>
-                          <h3 className="text-sm font-black text-gray-900">Buyering Colors & Logo</h3>
-                          <p className="text-[11px] text-gray-400 font-medium">Set your buyer palette and visual identity</p>
+                          <h3 className="text-sm font-black text-gray-900">Colors & Logo</h3>
+                          <p className="text-[11px] text-gray-400 font-medium">Set your brand palette and visual identity</p>
                         </div>
                       </div>
                       <div className="space-y-5">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                           <div>
-                            <label className={fieldLabel}>Primary Buyer Color</label>
+                            <label className={fieldLabel}>Primary Color</label>
                             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                               <div className="w-10 h-10 rounded-xl shadow-md flex-shrink-0 border-2 border-white" style={{ backgroundColor: form.primaryColor }} />
                               <div className="flex gap-1.5 flex-wrap">
@@ -613,7 +619,7 @@ export default function SellersPage() {
                             </div>
                           </div>
                           <div>
-                            <label className={fieldLabel}>Secondary Buyer Color</label>
+                            <label className={fieldLabel}>Secondary Color</label>
                             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                               <div className="w-10 h-10 rounded-xl shadow-md flex-shrink-0 border-2 border-white" style={{ backgroundColor: form.secondaryColor || '#f5a623' }} />
                               <div className="flex gap-1.5 flex-wrap">
@@ -763,6 +769,9 @@ export default function SellersPage() {
                         </div>
                         <button type="button" onClick={() => addArr("heroBanners", { id: uid(), url: "" })} className={addBtn}><Plus size={14} /> Add Banner</button>
                       </div>
+                      <div className="mb-3 px-3 py-2 bg-blue-50 border border-blue-100 rounded-xl">
+                        <p className="text-[11px] text-blue-700 font-semibold">📐 Recommended size: <strong>1920 × 600px</strong> (landscape). Max file size: <strong>2MB</strong>. Format: JPG or WebP.</p>
+                      </div>
                       <div className="space-y-3">
                         {(form.heroBanners || []).map((banner, i) => (
                           <div key={banner.id || i} className="flex gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 items-center">
@@ -839,14 +848,14 @@ export default function SellersPage() {
                         <div className="flex items-center gap-3">
                           <div>
                             <h3 className="text-sm font-black text-gray-900">Certifications</h3>
-                            <p className="text-[11px] text-gray-400 font-medium">Quality certificates & awards</p>
+                            <p className="text-[11px] text-gray-400 font-medium">Quality certificates & awards — only ✅ checked ones show on public page</p>
                           </div>
                         </div>
-                        <button type="button" onClick={() => addArr("certifications", { id: uid(), name: "", imageUrl: "", description: "" })} className={addBtn}><Plus size={14} /> Add Certificate</button>
+                        <button type="button" onClick={() => addArr("certifications", { id: uid(), name: "", imageUrl: "", description: "", checked: true })} className={addBtn}><Plus size={14} /> Add Certificate</button>
                       </div>
                       <div className="space-y-3">
                         {form.certifications.map((cert, i) => (
-                          <div key={cert.id || i} className="flex gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                          <div key={cert.id || i} className={`flex gap-3 p-3 rounded-xl border ${cert.checked !== false ? 'bg-emerald-50 border-emerald-200' : 'bg-gray-50 border-gray-100 opacity-60'}`}>
                             <div className="flex-shrink-0">
                               <UploadBox field={`cert_${i}`} value={cert.imageUrl} onPick={e => handleArrayImagePick(e, "certifications", i)} small />
                               {ProgPill({field:`certifications_${i}`,uploadStatus,uploadProgress})}
@@ -854,21 +863,23 @@ export default function SellersPage() {
                             <div className="flex-1 space-y-2">
                               <input type="text" value={cert.name} onChange={e => setArr("certifications", i, "name", e.target.value)} placeholder="e.g. FSSAI Approved" className={inp} />
                               <input type="text" value={cert.description} onChange={e => setArr("certifications", i, "description", e.target.value)} placeholder="Short description" className={inp} />
+                              <label className="flex items-center gap-2 cursor-pointer mt-1">
+                                <input type="checkbox" checked={cert.checked !== false} onChange={e => setArr("certifications", i, "checked", e.target.checked)} className="w-4 h-4 accent-emerald-600" />
+                                <span className="text-xs font-bold text-gray-700">Show on public page</span>
+                              </label>
                             </div>
                             <button type="button" onClick={() => delArr("certifications", i)} className={delBtn}><X size={14} /></button>
                           </div>
                         ))}
                       </div>
                     </div>
-                  </div>
-                )}
+                </div>{/* end section-identity */}
 
-                {/* ══ ABOUT TAB ══ */}
-                {step === 1 && (
-                  <div className="space-y-6">
+                {/* ══ ABOUT & VISION ══ */}
+                <div id="section-about" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
-                        <div><h3 className="text-sm font-black text-gray-900">About the Buyer</h3><p className="text-[11px] text-gray-400 font-medium">Story and buyer introduction</p></div>
+                        <div><h3 className="text-sm font-black text-gray-900">About the Company</h3><p className="text-[11px] text-gray-400 font-medium">Story and company introduction</p></div>
                       </div>
                       <div className="space-y-4">
                         <div>
@@ -876,16 +887,17 @@ export default function SellersPage() {
                           <textarea rows={5} value={form.about} onChange={e => sf("about", e.target.value)} placeholder="Established in 2010, we are a trusted name in the spice industry..." className={ta} />
                         </div>
                         <div>
-                          <label className={fieldLabel}>About Image (shown on right)</label>
+                          <label className={fieldLabel}>About Image (shown on right side)</label>
                           <UploadBox field="aboutImage" value={form.aboutImageUrl} onPick={e => handleImagePick(e, "aboutImage")} />
                           {ProgPill({field:"aboutImage",uploadStatus,uploadProgress})}
+                          <p className="text-[11px] text-gray-400 mt-1">📐 Recommended: <strong>800 × 600px</strong>. Shown top-right on About page.</p>
                         </div>
                       </div>
                     </div>
 
                     <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
-                        <div><h3 className="text-sm font-black text-gray-900">Mission, Vision, Values & Commitment</h3><p className="text-[11px] text-gray-400 font-medium">Core pillars of your buyer</p></div>
+                        <div><h3 className="text-sm font-black text-gray-900">Mission, Vision, Values & Commitment</h3><p className="text-[11px] text-gray-400 font-medium">Core pillars of your company</p></div>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {[
@@ -950,12 +962,10 @@ export default function SellersPage() {
                         ))}
                       </div>
                     </div>
-                  </div>
-                )}
+                </div>{/* end section-about */}
 
-                {/* ══ PRODUCTS TAB ══ */}
-                {step === 2 && (
-                  <div className="space-y-6">
+                {/* ══ PRODUCTS ══ */}
+                <div id="section-products" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
@@ -1127,12 +1137,10 @@ export default function SellersPage() {
                         ))}
                       </div>
                     </div>
-                  </div>
-                )}
+                </div>{/* end section-products */}
 
-                {/* ══ CONTACT TAB ══ */}
-                {step === 3 && (
-                  <div className="space-y-6">
+                {/* ══ CONTACT & SOCIAL ══ */}
+                <div id="section-contact" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
                         <div><h3 className="text-sm font-black text-gray-900">Contact Information</h3><p className="text-[11px] text-gray-400 font-medium">Phone, email & address</p></div>
@@ -1154,7 +1162,7 @@ export default function SellersPage() {
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-gray-800">Hide Phone Number on Buyer Page</p>
+                            <p className="text-sm font-bold text-gray-800">Hide Phone Number on Public Page</p>
                             <p className="text-xs text-gray-500 mt-0.5">Phone number will be completely hidden from visitors.</p>
                           </div>
                         </label>
@@ -1178,6 +1186,7 @@ export default function SellersPage() {
                           onPick={(e) => handleImagePick(e, "contactBanner")}
                         />
                         <ProgPill field="contactBanner" uploadStatus={uploadStatus} uploadProgress={uploadProgress} />
+                        <p className="text-[11px] text-gray-400">📐 Recommended: <strong>1920 × 480px</strong>. Max 2MB.</p>
                         {form.contactBannerUrl && (
                           <button type="button" onClick={() => setForm(p => ({ ...p, contactBannerUrl: "" }))}
                             className="text-xs text-red-500 font-bold hover:underline cursor-pointer">
@@ -1208,39 +1217,22 @@ export default function SellersPage() {
                         ))}
                       </div>
                     </div>
-                  </div>
-                )}
+                </div>{/* end section-contact */}
 
               </div>{/* end max-w-3xl inner */}
             </div>{/* end flex-1 overflow-y-auto */}
           </div>{/* end flex layout */}
 
-          {/* Mobile Action Bar */}
-          <div className="lg:hidden px-4 py-3 bg-white border-t border-gray-100 flex items-center justify-between gap-3">
-            <div className="flex gap-2">
-              {step > 0 && (
-                <button type="button" onClick={() => setStep(s => s - 1)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-bold text-xs hover:bg-gray-50 transition cursor-pointer">
-                  <ArrowLeft size={14} /> Back
-                </button>
-              )}
-              {step < 3 && (
-                <button type="button" onClick={() => setStep(s => s + 1)}
-                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition shadow-md cursor-pointer">
-                  Next <ArrowRight size={14} />
-                </button>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.name.trim()}
-                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-bold text-xs hover:bg-gray-50 transition disabled:opacity-50 cursor-pointer">
-                <Save size={13} /> {isUploading ? "Uploading..." : "Draft"}
-              </button>
-              <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.name.trim()}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-md disabled:opacity-50 cursor-pointer">
-                <Rocket size={13} /> {saving ? "Saving..." : isUploading ? "Uploading..." : "Publish"}
-              </button>
-            </div>
+          {/* Mobile Save Bar */}
+          <div className="lg:hidden px-4 py-3 bg-white border-t border-gray-100 flex items-center justify-end gap-3">
+            <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.name.trim()}
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-bold text-xs hover:bg-gray-50 transition disabled:opacity-50 cursor-pointer">
+              <Save size={13} /> {isUploading ? "Uploading..." : "Draft"}
+            </button>
+            <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.name.trim()}
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-md disabled:opacity-50 cursor-pointer">
+              <Rocket size={13} /> {saving ? "Saving..." : isUploading ? "Uploading..." : "Publish"}
+            </button>
           </div>
         </div>
       )}

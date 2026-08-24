@@ -28,6 +28,11 @@ export default function SellerClientPage({ initialSeller }) {
   const [enquiryForm, setEnquiryForm] = useState({ name: "", phone: "", email: "", message: "" });
   const [enquirySubmitting, setEnquirySubmitting] = useState(false);
   const [enquirySuccess, setEnquirySuccess] = useState(false);
+  const [showInquiryPopup, setShowInquiryPopup] = useState(false);
+  const [inquiryProd, setInquiryProd] = useState(null);
+  const [inquiryForm, setInquiryForm] = useState({ name: "", phone: "", email: "", message: "" });
+  const [inquirySubmitting, setInquirySubmitting] = useState(false);
+  const [inquirySuccess, setInquirySuccess] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [prodDropOpen, setProdDropOpen] = useState(false);
@@ -72,7 +77,7 @@ export default function SellerClientPage({ initialSeller }) {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
         <div className="w-14 h-14 border-4 border-gray-200 border-t-green-600 rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-gray-600 text-sm">Loading buyer page...</p>
+        <p className="text-gray-600 text-sm">Loading...</p>
       </div>
     </div>
   );
@@ -81,7 +86,7 @@ export default function SellerClientPage({ initialSeller }) {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center space-y-3">
         <div className="text-5xl">🏪</div>
-        <h1 className="text-xl font-black text-gray-800">Buyer Not Found</h1>
+        <h1 className="text-xl font-black text-gray-800">Page Not Found</h1>
         <a href="/" className="inline-block bg-green-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm">Back to Koop India</a>
       </div>
     </div>
@@ -155,51 +160,61 @@ export default function SellerClientPage({ initialSeller }) {
     }
   };
 
-  /* ── Save product enquiry lead to Firestore ── */
-  const onEnquirySubmit = async (e) => {
+  /* ── Open inquiry popup ── */
+  const openInquiry = (prod = null) => {
+    setInquiryProd(prod);
+    setInquiryForm({ name: "", phone: "", email: "", message: "" });
+    setInquirySuccess(false);
+    setShowInquiryPopup(true);
+  };
+
+  /* ── Save popup inquiry lead to Firestore ── */
+  const onInquirySubmit = async (e) => {
     e.preventDefault();
-    setEnquirySubmitting(true);
+    setInquirySubmitting(true);
     try {
       await addDoc(collection(db, "leads"), {
-        ...enquiryForm,
+        ...inquiryForm,
         sellerSlug: slug,
         sellerName: seller.name,
-        productName: selProd?.name || "",
-        source: "product_page",
-        subject: `Product Inquiry: ${selProd?.name || ""}`,
-        type: "Product Inquiry",
+        productName: inquiryProd?.name || "",
+        source: inquiryProd ? "product_enquiry" : "general_enquiry",
+        subject: inquiryProd ? `Product Inquiry: ${inquiryProd.name}` : "General Inquiry",
+        type: inquiryProd ? "Product Inquiry" : "General Inquiry",
         status: "New",
         createdAt: serverTimestamp(),
       });
-      setEnquirySuccess(true);
-      setEnquiryForm({ name: "", phone: "", email: "", message: "" });
+      setInquirySuccess(true);
+      setInquiryForm({ name: "", phone: "", email: "", message: "" });
     } catch (err) {
-      console.error("Enquiry save error:", err);
-      alert("Failed to send enquiry. Please try again.");
+      console.error("Inquiry save error:", err);
+      alert("Failed to send inquiry. Please try again.");
     } finally {
-      setEnquirySubmitting(false);
+      setInquirySubmitting(false);
     }
   };
+
 
   const Logo = () => seller.logoUrl
     ? <img src={seller.logoUrl} alt={seller.name} className="h-10 w-auto max-w-[140px] object-contain" />
     : <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ backgroundColor: pc }}>{ini(seller.name)}</div>;
 
+  /* ── Product Card — shows only name + size/weight ── */
   const ProdCard = ({ p }) => (
     <div onClick={() => { setSelProd(p); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
-      className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group overflow-hidden flex flex-col flex-shrink-0 w-full sm:w-[260px] lg:w-[270px]">
-      <div className="bg-slate-50 h-48 flex items-center justify-center p-4 relative">
+      className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group overflow-hidden flex flex-col" style={{ width: '220px', minWidth: '220px' }}>
+      <div className="bg-slate-50 flex items-center justify-center p-4 relative" style={{ height: '180px' }}>
         {p.imageUrl
           ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
           : <span className="text-5xl">{p.emoji || "📦"}</span>}
         {p.badge && <span className="absolute top-2 left-2 text-[10px] font-black px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: sc }}>{p.badge}</span>}
       </div>
-      <div className="p-4 flex-1 flex flex-col">
-        <p className="font-bold text-gray-900 text-sm leading-tight mb-1">{p.name}</p>
-        {p.tagline && <p className="text-gray-500 text-xs mb-1 italic">{p.tagline}</p>}
-        {p.description && <p className="text-gray-500 text-xs mb-2 line-clamp-2 leading-relaxed">{p.description}</p>}
-        <div className="mt-auto">
-          {p.price && <p className="font-black text-base mb-2" style={{ color: pc }}>{p.price}</p>}
+      <div className="p-3 flex flex-col items-center text-center flex-1">
+        <p className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2">{p.name}</p>
+        {(p.netWeight || p.availableVariants) && (
+          <p className="text-gray-500 text-xs mb-2 font-medium">{p.netWeight || p.availableVariants?.split(',')[0]?.trim()}</p>
+        )}
+        <div className="mt-auto w-full pt-2">
           <button className="w-full text-xs font-bold py-2 rounded-xl text-white hover:opacity-90 transition shadow cursor-pointer" style={{ backgroundColor: pc }}>View Details</button>
         </div>
       </div>
@@ -207,27 +222,25 @@ export default function SellerClientPage({ initialSeller }) {
   );
 
   const ProdGrid = ({ list }) => (
-    <div className="flex flex-wrap gap-6 justify-center">
+    <div className="flex flex-wrap gap-5 justify-center">
       {list.map((p, i) => (
-        <div key={i} className={list.length === 1 ? "w-full max-w-xs" : ""}>
-          <ProdCard p={p} />
-        </div>
+        <ProdCard key={i} p={p} />
       ))}
     </div>
   );
 
+  /* ── Certification Cards — compact size ── */
   const CertCards = ({ list }) => (
-    <div className="flex flex-wrap gap-5 justify-center">
-      {list.filter(c => c.name).map((cert, i) => (
-        <div key={i} className="flex flex-col items-center bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1" style={{ width: "180px" }}>
-          <div className="w-full flex items-center justify-center p-4 border-b border-gray-100" style={{ height: "150px" }}>
+    <div className="flex flex-wrap gap-4 justify-center">
+      {list.filter(c => c.name && c.checked !== false).map((cert, i) => (
+        <div key={i} className="flex flex-col items-center bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5" style={{ width: '120px' }}>
+          <div className="w-full flex items-center justify-center p-3 border-b border-gray-100" style={{ height: '80px' }}>
             {cert.imageUrl
               ? <img src={cert.imageUrl} alt={cert.name} className="h-full w-full object-contain" />
-              : <div className="h-full w-full bg-gray-50 rounded-xl flex items-center justify-center text-4xl">🏆</div>}
+              : <div className="h-full w-full bg-gray-50 rounded-lg flex items-center justify-center text-2xl">🏆</div>}
           </div>
-          <div className="p-3 text-center w-full">
-            <p className="font-bold text-gray-900 text-xs">{cert.name}</p>
-            {cert.description && <p className="text-gray-500 text-[10px] mt-0.5 line-clamp-2">{cert.description}</p>}
+          <div className="p-2 text-center w-full">
+            <p className="font-bold text-gray-900 text-[10px] leading-tight">{cert.name}</p>
           </div>
         </div>
       ))}
@@ -241,11 +254,11 @@ export default function SellerClientPage({ initialSeller }) {
         {NAV.map(t => {
           if (t === "products") {
             return (
-              <div key="products" className="relative" ref={prodDropRef}>
+              <div key="products" className="relative" ref={prodDropRef}
+                onMouseEnter={() => products.length > 0 && setProdDropOpen(true)}
+                onMouseLeave={() => setProdDropOpen(false)}>
                 <button
                   onClick={() => { setSelProd(null); setTab("products"); }}
-                  onMouseEnter={() => products.length > 0 && setProdDropOpen(true)}
-                  onMouseLeave={() => setProdDropOpen(false)}
                   className={`px-5 py-2 rounded-xl font-bold text-sm transition-all flex items-center gap-1 ${activeTab === "products" ? "shadow-md" : ""}`}
                   style={{ backgroundColor: activeTab === "products" ? pc : "transparent", color: activeTab === "products" ? "#ffffff" : hText }}>
                   {NL["products"]}
@@ -254,13 +267,12 @@ export default function SellerClientPage({ initialSeller }) {
                   )}
                 </button>
                 {prodDropOpen && products.length > 0 && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden" style={{ width: "260px" }}
-                    onMouseEnter={() => setProdDropOpen(true)}
-                    onMouseLeave={() => setProdDropOpen(false)}>
-                    <div className="p-2 max-h-[360px] overflow-y-auto">
-                      {products.slice(0, 8).map((p, i) => (
-                        <button key={i} onClick={() => { setSelProd(p); setProdDropOpen(false); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition text-left cursor-pointer">
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 z-50">
+                    <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden" style={{ width: "260px" }}>
+                      <div className="p-2 max-h-[360px] overflow-y-auto">
+                        {products.slice(0, 8).map((p, i) => (
+                          <button key={i} onClick={() => { setSelProd(p); setProdDropOpen(false); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition text-left cursor-pointer">
                           <div className="w-10 h-10 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
                             {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain" /> : <span className="text-xl">{p.emoji || "📦"}</span>}
                           </div>
@@ -275,6 +287,7 @@ export default function SellerClientPage({ initialSeller }) {
                       <button onClick={() => { setTab("products"); setProdDropOpen(false); }}
                         className="w-full text-xs font-black py-3 text-center hover:bg-gray-50 transition cursor-pointer"
                         style={{ color: pc }}>View All Products →</button>
+                    </div>
                     </div>
                   </div>
                 )}
@@ -312,7 +325,7 @@ export default function SellerClientPage({ initialSeller }) {
                   <NavItems />
                 </nav>
               )}
-              <button onClick={() => setTab("contact")}
+              <button onClick={() => openInquiry()}
                 className="hidden sm:flex text-white font-black text-xs px-4 py-2.5 rounded-xl hover:opacity-90 shadow-md transition whitespace-nowrap cursor-pointer"
                 style={{ backgroundColor: pc }}>
                 {btn2}
@@ -334,7 +347,7 @@ export default function SellerClientPage({ initialSeller }) {
                 {NL[t]}
               </button>
             ))}
-            <button onClick={() => { setTab("contact"); setMob(false); }}
+            <button onClick={() => { openInquiry(); setMob(false); }}
               className="w-full text-white font-black text-sm px-4 py-3 rounded-xl cursor-pointer"
               style={{ backgroundColor: pc }}>
               {btn2}
@@ -375,7 +388,7 @@ export default function SellerClientPage({ initialSeller }) {
                 <button onClick={() => setTab("products")}
                   className="text-white font-bold px-6 py-3 rounded-xl text-sm shadow-lg hover:opacity-95 transition cursor-pointer"
                   style={{ backgroundColor: pc }}>{btn1}</button>
-                <button onClick={() => setTab("contact")}
+                <button onClick={() => openInquiry()}
                   className="font-bold px-6 py-3 rounded-xl text-sm border border-gray-200 bg-white hover:bg-gray-50 transition shadow-lg cursor-pointer"
                   style={{ color: pc }}>{btn2}</button>
               </div>
@@ -428,7 +441,7 @@ export default function SellerClientPage({ initialSeller }) {
             </div>
           )}
 
-          {certs.filter(c => c.name).length > 0 && (
+          {certs.filter(c => c.name && c.checked !== false).length > 0 && (
             <div className="py-12 px-5" style={{ backgroundColor: homeCertBg }}>
               <div className="max-w-7xl mx-auto">
                 <h3 className="text-center text-xl font-black text-gray-800 mb-8">Our Certifications</h3>
@@ -447,9 +460,9 @@ export default function SellerClientPage({ initialSeller }) {
                   </p>
                 </div>
                 <div className="flex-shrink-0">
-                  <button onClick={() => setTab("contact")}
+                  <button onClick={() => openInquiry()}
                     className="px-8 py-3 rounded-xl font-black text-sm text-white tracking-widest uppercase shadow-md hover:opacity-90 hover:-translate-y-0.5 transition-all cursor-pointer"
-                    style={{ backgroundColor: pc }}>Contact</button>
+                    style={{ backgroundColor: pc }}>Send Inquiry</button>
                 </div>
               </div>
             </div>
@@ -460,18 +473,37 @@ export default function SellerClientPage({ initialSeller }) {
       {/* ══ ABOUT ══ */}
       {tab === "about" && !selProd && (
         <div style={{ backgroundColor: aboutBg }}>
+          {/* About banner top-right + text left layout */}
           {(seller.about || seller.description) && (
             <div className="py-16" style={{ backgroundColor: aboutBg }}>
-              <div className="max-w-7xl mx-auto px-5 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
-                  <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">About {seller.name}</h2>
+              <div className="max-w-7xl mx-auto px-5 sm:px-8">
+                <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
+                <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">About {seller.name}</h2>
+                {/* Float image right — text wraps beside it, then goes full-width below naturally */}
+                <div style={{ overflow: 'hidden' }}>
+                  {seller.aboutImageUrl && (
+                    <div style={{ float: 'right', width: '480px', marginLeft: '40px', marginBottom: '48px' }}
+                      className="hidden lg:block rounded-2xl overflow-hidden shadow-xl flex-shrink-0">
+                      <img src={seller.aboutImageUrl} alt={seller.name}
+                        className="w-full object-cover rounded-2xl"
+                        style={{ height: '420px' }} />
+                    </div>
+                  )}
+                  {/* Mobile: show image above text */}
+                  {seller.aboutImageUrl && (
+                    <div className="block lg:hidden mb-6 rounded-2xl overflow-hidden shadow-xl">
+                      <img src={seller.aboutImageUrl} alt={seller.name}
+                        className="w-full object-cover rounded-2xl"
+                        style={{ height: '260px' }} />
+                    </div>
+                  )}
                   <p className="text-gray-700 leading-relaxed text-base">{seller.about || seller.description}</p>
                 </div>
-                {seller.aboutImageUrl && <img src={seller.aboutImageUrl} alt={seller.name} className="w-full h-72 object-cover rounded-2xl shadow-lg" />}
               </div>
             </div>
           )}
+
+
 
           {/* Company Details Table — darker border, wider max-width */}
           {compRows.length > 0 && (
@@ -552,7 +584,7 @@ export default function SellerClientPage({ initialSeller }) {
             </div>
           )}
 
-          {certs.filter(c => c.name).length > 0 && (
+          {certs.filter(c => c.name && c.checked !== false).length > 0 && (
             <div className="py-16" style={{ backgroundColor: aboutCertBg || aboutBg }}>
               <div className="max-w-7xl mx-auto px-5 sm:px-8">
                 <h2 className="text-2xl font-black text-gray-900 text-center mb-1">Our Certifications</h2>
@@ -887,7 +919,7 @@ export default function SellerClientPage({ initialSeller }) {
                 {/* CTA Buttons */}
                 <div className="space-y-2.5">
                   <button
-                    onClick={() => { setContactForm(p => ({ ...p, subject: `Product Inquiry: ${selProd.name}` })); setTab("contact"); setSelProd(null); }}
+                    onClick={() => openInquiry(selProd)}
                     className="w-full font-black text-sm py-4 rounded-2xl text-white shadow-xl hover:opacity-90 hover:-translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2"
                     style={{ backgroundColor: pc }}>
                     ✉️ Send Inquiry
@@ -1104,9 +1136,8 @@ export default function SellerClientPage({ initialSeller }) {
               </div>
             )}
 
-            {/* Enquiry Form — premium dark-border design */}
+            {/* Enquiry CTA — opens popup */}
             <div className="mt-14 rounded-3xl overflow-hidden shadow-2xl border-2" style={{ borderColor: pc + "60" }}>
-              {/* Form Header Band */}
               <div className="px-8 py-5 flex items-center gap-4" style={{ backgroundColor: pc }}>
                 <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-xl flex-shrink-0">📩</div>
                 <div>
@@ -1114,50 +1145,13 @@ export default function SellerClientPage({ initialSeller }) {
                   <p className="text-white/70 text-xs mt-0.5">We'll get back to you within 24 hours</p>
                 </div>
               </div>
-              <div className="bg-white p-8">
-
-              {enquirySuccess ? (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <div className="text-5xl mb-4">✅</div>
-                  <h4 className="text-xl font-black text-gray-900 mb-2">Enquiry Sent!</h4>
-                  <p className="text-gray-500 text-sm mb-6">Thank you! We'll contact you soon regarding <strong>{selProd.name}</strong>.</p>
-                  <button onClick={() => setEnquirySuccess(false)} className="px-6 py-2.5 rounded-xl font-bold text-sm text-white cursor-pointer" style={{ backgroundColor: pc }}>Send Another</button>
-                </div>
-              ) : (
-                <form onSubmit={onEnquirySubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Your Name *</label>
-                      <input type="text" required placeholder="e.g. Rahul Sharma" value={enquiryForm.name} onChange={e => setEnquiryForm(p => ({ ...p, name: e.target.value }))}
-                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-100 text-sm outline-none transition bg-gray-50 placeholder:text-gray-400 font-medium"
-                        onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Phone *</label>
-                      <input type="tel" required placeholder="+91 98765 43210" value={enquiryForm.phone} onChange={e => setEnquiryForm(p => ({ ...p, phone: e.target.value }))}
-                        className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-100 text-sm outline-none transition bg-gray-50 placeholder:text-gray-400 font-medium"
-                        onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Email</label>
-                    <input type="email" placeholder="you@example.com" value={enquiryForm.email} onChange={e => setEnquiryForm(p => ({ ...p, email: e.target.value }))}
-                      className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-100 text-sm outline-none transition bg-gray-50 placeholder:text-gray-400 font-medium"
-                      onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Message</label>
-                    <textarea rows={4} placeholder="Tell us more about your requirement..." value={enquiryForm.message} onChange={e => setEnquiryForm(p => ({ ...p, message: e.target.value }))}
-                      className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-100 text-sm outline-none resize-none transition bg-gray-50 placeholder:text-gray-400 font-medium"
-                      onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
-                  </div>
-                  <button type="submit" disabled={enquirySubmitting}
-                    className="w-full text-white font-black py-4 rounded-xl shadow-lg hover:opacity-90 hover:-translate-y-0.5 transition-all text-sm cursor-pointer tracking-wide disabled:opacity-60"
-                    style={{ backgroundColor: pc }}>
-                    {enquirySubmitting ? "Sending..." : "📩 Send Enquiry →"}
-                  </button>
-                </form>
-              )}
+              <div className="bg-white p-8 flex flex-col items-center text-center gap-4">
+                <p className="text-gray-500 text-sm max-w-sm">Click below to send us your inquiry for <strong>{selProd.name}</strong>. Our team will respond within 24 hours.</p>
+                <button onClick={() => openInquiry(selProd)}
+                  className="inline-flex items-center gap-2 text-white font-black py-4 px-10 rounded-2xl shadow-xl hover:opacity-90 hover:-translate-y-0.5 transition-all text-sm cursor-pointer tracking-wide"
+                  style={{ backgroundColor: pc }}>
+                  📩 Send Inquiry Now →
+                </button>
               </div>
             </div>
 
@@ -1243,16 +1237,7 @@ export default function SellerClientPage({ initialSeller }) {
                 {[seller.city, seller.state].filter(Boolean).length > 0 && <p className="flex items-start gap-3"><span>📍</span> <span>{[seller.city, seller.state].filter(Boolean).join(", ")}</span></p>}
               </div>
 
-              {/* Footer Quality Badges */}
-              {fBadges.filter(b => b.label).length > 0 && (
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {fBadges.filter(b => b.label).map((badge, i) => (
-                    <span key={i} className="flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full opacity-80" style={{ backgroundColor: fText + "15" }}>
-                      {badge.icon} {badge.label}
-                    </span>
-                  ))}
-                </div>
-              )}
+
             </div>
           </div>
 
@@ -1266,6 +1251,78 @@ export default function SellerClientPage({ initialSeller }) {
           </div>
         </div>
       </footer>
+
+      {/* ══ INQUIRY POPUP MODAL ══ */}
+      {showInquiryPopup && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+          onClick={e => { if (e.target === e.currentTarget) setShowInquiryPopup(false); }}>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[fadeIn_0.2s_ease]" style={{ animation: 'slideUp 0.25s ease' }}>
+            {/* Header */}
+            <div className="px-6 py-4 flex items-center justify-between" style={{ backgroundColor: pc }}>
+              <div>
+                <h3 className="text-white font-black text-lg">{inquiryProd ? `Inquiry: ${inquiryProd.name}` : 'Send Inquiry'}</h3>
+                <p className="text-white/70 text-xs mt-0.5">We'll get back to you within 24 hours</p>
+              </div>
+              <button onClick={() => setShowInquiryPopup(false)}
+                className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition cursor-pointer">✕</button>
+            </div>
+            {/* Body */}
+            <div className="p-6">
+              {inquirySuccess ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="text-5xl mb-4">✅</div>
+                  <h4 className="text-xl font-black text-gray-900 mb-2">Inquiry Sent!</h4>
+                  <p className="text-gray-500 text-sm mb-5">Thank you! We'll contact you soon{inquiryProd ? ` regarding ${inquiryProd.name}` : ''}.</p>
+                  <div className="flex gap-3">
+                    <button onClick={() => { setInquirySuccess(false); setInquiryForm({ name: '', phone: '', email: '', message: '' }); }}
+                      className="px-5 py-2.5 rounded-xl font-bold text-sm border border-gray-200 hover:bg-gray-50 cursor-pointer">Send Another</button>
+                    <button onClick={() => setShowInquiryPopup(false)}
+                      className="px-5 py-2.5 rounded-xl font-bold text-sm text-white cursor-pointer" style={{ backgroundColor: pc }}>Close</button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={onInquirySubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Your Name *</label>
+                      <input type="text" required placeholder="e.g. Rahul Sharma" value={inquiryForm.name}
+                        onChange={e => setInquiryForm(p => ({ ...p, name: e.target.value }))}
+                        className="w-full px-3.5 py-3 rounded-xl border-2 border-gray-100 text-sm outline-none bg-gray-50 font-medium transition"
+                        onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Phone *</label>
+                      <input type="tel" required placeholder="+91 98765 43210" value={inquiryForm.phone}
+                        onChange={e => setInquiryForm(p => ({ ...p, phone: e.target.value }))}
+                        className="w-full px-3.5 py-3 rounded-xl border-2 border-gray-100 text-sm outline-none bg-gray-50 font-medium transition"
+                        onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Email</label>
+                    <input type="email" placeholder="you@example.com" value={inquiryForm.email}
+                      onChange={e => setInquiryForm(p => ({ ...p, email: e.target.value }))}
+                      className="w-full px-3.5 py-3 rounded-xl border-2 border-gray-100 text-sm outline-none bg-gray-50 font-medium transition"
+                      onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Message</label>
+                    <textarea rows={3} placeholder="Tell us about your requirement..." value={inquiryForm.message}
+                      onChange={e => setInquiryForm(p => ({ ...p, message: e.target.value }))}
+                      className="w-full px-3.5 py-3 rounded-xl border-2 border-gray-100 text-sm outline-none resize-none bg-gray-50 font-medium transition"
+                      onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
+                  </div>
+                  <button type="submit" disabled={inquirySubmitting}
+                    className="w-full text-white font-black py-3.5 rounded-xl shadow-lg hover:opacity-90 transition text-sm cursor-pointer tracking-wide disabled:opacity-60"
+                    style={{ backgroundColor: pc }}>
+                    {inquirySubmitting ? 'Sending...' : '📩 Send Inquiry →'}
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
