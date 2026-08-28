@@ -23,11 +23,15 @@ export default function SellerPublicPage() {
   const [tab, setTab] = useState("home");
   const [mob, setMob] = useState(false);
   const [selProd, setSelProd] = useState(null);
+  const [selPack, setSelPack] = useState(null);
   const [selCat, setSelCat] = useState("all");
   const [contactForm, setContactForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
   const [scrolled, setScrolled] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [prodDropOpen, setProdDropOpen] = useState(false);
+  const [inquirySubmitting, setInquirySubmitting] = useState(false);
+  const [inquirySuccess, setInquirySuccess] = useState(false);
+  const [wsSubmitting, setWsSubmitting] = useState(false);
+  const [wsSuccess, setWsSuccess] = useState(false);
+  const [prodTab, setProdTab] = useState("description");
   const prodDropRef = useRef(null);
   const featCarouselRef = useRef(null);
 
@@ -122,6 +126,7 @@ export default function SellerPublicPage() {
   const aboutMissionBg = seller.aboutMissionBgColor || "transparent";
   const aboutStatsBg = seller.aboutStatsBgColor || (pc + "12");
   const aboutCompanyBg = seller.aboutCompanyBgColor || "transparent";
+  const aboutCompanyText = seller.aboutCompanyTextColor || "#111827";
   const aboutInfraBg = seller.aboutInfraBgColor || "transparent";
   const aboutCertBg = seller.aboutCertBgColor || "transparent";
 
@@ -147,6 +152,20 @@ export default function SellerPublicPage() {
   const btn2 = seller.heroBtn2Text || "Distributors / Buyers Inquiry";
 
   const displayPhone = seller.hidePhone ? null : seller.phone;
+  const navHomeLabel = seller.navHomeLabel || "Home";
+  const navAboutLabel = seller.navAboutLabel || "About Us";
+  const navProductsLabel = seller.navProductsLabel || "Products";
+  const navContactLabel = seller.navContactLabel || "Contact Us";
+  const navCtaLabel = seller.navCtaLabel || btn2;
+  const navLabels = { home: navHomeLabel, about: navAboutLabel, products: navProductsLabel, contact: navContactLabel };
+  const statsBgColor = seller.statsBgColor || "";
+  const statsValueBgColor = seller.statsValueBgColor || "";
+  const statsTextColor = seller.statsTextColor || "";
+  const aboutTextColor = seller.aboutTextColor || "#374151";
+  const whyCards = (seller.whyCards || []).filter(c => c.title);
+  const whyBgColor = seller.whyBgColor || "#f5f0e8";
+  const whyTitle = seller.whyTitle || "";
+  const whySubtitle = seller.whySubtitle || "";
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -238,7 +257,7 @@ export default function SellerPublicPage() {
                   onMouseLeave={() => setProdDropOpen(false)}
                   className={`px-5 py-2 rounded-xl font-bold text-sm transition-all flex items-center gap-1 ${activeTab === "products" ? "shadow-md" : ""}`}
                   style={{ backgroundColor: activeTab === "products" ? pc : "transparent", color: activeTab === "products" ? "#ffffff" : hText }}>
-                  {NL["products"]}
+                  {navLabels["products"]}
                   {products.length > 0 && (
                     <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}><path d="m6 9 6 6 6-6" /></svg>
                   )}
@@ -275,7 +294,7 @@ export default function SellerPublicPage() {
           <button key={t} onClick={() => { setSelProd(null); setTab(t); }}
             className={`px-5 py-2 rounded-xl font-bold text-sm transition-all ${activeTab === t ? "shadow-md" : ""}`}
             style={{ backgroundColor: activeTab === t ? pc : "transparent", color: activeTab === t ? "#ffffff" : hText }}>
-            {NL[t]}
+            {navLabels[t]}
           </button>
         );
       })}
@@ -312,7 +331,7 @@ export default function SellerPublicPage() {
               <button onClick={() => setTab("contact")}
                 className="hidden sm:flex text-white font-black text-xs px-4 py-2.5 rounded-xl hover:opacity-90 shadow-md transition whitespace-nowrap cursor-pointer"
                 style={{ backgroundColor: pc }}>
-                {btn2}
+                {navCtaLabel}
               </button>
               <button className="md:hidden p-2 rounded-xl hover:opacity-100 cursor-pointer" style={{ color: hText }} onClick={() => setMob(m => !m)}>
                 <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -333,13 +352,13 @@ export default function SellerPublicPage() {
                   backgroundColor: tab === t ? pc : "transparent",
                   color: tab === t ? "#ffffff" : hText
                 }}>
-                {NL[t]}
+                {navLabels[t]}
               </button>
             ))}
             <button onClick={() => { setTab("contact"); setMob(false); }}
               className="w-full text-white font-black text-sm px-4 py-3 rounded-xl cursor-pointer"
               style={{ backgroundColor: pc }}>
-              {btn2}
+              {navCtaLabel}
             </button>
           </div>
         )}
@@ -394,15 +413,14 @@ export default function SellerPublicPage() {
 
           {/* Stats Bar */}
           {stats.filter(s => s.value).length > 0 && (
-            <div className="border-b border-gray-100 shadow-sm" style={{ backgroundColor: homeBg }}>
-              <div className={`max-w-7xl mx-auto px-5 py-8 flex flex-wrap gap-8 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-between' : 'justify-center'}`}>
+            <div className="shadow-sm" style={{ backgroundColor: statsBgColor || homeBg }}>
+              <div className={`max-w-7xl mx-auto px-5 py-10 flex flex-wrap gap-8 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
                 {stats.filter(s => s.value).map((s, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="text-2xl">{s.icon}</span>
-                    <div>
-                      <p className="font-black text-2xl leading-none" style={{ color: pc }}>{s.value}</p>
-                      <p className="text-gray-600 text-xs font-semibold mt-0.5">{s.label}</p>
+                  <div key={i} className="flex flex-col items-center gap-2">
+                    <div className="px-5 py-2.5 rounded-lg font-black text-2xl sm:text-3xl text-white min-w-[80px] text-center shadow-md" style={{ backgroundColor: statsValueBgColor || pc }}>
+                      {s.value}
                     </div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-center" style={{ color: statsTextColor || (statsBgColor ? "#ffffff" : "#4b5563") }}>{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -416,6 +434,28 @@ export default function SellerPublicPage() {
                 <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
                 <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-5">{seller.name}</h2>
                 <p className="text-gray-700 leading-relaxed text-base">{seller.homeAbout || seller.about || seller.description}</p>
+              </div>
+            </div>
+          )}
+
+          {whyCards.length > 0 && (
+            <div className="py-16 px-5" style={{ backgroundColor: whyBgColor }}>
+              <div className="max-w-7xl mx-auto">
+                {whyTitle && <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: sc }}>{whyTitle}</p>}
+                {whySubtitle && (
+                  <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-10 leading-tight">
+                    {whySubtitle}
+                  </h2>
+                )}
+                <div className={`grid gap-5 ${whyCards.length >= 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : whyCards.length === 3 ? 'grid-cols-1 sm:grid-cols-3' : whyCards.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 max-w-xs mx-auto'}`}>
+                  {whyCards.map((card, idx) => (
+                    <div key={idx} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+                      <p className="font-black text-xl mb-3" style={{ color: sc }}>{card.number || String(idx + 1).padStart(2, '0')}</p>
+                      <h3 className="font-black text-gray-900 text-base mb-2 leading-tight">{card.title}</h3>
+                      <p className="text-gray-500 text-sm leading-relaxed">{card.description}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -455,23 +495,28 @@ export default function SellerPublicPage() {
 
           {/* Home Contact Us — Banner Strip */}
           {seller.showContactOnHome !== false && (
-            <div className="py-10 px-5" style={{ backgroundColor: homeContactBg }}>
-              <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 px-8 py-7 flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div className="flex-1 min-w-0">
-                  <h2 className="text-xl sm:text-2xl font-black text-gray-800 mb-2 leading-tight">
-                    Have questions? Get in touch with us!
+            <div className="py-12 px-5" style={{ backgroundColor: homeContactBg }}>
+              <div className="max-w-5xl mx-auto rounded-[2.5rem] shadow-2xl px-10 py-14 flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden" style={{ backgroundColor: pc }}>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-black opacity-10 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4"></div>
+                
+                <div className="flex-1 relative z-10">
+                  <p className="text-xs font-black uppercase tracking-[0.25em] mb-4" style={{ color: sc }}>Let's Talk</p>
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-5 leading-[1.15]" style={{ fontFamily: "Georgia, serif" }}>
+                    Looking for a reliable<br/>
+                    <span className="opacity-70">partner?</span>
                   </h2>
-                  <p className="text-gray-600 text-sm leading-relaxed max-w-lg">
-                    {seller.homeContactDesc || "Have questions or need assistance? We\u2019re here to help! Reach out to us today, and our team will provide you with the support and information you need."}
+                  <p className="text-white/80 text-base md:text-lg leading-relaxed max-w-xl font-medium">
+                    {seller.homeContactDesc || `For retail, distribution, hotel, catering and bulk requirements, connect with ${seller.name}.`}
                   </p>
                 </div>
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 relative z-10">
                   <button
                     onClick={() => setTab("contact")}
-                    className="px-8 py-3 rounded-xl font-black text-sm text-white tracking-widest uppercase shadow-md hover:opacity-90 hover:-translate-y-0.5 transition-all cursor-pointer"
-                    style={{ backgroundColor: pc }}
+                    className="px-8 py-4 rounded-full font-bold text-base transition-transform hover:scale-105 shadow-xl flex items-center gap-3 cursor-pointer"
+                    style={{ backgroundColor: sc, color: pc }}
                   >
-                    Contact
+                    Send an Enquiry <span className="text-xl">&rarr;</span>
                   </button>
                 </div>
               </div>
@@ -491,26 +536,28 @@ export default function SellerPublicPage() {
                 <div>
                   <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
                   <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">About {seller.name}</h2>
-                  <p className="text-gray-700 leading-relaxed text-base">{seller.about || seller.description}</p>
+                  {(seller.about || seller.description || "").split(/\n\n+/).filter(p => p.trim()).map((para, pi) => (
+                    <p key={pi} className="leading-relaxed text-base mb-4 last:mb-0" style={{ color: aboutTextColor }}>{para.trim()}</p>
+                  ))}
                 </div>
                 {seller.aboutImageUrl && <img src={seller.aboutImageUrl} alt={seller.name} className="w-full h-72 object-cover rounded-2xl shadow-lg" />}
               </div>
             </div>
           )}
 
-          {/* Company Details Table — full-width bg */}
+          {/* Company Details Table — darker border, wider max-width */}
           {compRows.length > 0 && (
-            <div className="py-16" style={{ backgroundColor: aboutCompanyBg || (pc + "10") }}>
+            <div className="py-16" style={{ backgroundColor: aboutCompanyBg }}>
               <div className="max-w-7xl mx-auto px-5 sm:px-8">
-                <h2 className="text-2xl font-black text-gray-900 text-center mb-1">Company Details</h2>
-                <div className="w-16 h-1 rounded-full mx-auto mb-8" style={{ backgroundColor: pc }} />
-                <div className="max-w-4xl mx-auto bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200">
+                <h2 className="text-3xl font-black text-center mb-2" style={{ color: aboutCompanyText }}>Company Details</h2>
+                <div className="w-20 h-1 rounded-full mx-auto mb-10" style={{ backgroundColor: pc }} />
+                <div className="w-full bg-white rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-300">
                   <table className="w-full border-collapse">
                     <tbody>
                       {compRows.map((row, i) => (
-                        <tr key={i} className={`border-b border-gray-200 hover:bg-gray-50/50 transition-colors ${i % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}>
-                          <th className="w-2/5 px-6 py-4 font-bold text-gray-900 text-sm align-middle border-r border-gray-200 text-left">{row.label}</th>
-                          <td className="w-3/5 px-6 py-4 text-gray-700 text-sm font-medium align-middle text-left">{row.value}</td>
+                        <tr key={i} className={`border-b-2 border-gray-200 hover:bg-gray-50/80 transition-colors ${i === compRows.length - 1 ? 'border-b-0' : ''}`}>
+                          <th className="w-1/3 sm:w-1/4 px-6 sm:px-8 py-5 font-black text-sm align-middle border-r-2 border-gray-200 text-left bg-gray-50" style={{ color: aboutCompanyText }}>{row.label}</th>
+                          <td className="w-2/3 sm:w-3/4 px-6 sm:px-8 py-5 text-sm font-semibold align-middle text-left" style={{ color: aboutCompanyText }}>{row.value}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -534,7 +581,7 @@ export default function SellerPublicPage() {
                     <div key={i} className="bg-white rounded-2xl p-6 hover:-translate-y-1 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col justify-center">
                       <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-2xl mb-4 border border-gray-100 shadow-sm">{card.icon}</div>
                       <h3 className="font-black text-lg mb-2" style={{ color: pc }}>{card.title}</h3>
-                      <p className="text-gray-600 text-sm leading-relaxed font-medium">{card.body}</p>
+                      <p className="text-sm leading-relaxed font-medium" style={{ color: aboutTextColor }}>{card.body}</p>
                     </div>
                   ))}
                 </div>
@@ -542,21 +589,7 @@ export default function SellerPublicPage() {
             </div>
           )}
 
-          {/* Stats — full-width bg */}
-          {stats.filter(s => s.value).length > 0 && (
-            <div className="py-16" style={{ backgroundColor: aboutStatsBg || (pc + "18") }}>
-              <div className="max-w-7xl mx-auto px-5 sm:px-8">
-                <div className={`flex flex-wrap gap-8 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
-                  {stats.filter(s => s.value).map((s, i) => (
-                    <div key={i} className="text-center">
-                      <p className="font-black text-3xl sm:text-4xl" style={{ color: pc }}>{s.value}</p>
-                      <p className="text-gray-700 text-xs font-semibold mt-1">{s.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
+
 
           {/* About — Products Section — full-width bg */}
           {products.length > 0 && (
@@ -749,163 +782,384 @@ export default function SellerPublicPage() {
         </div>
       )}
 
+      {/* ══ PRODUCT DETAIL PAGE ══ */}
+      {selProd && (() => {
+        const allProdTabs = [
+          { id: "description", label: "Description", show: !!(selProd.about || selProd.keyHighlights || selProd.benefits || selProd.whyChoose || selProd.suitableFor || selProd.features) },
+          { id: "specifications", label: "Specifications", show: !!(selProd.netWeight || selProd.shelfLife || selProd.storageInstructions || selProd.packagingType || selProd.productType || selProd.specifications || selProd.fssaiNumber) },
+          { id: "ingredients", label: "Ingredients", show: !!(selProd.ingredientsList || selProd.ingredients) },
+          { id: "applications", label: "Applications", show: !!(selProd.industriesApplications || selProd.usageInstructions) },
+          { id: "bulk", label: "Bulk & Export", show: !!(selProd.availablePackaging || selProd.availableVariants || selProd.packaging) },
+          { id: "nutrition", label: "Nutrition", show: !!(selProd.nutritionEnergy || selProd.nutritionProtein || selProd.nutritionCarbs) },
+        ].filter(t => t.show);
+        const curTab = allProdTabs.find(t => t.id === prodTab) ? prodTab : (allProdTabs[0]?.id || "description");
+        return (
+          <div className="min-h-[80vh]" style={{ backgroundColor: productsBg || "#f8fafc" }}>
+            {/* Breadcrumb bar */}
+            <div className="border-b border-gray-200 bg-white px-4 sm:px-8 py-3 flex items-center gap-4">
+              <button onClick={() => setSelProd(null)}
+                className="flex items-center gap-2 text-sm font-black px-4 py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition cursor-pointer shadow-sm"
+                style={{ color: pc }}>
+                <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="m15 18-6-6 6-6" /></svg>
+                Back
+              </button>
+              <nav className="text-xs text-gray-400 font-semibold flex items-center gap-1">
+                <button onClick={() => { setSelProd(null); setTab("products"); }} className="hover:text-gray-700 cursor-pointer transition">Products</button>
+                <span>/</span>
+                <span className="text-gray-700">{selProd.name}</span>
+              </nav>
+            </div>
 
+            <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12">
+              {/* Top: Image + Info grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                {/* Left: Product image */}
+                <div className="lg:sticky lg:top-24">
+                  <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden relative">
+                    {selProd.badge && (
+                      <div className="absolute top-0 left-0 z-10 overflow-hidden w-28 h-28 pointer-events-none">
+                        <div className="absolute top-6 -left-8 w-40 text-center transform -rotate-45 font-black text-[10px] py-1.5 text-white shadow-lg tracking-wider" style={{ backgroundColor: sc || "#cc0000" }}>
+                          {selProd.badge.toUpperCase()}
+                        </div>
+                      </div>
+                    )}
+                    <div className="aspect-square flex items-center justify-center p-8" style={{ backgroundColor: productsBg === "#ffffff" ? "#f4ede4" : (productsBg || "#f4ede4") }}>
+                      {selProd.imageUrl
+                        ? <img src={selProd.imageUrl} alt={selProd.name} className="w-full h-full object-contain drop-shadow-xl" />
+                        : <span className="text-8xl">{selProd.emoji || "📦"}</span>}
+                    </div>
+                  </div>
+                </div>
 
-      {/* ══ PRODUCT DETAIL PAGE (inline — header & footer stay visible) ══ */}
-      {selProd && (
-        <div className="min-h-[80vh]" style={{ backgroundColor: productsBg || "#f8fafc" }}>
-          {/* Breadcrumb bar */}
-          <div className="border-b border-gray-200 bg-white px-4 sm:px-8 py-3 flex items-center gap-4">
-            <button onClick={() => setSelProd(null)}
-              className="flex items-center gap-2 text-sm font-black px-4 py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition cursor-pointer shadow-sm"
-              style={{ color: pc }}>
-              <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path d="m15 18-6-6 6-6" /></svg>
-              Back
-            </button>
-            <nav className="text-xs text-gray-400 font-semibold flex items-center gap-1">
-              <button onClick={() => { setSelProd(null); setTab("products"); }} className="hover:text-gray-700 cursor-pointer transition">Products</button>
-              <span>/</span>
-              <span className="text-gray-700">{selProd.name}</span>
-            </nav>
-          </div>
+                {/* Right: Details */}
+                <div className="space-y-6">
+                  <div>
+                    <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight mb-3" style={{ fontFamily: "Georgia, serif" }}>{selProd.name}</h1>
+                    {selProd.tagline && <p className="text-base text-gray-600 font-medium mb-4">{selProd.tagline}</p>}
+                    {selProd.price && (
+                      <div className="mb-4">
+                        <span className="text-2xl font-black" style={{ color: pc }}>{selProd.price}</span>
+                      </div>
+                    )}
+                    {selProd.description && <p className="text-gray-600 leading-relaxed text-sm mb-4">{selProd.description}</p>}
+                  </div>
 
-          {/* Product Content */}
-          <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                  {/* Quick meta grid */}
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-6 border-b border-gray-200 pb-5">
+                    <div><p className="text-xs font-bold text-gray-400 mb-0.5">Brand</p><p className="text-sm font-semibold text-gray-800">{seller.name}</p></div>
+                    {selProd.netWeight && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Net Weight</p><p className="text-sm font-semibold text-gray-800">{selProd.netWeight}</p></div>}
+                    {selProd.productType && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Product Type</p><p className="text-sm font-semibold text-gray-800">{selProd.productType}</p></div>}
+                    {(selProd.countryOfOrigin || selProd.origin) && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Origin</p><p className="text-sm font-semibold text-gray-800">{selProd.countryOfOrigin || selProd.origin}</p></div>}
+                    {selProd.skuCode && <div><p className="text-xs font-bold text-gray-400 mb-0.5">SKU</p><p className="text-sm font-semibold text-gray-800">{selProd.skuCode}</p></div>}
+                    {selProd.shelfLife && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Shelf Life</p><p className="text-sm font-semibold text-gray-800">{selProd.shelfLife}</p></div>}
+                  </div>
 
-              {/* Image */}
-              <div className="lg:sticky lg:top-24">
-                <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden relative">
-                  {selProd.badge && (
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="text-xs font-black px-3 py-1.5 rounded-full text-white shadow" style={{ backgroundColor: sc }}>{selProd.badge}</span>
+                  {/* Pack sizes */}
+                  {(selProd.availablePackaging || selProd.availableVariants) && (
+                    <div>
+                      <p className="text-sm font-black text-gray-900 mb-3">Available Pack Sizes</p>
+                      <div className="flex flex-wrap gap-2">
+                        {(selProd.availablePackaging || selProd.availableVariants).split(",").map((v, i) => {
+                          const val = v.trim();
+                          const isActive = selPack === val || (!selPack && i === 0);
+                          return (
+                            <button key={i} onClick={() => setSelPack(val)}
+                              className={`px-4 py-2 rounded-lg text-sm font-bold border-2 transition-all cursor-pointer ${isActive ? "text-white" : "text-gray-700 bg-white hover:bg-gray-50"}`}
+                              style={{ backgroundColor: isActive ? pc : "white", borderColor: isActive ? pc : "#e5e7eb" }}>
+                              {val}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
-                  <div className="aspect-square flex items-center justify-center p-12 bg-gray-50">
-                    {selProd.imageUrl
-                      ? <img src={selProd.imageUrl} alt={selProd.name} className="w-full h-full object-contain" />
-                      : <span className="text-9xl">{selProd.emoji || "📦"}</span>}
+
+                  {/* CTA buttons (no emoji) */}
+                  <div className="space-y-3 pt-2">
+                    <button
+                      onClick={() => openInquiry(selProd)}
+                      className="w-full font-black text-sm py-4 rounded-2xl text-white shadow-lg hover:opacity-90 transition-all cursor-pointer tracking-wide"
+                      style={{ backgroundColor: pc }}>Send Inquiry</button>
+                    {displayPhone && (
+                      <a href={`tel:${displayPhone}`}
+                        className="w-full flex items-center justify-center font-bold text-sm py-3.5 rounded-2xl border-2 transition cursor-pointer"
+                        style={{ borderColor: pc, color: pc }}>Call to Order</a>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Details */}
-              <div className="space-y-6">
-                {selProd.badge && (
-                  <span className="inline-block text-xs font-black px-3 py-1.5 rounded-full text-white" style={{ backgroundColor: sc }}>{selProd.badge}</span>
-                )}
-                <div>
-                  <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight mb-3">{selProd.name}</h1>
-                  {selProd.price && (
-                    <p className="text-3xl font-black" style={{ color: pc }}>{selProd.price}</p>
-                  )}
-                </div>
-
-                {selProd.description && (
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Description</p>
-                    <p className="text-gray-700 leading-relaxed text-base">{selProd.description}</p>
-                  </div>
-                )}
-
-                {/* Spec table */}
-                {(selProd.specifications || selProd.ingredients || selProd.packaging) && (
-                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                    <table className="w-full">
-                      <tbody>
-                        {selProd.specifications && (
-                          <tr className="border-b border-gray-100">
-                            <td className="px-5 py-3.5 text-xs font-black text-gray-400 uppercase tracking-wider w-1/3 bg-gray-50">Specifications</td>
-                            <td className="px-5 py-3.5 text-sm text-gray-700 font-medium">{selProd.specifications}</td>
-                          </tr>
-                        )}
-                        {selProd.ingredients && (
-                          <tr className="border-b border-gray-100">
-                            <td className="px-5 py-3.5 text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Ingredients</td>
-                            <td className="px-5 py-3.5 text-sm text-gray-700 font-medium">{selProd.ingredients}</td>
-                          </tr>
-                        )}
-                        {selProd.packaging && (
-                          <tr>
-                            <td className="px-5 py-3.5 text-xs font-black text-gray-400 uppercase tracking-wider bg-gray-50">Packaging</td>
-                            <td className="px-5 py-3.5 text-sm text-gray-700 font-medium">{selProd.packaging}</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                {/* CTA */}
-                <div className="space-y-3 pt-2">
-                  <button
-                    onClick={() => {
-                      setContactForm(p => ({ ...p, subject: `Inquiry about: ${selProd.name}` }));
-                      setTab("contact");
-                      setSelProd(null);
-                    }}
-                    className="w-full font-black text-base py-4 rounded-2xl text-white shadow-xl hover:opacity-90 hover:-translate-y-0.5 transition-all cursor-pointer"
-                    style={{ backgroundColor: pc }}>
-                    ✉️ Send Inquiry
-                  </button>
-                  {displayPhone && (
-                    <a href={`tel:${displayPhone}`}
-                      className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3.5 rounded-2xl border-2 transition cursor-pointer"
-                      style={{ borderColor: pc, color: pc }}>
-                      📞 Call to Order
-                    </a>
-                  )}
-                </div>
-
-                {/* Related products */}
-                {products.filter(p => p.name && p !== selProd).length > 0 && (
-                  <div className="pt-6 border-t border-gray-200">
-                    <p className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Other Products</p>
-                    <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-                      {products.filter(p => p.name && p !== selProd).slice(0, 6).map((p, i) => (
-                        <button key={i} onClick={() => { setSelProd(p); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-                          className="flex-shrink-0 w-20 flex flex-col items-center gap-1.5 group cursor-pointer">
-                          <div className="w-20 h-20 bg-white rounded-xl border border-gray-200 flex items-center justify-center overflow-hidden group-hover:shadow-md transition">
-                            {p.imageUrl
-                              ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition" />
-                              : <span className="text-2xl">{p.emoji || "📦"}</span>}
-                          </div>
-                          <p className="text-[10px] font-bold text-gray-600 text-center line-clamp-2 leading-tight group-hover:text-gray-900 transition">{p.name}</p>
+              {/* ── TABS SECTION ── */}
+              {allProdTabs.length > 0 && (
+                <div className="mt-12 bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-10">
+                  {/* Tab nav */}
+                  <div className="border-b border-gray-200 overflow-x-auto scrollbar-none mb-10">
+                    <div className="flex min-w-max gap-2">
+                      {allProdTabs.map(t => (
+                        <button key={t.id} onClick={() => setProdTab(t.id)}
+                          className={`px-6 py-4 text-sm font-black uppercase tracking-wider whitespace-nowrap cursor-pointer transition-all ${
+                            curTab === t.id ? "border-t-4" : "border-t-4 border-transparent text-gray-800 hover:text-gray-500"
+                          }`}
+                          style={curTab === t.id ? { color: pc, borderColor: pc } : {}}>
+                          {t.label}
                         </button>
                       ))}
                     </div>
                   </div>
-                )}
-              </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+                    {/* Left side: Tab content */}
+                    <div className="lg:col-span-3">
+                      {/* DESCRIPTION */}
+                      {curTab === "description" && (
+                        <div className="space-y-8">
+                          {selProd.about && (
+                            <div>
+                              <h3 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: "Georgia, serif" }}>About {selProd.name}</h3>
+                              <p className="text-gray-600 leading-relaxed">{selProd.about}</p>
+                            </div>
+                          )}
+                          {selProd.whyChoose && (
+                            <div>
+                              <h3 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: "Georgia, serif" }}>Why You'll Love It</h3>
+                              <p className="text-gray-600 leading-relaxed mb-4">{selProd.whyChoose}</p>
+                            </div>
+                          )}
+                          {selProd.keyHighlights && (
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 mb-3">Key Highlights</h3>
+                              <ul className="space-y-2">
+                                {selProd.keyHighlights.split(/[\n,]/).filter(h => h.trim()).map((h, i) => (
+                                  <li key={i} className="flex items-start gap-2.5 text-gray-600">
+                                    <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-gray-400" />
+                                    {h.trim()}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {selProd.benefits && (
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 mb-3">Benefits</h3>
+                              <ul className="space-y-2">
+                                {selProd.benefits.split(/[\n,]/).filter(b => b.trim()).map((b, i) => (
+                                  <li key={i} className="flex items-start gap-2.5 text-gray-600">
+                                    <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-gray-400" />
+                                    {b.trim()}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {selProd.suitableFor && (
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 mb-2">Suitable For</h3>
+                              <p className="text-gray-600 leading-relaxed">{selProd.suitableFor}</p>
+                            </div>
+                          )}
+                          {selProd.features && (
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 mb-2">Features</h3>
+                              <p className="text-gray-600 leading-relaxed">{selProd.features}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* SPECIFICATIONS */}
+                      {curTab === "specifications" && (
+                        <div>
+                          <table className="w-full">
+                            <tbody>
+                              {[
+                                { label: "Product Type", value: selProd.productType },
+                                { label: "Net Weight", value: selProd.netWeight },
+                                { label: "Shelf Life", value: selProd.shelfLife },
+                                { label: "Storage Instructions", value: selProd.storageInstructions },
+                                { label: "Packaging Type", value: selProd.packagingType },
+                                { label: "Country of Origin", value: selProd.countryOfOrigin },
+                                { label: "FSSAI Number", value: selProd.fssaiNumber },
+                                { label: "SKU Code", value: selProd.skuCode },
+                              ].filter(r => r.value).map((row, i) => (
+                                <tr key={i} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                  <th className="py-4 pr-6 text-left text-sm font-bold text-gray-800 w-2/5 align-top">{row.label}</th>
+                                  <td className="py-4 text-gray-600">{row.value}</td>
+                                </tr>
+                              ))}
+                              {selProd.specifications && selProd.specifications.split(/[\n,]/).filter(s => s.includes(":")).map((s, i) => {
+                                const [k, ...v] = s.split(":");
+                                return (
+                                  <tr key={`s-${i}`} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                    <th className="py-4 pr-6 text-left text-sm font-bold text-gray-800 w-2/5">{k.trim()}</th>
+                                    <td className="py-4 text-gray-600">{v.join(":").trim()}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                          {(selProd.isISOCertified || selProd.isFSSAIApproved || selProd.isGMPCertified || selProd.isLabTested || selProd.isQualityChecked || selProd.isNatural || selProd.isOrganic || selProd.isPreservativeFree || selProd.isVegetarian) && (
+                            <div className="mt-8 pt-6 border-t border-gray-100">
+                              <p className="text-sm font-bold text-gray-800 mb-4 uppercase tracking-wider">Quality & Certifications</p>
+                              <div className="flex flex-wrap gap-2">
+                                {selProd.isISOCertified && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-green-50 text-green-700 border border-green-200">ISO Certified</span>}
+                                {selProd.isFSSAIApproved && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">FSSAI Approved</span>}
+                                {selProd.isGMPCertified && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200">GMP Certified</span>}
+                                {selProd.isLabTested && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-yellow-50 text-yellow-700 border border-yellow-200">Lab Tested</span>}
+                                {selProd.isQualityChecked && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-orange-50 text-orange-700 border border-orange-200">Quality Checked</span>}
+                                {selProd.isNatural && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">100% Natural</span>}
+                                {selProd.isOrganic && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-lime-50 text-lime-700 border border-lime-200">Organic</span>}
+                                {selProd.isPreservativeFree && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200">Preservative Free</span>}
+                                {selProd.isVegetarian && <span className="px-3 py-1.5 rounded-md text-xs font-bold bg-green-50 text-green-800 border border-green-300">Vegetarian</span>}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* INGREDIENTS */}
+                      {curTab === "ingredients" && (
+                        <div>
+                          <p className="text-gray-600 leading-relaxed text-lg">{selProd.ingredientsList || selProd.ingredients}</p>
+                        </div>
+                      )}
+
+                      {/* APPLICATIONS */}
+                      {curTab === "applications" && (
+                        <div className="space-y-6">
+                          {selProd.industriesApplications && (
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 mb-4">Industries & Applications</h3>
+                              <ul className="space-y-2">
+                                {selProd.industriesApplications.split(/[\n,]/).filter(a => a.trim()).map((a, i) => (
+                                  <li key={i} className="flex items-start gap-2.5 text-gray-600">
+                                    <span className="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 bg-gray-400" />
+                                    {a.trim()}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {selProd.usageInstructions && (
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 mb-3">Usage Instructions</h3>
+                              <p className="text-gray-600 leading-relaxed">{selProd.usageInstructions}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* BULK & EXPORT */}
+                      {curTab === "bulk" && (
+                        <div className="space-y-6">
+                          {(selProd.availablePackaging || selProd.availableVariants) && (
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 mb-4">Available Pack Sizes</h3>
+                              <div className="flex flex-wrap gap-3">
+                                {(selProd.availablePackaging || selProd.availableVariants).split(",").map((v, i) => (
+                                  <span key={i} className="px-5 py-2.5 rounded-md font-bold border border-gray-200 bg-gray-50 text-gray-800">{v.trim()}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {selProd.packaging && (
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 mb-3">Packaging Details</h3>
+                              <p className="text-gray-600 leading-relaxed">{selProd.packaging}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* NUTRITION */}
+                      {curTab === "nutrition" && (
+                        <div>
+                          <p className="text-sm text-gray-500 mb-4 font-medium uppercase tracking-wider">Approximate values per 100g serving</p>
+                          <table className="w-full">
+                            <tbody>
+                              {[
+                                { label: "Energy", value: selProd.nutritionEnergy },
+                                { label: "Protein", value: selProd.nutritionProtein },
+                                { label: "Carbohydrates", value: selProd.nutritionCarbs },
+                                { label: "Sugar", value: selProd.nutritionSugar },
+                                { label: "Fat", value: selProd.nutritionFat },
+                                { label: "Sodium", value: selProd.nutritionSodium },
+                              ].filter(r => r.value).map((row, i) => (
+                                <tr key={i} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                  <th className="py-4 pr-6 text-left text-sm font-bold text-gray-800 w-2/5">{row.label}</th>
+                                  <td className="py-4 text-gray-600">{row.value}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Right side: Wholesale Inquiry Form */}
+                    <div className="lg:col-span-2">
+                      <div className="rounded-2xl p-6 sm:p-8" style={{ backgroundColor: productsBg === "#ffffff" ? "#f4ede4" : (productsBg || "#f4ede4") }}>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-6">Get Wholesale Price</h3>
+                        {wsSuccess ? (
+                          <div className="flex flex-col items-center justify-center py-8 text-center bg-white rounded-xl shadow-sm border border-gray-100">
+                            <div className="text-5xl mb-4">✅</div>
+                            <h4 className="text-xl font-black text-gray-900 mb-2">Inquiry Sent!</h4>
+                            <p className="text-gray-500 text-sm mb-5">Thank you! We'll contact you soon regarding {selProd.name}.</p>
+                            <button onClick={() => setWsSuccess(false)}
+                              className="px-5 py-2.5 rounded-xl font-bold text-sm text-white cursor-pointer transition-all hover:opacity-90" style={{ backgroundColor: pc }}>Send Another</button>
+                          </div>
+                        ) : (
+                          <form 
+                            className="space-y-4"
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              setWsSubmitting(true);
+                              setTimeout(() => {
+                                setWsSubmitting(false);
+                                setWsSuccess(true);
+                                e.target.reset();
+                              }, 1000);
+                            }}
+                          >
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <input required name="name" type="text" placeholder="Your Name *" className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 bg-white" style={{ '--tw-ring-color': pc }} />
+                              <input required name="phone" type="tel" placeholder="Mobile Number *" className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 bg-white" style={{ '--tw-ring-color': pc }} />
+                            </div>
+                            <input required name="email" type="email" placeholder="Email Address *" className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 bg-white" style={{ '--tw-ring-color': pc }} />
+                            <textarea name="message" placeholder="Message" rows="4" className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-opacity-50 bg-white resize-none" style={{ '--tw-ring-color': pc }}></textarea>
+
+                            <button type="submit" disabled={wsSubmitting} className="w-full font-bold text-sm py-4 rounded-xl text-white transition-all hover:opacity-90 mt-2 shadow-md cursor-pointer disabled:opacity-60" style={{ backgroundColor: pc }}>
+                              {wsSubmitting ? "SENDING..." : "GET QUOTATION"}
+                            </button>
+                          </form>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
-      {/* ══ FOOTER (moved to bottom) ══ */}
-      <footer className="pt-20 pb-8 mt-12" style={{ backgroundColor: fBg, color: fText }}>
+      {/* ══ FOOTER ══ */}
+      <footer className="pt-20 pb-12 mt-12" style={{ backgroundColor: fBg, color: fText }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-8 border-b pb-12" style={{ borderColor: fText + "15" }}>
-
-            {/* Buyer */}
-            <div>
-              <div className="bg-white inline-flex p-3 rounded-2xl mb-6 shadow-sm">
-                {seller.logoUrl ? <img src={seller.logoUrl} alt="Logo" className="h-12 w-auto object-contain" /> : <div className="h-12 w-12 bg-gray-100 rounded-xl flex items-center justify-center text-xl font-black text-gray-400">{ini(seller.name)}</div>}
-              </div>
-              <h3 className="text-xl font-black mb-3">{seller.name}</h3>
-              <p className="text-sm opacity-80 leading-relaxed mb-6 max-w-sm">{seller.aboutText ? seller.aboutText.slice(0, 120) + "..." : "Providing quality products with exceptional service."}</p>
-
-              {/* Social Media Links */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 border-b pb-12" style={{ borderColor: fText + "15" }}>
+            <div className="lg:pr-4">
+              <h3 className="text-xl font-bold mb-4" style={{ color: sc, fontFamily: 'Georgia, serif' }}>{seller.name.toUpperCase()}</h3>
+              <p className="text-sm opacity-90 leading-relaxed font-medium mb-6">
+                {seller.aboutText ? seller.aboutText.slice(0, 150) + "..." : "Authentic products crafted with tradition, quality, and passion."}
+              </p>
               {Object.values(social).some(Boolean) && (
-                <div className="flex gap-3 pt-2">
+                <div className="flex gap-3">
                   {Object.entries(social).filter(([, v]) => v).map(([key, url]) => {
                     const paths = SOCIAL_ICONS[key]; if (!paths) return null;
                     return (
                       <a key={key} href={url} target="_blank" rel="noreferrer"
-                        className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition-all hover:scale-110 cursor-pointer shadow-sm"
-                        style={{ backgroundColor: fText + "10", color: fText }}
-                        title={key}>
-                        <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        className="w-9 h-9 rounded-full flex items-center justify-center hover:opacity-80 transition-all hover:scale-110 cursor-pointer shadow-sm"
+                        style={{ backgroundColor: sc, color: fBg }} title={key}>
+                        <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                           {Array.isArray(paths) ? paths.map((p, i) => <path key={i} d={p} fill="currentColor" stroke="none" />) : <path d={paths} fill="currentColor" stroke="none" />}
                         </svg>
                       </a>
@@ -915,45 +1169,37 @@ export default function SellerPublicPage() {
               )}
             </div>
 
-            {/* Quick Links & Products */}
-            <div className="grid grid-cols-2 gap-8">
-              <div>
-                <h4 className="font-black text-xs uppercase tracking-widest mb-6 opacity-70">Quick Links</h4>
-                <ul className="space-y-3 text-sm font-semibold opacity-80">
-                  {NAV.map(t => (
-                    <li key={t}>
-                      <button onClick={() => { setSelProd(null); setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="hover:opacity-100 transition cursor-pointer">
-                        {NL[t]}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div>
-                <h4 className="font-black text-xs uppercase tracking-widest mb-6 opacity-70">Top Products</h4>
-                <ul className="space-y-3 text-sm font-semibold opacity-80">
-                  {products.slice(0, 5).map((p, i) => (
-                    <li key={i}>
-                      <button onClick={() => { setSelProd(p); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="hover:opacity-100 transition cursor-pointer text-left line-clamp-1">
-                        {p.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Contact Details */}
             <div>
-              <h4 className="font-black text-xs uppercase tracking-widest mb-6 opacity-70">Contact Us</h4>
-              <div className="space-y-4 text-sm opacity-80">
-                {displayPhone && <p className="flex items-start gap-3"><span>📞</span> <a href={`tel:${displayPhone}`} className="hover:opacity-100 transition">{displayPhone}</a></p>}
-                {seller.email && <p className="flex items-start gap-3"><span>✉️</span> <a href={`mailto:${seller.email}`} className="hover:opacity-100 transition break-all">{seller.email}</a></p>}
-                {[seller.city, seller.state].filter(Boolean).length > 0 && <p className="flex items-start gap-3"><span>📍</span> <span>{[seller.city, seller.state].filter(Boolean).join(", ")}</span></p>}
-              </div>
+              <h4 className="font-bold text-base mb-5" style={{ color: sc, fontFamily: 'Georgia, serif' }}>QUICK LINKS</h4>
+              <ul className="space-y-2.5 text-sm font-medium opacity-90">
+                {NAV.map(t => (
+                  <li key={t}>
+                    <button onClick={() => { setSelProd(null); setTab(t); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="hover:opacity-100 hover:translate-x-1 transition-all cursor-pointer">{NL[t]}</button>
+                  </li>
+                ))}
+              </ul>
             </div>
 
+            <div>
+              <h4 className="font-bold text-base mb-5" style={{ color: sc, fontFamily: 'Georgia, serif' }}>OUR MASALE</h4>
+              <ul className="space-y-2.5 text-sm font-medium opacity-90">
+                {products.slice(0, 5).map((p, i) => (
+                  <li key={i}>
+                    <button onClick={() => { setSelProd(p); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="hover:opacity-100 hover:translate-x-1 transition-all cursor-pointer text-left line-clamp-1">{p.name}</button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-base mb-5" style={{ color: sc, fontFamily: 'Georgia, serif' }}>CONTACT</h4>
+              <div className="space-y-3 text-sm font-medium opacity-90">
+                {[seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).length > 0 && <p className="leading-relaxed">{[seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).join(", ")}</p>}
+                {seller.email && <p><a href={`mailto:${seller.email}`} className="hover:opacity-100 transition break-all">{seller.email}</a></p>}
+                {displayPhone && <p><a href={`tel:${displayPhone}`} className="hover:opacity-100 transition">{displayPhone}</a></p>}
+                <p className="opacity-75 pt-2">Manufacturer | Brand Owner | Exporter</p>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t mt-8" style={{ borderColor: fText + "15" }}>

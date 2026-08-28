@@ -33,7 +33,7 @@ const statusCfg = {
 /* ─── DEFAULT DATA MODEL ─── */
 const blank = () => ({
   type: "product",
-  name: "", category: "", contact: "", phone: "", email: "",
+  name: "", category: "", subcategory: "", contact: "", phone: "", email: "",
   address: "", city: "", state: "", pincode: "",
   // Company Details Table
   companyName: "", natureOfBusiness: "", establishmentYear: "",
@@ -44,8 +44,21 @@ const blank = () => ({
   homeProductsBgColor: "", homeCertBgColor: "", homeContactBgColor: "",
   aboutMissionBgColor: "", aboutStatsBgColor: "", aboutCompanyBgColor: "", aboutInfraBgColor: "", aboutCertBgColor: "",
   navAlignment: "right",
+  navHomeLabel: "", navAboutLabel: "", navProductsLabel: "", navContactLabel: "", navCtaLabel: "",
   headerBgColor: "#ffffff", headerTextColor: "#4b5563",
   footerBgColor: "", footerTextColor: "#ffffff", footerText: "",
+  // Stats styling
+  statsBgColor: "", statsValueBgColor: "", statsTextColor: "",
+  // About text
+  aboutTextColor: "",
+  // Why Us Section
+  whyTitle: "WHY US", whySubtitle: "", whyBgColor: "#f5f0e8",
+  whyCards: [
+    { id: uid(), number: "01", title: "", description: "" },
+    { id: uid(), number: "02", title: "", description: "" },
+    { id: uid(), number: "03", title: "", description: "" },
+    { id: uid(), number: "04", title: "", description: "" },
+  ],
   // Hero
   heroBtn1Text: "View Our Products", heroBtn2Text: "Distributors / Buyers Inquiry",
   heroBanners: [{ id: uid(), url: "" }],
@@ -116,6 +129,124 @@ const CATEGORIES = [
   "Handicrafts & Gifts", "Stationery & Paper", "Plastics & Rubber",
   "Export & Import", "Other",
 ];
+
+const CATEGORY_SUBCATEGORIES = {
+  "Spices & Masala": [
+    "Whole Spices", "Ground Spices", "Blended Masala", "Curry Powder", "Chilli Products",
+    "Turmeric Products", "Coriander Products", "Cumin Products", "Pepper Products",
+    "Cardamom & Clove", "Garam Masala", "Kitchen King Masala", "Biryani Masala",
+    "Chat Masala", "Pickle Masala", "Meat Masala", "Sambar Masala", "Other Masala",
+  ],
+  "FMCG & Grocery": [
+    "Staples & Grains", "Pulses & Lentils", "Rice & Wheat", "Flour & Atta",
+    "Sugar & Salt", "Tea & Coffee", "Personal Care", "Home Care", "Baby Care",
+    "Oral Care", "Skin Care", "Hair Care", "Detergent & Soap", "Other FMCG",
+  ],
+  "Agriculture & Farming": [
+    "Seeds & Seedlings", "Fertilizers", "Pesticides & Herbicides", "Farm Equipment",
+    "Irrigation Products", "Crop Protection", "Organic Farming", "Horticulture",
+    "Agri Commodities", "Livestock Feed", "Poultry Products", "Fishery Products", "Other Agri",
+  ],
+  "Food & Beverages": [
+    "Soft Drinks & Juices", "Alcoholic Beverages", "Energy Drinks", "Mineral Water",
+    "Bakery & Confectionery", "Frozen Foods", "Ready to Eat", "Sauces & Condiments",
+    "Jam & Spreads", "Noodles & Pasta", "Breakfast Cereals", "Dry Fruits & Nuts",
+    "Honey & Sweeteners", "Other Food & Beverages",
+  ],
+  "Dairy & Dairy Products": [
+    "Milk & Cream", "Butter & Ghee", "Cheese", "Yogurt & Curd", "Paneer",
+    "Ice Cream", "Dairy Whitener", "Flavoured Milk", "Khoa & Mawa",
+    "Condensed Milk", "Dairy Blends", "Other Dairy",
+  ],
+  "Packaged Foods": [
+    "Canned Foods", "Pickles & Chutneys", "Papad & Fryums", "Mukhwas",
+    "Instant Mixes", "Health Foods", "Protein Supplements", "Ethnic Foods",
+    "Vegan & Organic", "Gluten Free", "Other Packaged Foods",
+  ],
+  "Snacks & Namkeen": [
+    "Chips & Wafers", "Namkeen & Bhujia", "Popcorn", "Extruded Snacks",
+    "Roasted Snacks", "Biscuits & Cookies", "Crackers", "Puff Snacks",
+    "Nuts & Seeds Snacks", "Chivda & Mixture", "Other Snacks",
+  ],
+  "Edible Oils": [
+    "Mustard Oil", "Sunflower Oil", "Soybean Oil", "Palm Oil", "Groundnut Oil",
+    "Rice Bran Oil", "Coconut Oil", "Sesame Oil", "Olive Oil", "Blended Oil",
+    "Vanaspati & Shortening", "Other Edible Oils",
+  ],
+  "Health & Wellness": [
+    "Vitamins & Minerals", "Protein Supplements", "Herbal Supplements", "Immunity Boosters",
+    "Weight Management", "Sports Nutrition", "Probiotics", "Omega & Fish Oil",
+    "Diabetic Care", "Women Health", "Kids Nutrition", "Other Health Products",
+  ],
+  "Ayurvedic & Herbal": [
+    "Ayurvedic Medicines", "Herbal Extracts", "Churna & Powder", "Kadha & Syrup",
+    "Herbal Tea", "Essential Oils", "Herbal Cosmetics", "Herbal Food Products",
+    "Ashwagandha Products", "Tulsi Products", "Amla Products", "Other Herbal",
+  ],
+  "Pharmaceuticals": [
+    "Tablets & Capsules", "Syrup & Liquid", "Injections", "Topical Creams",
+    "Surgical Disposables", "Diagnostic Products", "OTC Medicines", "Generic Medicines",
+    "Veterinary Medicines", "Hospital Supplies", "Other Pharma",
+  ],
+  "Chemicals & Fertilizers": [
+    "Industrial Chemicals", "Agricultural Chemicals", "Dyes & Pigments", "Adhesives & Sealants",
+    "Cleaning Chemicals", "Urea & DAP", "Micronutrients", "Bio Fertilizers",
+    "Water Treatment", "Coating & Paints", "Other Chemicals",
+  ],
+  "Textile & Garments": [
+    "Cotton Fabric", "Synthetic Fabric", "Knitted Fabric", "Woven Fabric",
+    "Ready Made Garments", "Sarees & Ethnic Wear", "Kids Wear", "Sportswear",
+    "Uniforms & Workwear", "Home Textiles", "Yarn & Thread", "Other Textile",
+  ],
+  "Electronics & Hardware": [
+    "Consumer Electronics", "Mobile Accessories", "LED & Lighting", "Cables & Wires",
+    "Switches & Sockets", "CCTV & Security", "Solar Products", "Computer Hardware",
+    "PCB & Components", "Industrial Electronics", "Other Electronics",
+  ],
+  "Construction Materials": [
+    "Cement & Concrete", "Steel & Iron", "Bricks & Tiles", "Paints & Varnish",
+    "Plumbing Materials", "Electrical Fittings", "Glass & Aluminum", "Waterproofing",
+    "Stone & Marble", "Plywood & Laminates", "Other Construction",
+  ],
+  "Machinery & Equipment": [
+    "Food Processing Machines", "Packaging Machines", "Agricultural Machines",
+    "Industrial Pumps", "Compressors", "CNC & Lathe", "Welding Equipment",
+    "Material Handling", "Generators", "HVAC Equipment", "Other Machinery",
+  ],
+  "Furniture & Interiors": [
+    "Wooden Furniture", "Metal Furniture", "Office Furniture", "Modular Kitchen",
+    "Sofa & Seating", "Beds & Mattresses", "Wardrobes & Cabinets", "Decor & Artifacts",
+    "Curtains & Blinds", "Flooring", "Other Furniture",
+  ],
+  "Automotive Parts": [
+    "Engine Parts", "Body Parts", "Electrical Parts", "Brake System",
+    "Transmission Parts", "Filters & Lubricants", "Tyres & Wheels", "Car Accessories",
+    "Two Wheeler Parts", "Heavy Vehicle Parts", "Other Auto Parts",
+  ],
+  "Handicrafts & Gifts": [
+    "Wooden Handicrafts", "Metal Handicrafts", "Textile Handicrafts", "Pottery & Ceramics",
+    "Jewellery & Accessories", "Decorative Items", "Gift Items", "Festive Products",
+    "Religious Items", "Wall Art", "Other Handicrafts",
+  ],
+  "Stationery & Paper": [
+    "Office Stationery", "School Stationery", "Paper Products", "Notebooks & Diaries",
+    "Pens & Writing Instruments", "Art & Craft Supplies", "Packaging Paper",
+    "Labels & Tags", "Printing Solutions", "Other Stationery",
+  ],
+  "Plastics & Rubber": [
+    "PET Products", "HDPE Products", "PP Products", "PVC Products",
+    "Rubber Products", "Silicone Products", "Plastic Packaging", "Plastic Components",
+    "Rubber Seals & Gaskets", "Other Plastics & Rubber",
+  ],
+  "Export & Import": [
+    "Agricultural Exports", "Food & Spice Exports", "Textile Exports", "Handicraft Exports",
+    "Chemical Exports", "Pharma Exports", "Import Trading", "Freight & Logistics",
+    "Customs Clearance", "Other Export & Import",
+  ],
+  "Other": [
+    "Other Products", "Other Services", "Other Businesses",
+  ],
+};
 
 /* ─── Tailwind helpers ─── */
 const inp = "w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 placeholder:text-gray-400 transition-all duration-150 shadow-sm hover:border-gray-300";
@@ -575,12 +706,24 @@ export default function SellersPage() {
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
-                            <select value={form.category} onChange={e => sf("category", e.target.value)} className={inp}>
+                            <select value={form.category} onChange={e => { sf("category", e.target.value); sf("subcategory", ""); }} className={inp}>
                               <option value="">Select Category...</option>
                               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                           </div>
                         </div>
+                        {/* ── Subcategory: shown only when selected category has subcategories ── */}
+                        {form.category && CATEGORY_SUBCATEGORIES[form.category] && (
+                          <div>
+                            <label className={fieldLabel}>Subcategory</label>
+                            <select value={form.subcategory || ""} onChange={e => sf("subcategory", e.target.value)} className={inp}>
+                              <option value="">Select Subcategory...</option>
+                              {(CATEGORY_SUBCATEGORIES[form.category] || []).map(sc => (
+                                <option key={sc} value={sc}>{sc}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
                         <div>
                           <label className={fieldLabel}>Business Type</label>
                           <select value={form.type} onChange={e => sf("type", e.target.value)} className={inp}>
@@ -693,6 +836,10 @@ export default function SellersPage() {
                               <input type="color" value={form.aboutCompanyBgColor || "#ffffff"} onChange={e => sf("aboutCompanyBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
                             </div>
                             <div>
+                              <label className={fieldLabel}>About Company Text</label>
+                              <input type="color" value={form.aboutCompanyTextColor || "#4b5563"} onChange={e => sf("aboutCompanyTextColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
+                            </div>
+                            <div>
                               <label className={fieldLabel}>About Infra BG</label>
                               <input type="color" value={form.aboutInfraBgColor || "#ffffff"} onChange={e => sf("aboutInfraBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
                             </div>
@@ -754,6 +901,27 @@ export default function SellersPage() {
                         <div>
                           <label className={fieldLabel}>Footer Copyright Text</label>
                           <input type="text" value={form.footerText || ""} onChange={e => sf("footerText", e.target.value)} placeholder="e.g. Managed by Koop India" className={inp} />
+                        </div>
+                        <div className="pt-4 border-t border-gray-100 mt-4">
+                          <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Header Colors & Navigation</p>
+                          <div className="grid grid-cols-2 gap-3 mb-4">
+                            <div>
+                              <label className={fieldLabel}>Header Background</label>
+                              <input type="color" value={form.headerBgColor || "#ffffff"} onChange={e => sf("headerBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
+                            </div>
+                            <div>
+                              <label className={fieldLabel}>Header Text / Links</label>
+                              <input type="color" value={form.headerTextColor || "#000000"} onChange={e => sf("headerTextColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
+                            </div>
+                          </div>
+                          <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Navigation Labels</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div><label className={fieldLabel}>Home Label</label><input type="text" value={form.navHomeLabel || ""} onChange={e => sf("navHomeLabel", e.target.value)} placeholder="Home" className={inp} /></div>
+                            <div><label className={fieldLabel}>About Us Label</label><input type="text" value={form.navAboutLabel || ""} onChange={e => sf("navAboutLabel", e.target.value)} placeholder="About Us" className={inp} /></div>
+                            <div><label className={fieldLabel}>Products Label</label><input type="text" value={form.navProductsLabel || ""} onChange={e => sf("navProductsLabel", e.target.value)} placeholder="Products" className={inp} /></div>
+                            <div><label className={fieldLabel}>Contact Us Label</label><input type="text" value={form.navContactLabel || ""} onChange={e => sf("navContactLabel", e.target.value)} placeholder="Contact Us" className={inp} /></div>
+                            <div className="sm:col-span-2"><label className={fieldLabel}>CTA Button Text (Header nav)</label><input type="text" value={form.navCtaLabel || ""} onChange={e => sf("navCtaLabel", e.target.value)} placeholder="Request For Quotation" className={inp} /></div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -819,6 +987,48 @@ export default function SellersPage() {
                       </div>
                     </div>
 
+                    {/* Why Us Section */}
+                    <div className={sectionCard}>
+                      <div className="flex items-center justify-between pb-3 border-b border-gray-50">
+                        <div className="flex items-center gap-3">
+                          <div>
+                            <h3 className="text-sm font-black text-gray-900">Why Us Section</h3>
+                            <p className="text-[11px] text-gray-400 font-medium">Numbered feature cards shown on home page</p>
+                          </div>
+                        </div>
+                        <button type="button" onClick={() => addArr("whyCards", { id: uid(), number: String((form.whyCards?.length || 0) + 1).padStart(2, "0"), title: "", description: "" })} className={addBtn}><Plus size={14} /> Add Card</button>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <label className={fieldLabel}>Section Label (small text above heading)</label>
+                            <input type="text" value={form.whyTitle || ""} onChange={e => sf("whyTitle", e.target.value)} placeholder="WHY KATA KIRR" className={inp} />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label className={fieldLabel}>Main Heading</label>
+                            <input type="text" value={form.whySubtitle || ""} onChange={e => sf("whySubtitle", e.target.value)} placeholder="Tradition in every blend." className={inp} />
+                          </div>
+                        </div>
+                        <div>
+                          <label className={fieldLabel}>Section Background Color</label>
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                            <input type="color" value={form.whyBgColor || "#f5f0e8"} onChange={e => sf("whyBgColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
+                            <span className="text-xs text-gray-500 font-medium">Cards section background (light beige recommended)</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          {(form.whyCards || []).map((card, i) => (
+                            <div key={card.id || i} className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                              <input type="text" value={card.number} onChange={e => setArr("whyCards", i, "number", e.target.value)} placeholder="01" className="w-14 text-center bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none" style={{ padding: "8px 4px" }} />
+                              <input type="text" value={card.title} onChange={e => setArr("whyCards", i, "title", e.target.value)} placeholder="Feature title (e.g. Authentic Taste)" className={inp_sm + " flex-1"} />
+                              <input type="text" value={card.description} onChange={e => setArr("whyCards", i, "description", e.target.value)} placeholder="Short description..." className={inp_sm + " flex-1"} />
+                              <button type="button" onClick={() => delArr("whyCards", i)} className={delBtn}><X size={14} /></button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Stats */}
                     <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
@@ -839,6 +1049,32 @@ export default function SellersPage() {
                             <button type="button" onClick={() => delArr("stats", i)} className={delBtn}><X size={14} /></button>
                           </div>
                         ))}
+                      </div>
+                      <div className="pt-4 border-t border-gray-100">
+                        <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Stats Bar Styling</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <label className={fieldLabel}>Stats BG Color</label>
+                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                              <input type="color" value={form.statsBgColor || "#7b1a1a"} onChange={e => sf("statsBgColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
+                              <span className="text-xs text-gray-500 font-medium">Stats section background</span>
+                            </div>
+                          </div>
+                          <div>
+                            <label className={fieldLabel}>Value Box Color</label>
+                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                              <input type="color" value={form.statsValueBgColor || "#1e3a8a"} onChange={e => sf("statsValueBgColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
+                              <span className="text-xs text-gray-500 font-medium">Number value box color</span>
+                            </div>
+                          </div>
+                          <div>
+                            <label className={fieldLabel}>Label Text Color</label>
+                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                              <input type="color" value={form.statsTextColor || "#ffffff"} onChange={e => sf("statsTextColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
+                              <span className="text-xs text-gray-500 font-medium">Stats label text color</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -883,8 +1119,16 @@ export default function SellersPage() {
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <label className={fieldLabel}>About / Description</label>
-                          <textarea rows={5} value={form.about} onChange={e => sf("about", e.target.value)} placeholder="Established in 2010, we are a trusted name in the spice industry..." className={ta} />
+                          <label className={fieldLabel}>About / Description (use blank lines between paragraphs)</label>
+                          <textarea rows={7} value={form.about} onChange={e => sf("about", e.target.value)} placeholder={"First paragraph about your company...\n\nSecond paragraph with more details...\n\nThird paragraph about your values..."} className={ta} />
+                          <p className="text-[10px] text-indigo-600 font-semibold mt-1">💡 Tip: Press Enter twice between text to create separate paragraphs on the page.</p>
+                        </div>
+                        <div>
+                          <label className={fieldLabel}>About Text Color</label>
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                            <input type="color" value={form.aboutTextColor || "#374151"} onChange={e => sf("aboutTextColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
+                            <span className="text-xs text-gray-500 font-medium">Color of about description paragraphs and table text</span>
+                          </div>
                         </div>
                         <div>
                           <label className={fieldLabel}>About Image (shown on right side)</label>
@@ -973,10 +1217,34 @@ export default function SellersPage() {
                         </div>
                         <button type="button" onClick={() => addArr("productCategories", { id: uid(), name: "" })} className={addBtn}><Plus size={14} /> Add Category</button>
                       </div>
-                      <div className="space-y-2">
+                       <div className="space-y-2">
                         {form.productCategories.map((cat, i) => (
                           <div key={cat.id || i} className="flex items-center gap-2">
-                            <input type="text" value={cat.name} onChange={e => setArr("productCategories", i, "name", e.target.value)} placeholder="Category name" className={inp + " flex-1"} disabled={cat.id === "all"} />
+                            {cat.id === "all" ? (
+                              <input type="text" value={cat.name} className={inp + " flex-1 opacity-60"} disabled />
+                            ) : (
+                              <select
+                                value={cat.name}
+                                onChange={e => setArr("productCategories", i, "name", e.target.value)}
+                                className={inp + " flex-1"}
+                              >
+                                <option value="">Select subcategory...</option>
+                                {/* Agar seller ki main category select hai to uske subcategories dikhao */}
+                                {form.category && CATEGORY_SUBCATEGORIES[form.category]
+                                  ? CATEGORY_SUBCATEGORIES[form.category].map(sc => (
+                                      <option key={sc} value={sc}>{sc}</option>
+                                    ))
+                                  : /* fallback: saari categories ki saari subcategories */
+                                    CATEGORIES.map(cat => (
+                                      <optgroup key={cat} label={cat}>
+                                        {(CATEGORY_SUBCATEGORIES[cat] || []).map(sc => (
+                                          <option key={sc} value={sc}>{sc}</option>
+                                        ))}
+                                      </optgroup>
+                                    ))
+                                }
+                              </select>
+                            )}
                             {cat.id !== "all" && <button type="button" onClick={() => delArr("productCategories", i)} className={delBtn}><X size={14} /></button>}
                           </div>
                         ))}
@@ -1007,11 +1275,35 @@ export default function SellersPage() {
                                   </label>
                                   <button type="button" onClick={() => delArr("products", i)} className={delBtn}><X size={14} /></button>
                                 </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                   <div>
                                     <label className={fieldLabel}>Category</label>
-                                    <select value={prod.categoryId} onChange={e => setArr("products", i, "categoryId", e.target.value)} className={inp_sm}>
-                                      {form.productCategories.map((cat, idx) => <option key={cat.id || idx} value={cat.id}>{cat.name}</option>)}
+                                    <select 
+                                      value={prod.categoryId || ""} 
+                                      onChange={e => {
+                                        setArr("products", i, "categoryId", e.target.value);
+                                        setArr("products", i, "subCategoryId", ""); // reset subcat on cat change
+                                      }} 
+                                      className={inp_sm}
+                                    >
+                                      <option value="">Select Category</option>
+                                      {Object.keys(CATEGORY_SUBCATEGORIES).map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label className={fieldLabel}>Sub Category</label>
+                                    <select 
+                                      value={prod.subCategoryId || ""} 
+                                      onChange={e => setArr("products", i, "subCategoryId", e.target.value)} 
+                                      className={inp_sm}
+                                      disabled={!prod.categoryId}
+                                    >
+                                      <option value="">Select Subcategory</option>
+                                      {prod.categoryId && CATEGORY_SUBCATEGORIES[prod.categoryId]?.map(sub => (
+                                        <option key={sub} value={sub}>{sub}</option>
+                                      ))}
                                     </select>
                                   </div>
                                   <div>
