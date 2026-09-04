@@ -137,13 +137,19 @@ export default function SellerClientPage({ initialSeller }) {
   const navCtaLabel = seller.navCtaLabel || btn2;
   const navLabels = { home: navHomeLabel, about: navAboutLabel, products: navProductsLabel, contact: navContactLabel };
   const statsBgColor = seller.statsBgColor || "";
-  const statsValueBgColor = seller.statsValueBgColor || "";
+  const statsValueColor = seller.statsValueColor || "";
   const statsTextColor = seller.statsTextColor || "";
   const aboutTextColor = seller.aboutTextColor || "#374151";
   const whyCards = (seller.whyCards || []).filter(c => c.title);
   const whyBgColor = seller.whyBgColor || "#f5f0e8";
   const whyTitle = seller.whyTitle || "";
   const whySubtitle = seller.whySubtitle || "";
+  const whyLabelColor = seller.whyLabelColor || "";
+  const whyHeadingColor = seller.whyHeadingColor || "";
+  const whyCardBgColor = seller.whyCardBgColor || "";
+  const whyNumberColor = seller.whyNumberColor || "";
+  const whyCardTitleColor = seller.whyCardTitleColor || "";
+  const whyCardDescColor = seller.whyCardDescColor || "";
 
   const compRows = [
     { label: "Company Name", value: seller.companyName || seller.name },
@@ -250,20 +256,20 @@ export default function SellerClientPage({ initialSeller }) {
   /* ── Product Card — shows only name + size/weight ── */
   const ProdCard = ({ p }) => (
     <div onClick={() => { setSelProd(p); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
-      className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group overflow-hidden flex flex-col" style={{ width: '220px', minWidth: '220px' }}>
-      <div className="bg-slate-50 flex items-center justify-center p-4 relative" style={{ height: '180px' }}>
+      className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1.5 cursor-pointer group overflow-hidden flex flex-col" style={{ width: '280px', minWidth: '280px' }}>
+      <div className="bg-slate-50 flex items-center justify-center p-6 relative" style={{ height: '240px' }}>
         {p.imageUrl
           ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
-          : <span className="text-5xl">{p.emoji || "📦"}</span>}
-        {p.badge && <span className="absolute top-2 left-2 text-[10px] font-black px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: sc }}>{p.badge}</span>}
+          : <span className="text-6xl">{p.emoji || "📦"}</span>}
+        {p.badge && <span className="absolute top-3 left-3 text-[11px] font-black px-3 py-1.5 rounded-full text-gray-900 shadow-md border border-gray-200" style={{ backgroundColor: sc || '#ffffff' }}>{p.badge}</span>}
       </div>
-      <div className="p-3 flex flex-col items-center text-center flex-1">
-        <p className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2">{p.name}</p>
+      <div className="p-5 flex flex-col items-center text-center flex-1">
+        <p className="font-black text-gray-900 text-lg leading-tight mb-2 line-clamp-2">{p.name}</p>
         {(p.netWeight || p.availableVariants) && (
-          <p className="text-gray-500 text-xs mb-2 font-medium">{p.netWeight || p.availableVariants?.split(',')[0]?.trim()}</p>
+          <p className="text-gray-500 text-sm mb-3 font-semibold">{p.netWeight || p.availableVariants?.split(',')[0]?.trim()}</p>
         )}
-        <div className="mt-auto w-full pt-2">
-          <button className="w-full text-xs font-bold py-2 rounded-xl text-white hover:opacity-90 transition shadow cursor-pointer" style={{ backgroundColor: pc }}>View Details</button>
+        <div className="mt-auto w-full pt-3">
+          <button className="w-full text-sm font-black py-3 rounded-xl text-white hover:opacity-90 transition shadow-md cursor-pointer" style={{ backgroundColor: pc }}>View Details</button>
         </div>
       </div>
     </div>
@@ -445,13 +451,28 @@ export default function SellerClientPage({ initialSeller }) {
 
           {stats.filter(s => s.value).length > 0 && (
             <div className="shadow-sm" style={{ backgroundColor: statsBgColor || homeBg }}>
-              <div className={`max-w-7xl mx-auto px-5 py-10 flex flex-wrap gap-8 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
-                {stats.filter(s => s.value).map((s, i) => (
-                  <div key={i} className="flex flex-col items-center gap-2">
-                    <div className="px-5 py-2.5 rounded-lg font-black text-2xl sm:text-3xl text-white min-w-[80px] text-center shadow-md" style={{ backgroundColor: statsValueBgColor || pc }}>
-                      {s.value}
+              <div className={`max-w-7xl mx-auto px-5 py-8 flex flex-wrap gap-0 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
+                {stats.filter(s => s.value).map((s, i, arr) => (
+                  <div key={i} className="flex items-center">
+                    <div className="flex flex-col items-center gap-1 px-8 py-3 text-center">
+                      <p
+                        className="font-black text-2xl sm:text-3xl leading-tight"
+                        style={{
+                          color: statsValueColor || "#f5c842",
+                          fontFamily: "Georgia, serif"
+                        }}
+                      >{s.value}</p>
+                      <p
+                        className="text-xs font-bold uppercase tracking-widest mt-1"
+                        style={{ color: statsTextColor || (statsBgColor ? "#ffffff" : "#4b5563") }}
+                      >{s.label}</p>
                     </div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-center" style={{ color: statsTextColor || (statsBgColor ? "#ffffff" : "#4b5563") }}>{s.label}</p>
+                    {i < arr.length - 1 && (
+                      <div
+                        className="w-px self-stretch opacity-25 mx-1"
+                        style={{ backgroundColor: statsTextColor || "#ffffff" }}
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -471,18 +492,18 @@ export default function SellerClientPage({ initialSeller }) {
           {whyCards.length > 0 && (
             <div className="py-16 px-5" style={{ backgroundColor: whyBgColor }}>
               <div className="max-w-7xl mx-auto">
-                {whyTitle && <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: sc }}>{whyTitle}</p>}
+                {whyTitle && <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: whyLabelColor || sc }}>{whyTitle}</p>}
                 {whySubtitle && (
-                  <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-10 leading-tight">
+                  <h2 className="text-3xl sm:text-4xl font-black mb-10 leading-tight" style={{ color: whyHeadingColor || "#111827" }}>
                     {whySubtitle}
                   </h2>
                 )}
-                <div className={`grid gap-5 ${whyCards.length >= 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : whyCards.length === 3 ? 'grid-cols-1 sm:grid-cols-3' : whyCards.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 max-w-xs mx-auto'}`}>
+                <div className={`grid gap-6 ${whyCards.length >= 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : whyCards.length === 3 ? 'grid-cols-1 sm:grid-cols-3' : whyCards.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 max-w-sm mx-auto'}`}>
                   {whyCards.map((card, idx) => (
-                    <div key={idx} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
-                      <p className="font-black text-xl mb-3" style={{ color: sc }}>{card.number || String(idx + 1).padStart(2, '0')}</p>
-                      <h3 className="font-black text-gray-900 text-base mb-2 leading-tight">{card.title}</h3>
-                      <p className="text-gray-500 text-sm leading-relaxed">{card.description}</p>
+                    <div key={idx} className="rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 min-h-[300px] flex flex-col" style={{ backgroundColor: whyCardBgColor || "#ffffff" }}>
+                      <p className="font-black text-2xl mb-5" style={{ color: whyNumberColor || sc, fontFamily: "Georgia, serif" }}>{card.number || String(idx + 1).padStart(2, '0')}</p>
+                      <h3 className="font-black text-lg mb-3 leading-tight" style={{ color: whyCardTitleColor || "#111827" }}>{card.title}</h3>
+                      <p className="text-sm leading-relaxed" style={{ color: whyCardDescColor || "#6b7280" }}>{card.description}</p>
                     </div>
                   ))}
                 </div>
@@ -760,6 +781,36 @@ export default function SellerClientPage({ initialSeller }) {
                           </div>
                         </a>
                       )}
+                      {(() => {
+                        let finalUrl = seller.mapUrl;
+                        if (finalUrl && finalUrl.includes("<iframe") && finalUrl.includes("src=")) {
+                          const match = finalUrl.match(/src="([^"]+)"/);
+                          if (match) finalUrl = match[1];
+                        }
+                        
+                        if (!finalUrl || (!finalUrl.includes("embed") && finalUrl.includes("google.com/maps"))) {
+                          const addressParts = [seller.address, seller.city, seller.state, seller.pincode].filter(Boolean);
+                          if (addressParts.length > 0) {
+                            finalUrl = `https://maps.google.com/maps?q=${encodeURIComponent(addressParts.join(", "))}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+                          } else {
+                            finalUrl = null;
+                          }
+                        }
+
+                        return finalUrl ? (
+                          <div className="w-full mt-8 rounded-2xl overflow-hidden border-2 border-white/10 opacity-90 hover:opacity-100 transition-opacity bg-white/5" style={{ height: "220px" }}>
+                            <iframe 
+                              src={finalUrl}
+                              width="100%" 
+                              height="100%" 
+                              style={{ border: 0 }} 
+                              allowFullScreen="" 
+                              loading="lazy" 
+                              referrerPolicy="no-referrer-when-downgrade"
+                            />
+                          </div>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
                   {Object.values(social).some(Boolean) && (

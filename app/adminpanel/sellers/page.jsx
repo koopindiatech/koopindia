@@ -41,18 +41,26 @@ const blank = () => ({
   // Buyering & Nav
   logoUrl: "", primaryColor: "#2d5a27", secondaryColor: "#f5a623",
   homeBgColor: "#ffffff", aboutBgColor: "#ffffff", productsBgColor: "#ffffff", contactBgColor: "#ffffff",
-  homeProductsBgColor: "", homeCertBgColor: "", homeContactBgColor: "",
-  aboutMissionBgColor: "", aboutStatsBgColor: "", aboutCompanyBgColor: "", aboutInfraBgColor: "", aboutCertBgColor: "",
+  homeProductsBgColor: "", homeProductsTextColor: "",
+  homeCertBgColor: "", homeCertTextColor: "",
+  homeContactBgColor: "", homeContactTextColor: "",
+  aboutMissionBgColor: "", aboutMissionTextColor: "",
+  aboutStatsBgColor: "", aboutStatsTextColor: "",
+  aboutCompanyBgColor: "", aboutCompanyTextColor: "",
+  aboutInfraBgColor: "", aboutInfraTextColor: "",
+  aboutCertBgColor: "", aboutCertTextColor: "",
   navAlignment: "right",
   navHomeLabel: "", navAboutLabel: "", navProductsLabel: "", navContactLabel: "", navCtaLabel: "",
   headerBgColor: "#ffffff", headerTextColor: "#4b5563",
   footerBgColor: "", footerTextColor: "#ffffff", footerText: "",
   // Stats styling
-  statsBgColor: "", statsValueBgColor: "", statsTextColor: "",
+  statsBgColor: "", statsValueColor: "#f5c842", statsTextColor: "",
   // About text
   aboutTextColor: "",
   // Why Us Section
   whyTitle: "WHY US", whySubtitle: "", whyBgColor: "#f5f0e8",
+  whyLabelColor: "", whyHeadingColor: "",
+  whyCardBgColor: "", whyNumberColor: "", whyCardTitleColor: "", whyCardDescColor: "",
   whyCards: [
     { id: uid(), number: "01", title: "", description: "" },
     { id: uid(), number: "02", title: "", description: "" },
@@ -324,6 +332,7 @@ export default function SellersPage() {
   const [delId, setDelId] = useState(null);
   const [uploadProgress, setUploadProgress] = useState({});
   const [uploadStatus, setUploadStatus] = useState({});
+  const [expandedProducts, setExpandedProducts] = useState({});
   /* true while ANY image is currently uploading — prevents saving with empty URL */
   const isUploading = Object.values(uploadStatus).some((s) => s === "uploading");
 
@@ -689,6 +698,13 @@ export default function SellersPage() {
               <div className="max-w-5xl mx-auto p-5 sm:p-8 space-y-10">
 
                 {/* ══ IDENTITY & BRANDING ══ */}
+                <div className="flex items-center gap-4 py-3 mb-2 border-b-2 border-gray-200">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-700 font-black text-2xl shadow-sm">1</div>
+                  <div>
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Identity & Branding</h2>
+                    <p className="text-sm text-gray-500 font-bold">Company details, colors, banners and navigation</p>
+                  </div>
+                </div>
                 <div id="section-identity" className="space-y-6 scroll-mt-6">
                     {/* Company Identity */}
                     <div className={sectionCard}>
@@ -809,44 +825,50 @@ export default function SellersPage() {
                         </div>
 
                         <div className="pt-4 border-t border-gray-100">
-                          <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Specific Section Backgrounds</p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                              <label className={fieldLabel}>Home Products BG</label>
-                              <input type="color" value={form.homeProductsBgColor || "#ffffff"} onChange={e => sf("homeProductsBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
-                            <div>
-                              <label className={fieldLabel}>Home Certs BG</label>
-                              <input type="color" value={form.homeCertBgColor || "#ffffff"} onChange={e => sf("homeCertBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
-                            <div>
-                              <label className={fieldLabel}>Home Contact BG</label>
-                              <input type="color" value={form.homeContactBgColor || "#ffffff"} onChange={e => sf("homeContactBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
-                            <div>
-                              <label className={fieldLabel}>About Mission BG</label>
-                              <input type="color" value={form.aboutMissionBgColor || "#ffffff"} onChange={e => sf("aboutMissionBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
-                            <div>
-                              <label className={fieldLabel}>About Stats BG</label>
-                              <input type="color" value={form.aboutStatsBgColor || "#ffffff"} onChange={e => sf("aboutStatsBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
-                            <div>
-                              <label className={fieldLabel}>About Company BG</label>
-                              <input type="color" value={form.aboutCompanyBgColor || "#ffffff"} onChange={e => sf("aboutCompanyBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
-                            <div>
-                              <label className={fieldLabel}>About Company Text</label>
-                              <input type="color" value={form.aboutCompanyTextColor || "#4b5563"} onChange={e => sf("aboutCompanyTextColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
-                            <div>
-                              <label className={fieldLabel}>About Infra BG</label>
-                              <input type="color" value={form.aboutInfraBgColor || "#ffffff"} onChange={e => sf("aboutInfraBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
-                            <div>
-                              <label className={fieldLabel}>About Certs BG</label>
-                              <input type="color" value={form.aboutCertBgColor || "#ffffff"} onChange={e => sf("aboutCertBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
-                            </div>
+                          <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Specific Section Colors (BG + Text)</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {[
+                              { label: "Home Products", bgKey: "homeProductsBgColor", textKey: "homeProductsTextColor" },
+                              { label: "Home Certifications", bgKey: "homeCertBgColor", textKey: "homeCertTextColor" },
+                              { label: "Home Contact", bgKey: "homeContactBgColor", textKey: "homeContactTextColor" },
+                              { label: "About Mission", bgKey: "aboutMissionBgColor", textKey: "aboutMissionTextColor" },
+                              { label: "About Stats", bgKey: "aboutStatsBgColor", textKey: "aboutStatsTextColor" },
+                              { label: "About Company", bgKey: "aboutCompanyBgColor", textKey: "aboutCompanyTextColor" },
+                              { label: "About Infra", bgKey: "aboutInfraBgColor", textKey: "aboutInfraTextColor" },
+                              { label: "About Certifications", bgKey: "aboutCertBgColor", textKey: "aboutCertTextColor" },
+                            ].map(({ label, bgKey, textKey }) => (
+                              <div key={bgKey} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 hover:border-indigo-200 transition">
+                                <div
+                                  className="w-10 h-10 rounded-xl flex-shrink-0 border-2 border-white shadow-sm flex items-center justify-center text-[10px] font-black"
+                                  style={{ backgroundColor: form[bgKey] || "#ffffff", color: form[textKey] || "#374151" }}
+                                >Aa</div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-[10px] font-black text-gray-600 uppercase tracking-wider truncate mb-1.5">{label}</p>
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-[9px] text-gray-400 font-bold">BG</span>
+                                      <input
+                                        type="color"
+                                        value={form[bgKey] || "#ffffff"}
+                                        onChange={e => sf(bgKey, e.target.value)}
+                                        className="w-7 h-7 rounded-lg cursor-pointer border border-gray-200"
+                                        title={`${label} Background Color`}
+                                      />
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <span className="text-[9px] text-gray-400 font-bold">Text</span>
+                                      <input
+                                        type="color"
+                                        value={form[textKey] || "#374151"}
+                                        onChange={e => sf(textKey, e.target.value)}
+                                        className="w-7 h-7 rounded-lg cursor-pointer border border-gray-200"
+                                        title={`${label} Text Color`}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
 
@@ -1009,13 +1031,6 @@ export default function SellersPage() {
                             <input type="text" value={form.whySubtitle || ""} onChange={e => sf("whySubtitle", e.target.value)} placeholder="Tradition in every blend." className={inp} />
                           </div>
                         </div>
-                        <div>
-                          <label className={fieldLabel}>Section Background Color</label>
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                            <input type="color" value={form.whyBgColor || "#f5f0e8"} onChange={e => sf("whyBgColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
-                            <span className="text-xs text-gray-500 font-medium">Cards section background (light beige recommended)</span>
-                          </div>
-                        </div>
                         <div className="space-y-2">
                           {(form.whyCards || []).map((card, i) => (
                             <div key={card.id || i} className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
@@ -1025,6 +1040,94 @@ export default function SellersPage() {
                               <button type="button" onClick={() => delArr("whyCards", i)} className={delBtn}><X size={14} /></button>
                             </div>
                           ))}
+                        </div>
+                        {/* WHY US STYLING (Live Preview & Controls) */}
+                        <div className="mt-6 space-y-4">
+                          <label className="text-[10px] font-black tracking-widest text-gray-500 uppercase">Why Us Styling</label>
+
+                          {/* 🔴 LIVE PREVIEW STRIP */}
+                          <div className="rounded-2xl overflow-hidden shadow-inner border border-gray-200" style={{ backgroundColor: form.whyBgColor || "#f5f0e8" }}>
+                            <div className="p-6">
+                              <p className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: form.whyLabelColor || form.secondaryColor || "#f5a623" }}>{form.whyTitle || "WHY US"}</p>
+                              <h2 className="text-xl font-black mb-6 leading-tight" style={{ color: form.whyHeadingColor || "#111827" }}>
+                                {form.whySubtitle || "Tradition in every blend."}
+                              </h2>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="rounded-3xl p-6 shadow-sm min-h-[200px] flex flex-col" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}>
+                                  <p className="font-black text-2xl mb-4" style={{ color: form.whyNumberColor || form.secondaryColor || "#f5a623", fontFamily: "Georgia, serif" }}>01</p>
+                                  <h3 className="font-black text-sm mb-2" style={{ color: form.whyCardTitleColor || "#111827" }}>Premium Quality</h3>
+                                  <p className="text-xs leading-relaxed" style={{ color: form.whyCardDescColor || "#6b7280" }}>Carefully selected spices for consistent flavour.</p>
+                                </div>
+                                <div className="rounded-3xl p-6 shadow-sm opacity-60 min-h-[200px] flex flex-col" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}>
+                                  <p className="font-black text-2xl mb-4" style={{ color: form.whyNumberColor || form.secondaryColor || "#f5a623", fontFamily: "Georgia, serif" }}>02</p>
+                                  <h3 className="font-black text-sm mb-2" style={{ color: form.whyCardTitleColor || "#111827" }}>Authentic Taste</h3>
+                                  <div className="h-2 w-3/4 rounded-full mt-2 opacity-20" style={{ backgroundColor: form.whyCardDescColor || "#6b7280" }}></div>
+                                  <div className="h-2 w-1/2 rounded-full mt-2 opacity-20" style={{ backgroundColor: form.whyCardDescColor || "#6b7280" }}></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 🎨 COLOR CONTROLS GRID */}
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                              <div className="h-10 border-b border-gray-100 flex-shrink-0" style={{ backgroundColor: form.whyBgColor || "#f5f0e8" }} />
+                              <div className="p-3 flex items-center justify-between flex-1">
+                                <div><p className="text-[10px] font-black text-gray-800">BG COLOR</p><p className="text-[9px] text-gray-500">Section bg</p></div>
+                                <input type="color" value={form.whyBgColor || "#f5f0e8"} onChange={e => sf("whyBgColor", e.target.value)} className="w-6 h-6 rounded cursor-pointer border border-gray-200" />
+                              </div>
+                            </div>
+                            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                              <div className="h-10 border-b border-gray-100 flex items-center px-3" style={{ backgroundColor: form.whyBgColor || "#f5f0e8" }}>
+                                <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: form.whyLabelColor || form.secondaryColor || "#f5a623" }}>LABEL</span>
+                              </div>
+                              <div className="p-3 flex items-center justify-between flex-1">
+                                <div><p className="text-[10px] font-black text-gray-800">LABEL COLOR</p><p className="text-[9px] text-gray-500">Small top text</p></div>
+                                <input type="color" value={form.whyLabelColor || ""} onChange={e => sf("whyLabelColor", e.target.value)} className="w-6 h-6 rounded cursor-pointer border border-gray-200" />
+                              </div>
+                            </div>
+                            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                              <div className="h-10 border-b border-gray-100 flex items-center px-3" style={{ backgroundColor: form.whyBgColor || "#f5f0e8" }}>
+                                <span className="text-[12px] font-black truncate" style={{ color: form.whyHeadingColor || "#111827" }}>Heading</span>
+                              </div>
+                              <div className="p-3 flex items-center justify-between flex-1">
+                                <div><p className="text-[10px] font-black text-gray-800">HEADING</p><p className="text-[9px] text-gray-500">Main title</p></div>
+                                <input type="color" value={form.whyHeadingColor || ""} onChange={e => sf("whyHeadingColor", e.target.value)} className="w-6 h-6 rounded cursor-pointer border border-gray-200" />
+                              </div>
+                            </div>
+
+                            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                              <div className="h-10 border-b border-gray-100 flex items-center justify-center bg-gray-100 flex-shrink-0">
+                                <div className="w-10 h-6 rounded-md shadow-sm border border-gray-200" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}></div>
+                              </div>
+                              <div className="p-3 flex items-center justify-between flex-1">
+                                <div><p className="text-[10px] font-black text-gray-800">CARD BG</p><p className="text-[9px] text-gray-500">Card background</p></div>
+                                <input type="color" value={form.whyCardBgColor || "#ffffff"} onChange={e => sf("whyCardBgColor", e.target.value)} className="w-6 h-6 rounded cursor-pointer border border-gray-200" />
+                              </div>
+                            </div>
+                            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                              <div className="h-10 border-b border-gray-100 flex items-center px-3 justify-between" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}>
+                                <span className="text-[12px] font-black" style={{ color: form.whyNumberColor || form.secondaryColor || "#f5a623" }}>01</span>
+                                <span className="text-[11px] font-black truncate max-w-[60px]" style={{ color: form.whyCardTitleColor || "#111827" }}>Title</span>
+                              </div>
+                              <div className="p-3 flex items-center justify-between flex-1">
+                                <div><p className="text-[10px] font-black text-gray-800">CARD TEXT</p><p className="text-[9px] text-gray-500">Number & Title</p></div>
+                                <div className="flex gap-1">
+                                  <input type="color" value={form.whyNumberColor || ""} onChange={e => sf("whyNumberColor", e.target.value)} title="Number Color" className="w-5 h-5 rounded cursor-pointer border border-gray-200" />
+                                  <input type="color" value={form.whyCardTitleColor || ""} onChange={e => sf("whyCardTitleColor", e.target.value)} title="Title Color" className="w-5 h-5 rounded cursor-pointer border border-gray-200" />
+                                </div>
+                              </div>
+                            </div>
+                            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+                              <div className="h-10 border-b border-gray-100 flex items-center px-3" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}>
+                                <span className="text-[10px] truncate" style={{ color: form.whyCardDescColor || "#6b7280" }}>Description text...</span>
+                              </div>
+                              <div className="p-3 flex items-center justify-between flex-1">
+                                <div><p className="text-[10px] font-black text-gray-800">CARD DESC</p><p className="text-[9px] text-gray-500">Description text</p></div>
+                                <input type="color" value={form.whyCardDescColor || ""} onChange={e => sf("whyCardDescColor", e.target.value)} className="w-6 h-6 rounded cursor-pointer border border-gray-200" />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1050,28 +1153,102 @@ export default function SellersPage() {
                           </div>
                         ))}
                       </div>
-                      <div className="pt-4 border-t border-gray-100">
-                        <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Stats Bar Styling</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                          <div>
-                            <label className={fieldLabel}>Stats BG Color</label>
-                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                              <input type="color" value={form.statsBgColor || "#7b1a1a"} onChange={e => sf("statsBgColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
-                              <span className="text-xs text-gray-500 font-medium">Stats section background</span>
+                      {/* ── Stats Bar Styling ── */}
+                      <div className="pt-4 border-t border-gray-100 space-y-4">
+                        <p className="text-xs font-black text-gray-800 uppercase tracking-widest">Stats Bar Styling</p>
+
+                        {/* Live Preview Strip */}
+                        <div
+                          className="w-full rounded-2xl overflow-hidden shadow-md"
+                          style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }}
+                        >
+                          <div className="flex items-center justify-around px-4 py-5 gap-2 flex-wrap">
+                            {(form.stats || []).filter(s => s.value || s.label).slice(0, 5).map((s, i, arr) => (
+                              <div key={i} className="flex items-center flex-1 min-w-0 justify-center">
+                                <div className="text-center px-4 py-1">
+                                  <p
+                                    className="text-2xl font-black leading-tight"
+                                    style={{ color: form.statsValueColor || "#f5c842", fontFamily: "Georgia, serif" }}
+                                  >{s.value || "—"}</p>
+                                  <p
+                                    className="text-[10px] font-bold tracking-widest uppercase mt-1"
+                                    style={{ color: form.statsTextColor || "#ffffff" }}
+                                  >{s.label || "Label"}</p>
+                                </div>
+                                {i < arr.length - 1 && (
+                                  <div className="w-px self-stretch mx-1 opacity-30" style={{ backgroundColor: form.statsTextColor || "#ffffff" }} />
+                                )}
+                              </div>
+                            ))}
+                            {(form.stats || []).filter(s => s.value || s.label).length === 0 && (
+                              <p className="text-xs opacity-40 py-2" style={{ color: form.statsTextColor || "#ffffff" }}>Add stats above to see preview</p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Color Picker Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          {/* BG Color */}
+                          <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+                            <div className="h-14 w-full" style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }} />
+                            <div className="p-3 bg-white flex items-center justify-between gap-2">
+                              <div>
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-wider">BG Color</p>
+                                <p className="text-[9px] text-gray-400 font-medium">Section background</p>
+                              </div>
+                              <input
+                                type="color"
+                                value={form.statsBgColor || "#7b1a1a"}
+                                onChange={e => sf("statsBgColor", e.target.value)}
+                                className="w-10 h-10 rounded-xl cursor-pointer border-2 border-gray-100 flex-shrink-0"
+                                title="Stats Background Color"
+                              />
                             </div>
                           </div>
-                          <div>
-                            <label className={fieldLabel}>Value Box Color</label>
-                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                              <input type="color" value={form.statsValueBgColor || "#1e3a8a"} onChange={e => sf("statsValueBgColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
-                              <span className="text-xs text-gray-500 font-medium">Number value box color</span>
+
+                          {/* Value Text Color */}
+                          <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+                            <div
+                              className="h-14 w-full flex items-center justify-center"
+                              style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }}
+                            >
+                              <span className="text-2xl font-black" style={{ color: form.statsValueColor || "#f5c842", fontFamily: "Georgia, serif" }}>500+</span>
+                            </div>
+                            <div className="p-3 bg-white flex items-center justify-between gap-2">
+                              <div>
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-wider">Value Color</p>
+                                <p className="text-[9px] text-gray-400 font-medium">Numbers / values</p>
+                              </div>
+                              <input
+                                type="color"
+                                value={form.statsValueColor || "#f5c842"}
+                                onChange={e => sf("statsValueColor", e.target.value)}
+                                className="w-10 h-10 rounded-xl cursor-pointer border-2 border-gray-100 flex-shrink-0"
+                                title="Stats Value Text Color"
+                              />
                             </div>
                           </div>
-                          <div>
-                            <label className={fieldLabel}>Label Text Color</label>
-                            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                              <input type="color" value={form.statsTextColor || "#ffffff"} onChange={e => sf("statsTextColor", e.target.value)} className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200" />
-                              <span className="text-xs text-gray-500 font-medium">Stats label text color</span>
+
+                          {/* Label Text Color */}
+                          <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+                            <div
+                              className="h-14 w-full flex items-center justify-center"
+                              style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }}
+                            >
+                              <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: form.statsTextColor || "#ffffff" }}>HAPPY CLIENTS</span>
+                            </div>
+                            <div className="p-3 bg-white flex items-center justify-between gap-2">
+                              <div>
+                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-wider">Label Color</p>
+                                <p className="text-[9px] text-gray-400 font-medium">Labels below values</p>
+                              </div>
+                              <input
+                                type="color"
+                                value={form.statsTextColor || "#ffffff"}
+                                onChange={e => sf("statsTextColor", e.target.value)}
+                                className="w-10 h-10 rounded-xl cursor-pointer border-2 border-gray-100 flex-shrink-0"
+                                title="Stats Label Text Color"
+                              />
                             </div>
                           </div>
                         </div>
@@ -1112,6 +1289,13 @@ export default function SellersPage() {
                 </div>{/* end section-identity */}
 
                 {/* ══ ABOUT & VISION ══ */}
+                <div className="flex items-center gap-4 py-3 mb-2 mt-20 border-b-2 border-gray-200">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-700 font-black text-2xl shadow-sm">2</div>
+                  <div>
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">About & Vision</h2>
+                    <p className="text-sm text-gray-500 font-bold">Company story, mission, stats, and infrastructure</p>
+                  </div>
+                </div>
                 <div id="section-about" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
@@ -1209,6 +1393,13 @@ export default function SellersPage() {
                 </div>{/* end section-about */}
 
                 {/* ══ PRODUCTS ══ */}
+                <div className="flex items-center gap-4 py-3 mb-2 mt-20 border-b-2 border-gray-200">
+                  <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-700 font-black text-2xl shadow-sm">3</div>
+                  <div>
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Products & Categories</h2>
+                    <p className="text-sm text-gray-500 font-bold">Manage product catalogs and categorisation</p>
+                  </div>
+                </div>
                 <div id="section-products" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
@@ -1258,23 +1449,60 @@ export default function SellersPage() {
                         </div>
                         <button type="button" onClick={() => addArr("products", { id: uid(), name: "", categoryId: "all", price: "", description: "", imageUrl: "", badge: "", emoji: "📦", showOnHome: false, tagline: "", keyHighlights: "", suitableFor: "", availableVariants: "", features: "", ingredientsList: "", isNatural: false, isOrganic: false, isPreservativeFree: false, productType: "", netWeight: "", shelfLife: "", storageInstructions: "", packagingType: "", countryOfOrigin: "", fssaiNumber: "", isVegetarian: false, skuCode: "", availablePackaging: "", benefits: "", usageInstructions: "", nutritionEnergy: "", nutritionProtein: "", nutritionCarbs: "", nutritionSugar: "", nutritionFat: "", nutritionSodium: "", isISOCertified: false, isFSSAIApproved: false, isGMPCertified: false, isLabTested: false, isQualityChecked: false, whyChoose: "", industriesApplications: "", specifications: "", ingredients: "", packaging: "" })} className={addBtn}><Plus size={14} /> Add Product</button>
                       </div>
-                      <div className="space-y-4">
-                        {form.products.map((prod, i) => (
-                          <div key={prod.id || i} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                            <div className="flex gap-4">
-                              <div className="flex-shrink-0 space-y-1">
-                                <UploadBox field={`prod_${i}`} value={prod.imageUrl} onPick={e => handleArrayImagePick(e, "products", i)} small />
-                                {ProgPill({field:`products_${i}`,uploadStatus,uploadProgress})}
+                      <div className="space-y-3">
+                        {form.products.map((prod, i) => {
+                          const isExpanded = expandedProducts[prod.id || i] === true; // default collapsed
+                          const toggleExpand = () => setExpandedProducts(p => ({ ...p, [prod.id || i]: !isExpanded }));
+                          return (
+                          <div key={prod.id || i} className={`rounded-xl border transition-all duration-200 ${isExpanded ? 'bg-white border-indigo-100 shadow-sm' : 'bg-gray-50 border-gray-100'}`}>
+                            {/* ── Collapsed Header ── */}
+                            <div className="flex items-center gap-3 p-3">
+                              {/* Thumbnail */}
+                              <div className="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center border border-gray-200">
+                                {prod.imageUrl
+                                  ? <img src={prod.imageUrl} alt="" className="w-full h-full object-contain" />
+                                  : <span className="text-xl">{prod.emoji || "📦"}</span>}
                               </div>
-                              <div className="flex-1 space-y-3">
-                                <div className="flex items-start justify-between gap-3">
-                                  <input type="text" value={prod.name} onChange={e => setArr("products", i, "name", e.target.value)} placeholder="Product name *" className={inp + " flex-1"} />
-                                  <label className="flex items-center gap-1.5 flex-shrink-0 cursor-pointer bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 hover:bg-amber-100 transition">
-                                    <input type="checkbox" checked={!!prod.showOnHome} onChange={e => setArr("products", i, "showOnHome", e.target.checked)} className="w-3.5 h-3.5 accent-amber-500" />
-                                    <span className="text-[10px] font-black text-amber-700 whitespace-nowrap">🏠 Home</span>
-                                  </label>
-                                  <button type="button" onClick={() => delArr("products", i)} className={delBtn}><X size={14} /></button>
-                                </div>
+                              {/* Name (editable even when collapsed) */}
+                              <input
+                                type="text"
+                                value={prod.name}
+                                onChange={e => setArr("products", i, "name", e.target.value)}
+                                onClick={e => e.stopPropagation()}
+                                placeholder="Product name *"
+                                className={inp + " flex-1 text-sm"}
+                              />
+                              {/* Home toggle */}
+                              <label className="flex items-center gap-1.5 flex-shrink-0 cursor-pointer bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 hover:bg-amber-100 transition">
+                                <input type="checkbox" checked={!!prod.showOnHome} onChange={e => setArr("products", i, "showOnHome", e.target.checked)} className="w-3.5 h-3.5 accent-amber-500" />
+                                <span className="text-[10px] font-black text-amber-700 whitespace-nowrap">🏠 Home</span>
+                              </label>
+                              {/* Expand / Collapse toggle */}
+                              <button
+                                type="button"
+                                onClick={toggleExpand}
+                                className={`w-8 h-8 flex items-center justify-center rounded-xl border transition-all cursor-pointer flex-shrink-0 ${isExpanded ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-gray-100 border-gray-200 text-gray-500 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600'}`}
+                                title={isExpanded ? 'Minimize' : 'Expand'}
+                              >
+                                <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                                  {isExpanded
+                                    ? <path d="m18 15-6-6-6 6" />
+                                    : <path d="m6 9 6 6 6-6" />}
+                                </svg>
+                              </button>
+                              {/* Delete */}
+                              <button type="button" onClick={() => delArr("products", i)} className={delBtn}><X size={14} /></button>
+                            </div>
+
+                            {/* ── Expanded Body ── */}
+                            {isExpanded && (
+                              <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+                                <div className="flex gap-4">
+                                  <div className="flex-shrink-0 space-y-1">
+                                    <UploadBox field={`prod_${i}`} value={prod.imageUrl} onPick={e => handleArrayImagePick(e, "products", i)} small />
+                                    {ProgPill({field:`products_${i}`,uploadStatus,uploadProgress})}
+                                  </div>
+                                  <div className="flex-1 space-y-3">
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                   <div>
                                     <label className={fieldLabel}>Category</label>
@@ -1423,15 +1651,25 @@ export default function SellersPage() {
                                   <label className={fieldLabel}>Industries / Applications (comma sep.)</label>
                                   <input type="text" value={prod.industriesApplications || ""} onChange={e => setArr("products", i, "industriesApplications", e.target.value)} placeholder="Food Industry, Restaurants, Hotels" className={inp_sm} />
                                 </div>
+                                </div>
                               </div>
                             </div>
+                            )}
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                 </div>{/* end section-products */}
 
                 {/* ══ CONTACT & SOCIAL ══ */}
+                <div className="flex items-center gap-4 py-3 mb-2 mt-20 border-b-2 border-gray-200">
+                  <div className="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-700 font-black text-2xl shadow-sm">4</div>
+                  <div>
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Contact & Social</h2>
+                    <p className="text-sm text-gray-500 font-bold">Address, phone numbers, and social media links</p>
+                  </div>
+                </div>
                 <div id="section-contact" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">

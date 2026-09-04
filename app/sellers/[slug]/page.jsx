@@ -194,19 +194,19 @@ export default function SellerPublicPage() {
   /* ── Reusable Product Card ── */
   const ProdCard = ({ p }) => (
     <div onClick={() => setSelProd(p)}
-      className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group overflow-hidden flex flex-col flex-shrink-0 w-full sm:w-[260px] lg:w-[270px]">
-      <div className="bg-slate-50 h-48 flex items-center justify-center p-4 relative">
+      className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group overflow-hidden flex flex-col flex-shrink-0 w-full sm:w-[290px] lg:w-[300px]">
+      <div className="bg-slate-50 h-64 flex items-center justify-center p-5 relative">
         {p.imageUrl
           ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
-          : <span className="text-5xl">{p.emoji || "📦"}</span>}
+          : <span className="text-6xl">{p.emoji || "📦"}</span>}
         {p.badge && <span className="absolute top-2 left-2 text-[10px] font-black px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: sc }}>{p.badge}</span>}
       </div>
-      <div className="p-4 flex-1 flex flex-col">
+      <div className="p-5 flex-1 flex flex-col">
         <p className="font-bold text-gray-900 text-sm leading-tight mb-1">{p.name}</p>
         {p.description && <p className="text-gray-500 text-xs mb-2 line-clamp-2 leading-relaxed">{p.description}</p>}
         <div className="mt-auto">
-          {p.price && <p className="font-black text-base mb-2" style={{ color: pc }}>{p.price}</p>}
-          <button className="w-full text-xs font-bold py-2 rounded-xl text-white hover:opacity-90 transition shadow cursor-pointer" style={{ backgroundColor: pc }}>View Details</button>
+          {p.price && <p className="font-black text-base mb-3" style={{ color: pc }}>{p.price}</p>}
+          <button className="w-full text-xs font-bold py-2.5 rounded-xl text-white hover:opacity-90 transition shadow cursor-pointer" style={{ backgroundColor: pc }}>View Details</button>
         </div>
       </div>
     </div>
@@ -414,13 +414,19 @@ export default function SellerPublicPage() {
           {/* Stats Bar */}
           {stats.filter(s => s.value).length > 0 && (
             <div className="shadow-sm" style={{ backgroundColor: statsBgColor || homeBg }}>
-              <div className={`max-w-7xl mx-auto px-5 py-10 flex flex-wrap gap-8 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
-                {stats.filter(s => s.value).map((s, i) => (
-                  <div key={i} className="flex flex-col items-center gap-2">
-                    <div className="px-5 py-2.5 rounded-lg font-black text-2xl sm:text-3xl text-white min-w-[80px] text-center shadow-md" style={{ backgroundColor: statsValueBgColor || pc }}>
-                      {s.value}
+              <div className={`max-w-7xl mx-auto px-5 py-10 flex flex-wrap gap-0 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
+                {stats.filter(s => s.value).map((s, i, arr) => (
+                  <div key={i} className="flex items-center">
+                    <div className="flex flex-col items-center gap-1 px-8 py-2 text-center">
+                      <p
+                        className="font-black text-2xl sm:text-3xl leading-tight"
+                        style={{ color: seller.statsValueColor || "#f5c842", fontFamily: "Georgia, serif" }}
+                      >{s.value}</p>
+                      <p className="text-xs font-bold uppercase tracking-widest mt-1" style={{ color: seller.statsTextColor || (statsBgColor ? "#ffffff" : "#4b5563") }}>{s.label}</p>
                     </div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-center" style={{ color: statsTextColor || (statsBgColor ? "#ffffff" : "#4b5563") }}>{s.label}</p>
+                    {i < arr.length - 1 && (
+                      <div className="w-px self-stretch opacity-25 mx-1" style={{ backgroundColor: seller.statsTextColor || "#ffffff" }} />
+                    )}
                   </div>
                 ))}
               </div>
@@ -697,6 +703,36 @@ export default function SellerPublicPage() {
                           </div>
                         </a>
                       )}
+                      {(() => {
+                        let finalUrl = seller.mapUrl;
+                        if (finalUrl && finalUrl.includes("<iframe") && finalUrl.includes("src=")) {
+                          const match = finalUrl.match(/src="([^"]+)"/);
+                          if (match) finalUrl = match[1];
+                        }
+                        
+                        if (!finalUrl || (!finalUrl.includes("embed") && finalUrl.includes("google.com/maps"))) {
+                          const addressParts = [seller.address, seller.city, seller.state, seller.pincode].filter(Boolean);
+                          if (addressParts.length > 0) {
+                            finalUrl = `https://maps.google.com/maps?q=${encodeURIComponent(addressParts.join(", "))}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+                          } else {
+                            finalUrl = null;
+                          }
+                        }
+
+                        return finalUrl ? (
+                          <div className="w-full mt-8 rounded-2xl overflow-hidden border-2 border-white/10 opacity-90 hover:opacity-100 transition-opacity bg-white/5" style={{ height: "220px" }}>
+                            <iframe 
+                              src={finalUrl}
+                              width="100%" 
+                              height="100%" 
+                              style={{ border: 0 }} 
+                              allowFullScreen="" 
+                              loading="lazy" 
+                              referrerPolicy="no-referrer-when-downgrade"
+                            />
+                          </div>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
 
