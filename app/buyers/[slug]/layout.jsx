@@ -17,9 +17,25 @@ export async function generateMetadata({ params }) {
       if (!desc) {
         desc = `${buyer.buyerName || buyer.name || buyer.companyName} is looking for verified suppliers on Koop India. View their requirements and connect directly.`;
       }
+      
+      const images = [];
+      if (buyer.logoUrl) images.push(buyer.logoUrl);
+      if (buyer.coverImageUrl) images.push(buyer.coverImageUrl);
+
       return {
         title,
         description: desc,
+        openGraph: {
+          title,
+          description: desc,
+          images: images.length > 0 ? images : undefined,
+        },
+        twitter: {
+          card: "summary_large_image",
+          title,
+          description: desc,
+          images: images.length > 0 ? images : undefined,
+        },
       };
     }
   } catch (error) {
