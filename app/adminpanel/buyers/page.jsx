@@ -142,6 +142,7 @@ export default function BuyersAdminPage() {
   const [delId, setDelId] = useState(null);
   const [uploadProgress, setUploadProgress] = useState({});
   const [uploadStatus, setUploadStatus] = useState({});
+  const [activeSection, setActiveSection] = useState("section-identity");
   const isUploading = Object.values(uploadStatus).some((s) => s === "uploading");
 
   /* ── Load from Firestore ── */
@@ -428,51 +429,57 @@ export default function BuyersAdminPage() {
           </div>
 
           <div className="flex flex-1 overflow-hidden">
-            {/* Sidebar */}
-            <div className="hidden lg:flex flex-col w-64 flex-shrink-0 bg-white border-r border-gray-100 pt-6 pb-10 px-4 gap-1 sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2 mb-3">Sections</p>
-              {STEPS.map((t) => (
-                <button key={t.id} type="button" onClick={() => setStep(t.id)}
-                  className={`w-full text-left px-3 py-3 rounded-xl transition-all duration-150 group ${step === t.id ? "bg-orange-500 text-white shadow-md shadow-orange-200" : "hover:bg-gray-50 text-gray-700"}`}>
-                  <div className="flex items-center gap-3">
-                    <span className="text-base">{t.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-bold truncate ${step === t.id ? "text-white" : "text-gray-800"}`}>{t.label}</p>
-                      <p className={`text-[10px] truncate mt-0.5 ${step === t.id ? "text-orange-200" : "text-gray-400"}`}>{t.desc}</p>
-                    </div>
-                    {step === t.id && <Check size={14} className="text-orange-200 flex-shrink-0" />}
+            {/* Form Body - Full Width Scrollable */}
+            <div className="flex-1 overflow-y-auto" onScroll={(e) => {
+              const sections = ["section-identity", "section-visuals", "section-about", "section-categories", "section-stats", "section-contact"];
+              const scrollPos = e.target.scrollTop;
+              for (const id of [...sections].reverse()) {
+                const el = document.getElementById(id);
+                if (el && el.offsetTop <= scrollPos + 150) {
+                  setActiveSection(id);
+                  break;
+                }
+              }
+            }}>
+              {/* ── Sticky Top Section Nav (horizontal) ── */}
+              <div className="bg-white border-b border-gray-100 sticky top-0 z-20 flex-shrink-0 shadow-sm">
+                <div className="max-w-4xl mx-auto px-4 sm:px-8">
+                  <div className="flex items-center gap-1 py-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                    {[
+                      { id: "section-identity", icon: "🏠", label: "Identity & Basic Info" },
+                      { id: "section-visuals", icon: "🎨", label: "Visuals & Branding" },
+                      { id: "section-about", icon: "ℹ️", label: "About & Details" },
+                      { id: "section-categories", icon: "📦", label: "Categories & Partners" },
+                      { id: "section-stats", icon: "📈", label: "Why Us & Stats" },
+                      { id: "section-contact", icon: "📞", label: "Contact & Settings" },
+                    ].map((t) => (
+                      <button key={t.id} type="button"
+                        onClick={() => document.getElementById(t.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                        className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer ${
+                          activeSection === t.id
+                            ? "bg-orange-500 text-white shadow-md"
+                            : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                        }`}>
+                        <span>{t.icon}</span>
+                        <span>{t.label}</span>
+                        {activeSection === t.id && <Check size={12} className="text-orange-200" />}
+                      </button>
+                    ))}
                   </div>
-                </button>
-              ))}
-              <div className="mt-auto pt-6 border-t border-gray-100 space-y-2">
-                <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.buyerName.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer">
-                  <Save size={13} /> {isUploading ? "Wait for upload..." : "Save as Draft"}
-                </button>
-                <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.buyerName.trim()}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-all shadow-md disabled:opacity-40 cursor-pointer">
-                  <Rocket size={13} /> {saving ? "Publishing..." : isUploading ? "Uploading..." : "Publish Live"}
-                </button>
+                </div>
               </div>
-            </div>
 
-            {/* Mobile Tabs */}
-            <div className="flex lg:hidden border-b border-gray-100 bg-white overflow-x-auto sticky top-[57px] z-20 w-full flex-shrink-0">
-              {STEPS.map((t) => (
-                <button key={t.id} type="button" onClick={() => setStep(t.id)}
-                  className={`flex-shrink-0 px-4 py-3.5 text-left border-b-2 transition-all ${step === t.id ? "border-orange-500 bg-white" : "border-transparent hover:bg-gray-50"}`}>
-                  <p className={`text-xs font-black ${step === t.id ? "text-orange-600" : "text-gray-500"}`}>{t.icon} {t.label}</p>
-                </button>
-              ))}
-            </div>
-
-            {/* Form Body */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="max-w-3xl mx-auto p-5 sm:p-8 space-y-6">
+              <div className="max-w-4xl mx-auto p-4 sm:p-8 pb-32 space-y-8 relative">
 
                 {/* ══ STEP 0: BUYER IDENTITY ══ */}
-                {step === 0 && (
-                  <div className="space-y-6">
+                <div className="space-y-6 pt-6" id="section-identity">
+                  <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
+                    <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">01</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white tracking-wide">Basic Information</h3>
+                      <p className="text-orange-100 text-sm font-medium mt-1">Provide primary details about the buyer.</p>
+                    </div>
+                  </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Buyer Identity</h3>
                       <div className="space-y-4">
@@ -483,7 +490,7 @@ export default function BuyersAdminPage() {
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
-                            <input type="text" value={form.category} onChange={(e) => sf("category", e.target.value)} placeholder="e.g. Supermarket Chain" className={inp} />
+                            <input type="text" list="category-list" value={form.category} onChange={(e) => sf("category", e.target.value)} placeholder="e.g. Supermarket Chain" className={inp} />
                           </div>
                         </div>
                         <div>
@@ -492,10 +499,11 @@ export default function BuyersAdminPage() {
                         </div>
                         <div>
                           <label className={fieldLabel}>Business Type</label>
-                          <div className="flex flex-wrap gap-2">
+                          <input type="text" list="business-type-list" value={form.businessType || ""} onChange={(e) => sf("businessType", e.target.value)} placeholder="Select or type..." className={inp} />
+                          <div className="flex flex-wrap gap-2 mt-2">
                             {["Manufacturer", "Distributor", "Retailer", "Wholesaler", "Supermarket Chain", "Buyer", "Importer / Exporter"].map((t) => (
                               <button key={t} type="button" onClick={() => sf("businessType", t)}
-                                className={`px-4 py-2 rounded-xl border-2 font-bold text-xs transition-all cursor-pointer ${form.businessType === t ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}>
+                                className={`px-4 py-2 rounded-xl border-2 font-bold text-[10px] transition-all cursor-pointer ${form.businessType === t ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 text-gray-500 hover:bg-gray-50"}`}>
                                 {t}
                               </button>
                             ))}
@@ -507,8 +515,8 @@ export default function BuyersAdminPage() {
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Location & Basic Info</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div><label className={fieldLabel}>City</label><input value={form.city} onChange={(e) => sf("city", e.target.value)} placeholder="e.g. Bangalore" className={inp} /></div>
-                        <div><label className={fieldLabel}>State</label><input value={form.state} onChange={(e) => sf("state", e.target.value)} placeholder="e.g. Karnataka" className={inp} /></div>
+                        <div><label className={fieldLabel}>City</label><input list="city-list" value={form.city} onChange={(e) => sf("city", e.target.value)} placeholder="e.g. Bangalore" className={inp} /></div>
+                        <div><label className={fieldLabel}>State</label><input list="state-list" value={form.state} onChange={(e) => sf("state", e.target.value)} placeholder="e.g. Karnataka" className={inp} /></div>
                         <div><label className={fieldLabel}>Establishment Year</label><input value={form.estYear} onChange={(e) => sf("estYear", e.target.value)} placeholder="e.g. 2014" className={inp} /></div>
                         <div><label className={fieldLabel}>Delivery / Presence Area</label><input value={form.deliveryArea} onChange={(e) => sf("deliveryArea", e.target.value)} placeholder="e.g. All Over India" className={inp} /></div>
                       </div>
@@ -535,11 +543,16 @@ export default function BuyersAdminPage() {
                       </div>
                     </div>
                   </div>
-                )}
 
                 {/* ══ STEP 1: VISUALS ══ */}
-                {step === 1 && (
-                  <div className="space-y-6">
+                <div className="space-y-6 pt-10" id="section-visuals">
+                  <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
+                    <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">02</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white tracking-wide">Visuals & Branding</h3>
+                      <p className="text-orange-100 text-sm font-medium mt-1">Logo, cover image, and theme color.</p>
+                    </div>
+                  </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Logo & Cover Image</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -577,11 +590,16 @@ export default function BuyersAdminPage() {
                       </div>
                     </div>
                   </div>
-                )}
 
                 {/* ══ STEP 2: ABOUT & DETAILS ══ */}
-                {step === 2 && (
-                  <div className="space-y-6">
+                <div className="space-y-6 pt-10" id="section-about">
+                  <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
+                    <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">03</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white tracking-wide">About & Details</h3>
+                      <p className="text-orange-100 text-sm font-medium mt-1">Company overview and business details.</p>
+                    </div>
+                  </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">About Company</h3>
                       <textarea value={form.about} onChange={(e) => sf("about", e.target.value)} placeholder="Describe the company, its history, what it does..." className={ta} rows={5} />
@@ -600,11 +618,16 @@ export default function BuyersAdminPage() {
                       </div>
                     </div>
                   </div>
-                )}
 
                 {/* ══ STEP 3: CATEGORIES & PARTNERS ══ */}
-                {step === 3 && (
-                  <div className="space-y-6">
+                <div className="space-y-6 pt-10" id="section-categories">
+                  <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
+                    <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">04</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white tracking-wide">Categories & Partners</h3>
+                      <p className="text-orange-100 text-sm font-medium mt-1">Products purchased and buyers network.</p>
+                    </div>
+                  </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Product Categories We Purchase / Deal In</h3>
                       <p className="text-xs text-gray-400 -mt-2">Click to toggle categories shown on the profile page</p>
@@ -663,11 +686,16 @@ export default function BuyersAdminPage() {
                       </div>
                     </div>
                   </div>
-                )}
 
                 {/* ══ STEP 4: WHY US & STATS ══ */}
-                {step === 4 && (
-                  <div className="space-y-6">
+                <div className="space-y-6 pt-10" id="section-stats">
+                  <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
+                    <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">05</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white tracking-wide">Why Us & Stats</h3>
+                      <p className="text-orange-100 text-sm font-medium mt-1">Key metrics and reasons to supply.</p>
+                    </div>
+                  </div>
                     <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
                         <h3 className="text-sm font-black text-gray-900">Why Supply to Us</h3>
@@ -715,11 +743,16 @@ export default function BuyersAdminPage() {
                       </div>
                     </div>
                   </div>
-                )}
 
                 {/* ══ STEP 5: CONTACT & DOCS ══ */}
-                {step === 5 && (
-                  <div className="space-y-6">
+                <div className="space-y-6 pt-10" id="section-contact">
+                  <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
+                    <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">06</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white tracking-wide">Contact & Settings</h3>
+                      <p className="text-orange-100 text-sm font-medium mt-1">Contact person and listing status.</p>
+                    </div>
+                  </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Key Contact Person</h3>
                       <div className="flex items-start gap-4">
@@ -737,11 +770,6 @@ export default function BuyersAdminPage() {
                     </div>
 
                     <div className={sectionCard}>
-                      <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Google Map Embed URL</h3>
-                      <textarea value={form.mapEmbedUrl} onChange={(e) => sf("mapEmbedUrl", e.target.value)} placeholder="Paste Google Maps embed URL (from Share > Embed a map)..." className={ta} rows={3} />
-                    </div>
-
-                    <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Publish Settings</h3>
                       <div className="flex gap-3">
                         {["draft", "live", "paused"].map((s) => (
@@ -753,9 +781,54 @@ export default function BuyersAdminPage() {
                       </div>
                     </div>
                   </div>
-                )}
 
               </div>
+
+              {/* Data Lists for Dropdowns */}
+              <datalist id="business-type-list">
+                <option value="Manufacturer" />
+                <option value="Distributor" />
+                <option value="Retailer" />
+                <option value="Wholesaler" />
+                <option value="Supermarket Chain" />
+                <option value="Buyer" />
+                <option value="Importer / Exporter" />
+              </datalist>
+              <datalist id="category-list">
+                <option value="Spices & Masala" />
+                <option value="FMCG & Grocery" />
+                <option value="Agriculture & Farming" />
+                <option value="Food & Beverages" />
+                <option value="Dairy & Dairy Products" />
+                <option value="Packaged Foods" />
+                <option value="Health & Wellness" />
+                <option value="Ayurvedic & Herbal" />
+              </datalist>
+              <datalist id="city-list">
+                <option value="Delhi" />
+                <option value="Mumbai" />
+                <option value="Bangalore" />
+                <option value="Chennai" />
+                <option value="Kolkata" />
+                <option value="Hyderabad" />
+                <option value="Pune" />
+                <option value="Ahmedabad" />
+                <option value="Surat" />
+                <option value="Jaipur" />
+              </datalist>
+              <datalist id="state-list">
+                <option value="Delhi" />
+                <option value="Maharashtra" />
+                <option value="Karnataka" />
+                <option value="Tamil Nadu" />
+                <option value="West Bengal" />
+                <option value="Telangana" />
+                <option value="Gujarat" />
+                <option value="Rajasthan" />
+                <option value="Uttar Pradesh" />
+                <option value="Madhya Pradesh" />
+              </datalist>
+
             </div>
           </div>
         </div>
