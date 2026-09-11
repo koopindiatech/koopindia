@@ -34,6 +34,7 @@ const statusCfg = {
 const blank = () => ({
   type: "product",
   name: "", category: "", subcategory: "", contact: "", phone: "", email: "",
+  hideContact: false,
   address: "", city: "", state: "", pincode: "",
   // Company Details Table
   companyName: "", natureOfBusiness: "", establishmentYear: "",
@@ -575,9 +576,9 @@ export default function SellersPage() {
               const cfg = statusCfg[s.status] || statusCfg.draft;
               const color = s.primaryColor || "#7c3aed";
               return (
-                <div key={s.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col">
+                <div key={s.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col">
                   {/* Card header band */}
-                  <div className="h-1.5 w-full" style={{ backgroundColor: color }} />
+                  <div className="h-1.5 w-full rounded-t-2xl" style={{ backgroundColor: color }} />
                   <div className="p-5 flex-1 flex flex-col gap-4">
                     <div className="flex items-start gap-3">
                       {s.logoUrl
@@ -1393,7 +1394,7 @@ export default function SellersPage() {
                 </div>{/* end section-about */}
 
                 {/* ══ PRODUCTS ══ */}
-                <div className="flex items-center gap-4 py-3 mb-2 mt-20 border-b-2 border-gray-200">
+                <div className="flex items-center gap-4 py-3 mb-2 mt-10 border-b-2 border-gray-200">
                   <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-700 font-black text-2xl shadow-sm">3</div>
                   <div>
                     <h2 className="text-2xl font-black text-gray-900 tracking-tight">Products & Categories</h2>
@@ -1663,7 +1664,7 @@ export default function SellersPage() {
                 </div>{/* end section-products */}
 
                 {/* ══ CONTACT & SOCIAL ══ */}
-                <div className="flex items-center gap-4 py-3 mb-2 mt-20 border-b-2 border-gray-200">
+                <div className="flex items-center gap-4 py-3 mb-2 mt-10 border-b-2 border-gray-200">
                   <div className="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-700 font-black text-2xl shadow-sm">4</div>
                   <div>
                     <h2 className="text-2xl font-black text-gray-900 tracking-tight">Contact & Social</h2>
@@ -1688,12 +1689,12 @@ export default function SellersPage() {
                         </div>
                         <label className="flex items-center gap-3 p-4 bg-orange-50/50 border border-orange-100 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors">
                           <div className="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" className="sr-only peer" checked={form.hidePhone} onChange={e => sf("hidePhone", e.target.checked)} />
+                            <input type="checkbox" className="sr-only peer" checked={!!(form.hideContact || form.hidePhone)} onChange={e => setForm(p => ({ ...p, hideContact: e.target.checked, hidePhone: e.target.checked }))} />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-gray-800">Hide Phone Number on Public Page</p>
-                            <p className="text-xs text-gray-500 mt-0.5">Phone number will be completely hidden from visitors.</p>
+                            <p className="text-sm font-bold text-gray-800">Hide Contact Details on Public Page</p>
+                            <p className="text-xs text-gray-500 mt-0.5">Seller's phone &amp; email will be hidden. Koop India's details will be shown instead.</p>
                           </div>
                         </label>
                         <div>

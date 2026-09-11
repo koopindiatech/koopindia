@@ -151,7 +151,11 @@ export default function SellerPublicPage() {
   const btn1 = seller.heroBtn1Text || "View Our Products";
   const btn2 = seller.heroBtn2Text || "Distributors / Buyers Inquiry";
 
-  const displayPhone = seller.hidePhone ? null : seller.phone;
+  const contactHidden = seller.hideContact || seller.hidePhone;
+  const koopPhone = "+91 9599826131";
+  const koopEmail = "koopindiadl@gmail.com";
+  const shownPhone = contactHidden ? koopPhone : (seller.phone || koopPhone);
+  const shownEmail = contactHidden ? koopEmail : (seller.email || koopEmail);
   const navHomeLabel = seller.navHomeLabel || "Home";
   const navAboutLabel = seller.navAboutLabel || "About Us";
   const navProductsLabel = seller.navProductsLabel || "Products";
@@ -169,16 +173,19 @@ export default function SellerPublicPage() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    if (!seller.email) {
-      alert("Seller email is not available.");
+    const emailTarget = shownEmail;
+    if (!emailTarget) {
+      alert("Contact email is not available.");
       return;
     }
-    const mailto = `mailto:${seller.email}?subject=${encodeURIComponent(contactForm.subject)}&body=${encodeURIComponent(`Hello ${seller.name},\n\nName: ${contactForm.name}\nPhone: ${contactForm.phone}\n\nMessage:\n${contactForm.message}`)}`;
+    const mailto = `mailto:${emailTarget}?subject=${encodeURIComponent(contactForm.subject)}&body=${encodeURIComponent(`Hello ${seller.name},\n\nName: ${contactForm.name}\nPhone: ${contactForm.phone}\n\nMessage:\n${contactForm.message}`)}`;
     window.location.href = mailto;
   };
 
   const compRows = [
     { label: "Company Name", value: seller.companyName || seller.name },
+    { label: "Category / Industry", value: seller.category },
+    { label: "Subcategory", value: seller.subcategory },
     { label: "Nature of Business", value: seller.natureOfBusiness },
     { label: "Establishment Year", value: seller.establishmentYear },
     { label: "No. of Employees", value: seller.employees },
@@ -414,7 +421,7 @@ export default function SellerPublicPage() {
           {/* Stats Bar */}
           {stats.filter(s => s.value).length > 0 && (
             <div className="shadow-sm" style={{ backgroundColor: statsBgColor || homeBg }}>
-              <div className={`max-w-7xl mx-auto px-5 py-10 flex flex-wrap gap-0 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
+              <div className={`max-w-7xl mx-auto px-5 py-2 flex flex-wrap gap-0 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
                 {stats.filter(s => s.value).map((s, i, arr) => (
                   <div key={i} className="flex items-center">
                     <div className="flex flex-col items-center gap-1 px-8 py-2 text-center">
@@ -685,21 +692,21 @@ export default function SellerPublicPage() {
                           </div>
                         </div>
                       )}
-                      {displayPhone && (
-                        <a href={`tel:${displayPhone}`} className="flex items-center gap-4 group cursor-pointer">
+                      {shownPhone && (
+                        <a href={`tel:${shownPhone}`} className="flex items-center gap-4 group cursor-pointer">
                           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-white/25 transition">📞</div>
                           <div>
-                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Call Us</p>
-                            <p className="text-white font-bold text-sm group-hover:underline">{displayPhone}</p>
+                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">{contactHidden ? "Koop India" : "Call Us"}</p>
+                            <p className="text-white font-bold text-sm group-hover:underline">{shownPhone}</p>
                           </div>
                         </a>
                       )}
-                      {seller.email && (
-                        <a href={`mailto:${seller.email}`} className="flex items-center gap-4 group cursor-pointer">
+                      {shownEmail && (
+                        <a href={`mailto:${shownEmail}`} className="flex items-center gap-4 group cursor-pointer">
                           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-white/25 transition">✉️</div>
                           <div>
-                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Email Us</p>
-                            <p className="text-white font-bold text-sm group-hover:underline break-all">{seller.email}</p>
+                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">{contactHidden ? "Koop India Email" : "Email Us"}</p>
+                            <p className="text-white font-bold text-sm group-hover:underline break-all">{shownEmail}</p>
                           </div>
                         </a>
                       )}
@@ -916,8 +923,8 @@ export default function SellerPublicPage() {
                       onClick={() => openInquiry(selProd)}
                       className="w-full font-black text-sm py-4 rounded-2xl text-white shadow-lg hover:opacity-90 transition-all cursor-pointer tracking-wide"
                       style={{ backgroundColor: pc }}>Send Inquiry</button>
-                    {displayPhone && (
-                      <a href={`tel:${displayPhone}`}
+                    {shownPhone && (
+                      <a href={`tel:${shownPhone}`}
                         className="w-full flex items-center justify-center font-bold text-sm py-3.5 rounded-2xl border-2 transition cursor-pointer"
                         style={{ borderColor: pc, color: pc }}>Call to Order</a>
                     )}
@@ -1231,8 +1238,8 @@ export default function SellerPublicPage() {
               <h4 className="font-bold text-base mb-5" style={{ color: sc, fontFamily: 'Georgia, serif' }}>CONTACT</h4>
               <div className="space-y-3 text-sm font-medium opacity-90">
                 {[seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).length > 0 && <p className="leading-relaxed">{[seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).join(", ")}</p>}
-                {seller.email && <p><a href={`mailto:${seller.email}`} className="hover:opacity-100 transition break-all">{seller.email}</a></p>}
-                {displayPhone && <p><a href={`tel:${displayPhone}`} className="hover:opacity-100 transition">{displayPhone}</a></p>}
+                {shownEmail && <p><a href={`mailto:${shownEmail}`} className="hover:opacity-100 transition break-all">{shownEmail}</a></p>}
+                {shownPhone && <p><a href={`tel:${shownPhone}`} className="hover:opacity-100 transition">{shownPhone}</a></p>}
                 <p className="opacity-75 pt-2">Manufacturer | Brand Owner | Exporter</p>
               </div>
             </div>

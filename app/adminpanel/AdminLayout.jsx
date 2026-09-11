@@ -177,6 +177,7 @@ export default function AdminLayout({ children }) {
     { label: "Buyer Listings",  href: "/adminpanel/buyers",   icon: Building2,       key: "buyers",    badgeColor: "bg-purple-500"  },
     { label: "Lead Manager",    href: "/adminpanel/leads",     icon: Users,           key: "leads",     badgeColor: "bg-orange-500"  },
     { label: "User Management", href: "/adminpanel/users",     icon: UserCog,         key: "users"      },
+    { label: "Settings",        href: "/adminpanel/settings",  icon: Settings,        key: "settings"   },
   ];
 
   // ── Filter nav by permission ─────────────────────────────────
@@ -268,7 +269,7 @@ export default function AdminLayout({ children }) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto p-5 md:p-6">
           {accessDenied ? (
             <div className="flex flex-col items-center justify-center h-full text-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center">
