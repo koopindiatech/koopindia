@@ -13,7 +13,6 @@ export async function POST(request) {
       return NextResponse.json({ error: "Invalid user data" }, { status: 400 });
     }
 
-    // Sign the JWT
     const secret = new TextEncoder().encode(JWT_SECRET);
     const token = await new SignJWT({ 
       id: user.id,
@@ -26,7 +25,6 @@ export async function POST(request) {
       .setExpirationTime("24h")
       .sign(secret);
 
-    // Set the cookie
     (await cookies()).set("admin_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

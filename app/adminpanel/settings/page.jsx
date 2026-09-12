@@ -29,7 +29,6 @@ export default function SettingsPage() {
     whatsapp: "+91-9891233311",
   });
 
-  // Banner state
   const [banner, setBanner] = useState({
     imageUrl: "",
     title: "Welcome to\nKoopIndia.",
@@ -44,7 +43,6 @@ export default function SettingsPage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const fileRef = useRef();
 
-  // Load banner from Firestore
   useEffect(() => {
     const load = async () => {
       try {
@@ -136,8 +134,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Banner Toast */}
-        {bannerToast && (
+                {bannerToast && (
           <div className={`mx-5 mt-4 flex items-center gap-2 px-4 py-3 rounded-xl border text-xs font-semibold ${
             bannerToast.type === "success"
               ? "bg-emerald-50 border-emerald-200 text-emerald-700"
@@ -157,8 +154,7 @@ export default function SettingsPage() {
             </div>
           ) : (
             <>
-              {/* Image Upload & Real Preview */}
-              <div>
+                            <div>
                 <label className="text-sm font-bold text-gray-800 block mb-3">
                   Banner Image
                 </label>
@@ -204,10 +200,7 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-
-
-              {/* Save Banner Button */}
-              <button
+                            <button
                 onClick={handleSaveBanner}
                 disabled={bannerSaving}
                 className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white text-sm font-bold px-6 py-3 rounded-xl transition-all shadow-md shadow-orange-500/20"
@@ -243,7 +236,6 @@ export default function SettingsPage() {
           </div>
         ))}
       </div>
-
 
       <button
         onClick={handleSave}

@@ -2,7 +2,7 @@
 import { db } from "../../../lib/firebase";
 import {
   collection, getDocs, addDoc, updateDoc, deleteDoc, doc,
-  query, where, serverTimestamp,
+  query, where, serverTimestamp, arrayUnion
 } from "firebase/firestore";
 
 export const ALL_PERMISSIONS = [
@@ -35,39 +35,71 @@ export function setCurrentUser(user) {
 }
 
 export async function login(email, password) {
-  // Check Firestore users collection
   try {
-    const q = query(collection(db, "users"), where("email", "==", email.toLowerCase()));
-    const snap = await getDocs(q);
+    // 1. Check Admin / General Users
+    let q = query(collection(db, "users"), where("email", "==", email.toLowerCase()));
+    let snap = await getDocs(q);
     if (!snap.empty) {
       const userData = snap.docs[0].data();
       if (userData.password === password) {
-
-
         const session = {
           id: snap.docs[0].id,
           name: userData.name,
           email: userData.email,
-          role: userData.role,
+          role: userData.role || "user",
           permissions: userData.permissions || [],
           loginAt: Date.now(),
         };
         localStorage.setItem("ki_admin_session", JSON.stringify(session));
-
-        // Call the API route to set the HTTP-only cookie
-        try {
-          await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user: session }),
-          });
-        } catch (e) {
-          console.error("Failed to set secure cookie:", e);
-        }
-
-        return { success: true, user: session };
+        try { await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user: session }) }); } catch(e) {}
+        return { success: true, user: session, role: session.role };
       }
     }
+
+    // 2. Check Sellers
+    q = query(collection(db, "seller_users"), where("email", "==", email.toLowerCase()));
+    snap = await getDocs(q);
+    if (!snap.empty) {
+      const userData = snap.docs[0].data();
+      if (userData.password === password) {
+        if (userData.status === "suspended") return { success: false, error: "Your account has been suspended. Contact admin." };
+        const session = {
+          id: snap.docs[0].id,
+          name: userData.name,
+          email: userData.email,
+          linkedSlug: userData.linkedSlug,
+          linkedId: userData.linkedId,
+          role: "seller",
+          loginAt: Date.now(),
+        };
+        localStorage.setItem("ki_admin_session", JSON.stringify(session));
+        try { await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user: session }) }); } catch(e) {}
+        return { success: true, user: session, role: "seller" };
+      }
+    }
+
+    // 3. Check Buyers
+    q = query(collection(db, "buyer_users"), where("email", "==", email.toLowerCase()));
+    snap = await getDocs(q);
+    if (!snap.empty) {
+      const userData = snap.docs[0].data();
+      if (userData.password === password) {
+        if (userData.status === "suspended") return { success: false, error: "Your account has been suspended. Contact admin." };
+        const session = {
+          id: snap.docs[0].id,
+          name: userData.name,
+          email: userData.email,
+          linkedSlug: userData.linkedSlug,
+          linkedId: userData.linkedId,
+          role: "buyer",
+          loginAt: Date.now(),
+        };
+        localStorage.setItem("ki_admin_session", JSON.stringify(session));
+        try { await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user: session }) }); } catch(e) {}
+        return { success: true, user: session, role: "buyer" };
+      }
+    }
+
   } catch (e) {
     console.error("Firestore login error:", e);
     return { success: false, error: "An error occurred during login." };
@@ -110,7 +142,6 @@ export async function getFirestoreUsers() {
 
 export async function createFirestoreUser(data) {
   try {
-    // Check if email exists
     const q = query(collection(db, "users"), where("email", "==", data.email.toLowerCase()));
     const existing = await getDocs(q);
     if (!existing.empty) return { success: false, error: "Email already exists" };
@@ -152,17 +183,98 @@ export async function deleteFirestoreUser(firestoreId) {
   }
 }
 
-// ── Assign lead to user ──────────────────────────────────────────
+// ── Assign lead to admin user ──────────────────────────────────────────
 export async function assignLeadToUser(leadId, userId, userName) {
   try {
     await updateDoc(doc(db, "leads", leadId), {
       assignedTo: userId,
       assignedToName: userName,
       assignedAt: serverTimestamp(),
+      history: arrayUnion({
+        action: `Assigned to user: ${userName}`,
+        timestamp: new Date().toISOString(), // Use ISO string for consistent sorting in UI without serverTimestamp delay
+        user: getCurrentUser()?.name || "System"
+      })
     });
     return { success: true };
   } catch (e) {
     console.error("assignLeadToUser error:", e);
     return { success: false, error: e.message };
   }
+}
+
+// ── Assign lead to a Seller (by slug) ─────────────────────────────────
+export async function assignLeadToSeller(leadId, sellerSlug, sellerName) {
+  try {
+    await updateDoc(doc(db, "leads", leadId), {
+      assignedToSellerSlug: sellerSlug || null,
+      assignedToSellerName: sellerName || null,
+      assignedToSellerAt: sellerSlug ? serverTimestamp() : null,
+      history: arrayUnion({
+        action: sellerSlug ? `Assigned to Seller: ${sellerName}` : "Unassigned from Seller",
+        timestamp: new Date().toISOString(),
+        user: getCurrentUser()?.name || "System"
+      })
+    });
+    return { success: true };
+  } catch (e) {
+    console.error("assignLeadToSeller error:", e);
+    return { success: false, error: e.message };
+  }
+}
+
+// ── Assign lead to a Buyer (by slug) ──────────────────────────────────
+export async function assignLeadToBuyer(leadId, buyerSlug, buyerName) {
+  try {
+    await updateDoc(doc(db, "leads", leadId), {
+      assignedToBuyerSlug: buyerSlug || null,
+      assignedToBuyerName: buyerName || null,
+      assignedToBuyerAt: buyerSlug ? serverTimestamp() : null,
+      history: arrayUnion({
+        action: buyerSlug ? `Assigned to Buyer: ${buyerName}` : "Unassigned from Buyer",
+        timestamp: new Date().toISOString(),
+        user: getCurrentUser()?.name || "System"
+      })
+    });
+    return { success: true };
+  } catch (e) {
+    console.error("assignLeadToBuyer error:", e);
+    return { success: false, error: e.message };
+  }
+}
+
+// ── Seller users ──────────────────────────────────────────
+export async function getFirestoreSellerUsers() {
+  const s = await getDocs(collection(db, "seller_users"));
+  return s.docs.map(d => ({id:d.id, ...d.data()}));
+}
+export async function createSellerUser(data) {
+  const ref = await addDoc(collection(db, "seller_users"), {...data, createdAt: serverTimestamp()});
+  return {success:true, user:{id:ref.id, ...data}};
+}
+export async function updateSellerUser(id, data) {
+  await updateDoc(doc(db, "seller_users", id), {...data, updatedAt: serverTimestamp()});
+  return {success:true};
+}
+export async function deleteSellerUser(id) {
+  await deleteDoc(doc(db, "seller_users", id));
+  return {success:true};
+}
+
+// ── Buyer users ──────────────────────────────────────────
+export async function getFirestoreBuyerUsers() {
+  const s = await getDocs(collection(db, "buyer_users"));
+  return s.docs.map(d => ({id:d.id, ...d.data()}));
+}
+export async function createBuyerUser(data) {
+  const ref = await addDoc(collection(db, "buyer_users"), {...data, createdAt: serverTimestamp()});
+  return {success:true, user:{id:ref.id, ...data}};
+}
+export async function updateBuyerUser(id, data) {
+  await updateDoc(doc(db, "buyer_users", id), {...data, updatedAt: serverTimestamp()});
+  return {success:true};
+}
+export async function deleteBuyerUser(id) {
+  await deleteDoc(doc(db, "buyer_users", id));
+  return {success:true};
 }

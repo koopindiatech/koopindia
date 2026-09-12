@@ -239,8 +239,7 @@ function ServiceMultiSelect({ selected, onChange }) {
 
   return (
     <div ref={ref} className="relative">
-      {/* Trigger box */}
-      <div
+            <div
         onClick={() => setOpen((v) => !v)}
         className="form-input w-full border border-orange-300 rounded-xl px-3 py-2 text-sm bg-orange-50 cursor-pointer min-h-[38px] flex flex-wrap gap-1.5 items-center"
       >
@@ -338,8 +337,7 @@ function EnquiryForm({
       ref={formRef}
       className="rounded-2xl shadow-xl overflow-hidden border border-orange-100"
     >
-      {/* Header */}
-      <div
+            <div
         style={{
           background:
             "linear-gradient(135deg, #f97316 0%, #fb923c 40%, #fbbf24 100%)",
@@ -412,8 +410,7 @@ function EnquiryForm({
             />
           </div>
 
-          {/* Name */}
-          <div className="relative">
+                    <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm">
               👤
             </span>
@@ -427,8 +424,7 @@ function EnquiryForm({
             />
           </div>
 
-          {/* Email */}
-          <div className="relative">
+                    <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm">
               ✉️
             </span>
@@ -472,8 +468,7 @@ function EnquiryForm({
             </div>
           </div>
 
-          {/* Company */}
-          <div className="relative">
+                    <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm">
               🏢
             </span>
@@ -487,8 +482,7 @@ function EnquiryForm({
             />
           </div>
 
-          {/* Message */}
-          <textarea
+                    <textarea
             placeholder="Tell us about your requirement..."
             rows={3}
             value={form.message}
@@ -574,8 +568,7 @@ function ReassuranceCards() {
       hover:-translate-y-1 
       transition-all duration-300 group"
         >
-          {/* Icon */}
-          <span
+                    <span
             className="text-xl flex items-center justify-center 
         w-10 h-10 rounded-full 
         bg-orange-100 text-orange-600 
@@ -585,8 +578,7 @@ function ReassuranceCards() {
             {item.icon}
           </span>
 
-          {/* Content */}
-          <div>
+                    <div>
             <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition">
               {item.title}
             </p>
@@ -756,8 +748,7 @@ export default function ServicesPage() {
         }
       `}</style>
 
-      {/* HERO */}
-      <section className="hero-bg text-white py-12 px-4">
+            <section className="hero-bg text-white py-12 px-4">
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
           <span className="inline-flex items-center gap-2 bg-white/10 border border-white/15 text-orange-200 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4 backdrop-blur-sm">
             <span className="w-1.5 h-1.5 bg-orange-400 rounded-full animate-pulse inline-block" />
@@ -810,8 +801,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* BODY */}
-      <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
+            <section className="mx-auto max-w-7xl px-4 py-10 md:px-6">
         <div className="flex flex-col lg:flex-row gap-10">
           {/* LEFT — SERVICE CARDS */}
           <div className="flex-1 space-y-6">
@@ -840,8 +830,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* REVIEWS */}
-      <section className="bg-white py-10 px-4">
+            <section className="bg-white py-10 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
             <span className="inline-flex items-center gap-2 bg-orange-50 text-orange-500 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">

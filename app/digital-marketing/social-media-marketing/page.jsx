@@ -96,20 +96,17 @@ export default function SocialMediaMarketingPage() {
       <div className="font-sans bg-white overflow-hidden text-gray-800">
         {/* ================= HERO SECTION ================= */}
         <section className="relative pt-16 pb-14  bg-[#0a1128] overflow-hidden">
-          {/* Background Elements */}
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
             <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-[#F97316] opacity-15 blur-[100px] rounded-full"></div>
             <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600 opacity-20 blur-[120px] rounded-full"></div>
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-            {/* Grid pattern overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+                        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
               
-              {/* Left Column: Text */}
-              <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
+                            <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
                 {/* <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -161,8 +158,7 @@ export default function SocialMediaMarketingPage() {
                   </button>
                 </motion.div>
 
-                {/* Trust Indicators */}
-                <motion.div 
+                                <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
@@ -183,28 +179,23 @@ export default function SocialMediaMarketingPage() {
                 </motion.div>
               </div>
 
-              {/* Right Column: Visual Composition */}
-              <motion.div 
+                            <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="relative hidden lg:block h-[550px] w-full"
               >
-                {/* Main Glassy Plate */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[480px] rounded-[40px] border border-white/10 shadow-2xl z-10 bg-gradient-to-b from-white/5 to-white/0 backdrop-blur-2xl overflow-hidden flex flex-col items-center justify-center">
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[480px] rounded-[40px] border border-white/10 shadow-2xl z-10 bg-gradient-to-b from-white/5 to-white/0 backdrop-blur-2xl overflow-hidden flex flex-col items-center justify-center">
                   
-                  {/* Background Glows inside the plate */}
-                  <div className="absolute top-[-20%] left-[-20%] w-64 h-64 bg-pink-500/30 blur-[60px] rounded-full"></div>
+                                    <div className="absolute top-[-20%] left-[-20%] w-64 h-64 bg-pink-500/30 blur-[60px] rounded-full"></div>
                   <div className="absolute bottom-[-20%] right-[-20%] w-64 h-64 bg-blue-500/30 blur-[60px] rounded-full"></div>
                   <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
 
-                  {/* Central Hub Icon */}
-                  <div className="relative z-20 w-24 h-24 bg-gradient-to-br from-[#F97316] to-pink-600 rounded-3xl shadow-[0_0_40px_rgba(249,115,22,0.4)] flex items-center justify-center mb-10 border border-white/20 mt-4">
+                                    <div className="relative z-20 w-24 h-24 bg-gradient-to-br from-[#F97316] to-pink-600 rounded-3xl shadow-[0_0_40px_rgba(249,115,22,0.4)] flex items-center justify-center mb-10 border border-white/20 mt-4">
                     <Megaphone className="w-10 h-10 text-white" />
                   </div>
                   
-                  {/* Mock UI elements */}
-                  <div className="relative z-20 w-[80%] h-12 rounded-2xl bg-white/5 border border-white/10 mb-4 flex items-center px-4 backdrop-blur-md shadow-lg">
+                                    <div className="relative z-20 w-[80%] h-12 rounded-2xl bg-white/5 border border-white/10 mb-4 flex items-center px-4 backdrop-blur-md shadow-lg">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center mr-3">
                       <Instagram className="w-4 h-4 text-white" />
                     </div>
@@ -243,8 +234,7 @@ export default function SocialMediaMarketingPage() {
                     </div>
                   </div>
 
-                  {/* Floating Stats on Image */}
-                  <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg z-20">
+                                    <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg z-20">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Total Reach</p>
@@ -383,8 +373,7 @@ export default function SocialMediaMarketingPage() {
         <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             
-            {/* NOIDA */}
-            <motion.div 
+                        <motion.div 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -419,8 +408,7 @@ export default function SocialMediaMarketingPage() {
               </div>
             </motion.div>
 
-            {/* GURUGRAM */}
-            <motion.div 
+                        <motion.div 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

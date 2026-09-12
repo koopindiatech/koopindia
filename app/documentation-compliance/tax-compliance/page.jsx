@@ -32,8 +32,7 @@ const TaxComplianceServicesPage = () => {
       <div className="bg-white">
         {/* ================= HERO SECTION ================= */}
         <section className="relative py-20 px-6 bg-[#141D32] text-white overflow-hidden">
-          {/* Decorative Glow */}
-          <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+                    <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
             <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#F97316] rounded-full blur-[120px]"></div>
           </div>
 
@@ -143,8 +142,7 @@ const TaxComplianceServicesPage = () => {
 
         {/* ================= FINAL CTA (DARK BG) ================= */}
        <section className="py-20 px-6 bg-[#F97316] text-center relative overflow-hidden">
-  {/* Subtle White Grid Pattern for texture */}
-  <div className="absolute inset-0 opacity-20">
+    <div className="absolute inset-0 opacity-20">
     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]"></div>
   </div>
   

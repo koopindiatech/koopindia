@@ -28,7 +28,6 @@ export default function ContactSlideForm({ open, onClose }) {
         source: "Sidebar-Floating",
       });
 
-      // Meta Pixel Lead Event
       if (typeof window !== "undefined" && window.fbq) {
         window.fbq("track", "Lead");
       }
@@ -54,16 +53,14 @@ export default function ContactSlideForm({ open, onClose }) {
 
   return (
     <>
-      {/* Backdrop */}
-      <div
+            <div
         className={`fixed inset-0 z-[110] transition-opacity duration-300 ${
           open ? "bg-black/40 opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
       />
 
-      {/* Floating Card - Dark Theme */}
-      <div
+            <div
         className={`fixed right-4 top-2/3 -translate-y-1/2 z-[120] w-[90%] max-w-[340px] bg-[#141d32] rounded-2xl shadow-2xl border border-white/10 transform transition-all duration-300 ease-in-out ${
           open
             ? "translate-x-0 opacity-100"
@@ -71,8 +68,7 @@ export default function ContactSlideForm({ open, onClose }) {
         }`}
       >
         <div className="p-6 relative">
-          {/* Close Button */}
-          <button
+                    <button
             onClick={onClose}
             className="absolute top-4 right-4 text-gray-400 cursor-pointer hover:text-[#F97316] transition-colors"
           >

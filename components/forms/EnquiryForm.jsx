@@ -58,12 +58,9 @@ export default function EnquiryModal({ isOpen, onClose }) {
   };
 
   return (
-    // Background Overlay - Solid dark without blur
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      {/* Main Container */}
-      <div className="bg-white rounded-lg w-full max-w-4xl relative flex flex-col md:flex-row shadow-2xl overflow-hidden border border-gray-100">
-        {/* Success Overlay */}
-        {successMsg && (
+            <div className="bg-white rounded-lg w-full max-w-4xl relative flex flex-col md:flex-row shadow-2xl overflow-hidden border border-gray-100">
+                {successMsg && (
           <div className="absolute inset-0 flex items-center justify-center z-50 bg-white/95 transition-all">
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -87,8 +84,7 @@ export default function EnquiryModal({ isOpen, onClose }) {
           </div>
         )}
 
-        {/* LEFT IMAGE - Adjusted Height & Fitting */}
-        <div className="md:w-[55%] hidden md:block relative bg-[#f8fafc] border-r border-gray-100">
+                <div className="md:w-[55%] hidden md:block relative bg-[#f8fafc] border-r border-gray-100">
           <div className="absolute inset-0 p-0 flex items-center justify-center">
             <div className="relative w-full h-[85%]">
               {" "}
@@ -102,13 +98,11 @@ export default function EnquiryModal({ isOpen, onClose }) {
               />
             </div>
           </div>
-          {/* Subtle logo or text on image side if needed */}
-        </div>
+                  </div>
 
         {/* RIGHT FORM - Clean 45% Width */}
         <div className="md:w-[45%] w-full p-4 flex flex-col justify-center bg-white relative">
-          {/* Close Button */}
-          <button
+                    <button
             onClick={onClose}
             className="absolute top-4 right-4 text-gray-400 cursor-pointer hover:text-orange-500 transition-colors p-1 z-10"
           >

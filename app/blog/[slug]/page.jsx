@@ -123,8 +123,7 @@ export default function BlogDetailPage() {
           </div>
         )}
 
-        {/* Categories */}
-        {blog.categories?.length > 0 && (
+                {blog.categories?.length > 0 && (
           <div className="flex flex-wrap justify-center gap-2 mb-5">
             {blog.categories.map((cat, i) => (
               <span key={i} className="text-xs font-medium bg-slate-100 text-slate-600 px-3 py-1 rounded-full">

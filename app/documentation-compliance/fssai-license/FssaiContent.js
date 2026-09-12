@@ -393,8 +393,7 @@ const FSSAILicensePage = () => {
             padding: "80px 24px",
           }}
         >
-          {/* Decorative orbs */}
-          <div
+                    <div
             className="pointer-events-none absolute -right-24 -top-24 w-96 h-96 rounded-full"
             style={{
               background:
@@ -418,8 +417,7 @@ const FSSAILicensePage = () => {
 
           <div className="relative z-10 max-w-7xl mx-auto">
             <div className="max-w-4xl mx-auto text-center">
-              {/* Location badge */}
-              <div className="inline-flex items-center gap-2 rounded-full bg-orange-500/15 border border-orange-500/20 px-4 py-1.5 mb-5">
+                            <div className="inline-flex items-center gap-2 rounded-full bg-orange-500/15 border border-orange-500/20 px-4 py-1.5 mb-5">
                 <MapPin size={11} className="text-orange-400" />
                 <span className="text-[10.5px] font-bold uppercase tracking-[0.13em] text-orange-400">
                   #1 FSSAI Registration Consultant in Delhi
@@ -436,14 +434,12 @@ const FSSAILicensePage = () => {
                 Consultant
               </h1>
 
-              {/* Categories */}
-              <p className="mb-2 text-sm font-semibold text-slate-400">
+                            <p className="mb-2 text-sm font-semibold text-slate-400">
                 Basic FSSAI Registration &nbsp;•&nbsp; State Food License
                 &nbsp;•&nbsp; Central FSSAI License
               </p>
 
-              {/* Description with SEO keywords naturally embedded */}
-              <p
+                            <p
                 className="mx-auto p-6 mb-8 max-w-[1260px] text-sm leading-relaxed text-slate-300"
                 style={{ fontSize: "clamp(13px,1.5vw,15px)" }}
               >
@@ -464,8 +460,7 @@ const FSSAILicensePage = () => {
                 compliance and fast delivery.
               </p>
 
-              {/* CTAs */}
-              <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+                            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
                 <button
                   onClick={onOpenModal}
                   className="fp-pulse group flex items-center cursor-pointer gap-2 rounded-xl bg-orange-500 px-8 py-3.5 text-sm font-bold text-white shadow-[0_10px_28px_-5px_rgba(249,115,22,0.45)] transition-all hover:bg-orange-600 active:scale-95"
@@ -484,8 +479,7 @@ const FSSAILicensePage = () => {
                 </button>
               </div>
 
-              {/* Trust Signals */}
-              <div className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-3">
+                            <div className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-3">
                 {[
                   "✓ 100% Online FoSCoS Process",
                   "✓ Fast FSSAI Certificate Delivery",
@@ -501,8 +495,7 @@ const FSSAILicensePage = () => {
                 ))}
               </div>
 
-              {/* Rating */}
-              <div className="mt-7 inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-5 py-2">
+                            <div className="mt-7 inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-5 py-2">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
                     <Star
@@ -583,8 +576,7 @@ const FSSAILicensePage = () => {
                     is accurate, compliant, and approved at the first attempt.
                   </p>
 
-                  {/* Delhi-specific highlight */}
-                  <div className="flex items-start gap-3 p-4 rounded-xl bg-orange-50 border border-orange-100 mb-2">
+                                    <div className="flex items-start gap-3 p-4 rounded-xl bg-orange-50 border border-orange-100 mb-2">
                     <MapPin
                       size={16}
                       className="text-orange-500 mt-0.5 flex-shrink-0"
@@ -824,8 +816,7 @@ const FSSAILicensePage = () => {
               {steps.map((s, i) => (
                 <Fade key={i} delay={i * 70}>
                   <div className="fp-card bg-white rounded-2xl border border-slate-200 p-6 relative overflow-hidden group">
-                    {/* Step number watermark */}
-                    <span
+                                        <span
                       className="absolute -right-2 -top-4 text-7xl font-black text-slate-50 select-none transition-colors group-hover:text-orange-50"
                       style={{ fontFamily: "Sora, sans-serif" }}
                     >

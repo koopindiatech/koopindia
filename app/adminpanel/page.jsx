@@ -101,8 +101,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Page Title */}
-      <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-gray-900">Dashboard</h1>
           <p className="text-gray-500 text-sm mt-0.5">Welcome back, Admin. Here&apos;s what&apos;s happening today.</p>
@@ -115,8 +114,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((s) => {
           const Icon = s.icon;
           return (
@@ -146,10 +144,8 @@ export default function AdminDashboard() {
         })}
       </div>
 
-      {/* Middle Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Lead Activity Chart */}
-        <div className="lg:col-span-2 bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2 bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="text-gray-900 font-bold text-sm">Lead Activity</h2>
@@ -171,8 +167,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
           <h2 className="text-gray-900 font-bold text-sm mb-4">Quick Actions</h2>
           <div className="space-y-1">
             {[
@@ -196,10 +191,8 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Recent Leads */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-gray-900 font-bold text-sm">Recent Leads</h2>
             <Link href="/adminpanel/leads" className="text-orange-500 text-xs hover:underline">View all →</Link>
@@ -233,8 +226,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        {/* Buyer Listings */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-gray-900 font-bold text-sm">Buyer Listings</h2>
             <Link href="/adminpanel/sellers" className="text-orange-500 text-xs hover:underline">Manage →</Link>

@@ -1,7 +1,5 @@
 import React from "react";
 
-
-
 const sections = [
   {
     title: "Introduction",
@@ -76,8 +74,7 @@ const sections = [
 const TermsConditions = () => {
   return (
     <main className="bg-white text-[#141d32]">
-      {/* Header Section */}
-      <header className="bg-gradient-to-r from-[#141d32] via-[#1f2a48] to-[#F97316] py-16 text-center text-white">
+            <header className="bg-gradient-to-r from-[#141d32] via-[#1f2a48] to-[#F97316] py-16 text-center text-white">
         <h1 className="text-4xl font-bold">
           Terms & Conditions – <span className="text-[#F97316]">Koop India</span>
         </h1>
@@ -86,8 +83,7 @@ const TermsConditions = () => {
         </p>
       </header>
 
-      {/* Content Section */}
-      <section className="py-16 px-6 md:px-12">
+            <section className="py-16 px-6 md:px-12">
         <div className="max-w-4xl mx-auto space-y-10">
           {sections.map((section, index) => (
             <div key={index}>

@@ -1,7 +1,5 @@
 import React from "react";
 
-
-
 const sections = [
   {
     title: "Information We Collect",
@@ -66,8 +64,7 @@ const sections = [
 const PrivacyPolicy = () => {
   return (
     <main className="bg-white text-[#141d32]">
-      {/* Header Section */}
-      <header className="bg-gradient-to-r from-[#141d32] via-[#1f2a48] to-[#F97316] py-16 text-center text-white">
+            <header className="bg-gradient-to-r from-[#141d32] via-[#1f2a48] to-[#F97316] py-16 text-center text-white">
         <h1 className="text-4xl font-bold">
           Privacy Policy – <span className="text-[#F97316]">Koop India</span>
         </h1>
@@ -76,11 +73,9 @@ const PrivacyPolicy = () => {
         </p>
       </header>
 
-      {/* Content Section */}
-      <section className="py-16 px-6 md:px-12">
+            <section className="py-16 px-6 md:px-12">
         <div className="max-w-4xl mx-auto space-y-10">
-          {/* Introduction */}
-          <div>
+                    <div>
             <h2 className="text-2xl font-semibold mb-3">Introduction</h2>
             <p className="text-gray-700 text-lg leading-relaxed">
               Koop India is committed to protecting your privacy and ensuring that
@@ -88,8 +83,7 @@ const PrivacyPolicy = () => {
             </p>
           </div>
 
-          {/* Policy Sections */}
-          {sections.map((section, index) => (
+                    {sections.map((section, index) => (
             <div key={index}>
               <h2 className="text-2xl font-semibold mb-3">
                 {section.title}
@@ -108,8 +102,7 @@ const PrivacyPolicy = () => {
             </div>
           ))}
 
-          {/* Contact Information */}
-          <div>
+                    <div>
             <h2 className="text-2xl font-semibold mb-3">Contact Information</h2>
             <p className="text-gray-700 text-lg leading-relaxed">
               If you have any questions or concerns regarding this Privacy Policy,

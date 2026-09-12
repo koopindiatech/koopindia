@@ -363,8 +363,7 @@ export default function SellerClientPage({ initialSeller }) {
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
 
-      {/* NAVBAR */}
-      <header className={`sticky top-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-md" : "shadow-sm border-b border-gray-100"}`} style={{ backgroundColor: hBg }}>
+            <header className={`sticky top-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-md" : "shadow-sm border-b border-gray-100"}`} style={{ backgroundColor: hBg }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 gap-4">
             <button onClick={() => setTab("home")} className="flex-shrink-0 cursor-pointer"><Logo /></button>
@@ -588,8 +587,7 @@ export default function SellerClientPage({ initialSeller }) {
                         style={{ height: '420px' }} />
                     </div>
                   )}
-                  {/* Mobile: show image above text */}
-                  {seller.aboutImageUrl && (
+                                    {seller.aboutImageUrl && (
                     <div className="block lg:hidden mb-6 rounded-2xl overflow-hidden shadow-xl">
                       <img src={seller.aboutImageUrl} alt={seller.name}
                         className="w-full object-cover rounded-2xl"
@@ -603,8 +601,6 @@ export default function SellerClientPage({ initialSeller }) {
               </div>
             </div>
           )}
-
-
 
           {/* Company Details Table — darker border, wider max-width */}
           {compRows.length > 0 && (
@@ -648,8 +644,6 @@ export default function SellerClientPage({ initialSeller }) {
               </div>
             </div>
           )}
-
-
 
           {infra.filter(i => i.title).length > 0 && (
             <div className="py-16" style={{ backgroundColor: aboutInfraBg || aboutBg }}>
@@ -916,8 +910,7 @@ export default function SellerClientPage({ initialSeller }) {
         const curTab = allProdTabs.find(t => t.id === prodTab) ? prodTab : (allProdTabs[0]?.id || "description");
         return (
           <div className="min-h-[80vh]" style={{ backgroundColor: productsBg || "#f8fafc" }}>
-            {/* Breadcrumb bar */}
-            <div className="border-b border-gray-200 bg-white px-4 sm:px-8 py-3 flex items-center gap-4">
+                        <div className="border-b border-gray-200 bg-white px-4 sm:px-8 py-3 flex items-center gap-4">
               <button onClick={() => setSelProd(null)}
                 className="flex items-center gap-2 text-sm font-black px-4 py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition cursor-pointer shadow-sm"
                 style={{ color: pc }}>
@@ -934,8 +927,7 @@ export default function SellerClientPage({ initialSeller }) {
             <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12">
               {/* Top: Image + Info grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                {/* Left: Product image */}
-                <div className="lg:sticky lg:top-24">
+                                <div className="lg:sticky lg:top-24">
                   <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden relative">
                     {selProd.badge && (
                       <div className="absolute top-0 left-0 z-10 overflow-hidden w-28 h-28 pointer-events-none">
@@ -952,8 +944,7 @@ export default function SellerClientPage({ initialSeller }) {
                   </div>
                 </div>
 
-                {/* Right: Details */}
-                <div className="space-y-6">
+                                <div className="space-y-6">
                   <div>
                     <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight mb-3" style={{ fontFamily: "Georgia, serif" }}>{selProd.name}</h1>
                     {selProd.tagline && <p className="text-base text-gray-600 font-medium mb-4">{selProd.tagline}</p>}
@@ -965,8 +956,7 @@ export default function SellerClientPage({ initialSeller }) {
                     {selProd.description && <p className="text-gray-600 leading-relaxed text-sm mb-4">{selProd.description}</p>}
                   </div>
 
-                  {/* Quick meta grid */}
-                  <div className="grid grid-cols-2 gap-y-3 gap-x-6 border-b border-gray-200 pb-5">
+                                    <div className="grid grid-cols-2 gap-y-3 gap-x-6 border-b border-gray-200 pb-5">
                     <div><p className="text-xs font-bold text-gray-400 mb-0.5">Brand</p><p className="text-sm font-semibold text-gray-800">{seller.name}</p></div>
                     {selProd.netWeight && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Net Weight</p><p className="text-sm font-semibold text-gray-800">{selProd.netWeight}</p></div>}
                     {selProd.productType && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Product Type</p><p className="text-sm font-semibold text-gray-800">{selProd.productType}</p></div>}
@@ -975,8 +965,7 @@ export default function SellerClientPage({ initialSeller }) {
                     {selProd.shelfLife && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Shelf Life</p><p className="text-sm font-semibold text-gray-800">{selProd.shelfLife}</p></div>}
                   </div>
 
-                  {/* Pack sizes */}
-                  {(selProd.availablePackaging || selProd.availableVariants) && (
+                                    {(selProd.availablePackaging || selProd.availableVariants) && (
                     <div>
                       <p className="text-sm font-black text-gray-900 mb-3">Available Pack Sizes</p>
                       <div className="flex flex-wrap gap-2">
@@ -1013,8 +1002,7 @@ export default function SellerClientPage({ initialSeller }) {
               {/* ── TABS SECTION ── */}
               {allProdTabs.length > 0 && (
                 <div className="mt-12 bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-10">
-                  {/* Tab nav */}
-                  <div className="border-b border-gray-200 overflow-x-auto scrollbar-none mb-10">
+                                    <div className="border-b border-gray-200 overflow-x-auto scrollbar-none mb-10">
                     <div className="flex min-w-max gap-2">
                       {allProdTabs.map(t => (
                         <button key={t.id} onClick={() => setProdTab(t.id)}
@@ -1029,10 +1017,8 @@ export default function SellerClientPage({ initialSeller }) {
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
-                    {/* Left side: Tab content */}
-                    <div className="lg:col-span-3">
-                      {/* DESCRIPTION */}
-                      {curTab === "description" && (
+                                        <div className="lg:col-span-3">
+                                            {curTab === "description" && (
                         <div className="space-y-8">
                           {selProd.about && (
                             <div>
@@ -1087,8 +1073,7 @@ export default function SellerClientPage({ initialSeller }) {
                         </div>
                       )}
 
-                      {/* SPECIFICATIONS */}
-                      {curTab === "specifications" && (
+                                            {curTab === "specifications" && (
                         <div>
                           <table className="w-full">
                             <tbody>
@@ -1137,15 +1122,13 @@ export default function SellerClientPage({ initialSeller }) {
                         </div>
                       )}
 
-                      {/* INGREDIENTS */}
-                      {curTab === "ingredients" && (
+                                            {curTab === "ingredients" && (
                         <div>
                           <p className="text-gray-600 leading-relaxed text-lg">{selProd.ingredientsList || selProd.ingredients}</p>
                         </div>
                       )}
 
-                      {/* APPLICATIONS */}
-                      {curTab === "applications" && (
+                                            {curTab === "applications" && (
                         <div className="space-y-6">
                           {selProd.industriesApplications && (
                             <div>
@@ -1169,8 +1152,7 @@ export default function SellerClientPage({ initialSeller }) {
                         </div>
                       )}
 
-                      {/* BULK & EXPORT */}
-                      {curTab === "bulk" && (
+                                            {curTab === "bulk" && (
                         <div className="space-y-6">
                           {(selProd.availablePackaging || selProd.availableVariants) && (
                             <div>
@@ -1191,8 +1173,7 @@ export default function SellerClientPage({ initialSeller }) {
                         </div>
                       )}
 
-                      {/* NUTRITION */}
-                      {curTab === "nutrition" && (
+                                            {curTab === "nutrition" && (
                         <div>
                           <p className="text-sm text-gray-500 mb-4 font-medium uppercase tracking-wider">Approximate values per 100g serving</p>
                           <table className="w-full">
@@ -1216,8 +1197,7 @@ export default function SellerClientPage({ initialSeller }) {
                       )}
                     </div>
 
-                    {/* Right side: Wholesale Inquiry Form */}
-                    <div className="lg:col-span-2">
+                                        <div className="lg:col-span-2">
                       <div className="rounded-2xl p-6 sm:p-8" style={{ backgroundColor: productsBg === "#ffffff" ? "#f4ede4" : (productsBg || "#f4ede4") }}>
                         <h3 className="text-2xl font-bold text-gray-900 mb-6">Get Wholesale Price</h3>
                         {wsSuccess ? (
@@ -1331,8 +1311,7 @@ export default function SellerClientPage({ initialSeller }) {
         <div className="fixed inset-0 z-[999] flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
           onClick={e => { if (e.target === e.currentTarget) setShowInquiryPopup(false); }}>
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-[fadeIn_0.2s_ease]" style={{ animation: 'slideUp 0.25s ease' }}>
-            {/* Header */}
-            <div className="px-6 py-4 flex items-center justify-between" style={{ backgroundColor: pc }}>
+                        <div className="px-6 py-4 flex items-center justify-between" style={{ backgroundColor: pc }}>
               <div>
                 <h3 className="text-white font-black text-lg">{inquiryProd ? `Inquiry: ${inquiryProd.name}` : 'Send Inquiry'}</h3>
                 <p className="text-white/70 text-xs mt-0.5">We'll get back to you within 24 hours</p>
@@ -1340,8 +1319,7 @@ export default function SellerClientPage({ initialSeller }) {
               <button onClick={() => setShowInquiryPopup(false)}
                 className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition cursor-pointer">✕</button>
             </div>
-            {/* Body */}
-            <div className="p-6">
+                        <div className="p-6">
               {inquirySuccess ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <div className="text-5xl mb-4">✅</div>

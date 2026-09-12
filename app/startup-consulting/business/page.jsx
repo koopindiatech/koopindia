@@ -119,8 +119,7 @@ const BusinessConsultingPage = () => {
 
      {/* ================= VALUE ADD ================= */}
 <section className="py-16 px-5 bg-[#F97316] relative overflow-hidden">
-  {/* Optional: Subtle decorative circle for texture */}
-  <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+    <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
   
   <div className="max-w-6xl mx-auto text-center relative z-10">
     <h2 className="text-3xl font-extrabold text-white mb-6">
@@ -134,8 +133,7 @@ const BusinessConsultingPage = () => {
       plans into action and action into measurable growth.
     </p>
     
-    {/* Decorative line */}
-    <div className="w-24 h-1 bg-[#141D32] mx-auto mt-8 rounded-full"></div>
+        <div className="w-24 h-1 bg-[#141D32] mx-auto mt-8 rounded-full"></div>
   </div>
 </section>
 

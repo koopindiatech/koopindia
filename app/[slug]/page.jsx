@@ -2,7 +2,6 @@ import { db } from "../../lib/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import SellerClientPage from "./SellerClientPage";
 
-// Recursively convert Firestore Timestamps and non-serializable values to plain JS
 function serialize(obj) {
   if (obj === null || obj === undefined) return obj;
   if (typeof obj !== "object") return obj;
@@ -49,7 +48,6 @@ export default async function SellerPage({ params }) {
         infrastructure: (data.infrastructure || []).map((i) => ({ ...i, imageUrl: proxyUrl(i.imageUrl) })),
       };
 
-      // Serialize to strip Firestore Timestamps and other non-plain objects
       initialSeller = serialize(raw);
     }
   } catch (error) {

@@ -258,8 +258,7 @@ export default function SellerOnboarding() {
         />
       </Head>
 
-      {/* JSON-LD */}
-      <script
+            <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
       />
@@ -273,21 +272,18 @@ export default function SellerOnboarding() {
           className="relative overflow-hidden min-h-[82vh] flex flex-col justify-center px-6 pt-6 pb-8"
           style={{ background: "#0B1D3A" }}
         >
-          {/* Full-background subtle dot pattern */}
-          <div
+                    <div
             className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.09) 1px, transparent 1px)",
               backgroundSize: "22px 22px",
             }}
           />
-          {/* Orange glow top-right */}
-          <div
+                    <div
             className="absolute top-0 right-0 w-[550px] h-[550px] pointer-events-none"
             style={{ background: "radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 65%)" }}
           />
-          {/* Blue glow bottom-left */}
-          <div
+                    <div
             className="absolute bottom-0 left-0 w-[450px] h-[450px] pointer-events-none"
             style={{ background: "radial-gradient(circle, rgba(20,80,220,0.10) 0%, transparent 65%)" }}
           />
@@ -297,8 +293,7 @@ export default function SellerOnboarding() {
 
               {/* ── LEFT: Heading + Text + Buttons ── */}
               <div>
-                {/* Orange badge */}
-                <span className="inline-flex items-center bg-orange-500 text-white text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-sm mb-6">
+                                <span className="inline-flex items-center bg-orange-500 text-white text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-sm mb-6">
                   SELLER ONBOARDING SERVICES
                 </span>
 
@@ -335,14 +330,12 @@ export default function SellerOnboarding() {
               {/* ── RIGHT: Dashboard mockup + Stacked marketplace badges ── */}
               <div className="relative flex flex-col sm:flex-row items-center justify-center lg:justify-end gap-8 sm:gap-5 mt-12 lg:mt-0">
 
-                {/* Dashboard card */}
-                <div className="relative flex-shrink-0">
+                                <div className="relative flex-shrink-0">
                   <div
                     className="rounded-2xl overflow-hidden shadow-2xl"
                     style={{ width: "300px", background: "#1A2744", border: "1px solid rgba(255,255,255,0.08)" }}
                   >
-                    {/* Top bar */}
-                    <div
+                                        <div
                       className="flex items-center gap-3 px-4 py-2.5 border-b"
                       style={{ borderColor: "rgba(255,255,255,0.06)", background: "#13203A" }}
                     >
@@ -358,8 +351,7 @@ export default function SellerOnboarding() {
 
                     {/* Sidebar + Content */}
                     <div className="flex" style={{ minHeight: "210px" }}>
-                      {/* Sidebar */}
-                      <div
+                                            <div
                         className="w-20 border-r flex flex-col gap-0.5 py-3 px-1.5 flex-shrink-0"
                         style={{ borderColor: "rgba(255,255,255,0.05)", background: "#13203A" }}
                       >
@@ -377,14 +369,12 @@ export default function SellerOnboarding() {
                         ))}
                       </div>
 
-                      {/* Main stats panel */}
-                      <div className="flex-1 p-4">
+                                            <div className="flex-1 p-4">
                         <div className="text-[8px] text-white/40 mb-0.5">Total Sales</div>
                         <div className="text-xl font-black text-white mb-0.5">₹ 24,65,800</div>
                         <div className="text-[8px] text-green-400 font-bold mb-3">+32.6%</div>
 
-                        {/* SVG Line chart */}
-                        <div
+                                                <div
                           className="h-14 rounded-lg mb-3 overflow-hidden"
                           style={{ background: "rgba(255,255,255,0.03)" }}
                         >
@@ -409,8 +399,7 @@ export default function SellerOnboarding() {
                           </svg>
                         </div>
 
-                        {/* Stats row */}
-                        <div className="grid grid-cols-3 text-center">
+                                                <div className="grid grid-cols-3 text-center">
                           <div>
                             <div className="text-[10px] font-black text-white">1,265</div>
                             <div className="text-[7px] text-white/30">Orders</div>
@@ -428,8 +417,7 @@ export default function SellerOnboarding() {
                     </div>
                   </div>
 
-                  {/* Shopping items below dashboard */}
-                  <div className="absolute -bottom-8 left-2 flex items-end gap-2 select-none pointer-events-none">
+                                    <div className="absolute -bottom-8 left-2 flex items-end gap-2 select-none pointer-events-none">
                     <span className="text-5xl drop-shadow-lg">🛒</span>
                     <span className="text-4xl drop-shadow-lg">🛍️</span>
                     <span className="text-3xl drop-shadow-lg">📦</span>
@@ -438,16 +426,14 @@ export default function SellerOnboarding() {
 
                 {/* Stacked marketplace badge cards — far right column */}
                 <div className="hidden md:flex flex-col gap-3 flex-shrink-0">
-                  {/* Green upward arrow */}
-                  <div className="flex justify-center mb-1">
+                                    <div className="flex justify-center mb-1">
                     <svg viewBox="0 0 28 44" width="24" height="38" className="opacity-90">
                       <line x1="14" y1="44" x2="14" y2="6" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" />
                       <polyline points="4,16 14,4 24,16" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                     </svg>
                   </div>
 
-                  {/* Amazon */}
-                  <div
+                                    <div
                     className="bg-white rounded-xl shadow-xl px-4 py-2.5 flex flex-col items-start"
                     style={{ minWidth: "128px" }}
                   >
@@ -460,8 +446,7 @@ export default function SellerOnboarding() {
                     </svg>
                   </div>
 
-                  {/* Flipkart */}
-                  <div
+                                    <div
                     className="bg-white rounded-xl shadow-xl px-4 py-2.5 flex items-center gap-2.5"
                     style={{ minWidth: "128px" }}
                   >
@@ -474,8 +459,7 @@ export default function SellerOnboarding() {
                     <span style={{ color: "#2874F0", fontWeight: 700, fontSize: "13px" }}>Flipkart</span>
                   </div>
 
-                  {/* JioMart */}
-                  <div
+                                    <div
                     className="bg-white rounded-xl shadow-xl px-4 py-2.5 flex items-center gap-2.5"
                     style={{ minWidth: "128px" }}
                   >
@@ -491,8 +475,7 @@ export default function SellerOnboarding() {
                     <span style={{ color: "#003087", fontWeight: 700, fontSize: "13px" }}>JioMart</span>
                   </div>
 
-                  {/* Myntra */}
-                  <div
+                                    <div
                     className="bg-white rounded-xl shadow-xl px-4 py-2.5 flex items-center gap-2.5"
                     style={{ minWidth: "128px" }}
                   >
@@ -515,8 +498,7 @@ export default function SellerOnboarding() {
         <div className="relative z-10 max-w-[95%] xl:max-w-7xl mx-auto -mt-10 mb-12">
           <div className="bg-white rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.15)] py-4 px-6 md:px-8 flex flex-wrap items-center justify-center md:justify-between gap-6 md:gap-0">
 
-            {/* Amazon */}
-            <div className="flex flex-col items-center justify-center mt-1">
+                        <div className="flex flex-col items-center justify-center mt-1">
               <span style={{ fontFamily: "Georgia, serif", fontWeight: 900, fontSize: "20px", color: "#000", letterSpacing: "-0.5px", lineHeight: 1 }}>amazon</span>
               <svg viewBox="0 0 90 10" height="7" style={{ width: "70px" }}>
                 <path d="M5 5 Q45 12 80 4" stroke="#FF9900" strokeWidth="2.5" fill="none" strokeLinecap="round" />
@@ -526,8 +508,7 @@ export default function SellerOnboarding() {
 
             <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
-            {/* Flipkart */}
-            <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5">
               <span style={{ color: "#0084FF", fontWeight: 700, fontStyle: "italic", fontSize: "16px" }}>Flipkart</span>
               <div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: "#FFE11B" }}>
                 <span style={{ color: "#0084FF", fontWeight: 900, fontStyle: "italic", fontSize: "14px" }}>f</span>
@@ -536,8 +517,7 @@ export default function SellerOnboarding() {
 
             <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
-            {/* JioMart */}
-            <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5">
               <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: "#E31837" }}>
                 <span style={{ color: "white", fontWeight: 900, fontSize: "10px" }}>Jio</span>
               </div>
@@ -546,8 +526,7 @@ export default function SellerOnboarding() {
 
             <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
-            {/* Myntra */}
-            <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5">
               <div className="flex items-center justify-center">
                 <span style={{ background: "-webkit-linear-gradient(45deg, #F12E5F, #F48D21)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 900, fontSize: "24px", lineHeight: 1 }}>M</span>
               </div>
@@ -556,22 +535,19 @@ export default function SellerOnboarding() {
 
             <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
-            {/* meesho */}
-            <div className="flex items-center">
+                        <div className="flex items-center">
               <span style={{ color: "#F43397", fontWeight: 700, fontSize: "18px" }}>meesho</span>
             </div>
 
             <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
-            {/* AJIO */}
-            <div className="flex items-center">
+                        <div className="flex items-center">
               <span style={{ color: "#2C415C", fontWeight: 900, fontSize: "18px", letterSpacing: "1px" }}>AJIO</span>
             </div>
 
             <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
-            {/* TATA CLiQ */}
-            <div className="flex flex-col items-center leading-none">
+                        <div className="flex flex-col items-center leading-none">
               <div style={{ color: "#000", fontWeight: 700, fontSize: "7px", letterSpacing: "3px", marginBottom: "1px" }}>TATA</div>
               <div className="flex items-start">
                 <span style={{ color: "#000", fontWeight: 900, fontSize: "16px", letterSpacing: "-0.5px" }}>CL</span>
@@ -585,8 +561,7 @@ export default function SellerOnboarding() {
 
             <div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
-            {/* snapdeal */}
-            <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5">
               <div className="w-6 h-6 rounded-md flex items-center justify-center overflow-hidden" style={{ background: "#E40046" }}>
                 <svg viewBox="0 0 100 100" width="16" height="16" fill="white">
                   <polygon points="50,15 90,35 50,55 10,35" />
@@ -603,12 +578,10 @@ export default function SellerOnboarding() {
         <section className="py-16 px-5 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
-              {/* Illustration */}
-              <div className="flex justify-center">
+                            <div className="flex justify-center">
                 <div className="relative w-72 h-72 md:w-80 md:h-80">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-orange-50 to-yellow-50 rounded-3xl" />
-                  {/* Stylized store elements */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
                     <div className="relative">
                       <div className="w-28 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center border-2 border-blue-100">
                         <span className="text-5xl">🏪</span>
@@ -627,8 +600,7 @@ export default function SellerOnboarding() {
                         </div>
                       ))}
                     </div>
-                    {/* Graph line */}
-                    <div className="w-44 h-12 bg-white rounded-xl shadow-md border border-gray-100 flex items-center px-3">
+                                        <div className="w-44 h-12 bg-white rounded-xl shadow-md border border-gray-100 flex items-center px-3">
                       <svg
                         viewBox="0 0 120 30"
                         className="w-full text-green-400"
@@ -647,8 +619,7 @@ export default function SellerOnboarding() {
                 </div>
               </div>
 
-              {/* Content */}
-              <div>
+                            <div>
                 <SectionBadge>WHY SELL ONLINE?</SectionBadge>
                 <h2 className="text-3xl md:text-4xl font-black text-[#141D32] mb-4 leading-tight">
                   Sell Across India Without
@@ -764,8 +735,7 @@ export default function SellerOnboarding() {
               </h2>
             </div>
 
-            {/* Steps row */}
-            <div className="flex flex-wrap justify-center items-start gap-y-6">
+                        <div className="flex flex-wrap justify-center items-start gap-y-6">
               {steps.map((step, i) => (
                 <div key={i} className="flex items-start">
                   <div className="flex flex-col items-center text-center w-24 md:w-28">
@@ -790,8 +760,7 @@ export default function SellerOnboarding() {
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-3 gap-6">
 
-              {/* Why Choose Koop India */}
-              <div className="bg-[#0F172A] rounded-2xl p-7">
+                            <div className="bg-[#0F172A] rounded-2xl p-7">
                 <h3 className="text-white font-black text-lg mb-6">
                   Why Choose Koop India?
                 </h3>
@@ -805,8 +774,7 @@ export default function SellerOnboarding() {
                 </div>
               </div>
 
-              {/* Documents Required */}
-              <div className="bg-white border border-gray-100 rounded-2xl p-7 shadow-sm">
+                            <div className="bg-white border border-gray-100 rounded-2xl p-7 shadow-sm">
                 <h3 className="text-[#141D32] font-black text-lg mb-6">
                   Documents Required
                 </h3>
@@ -820,8 +788,7 @@ export default function SellerOnboarding() {
                 </div>
               </div>
 
-              {/* Our Packages */}
-              <div className="bg-white border border-gray-100 rounded-2xl p-7 shadow-sm">
+                            <div className="bg-white border border-gray-100 rounded-2xl p-7 shadow-sm">
                 <h3 className="text-[#141D32] font-black text-lg mb-6">
                   Our Packages
                 </h3>
@@ -838,8 +805,7 @@ export default function SellerOnboarding() {
                     </div>
                   ))}
                 </div>
-                {/* Illustration placeholder */}
-                <div className="flex justify-center mb-5">
+                                <div className="flex justify-center mb-5">
                   <div className="text-5xl">📋</div>
                 </div>
                 <button
@@ -860,21 +826,18 @@ export default function SellerOnboarding() {
             background: "linear-gradient(135deg, #FF6B00 0%, #FF8C00 40%, #FF5500 100%)",
           }}
         >
-          {/* Subtle dot pattern */}
-          <div
+                    <div
             className="absolute inset-0 pointer-events-none"
             style={{
               backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)",
               backgroundSize: "22px 22px",
             }}
           />
-          {/* White glow top-right */}
-          <div
+                    <div
             className="absolute top-0 right-0 w-[500px] h-[500px] pointer-events-none"
             style={{ background: "radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%)" }}
           />
-          {/* Dark glow bottom-left */}
-          <div
+                    <div
             className="absolute bottom-0 left-0 w-[400px] h-[400px] pointer-events-none"
             style={{ background: "radial-gradient(circle, rgba(180,50,0,0.25) 0%, transparent 65%)" }}
           />
@@ -882,8 +845,7 @@ export default function SellerOnboarding() {
           <div className="relative max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
 
-              {/* Left */}
-              <div>
+                            <div>
                 <span className="inline-flex items-center bg-white/20 text-white border border-white/30 text-[11px] font-bold tracking-widest uppercase px-3 py-1 rounded-sm mb-4">
                   READY TO START?
                 </span>

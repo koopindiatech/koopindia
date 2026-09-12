@@ -8,9 +8,10 @@ import {
 } from "lucide-react";
 import { db, storage } from "../../../lib/firebase";
 import {
-  collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy,
+  collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, where
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getCurrentUser } from "../lib/auth";
 
 /* ─── helpers ─── */
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -36,10 +37,8 @@ const blank = () => ({
   name: "", category: "", subcategory: "", contact: "", phone: "", email: "",
   hideContact: false,
   address: "", city: "", state: "", pincode: "",
-  // Company Details Table
   companyName: "", natureOfBusiness: "", establishmentYear: "",
   employees: "", gstNumber: "", fssaiLicense: "",
-  // Buyering & Nav
   logoUrl: "", primaryColor: "#2d5a27", secondaryColor: "#f5a623",
   homeBgColor: "#ffffff", aboutBgColor: "#ffffff", productsBgColor: "#ffffff", contactBgColor: "#ffffff",
   homeProductsBgColor: "", homeProductsTextColor: "",
@@ -54,11 +53,8 @@ const blank = () => ({
   navHomeLabel: "", navAboutLabel: "", navProductsLabel: "", navContactLabel: "", navCtaLabel: "",
   headerBgColor: "#ffffff", headerTextColor: "#4b5563",
   footerBgColor: "", footerTextColor: "#ffffff", footerText: "",
-  // Stats styling
   statsBgColor: "", statsValueColor: "#f5c842", statsTextColor: "",
-  // About text
   aboutTextColor: "",
-  // Why Us Section
   whyTitle: "WHY US", whySubtitle: "", whyBgColor: "#f5f0e8",
   whyLabelColor: "", whyHeadingColor: "",
   whyCardBgColor: "", whyNumberColor: "", whyCardTitleColor: "", whyCardDescColor: "",
@@ -68,16 +64,13 @@ const blank = () => ({
     { id: uid(), number: "03", title: "", description: "" },
     { id: uid(), number: "04", title: "", description: "" },
   ],
-  // Hero
   heroBtn1Text: "View Our Products", heroBtn2Text: "Distributors / Buyers Inquiry",
   heroBanners: [{ id: uid(), url: "" }],
-  // About
   about: "", aboutImageUrl: "",
   missionTitle: "Our Mission", mission: "",
   visionTitle: "Our Vision", vision: "",
   valuesTitle: "Our Values", values: "",
   commitmentTitle: "Our Commitment", commitment: "",
-  // Products
   productCategories: [{ id: "all", name: "All Products" }],
   products: [{ id: uid(), name: "", categoryId: "all", price: "", description: "", imageUrl: "", badge: "", emoji: "📦", showOnHome: false,
     tagline: "", keyHighlights: "", suitableFor: "", availableVariants: "",
@@ -88,9 +81,6 @@ const blank = () => ({
     isISOCertified: false, isFSSAIApproved: false, isGMPCertified: false, isLabTested: false, isQualityChecked: false,
     whyChoose: "", industriesApplications: "",
     specifications: "", ingredients: "", packaging: "" }],
-  // Home Page configuration
-  showContactOnHome: true,
-  // Stats
   stats: [
     { id: uid(), icon: "📦", value: "25+", label: "Products" },
     { id: uid(), icon: "😊", value: "500+", label: "Happy Clients" },
@@ -98,16 +88,12 @@ const blank = () => ({
     { id: uid(), icon: "📍", value: "20+", label: "States Presence" },
     { id: uid(), icon: "🌍", value: "10+", label: "Countries Export" },
   ],
-  // Infrastructure
   infrastructureTitle: "Our Infrastructure",
   infrastructureDesc: "We have a state-of-the-art processing unit equipped with modern machinery and advanced technology.",
   infrastructure: [{ id: uid(), title: "", description: "", imageUrl: "" }],
-  // Certifications
   certifications: [{ id: uid(), name: "", imageUrl: "", description: "" }],
-  // Contact & Social
   contactBannerUrl: "", whatsapp: "", hidePhone: false, mapEmbedUrl: "",
   social: { facebook: "", instagram: "", linkedin: "", youtube: "" },
-  // Footer
   footerBadges: [
     { id: uid(), icon: "✅", label: "FSSAI Approved" },
     { id: uid(), icon: "🏆", label: "ISO 22000:2018 Certified" },
@@ -294,8 +280,7 @@ const UploadBox = ({ field, label, value, onPick, small = false }) => {
           </div>
         )}
       </label>
-      {/* Input is a SIBLING of label, NOT nested inside it */}
-      <input
+            <input
         id={inputId}
         type="file"
         accept="image/*"
@@ -319,6 +304,7 @@ const ProgPill = ({ field, uploadStatus, uploadProgress }) =>
 
 /* ══════════════════════════════════════════════════════════ */
 export default function SellersPage() {
+  const [user, setUser] = useState(null);
   const [sellers, setSellers] = useState([]);
   const [search, setSearch] = useState("");
   const [dbLoading, setDbLoading] = useState(true);
@@ -360,14 +346,27 @@ export default function SellersPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const snap = await getDocs(query(collection(db, "sellers"), orderBy("createdAt", "desc")));
-        setSellers(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        const u = getCurrentUser();
+        setUser(u);
+        if (u?.role === "seller") {
+          const snap = await getDocs(query(collection(db, "sellers"), where("slug", "==", u.linkedSlug)));
+          if (!snap.empty) {
+            const data = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            setSellers([data]);
+            openForm(data);
+          } else {
+            setSellers([]);
+            openForm({ slug: u.linkedSlug, name: u.name, email: u.email });
+          }
+        } else {
+          const snap = await getDocs(query(collection(db, "sellers"), orderBy("createdAt", "desc")));
+          setSellers(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        }
       } catch (e) { console.error(e); }
       finally { setDbLoading(false); }
     };
     load();
   }, []);
-
 
   /* ─── Upload file to Firebase Storage → return permanent URL ─── */
   const uploadToStorage = (file, path, uiKey) => new Promise((resolve, reject) => {
@@ -470,8 +469,10 @@ export default function SellersPage() {
         slug,
         heroBannerUrl: clean.heroBannerUrl || clean.bannerUrl || "",
         bannerUrl: clean.heroBannerUrl || clean.bannerUrl || "",
-        status: asDraft ? "draft" : "live",
       };
+      if (asDraft !== null) {
+        payload.status = asDraft ? "draft" : "live";
+      }
       if (editing) {
         await updateDoc(doc(db, "sellers", editing.id), { ...payload, updatedAt: serverTimestamp() });
         setSellers((p) => p.map((s) => s.id === editing.id ? { ...s, ...payload } : s));
@@ -536,7 +537,7 @@ export default function SellersPage() {
                 <Store className="text-white" size={18} />
               </div>
               <div>
-                <h1 className="font-black text-gray-900 text-base leading-none">Buyer Portals</h1>
+                <h1 className="font-black text-gray-900 text-base leading-none">Seller Portals</h1>
                 <p className="text-gray-400 text-[11px] mt-0.5 font-medium">{sellers.length} sellers listed</p>
               </div>
             </div>
@@ -577,8 +578,7 @@ export default function SellersPage() {
               const color = s.primaryColor || "#7c3aed";
               return (
                 <div key={s.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col">
-                  {/* Card header band */}
-                  <div className="h-1.5 w-full rounded-t-2xl" style={{ backgroundColor: color }} />
+                                    <div className="h-1.5 w-full rounded-t-2xl" style={{ backgroundColor: color }} />
                   <div className="p-5 flex-1 flex flex-col gap-4">
                     <div className="flex items-start gap-3">
                       {s.logoUrl
@@ -635,12 +635,13 @@ export default function SellersPage() {
       {/* ═══════════════ BUYER STUDIO ═══════════════ */}
       {formOpen && (
         <div className="w-full flex flex-col" style={{ minHeight: '100vh', background: '#f1f5f9' }}>
-          {/* Studio Header */}
-          <div className="px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-4 sticky top-0 z-30">
+                    <div className="px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-4 sticky top-0 z-30">
             <div className="flex items-center gap-4">
-              <button type="button" onClick={() => setFormOpen(false)} className="w-9 h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer">
-                <ArrowLeft size={16} />
-              </button>
+              {user?.role !== "seller" && (
+                <button type="button" onClick={() => setFormOpen(false)} className="w-9 h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer">
+                  <ArrowLeft size={16} />
+                </button>
+              )}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md" style={{ backgroundColor: pc }}>
                   {form.logoUrl
@@ -654,43 +655,50 @@ export default function SellersPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.name.trim()}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer">
-                <Save size={14} /> Save Draft
-              </button>
-              <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.name.trim()}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-lg shadow-emerald-200 disabled:opacity-40 cursor-pointer">
-                <Rocket size={14} /> {saving ? "Publishing..." : isUploading ? "Uploading..." : "Publish Live"}
-              </button>
+              {user?.role === "seller" ? (
+                <button type="button" onClick={() => handleSave(null)} disabled={saving || isUploading || !form.name.trim()}
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs transition-all shadow-lg shadow-violet-200 disabled:opacity-40 cursor-pointer">
+                  <Save size={14} /> {saving ? "Saving..." : isUploading ? "Uploading..." : "Save Updates"}
+                </button>
+              ) : (
+                <>
+                  <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.name.trim()}
+                    className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer">
+                    <Save size={14} /> Save Draft
+                  </button>
+                  <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.name.trim()}
+                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-lg shadow-emerald-200 disabled:opacity-40 cursor-pointer">
+                    <Rocket size={14} /> {saving ? "Publishing..." : isUploading ? "Uploading..." : "Publish Live"}
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
           {/* Studio Layout — full width, no sidebar */}
           <div className="flex flex-col flex-1 overflow-hidden">
 
-            {/* ── Sticky Top Section Nav (horizontal) ── */}
-            <div className="bg-white border-b border-gray-100 sticky top-[57px] z-20 flex-shrink-0">
-              <div className="max-w-5xl mx-auto px-5 sm:px-8">
-                <div className="flex items-center gap-1 py-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                  {[
-                    { id: "section-identity", icon: "🏠", label: "Identity & Branding" },
-                    { id: "section-about", icon: "ℹ️", label: "About & Vision" },
-                    { id: "section-products", icon: "📦", label: "Products" },
-                    { id: "section-contact", icon: "📞", label: "Contact & Social" },
-                  ].map((t, idx) => (
-                    <button key={t.id} type="button"
-                      onClick={() => scrollRef.current?.querySelector(`#${t.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                      className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer ${
-                        activeSection === t.id
-                          ? "bg-indigo-600 text-white shadow-md"
-                          : "text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                      }`}>
-                      <span>{t.icon}</span>
-                      <span>{t.label}</span>
-                      {activeSection === t.id && <Check size={12} className="text-indigo-200" />}
-                    </button>
-                  ))}
-                </div>
+            {/* ── Sticky Top Section Nav (Floating Capsule) ── */}
+            <div className="sticky top-[72px] z-20 flex justify-center mt-3 mb-6 pointer-events-none px-4">
+              <div className="bg-white/90 backdrop-blur-md border border-gray-200/60 shadow-xl shadow-gray-200/50 rounded-full p-1.5 flex items-center gap-1 overflow-x-auto pointer-events-auto w-max max-w-full" style={{ scrollbarWidth: 'none' }}>
+                {[
+                  { id: "section-identity", icon: "🏠", label: "Identity & Branding" },
+                  { id: "section-about", icon: "ℹ️", label: "About & Vision" },
+                  { id: "section-products", icon: "📦", label: "Products" },
+                  { id: "section-contact", icon: "📞", label: "Contact & Social" },
+                ].map((t, idx) => (
+                  <button key={t.id} type="button"
+                    onClick={() => scrollRef.current?.querySelector(`#${t.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                    className={`flex-shrink-0 flex items-center gap-2 px-5 py-2 rounded-full font-bold text-xs transition-all duration-300 cursor-pointer ${
+                      activeSection === t.id
+                        ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-200/50 scale-[1.02]"
+                        : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                    }`}>
+                    <span>{t.icon}</span>
+                    <span>{t.label}</span>
+                    {activeSection === t.id && <Check size={14} className="text-indigo-200" />}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -699,16 +707,15 @@ export default function SellersPage() {
               <div className="max-w-5xl mx-auto p-5 sm:p-8 space-y-10">
 
                 {/* ══ IDENTITY & BRANDING ══ */}
-                <div className="flex items-center gap-4 py-3 mb-2 border-b-2 border-gray-200">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-700 font-black text-2xl shadow-sm">1</div>
+                <div className="flex items-center gap-5 py-4 mb-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-indigo-200/50 rotate-[-4deg] transition-transform hover:rotate-0 duration-300">1</div>
                   <div>
-                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Identity & Branding</h2>
-                    <p className="text-sm text-gray-500 font-bold">Company details, colors, banners and navigation</p>
+                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">Identity & Branding</h2>
+                    <p className="text-sm text-gray-500 font-bold mt-0.5">Company details, colors, banners and navigation</p>
                   </div>
                 </div>
                 <div id="section-identity" className="space-y-6 scroll-mt-6">
-                    {/* Company Identity */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
                         <div>
                           <h3 className="text-sm font-black text-gray-900">Company Identity</h3>
@@ -719,7 +726,8 @@ export default function SellersPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className={fieldLabel}>Company Name *</label>
-                            <input type="text" value={form.name} onChange={e => sf("name", e.target.value)} placeholder="e.g. Nayana Masala Pvt Ltd" className={inp} />
+                            <input type="text" value={form.name} disabled={user?.role === "seller"} onChange={e => sf("name", e.target.value)} placeholder="e.g. Nayana Masala Pvt Ltd" className={`${inp} ${user?.role === "seller" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
+                            {user?.role === "seller" && <p className="text-[10px] text-gray-400 mt-1">Contact admin to change Business Name.</p>}
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
@@ -753,8 +761,7 @@ export default function SellersPage() {
                       </div>
                     </div>
 
-                    {/* Brand Colors & Logo */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
                         <div>
                           <h3 className="text-sm font-black text-gray-900">Colors & Logo</h3>
@@ -894,8 +901,7 @@ export default function SellersPage() {
                       </div>
                     </div>
 
-                    {/* Header & Footer */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
                         <div>
                           <h3 className="text-sm font-black text-gray-900">Header & Footer</h3>
@@ -949,8 +955,7 @@ export default function SellersPage() {
                       </div>
                     </div>
 
-                    {/* Hero Banner */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
                           <div>
@@ -987,8 +992,7 @@ export default function SellersPage() {
                       </div>
                     </div>
 
-                    {/* Home Config */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
                         <div>
                           <h3 className="text-sm font-black text-gray-900">Home Page Content</h3>
@@ -1010,8 +1014,7 @@ export default function SellersPage() {
                       </div>
                     </div>
 
-                    {/* Why Us Section */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
                           <div>
@@ -1133,8 +1136,7 @@ export default function SellersPage() {
                       </div>
                     </div>
 
-                    {/* Stats */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
                           <div>
@@ -1158,8 +1160,7 @@ export default function SellersPage() {
                       <div className="pt-4 border-t border-gray-100 space-y-4">
                         <p className="text-xs font-black text-gray-800 uppercase tracking-widest">Stats Bar Styling</p>
 
-                        {/* Live Preview Strip */}
-                        <div
+                                                <div
                           className="w-full rounded-2xl overflow-hidden shadow-md"
                           style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }}
                         >
@@ -1187,10 +1188,8 @@ export default function SellersPage() {
                           </div>
                         </div>
 
-                        {/* Color Picker Cards */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          {/* BG Color */}
-                          <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+                                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                    <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
                             <div className="h-14 w-full" style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }} />
                             <div className="p-3 bg-white flex items-center justify-between gap-2">
                               <div>
@@ -1207,8 +1206,7 @@ export default function SellersPage() {
                             </div>
                           </div>
 
-                          {/* Value Text Color */}
-                          <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+                                                    <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
                             <div
                               className="h-14 w-full flex items-center justify-center"
                               style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }}
@@ -1230,8 +1228,7 @@ export default function SellersPage() {
                             </div>
                           </div>
 
-                          {/* Label Text Color */}
-                          <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+                                                    <div className="rounded-xl border border-gray-100 overflow-hidden shadow-sm">
                             <div
                               className="h-14 w-full flex items-center justify-center"
                               style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }}
@@ -1256,8 +1253,7 @@ export default function SellersPage() {
                       </div>
                     </div>
 
-                    {/* Certifications */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
                         <div className="flex items-center gap-3">
                           <div>
@@ -1287,14 +1283,13 @@ export default function SellersPage() {
                         ))}
                       </div>
                     </div>
-                </div>{/* end section-identity */}
-
+                </div>
                 {/* ══ ABOUT & VISION ══ */}
-                <div className="flex items-center gap-4 py-3 mb-2 mt-20 border-b-2 border-gray-200">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-700 font-black text-2xl shadow-sm">2</div>
+                <div className="flex items-center gap-5 py-4 mb-4 mt-20">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-emerald-200/50 rotate-[-4deg] transition-transform hover:rotate-0 duration-300">2</div>
                   <div>
-                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">About & Vision</h2>
-                    <p className="text-sm text-gray-500 font-bold">Company story, mission, stats, and infrastructure</p>
+                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">About & Vision</h2>
+                    <p className="text-sm text-gray-500 font-bold mt-0.5">Company story, mission, stats, and infrastructure</p>
                   </div>
                 </div>
                 <div id="section-about" className="space-y-6 scroll-mt-6">
@@ -1391,14 +1386,13 @@ export default function SellersPage() {
                         ))}
                       </div>
                     </div>
-                </div>{/* end section-about */}
-
-                {/* ══ PRODUCTS ══ */}
-                <div className="flex items-center gap-4 py-3 mb-2 mt-10 border-b-2 border-gray-200">
-                  <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-700 font-black text-2xl shadow-sm">3</div>
+                </div>
+                {/* ══ PRODUCTS / SERVICES ══ */}
+                <div className="flex items-center gap-5 py-4 mb-4 mt-20">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-500 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-blue-200/50 rotate-[-4deg] transition-transform hover:rotate-0 duration-300">3</div>
                   <div>
-                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Products & Categories</h2>
-                    <p className="text-sm text-gray-500 font-bold">Manage product catalogs and categorisation</p>
+                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">Products & Services</h2>
+                    <p className="text-sm text-gray-500 font-bold mt-0.5">Showcase your offerings, images, and prices</p>
                   </div>
                 </div>
                 <div id="section-products" className="space-y-6 scroll-mt-6">
@@ -1421,8 +1415,7 @@ export default function SellersPage() {
                                 className={inp + " flex-1"}
                               >
                                 <option value="">Select subcategory...</option>
-                                {/* Agar seller ki main category select hai to uske subcategories dikhao */}
-                                {form.category && CATEGORY_SUBCATEGORIES[form.category]
+                                                                {form.category && CATEGORY_SUBCATEGORIES[form.category]
                                   ? CATEGORY_SUBCATEGORIES[form.category].map(sc => (
                                       <option key={sc} value={sc}>{sc}</option>
                                     ))
@@ -1458,8 +1451,7 @@ export default function SellersPage() {
                           <div key={prod.id || i} className={`rounded-xl border transition-all duration-200 ${isExpanded ? 'bg-white border-indigo-100 shadow-sm' : 'bg-gray-50 border-gray-100'}`}>
                             {/* ── Collapsed Header ── */}
                             <div className="flex items-center gap-3 p-3">
-                              {/* Thumbnail */}
-                              <div className="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center border border-gray-200">
+                                                            <div className="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center border border-gray-200">
                                 {prod.imageUrl
                                   ? <img src={prod.imageUrl} alt="" className="w-full h-full object-contain" />
                                   : <span className="text-xl">{prod.emoji || "📦"}</span>}
@@ -1473,8 +1465,7 @@ export default function SellersPage() {
                                 placeholder="Product name *"
                                 className={inp + " flex-1 text-sm"}
                               />
-                              {/* Home toggle */}
-                              <label className="flex items-center gap-1.5 flex-shrink-0 cursor-pointer bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 hover:bg-amber-100 transition">
+                                                            <label className="flex items-center gap-1.5 flex-shrink-0 cursor-pointer bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 hover:bg-amber-100 transition">
                                 <input type="checkbox" checked={!!prod.showOnHome} onChange={e => setArr("products", i, "showOnHome", e.target.checked)} className="w-3.5 h-3.5 accent-amber-500" />
                                 <span className="text-[10px] font-black text-amber-700 whitespace-nowrap">🏠 Home</span>
                               </label>
@@ -1491,8 +1482,7 @@ export default function SellersPage() {
                                     : <path d="m6 9 6 6 6-6" />}
                                 </svg>
                               </button>
-                              {/* Delete */}
-                              <button type="button" onClick={() => delArr("products", i)} className={delBtn}><X size={14} /></button>
+                                                            <button type="button" onClick={() => delArr("products", i)} className={delBtn}><X size={14} /></button>
                             </div>
 
                             {/* ── Expanded Body ── */}
@@ -1561,14 +1551,12 @@ export default function SellersPage() {
                                   <div><label className={fieldLabel}>Available Variants (comma sep.)</label><input type="text" value={prod.availableVariants || ""} onChange={e => setArr("products", i, "availableVariants", e.target.value)} placeholder="e.g. 100g, 500g, 1kg" className={inp_sm} /></div>
                                 </div>
 
-                                {/* Features */}
-                                <div className="pt-2 border-t border-gray-100">
+                                                                <div className="pt-2 border-t border-gray-100">
                                   <label className={fieldLabel}>Product Features (one per line, up to 4)</label>
                                   <textarea rows={4} value={prod.features || ""} onChange={e => setArr("products", i, "features", e.target.value)} placeholder="Feature 1\nFeature 2\nFeature 3\nFeature 4" className={ta + " text-xs"} />
                                 </div>
 
-                                {/* Ingredients */}
-                                <div className="pt-2 border-t border-gray-100">
+                                                                <div className="pt-2 border-t border-gray-100">
                                   <label className={fieldLabel}>Ingredients / Composition</label>
                                   <textarea rows={2} value={prod.ingredientsList || prod.ingredients || ""} onChange={e => setArr("products", i, "ingredientsList", e.target.value)} placeholder="e.g. Red Chili, Salt, Turmeric" className={ta + " text-xs"} />
                                   <div className="flex gap-4 mt-2 flex-wrap">
@@ -1581,8 +1569,7 @@ export default function SellersPage() {
                                   </div>
                                 </div>
 
-                                {/* Specifications */}
-                                <div className="pt-2 border-t border-gray-100">
+                                                                <div className="pt-2 border-t border-gray-100">
                                   <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Specifications</p>
                                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                     <div><label className={fieldLabel}>Product Type</label><input type="text" value={prod.productType || ""} onChange={e => setArr("products", i, "productType", e.target.value)} placeholder="e.g. Spice" className={inp_sm} /></div>
@@ -1600,26 +1587,22 @@ export default function SellersPage() {
                                   </label>
                                 </div>
 
-                                {/* Available Packaging */}
-                                <div>
+                                                                <div>
                                   <label className={fieldLabel}>Available Packaging (comma sep.)</label>
                                   <input type="text" value={prod.availablePackaging || ""} onChange={e => setArr("products", i, "availablePackaging", e.target.value)} placeholder="50g, 100g, 200g, 500g, 1kg, Bulk" className={inp_sm} />
                                 </div>
 
-                                {/* Benefits */}
-                                <div>
+                                                                <div>
                                   <label className={fieldLabel}>Benefits (one per line)</label>
                                   <textarea rows={3} value={prod.benefits || ""} onChange={e => setArr("products", i, "benefits", e.target.value)} placeholder="Authentic Taste\nPremium Ingredients\nNo Artificial Colours" className={ta + " text-xs"} />
                                 </div>
 
-                                {/* Usage Instructions */}
-                                <div>
+                                                                <div>
                                   <label className={fieldLabel}>Usage Instructions</label>
                                   <textarea rows={3} value={prod.usageInstructions || ""} onChange={e => setArr("products", i, "usageInstructions", e.target.value)} placeholder="Add 1 tsp to your recipe..." className={ta + " text-xs"} />
                                 </div>
 
-                                {/* Nutrition */}
-                                <div className="pt-2 border-t border-gray-100">
+                                                                <div className="pt-2 border-t border-gray-100">
                                   <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Nutritional Info (per 100g)</p>
                                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                     {[["nutritionEnergy","Energy (kcal)"],["nutritionProtein","Protein (g)"],["nutritionCarbs","Carbs (g)"],["nutritionSugar","Sugar (g)"],["nutritionFat","Fat (g)"],["nutritionSodium","Sodium (mg)"]].map(([key, label]) => (
@@ -1628,8 +1611,7 @@ export default function SellersPage() {
                                   </div>
                                 </div>
 
-                                {/* Quality Assurance */}
-                                <div className="pt-2 border-t border-gray-100">
+                                                                <div className="pt-2 border-t border-gray-100">
                                   <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Quality Assurance</p>
                                   <div className="flex flex-wrap gap-4">
                                     {[["isISOCertified","ISO Certified"],["isFSSAIApproved","FSSAI Approved"],["isGMPCertified","GMP Certified"],["isLabTested","Lab Tested"],["isQualityChecked","Quality Checked"]].map(([key, label]) => (
@@ -1641,14 +1623,12 @@ export default function SellersPage() {
                                   </div>
                                 </div>
 
-                                {/* Why Choose */}
-                                <div>
+                                                                <div>
                                   <label className={fieldLabel}>Why Choose (one point per line)</label>
                                   <textarea rows={3} value={prod.whyChoose || ""} onChange={e => setArr("products", i, "whyChoose", e.target.value)} placeholder="Premium Raw Materials\nTraditional Recipe\nExport Quality" className={ta + " text-xs"} />
                                 </div>
 
-                                {/* Industries */}
-                                <div>
+                                                                <div>
                                   <label className={fieldLabel}>Industries / Applications (comma sep.)</label>
                                   <input type="text" value={prod.industriesApplications || ""} onChange={e => setArr("products", i, "industriesApplications", e.target.value)} placeholder="Food Industry, Restaurants, Hotels" className={inp_sm} />
                                 </div>
@@ -1661,14 +1641,13 @@ export default function SellersPage() {
                         })}
                       </div>
                     </div>
-                </div>{/* end section-products */}
-
+                </div>
                 {/* ══ CONTACT & SOCIAL ══ */}
-                <div className="flex items-center gap-4 py-3 mb-2 mt-10 border-b-2 border-gray-200">
-                  <div className="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center text-rose-700 font-black text-2xl shadow-sm">4</div>
+                <div className="flex items-center gap-5 py-4 mb-4 mt-20">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-rose-200/50 rotate-[-4deg] transition-transform hover:rotate-0 duration-300">4</div>
                   <div>
-                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Contact & Social</h2>
-                    <p className="text-sm text-gray-500 font-bold">Address, phone numbers, and social media links</p>
+                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">Contact & Social</h2>
+                    <p className="text-sm text-gray-500 font-bold mt-0.5">Location, contact person, and social links</p>
                   </div>
                 </div>
                 <div id="section-contact" className="space-y-6 scroll-mt-6">
@@ -1687,16 +1666,18 @@ export default function SellersPage() {
                             <input type="tel" value={form.phone} onChange={e => sf("phone", e.target.value)} placeholder="+91 98765 43210" className={inp} />
                           </div>
                         </div>
-                        <label className="flex items-center gap-3 p-4 bg-orange-50/50 border border-orange-100 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors">
-                          <div className="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" className="sr-only peer" checked={!!(form.hideContact || form.hidePhone)} onChange={e => setForm(p => ({ ...p, hideContact: e.target.checked, hidePhone: e.target.checked }))} />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-gray-800">Hide Contact Details on Public Page</p>
-                            <p className="text-xs text-gray-500 mt-0.5">Seller's phone &amp; email will be hidden. Koop India's details will be shown instead.</p>
-                          </div>
-                        </label>
+                        {user?.role !== "seller" && (
+                          <label className="flex items-center gap-3 p-4 bg-orange-50/50 border border-orange-100 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors">
+                            <div className="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" className="sr-only peer" checked={!!(form.hideContact || form.hidePhone)} onChange={e => setForm(p => ({ ...p, hideContact: e.target.checked, hidePhone: e.target.checked }))} />
+                              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-gray-800">Hide Contact Details on Public Page</p>
+                              <p className="text-xs text-gray-500 mt-0.5">Seller's phone &amp; email will be hidden. Koop India's details will be shown instead.</p>
+                            </div>
+                          </label>
+                        )}
                         <div>
                           <label className={fieldLabel}>Email Address</label>
                           <input type="email" value={form.email} onChange={e => sf("email", e.target.value)} placeholder="info@yourbuyer.com" className={inp} />
@@ -1704,8 +1685,7 @@ export default function SellersPage() {
                       </div>
                     </div>
 
-                    {/* Contact Page Optional Banner */}
-                    <div className={sectionCard}>
+                                        <div className={sectionCard}>
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
                         <div><h3 className="text-sm font-black text-gray-900">Contact Page Banner <span className="text-gray-400 font-medium">(Optional)</span></h3><p className="text-[11px] text-gray-400 font-medium">Wide banner image shown at the top of the Contact Us page</p></div>
                       </div>
@@ -1748,14 +1728,9 @@ export default function SellersPage() {
                         ))}
                       </div>
                     </div>
-                </div>{/* end section-contact */}
-
-              </div>{/* end max-w-3xl inner */}
-            </div>{/* end flex-1 overflow-y-auto */}
-          </div>{/* end flex layout */}
-
-          {/* Mobile Save Bar */}
-          <div className="lg:hidden px-4 py-3 bg-white border-t border-gray-100 flex items-center justify-end gap-3">
+                </div>
+              </div>            </div>          </div>
+                    <div className="lg:hidden px-4 py-3 bg-white border-t border-gray-100 flex items-center justify-end gap-3">
             <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.name.trim()}
               className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-bold text-xs hover:bg-gray-50 transition disabled:opacity-50 cursor-pointer">
               <Save size={13} /> {isUploading ? "Uploading..." : "Draft"}

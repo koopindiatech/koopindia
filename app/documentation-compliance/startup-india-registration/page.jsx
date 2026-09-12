@@ -23,7 +23,6 @@ import { useModal } from "@/context/ModalContext";
 const StartupIndiaRegistrationPage = () => {
   const { isOpen, onOpenModal, onCloseModal } = useModal();
 
-  // SEO Keywords & Schema Data
   const seoKeywords = [
     "Startup India Registration",
     "DPIIT Recognition",
@@ -94,20 +93,17 @@ const StartupIndiaRegistrationPage = () => {
           href="https://www.koopindia.com/documentation-compliance/startup-india-registration"
         />
         
-        {/* Open Graph */}
-        <meta property="og:title" content="Startup India Registration | DPIIT Recognition | Koop India" />
+                <meta property="og:title" content="Startup India Registration | DPIIT Recognition | Koop India" />
         <meta property="og:description" content="Unlock tax benefits, funding & government support with expert-handled DPIIT Registration. Get started today!" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.koopindia.com/documentation-compliance/startup-india-registration" />
         <meta property="og:image" content="https://www.koopindia.com/images/startup-india-og.jpg" />
         
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Startup India Registration | Koop India" />
         <meta name="twitter:description" content="Get DPIIT Recognition with tax exemptions & government benefits. Expert support, 100% online." />
         
-        {/* Structured Data */}
-        <script
+                <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
@@ -139,15 +135,13 @@ const StartupIndiaRegistrationPage = () => {
 
         {/* ================= HERO SECTION ================= */}
         <section className="relative py-14 px-5 bg-gradient-to-br from-[#0F172A] via-[#141D32] to-[#1a2340] text-white overflow-hidden">
-          {/* Decorative Elements */}
-          <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0 opacity-10">
             <div className="absolute top-20 left-10 w-72 h-72 bg-[#F97316] rounded-full blur-3xl"></div>
             <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
           </div>
           
           <div className="relative max-w-7xl mx-auto text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm mb-6 border border-white/20">
+                        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm mb-6 border border-white/20">
               <ShieldCheck className="w-4 h-4 text-[#F97316]" />
               <span>95%+ Approval Success Rate</span>
             </div>
@@ -176,8 +170,7 @@ const StartupIndiaRegistrationPage = () => {
               </button>
             </div>
             
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
+                        <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-[#F97316]" />
                 <span>Expert CA/CS Support</span>
@@ -193,8 +186,7 @@ const StartupIndiaRegistrationPage = () => {
             </div>
           </div>
           
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
             <ChevronDown className="w-6 h-6 text-gray-400" />
           </div>
         </section>
@@ -261,8 +253,7 @@ const StartupIndiaRegistrationPage = () => {
                     ))}
                   </ul>
                 </div>
-                {/* Decorative */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#F97316]/20 rounded-full blur-2xl"></div>
+                                <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#F97316]/20 rounded-full blur-2xl"></div>
                 <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl"></div>
               </div>
             </div>
@@ -344,8 +335,7 @@ const StartupIndiaRegistrationPage = () => {
             </div>
 
             <div className="grid lg:grid-cols-2 gap-12">
-              {/* Criteria List */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                            <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
                 <h3 className="font-bold text-xl text-[#141D32] mb-6 flex items-center gap-3">
                   <CheckCircle className="w-6 h-6 text-[#F97316]" />
                   Your Business Must:
@@ -375,8 +365,7 @@ const StartupIndiaRegistrationPage = () => {
                 </button>
               </div>
 
-              {/* Visual Card */}
-              <div className="relative">
+                            <div className="relative">
                 <div className="bg-gradient-to-br from-[#0F172A] to-[#141D32] rounded-3xl p-8 text-white h-full">
                   <h3 className="text-xl font-bold mb-6">💡 Pro Tips for Approval</h3>
                   <ul className="space-y-4 text-gray-200">
@@ -420,8 +409,7 @@ const StartupIndiaRegistrationPage = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
-              {/* Mandatory */}
-              <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                            <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
                     <CheckCircle className="w-5 h-5 text-green-600" />
@@ -445,8 +433,7 @@ const StartupIndiaRegistrationPage = () => {
                 </ul>
               </div>
 
-              {/* Supporting */}
-              <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+                            <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
                     <FileText className="w-5 h-5 text-blue-600" />
@@ -494,8 +481,7 @@ const StartupIndiaRegistrationPage = () => {
             </div>
 
             <div className="relative">
-              {/* Connection Line */}
-              <div className="hidden lg:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-[#F97316]/20 via-[#F97316] to-[#F97316]/20"></div>
+                            <div className="hidden lg:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-[#F97316]/20 via-[#F97316] to-[#F97316]/20"></div>
               
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
@@ -510,8 +496,7 @@ const StartupIndiaRegistrationPage = () => {
                     key={i}
                     className="relative bg-white p-6 rounded-2xl border border-slate-200 hover:border-[#F97316] hover:shadow-lg transition-all duration-300 group"
                   >
-                    {/* Step Number */}
-                    <div className="absolute -top-4 left-6 w-8 h-8 bg-[#F97316] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/30">
+                                        <div className="absolute -top-4 left-6 w-8 h-8 bg-[#F97316] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/30">
                       {item.step}
                     </div>
                     
@@ -526,8 +511,7 @@ const StartupIndiaRegistrationPage = () => {
               </div>
             </div>
 
-            {/* Timeline Note */}
-            <div className="mt-10 text-center">
+                        <div className="mt-10 text-center">
               <div className="inline-flex items-center gap-3 bg-slate-100 px-6 py-3 rounded-full">
                 <Clock className="w-5 h-5 text-[#F97316]" />
                 <span className="text-gray-700">
@@ -659,8 +643,7 @@ const StartupIndiaRegistrationPage = () => {
               ))}
             </div>
             
-            {/* Testimonial Snippet */}
-            <div className="mt-12 bg-white rounded-3xl p-8 border border-slate-200 max-w-5xl mx-auto">
+                        <div className="mt-12 bg-white rounded-3xl p-8 border border-slate-200 max-w-5xl mx-auto">
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
@@ -724,7 +707,6 @@ const StartupIndiaRegistrationPage = () => {
             </div>
           </div>
         </section>
-
 
         {/* ================= ENQUIRY MODAL ================= */}
         <EnquiryModal isOpen={isOpen} onClose={onCloseModal} />

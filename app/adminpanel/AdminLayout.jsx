@@ -41,8 +41,7 @@ function SidebarContent({ user, collapsed, allowedNav, isActive, onLinkClick, on
         </div>
       )}
 
-      {/* Nav */}
-      <nav className="flex-1 px-2 py-2.5 space-y-0.5 overflow-y-auto">
+            <nav className="flex-1 px-2 py-2.5 space-y-0.5 overflow-y-auto">
         {allowedNav.map((item) => {
           const Icon = item.icon;
           const active = isActive(item);
@@ -183,7 +182,14 @@ export default function AdminLayout({ children }) {
   // ── Filter nav by permission ─────────────────────────────────
   const allowedNav = NAV_ITEMS.filter((item) => {
     if (user?.role === "admin") return true;
+    if (user?.role === "seller") return item.key === "leads" || item.key === "sellers";
+    if (user?.role === "buyer") return item.key === "leads" || item.key === "buyers";
     return item.key === "leads"; // non-admins only see leads
+  }).map(item => {
+    if (user?.role === "seller" && item.key === "sellers") return { ...item, label: "My Listing" };
+    if (user?.role === "buyer" && item.key === "buyers") return { ...item, label: "My Profile" };
+    if ((user?.role === "seller" || user?.role === "buyer") && item.key === "leads") return { ...item, label: "My Leads" };
+    return item;
   });
 
   // ── Permission denied for current route ─────────────────────
@@ -193,7 +199,7 @@ export default function AdminLayout({ children }) {
   const accessDenied =
     currentKey &&
     user?.role !== "admin" &&
-    currentKey !== "leads";
+    !allowedNav.some(n => n.key === currentKey);
 
   const isActive = (item) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -210,14 +216,12 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
-      {/* Desktop Sidebar */}
-      <aside className={`hidden md:flex flex-col bg-white border-r border-gray-200 shadow-sm transition-all duration-300 flex-shrink-0 ${collapsed ? "w-14" : "w-58"}`}
+            <aside className={`hidden md:flex flex-col bg-white border-r border-gray-200 shadow-sm transition-all duration-300 flex-shrink-0 ${collapsed ? "w-14" : "w-58"}`}
         style={{ width: collapsed ? "56px" : "230px" }}>
         <SidebarContent {...sidebarProps} />
       </aside>
 
-      {/* Mobile overlay */}
-      {mobileOpen && (
+            {mobileOpen && (
         <div className="fixed inset-0 bg-black/40 z-40 md:hidden" onClick={() => setMobileOpen(false)} />
       )}
       <aside className={`fixed top-0 left-0 h-full w-60 bg-white border-r border-gray-200 shadow-xl z-50 transition-transform duration-300 md:hidden flex flex-col ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -227,8 +231,7 @@ export default function AdminLayout({ children }) {
         <SidebarContent {...sidebarProps} />
       </aside>
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar — darker */}
         <header className="h-13 bg-white border-b border-gray-200 shadow-sm flex items-center px-4 gap-4 flex-shrink-0" style={{ height: "52px" }}>
           <button onClick={() => setMobileOpen(true)} className="md:hidden text-gray-500 hover:text-gray-800">
@@ -241,8 +244,7 @@ export default function AdminLayout({ children }) {
             {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
 
-          {/* Search */}
-          <div className="flex-1 max-w-md">
+                    <div className="flex-1 max-w-md">
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
@@ -268,8 +270,7 @@ export default function AdminLayout({ children }) {
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-5 md:p-6">
+                <main className="flex-1 overflow-y-auto p-5 md:p-6">
           {accessDenied ? (
             <div className="flex flex-col items-center justify-center h-full text-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center">

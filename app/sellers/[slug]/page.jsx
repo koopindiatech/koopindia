@@ -70,7 +70,6 @@ export default function SellerPublicPage() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  // Close product dropdown on outside click
   useEffect(() => {
     const handleClick = (e) => {
       if (prodDropRef.current && !prodDropRef.current.contains(e.target)) setProdDropOpen(false);
@@ -312,13 +311,11 @@ export default function SellerPublicPage() {
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
 
-      {/* NAVBAR */}
-      <header className={`sticky top-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-md" : "shadow-sm border-b border-gray-100"}`} style={{ backgroundColor: hBg }}>
+            <header className={`sticky top-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-md" : "shadow-sm border-b border-gray-100"}`} style={{ backgroundColor: hBg }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 gap-4">
 
-            {/* Logo always left */}
-            <button onClick={() => setTab("home")} className="flex-shrink-0 cursor-pointer"><Logo /></button>
+                        <button onClick={() => setTab("home")} className="flex-shrink-0 cursor-pointer"><Logo /></button>
 
             {/* Nav items — LEFT alignment */}
             {navAlign === "left" && (
@@ -327,8 +324,7 @@ export default function SellerPublicPage() {
               </nav>
             )}
 
-            {/* Right side area */}
-            <div className="flex items-center gap-2 ml-auto">
+                        <div className="flex items-center gap-2 ml-auto">
               {/* Nav items — RIGHT alignment */}
               {navAlign !== "left" && (
                 <nav className="hidden md:flex items-center gap-1 mr-3">
@@ -349,8 +345,7 @@ export default function SellerPublicPage() {
           </div>
         </div>
 
-        {/* Mobile menu */}
-        {mob && (
+                {mob && (
           <div className="md:hidden border-t border-gray-100 py-3 px-4 space-y-1 shadow-lg" style={{ backgroundColor: hBg }}>
             {NAV.map(t => (
               <button key={t} onClick={() => { setTab(t); setMob(false); }}
@@ -374,16 +369,14 @@ export default function SellerPublicPage() {
       {/* ══ HOME ══ */}
       {tab === "home" && !selProd && (
         <div>
-          {/* Hero Banner Slider */}
-          <div className="relative overflow-hidden flex items-end pb-12 group" style={{ backgroundColor: heroBannerBg, minHeight: "clamp(600px, 75vh, 900px)" }}>
+                    <div className="relative overflow-hidden flex items-end pb-12 group" style={{ backgroundColor: heroBannerBg, minHeight: "clamp(600px, 75vh, 900px)" }}>
             {banners.map((url, idx) => (
               <div key={idx}
                 className={`absolute inset-0 transition-opacity duration-1000 ${currentSlide === idx ? "opacity-100" : "opacity-0 z-0"}`}
                 style={{ backgroundImage: `url("${url}")`, backgroundSize: "cover", backgroundPosition: "center" }} />
             ))}
 
-            {/* Controls */}
-            {banners.length > 1 && (
+                        {banners.length > 1 && (
               <>
                 <button onClick={() => setCurrentSlide(s => (s - 1 + banners.length) % banners.length)}
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-md">
@@ -418,8 +411,7 @@ export default function SellerPublicPage() {
             </div>
           </div>
 
-          {/* Stats Bar */}
-          {stats.filter(s => s.value).length > 0 && (
+                    {stats.filter(s => s.value).length > 0 && (
             <div className="shadow-sm" style={{ backgroundColor: statsBgColor || homeBg }}>
               <div className={`max-w-7xl mx-auto px-5 py-2 flex flex-wrap gap-0 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
                 {stats.filter(s => s.value).map((s, i, arr) => (
@@ -473,8 +465,7 @@ export default function SellerPublicPage() {
             </div>
           )}
 
-          {/* Home Featured Products */}
-          {homeProd.length > 0 && (
+                    {homeProd.length > 0 && (
             <div className="py-14 px-5 sm:px-10" style={{ backgroundColor: homeProductsBg }}>
               <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-10">
@@ -602,8 +593,6 @@ export default function SellerPublicPage() {
             </div>
           )}
 
-
-
           {/* About — Products Section — full-width bg */}
           {products.length > 0 && (
             <div className="py-16" style={{ backgroundColor: aboutBg }}>
@@ -658,8 +647,7 @@ export default function SellerPublicPage() {
       {/* ══ CONTACT ══ */}
       {tab === "contact" && !selProd && (
         <div>
-          {/* Optional Contact Banner */}
-          {seller.contactBannerUrl && (
+                    {seller.contactBannerUrl && (
             <div className="w-full overflow-hidden" style={{ maxHeight: "340px" }}>
               <img src={seller.contactBannerUrl} alt="Contact Banner" className="w-full object-cover" style={{ maxHeight: "340px" }} />
             </div>
@@ -667,8 +655,7 @@ export default function SellerPublicPage() {
 
           <div className="min-h-screen" style={{ backgroundColor: contactBg }}>
             <div className="max-w-7xl mx-auto px-5 sm:px-8 py-16">
-              {/* Header */}
-              <div className="text-center mb-14">
+                            <div className="text-center mb-14">
                 <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: pc }}>Get In Touch</p>
                 <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3">We'd love to hear from you</h2>
                 <p className="text-gray-500 text-base max-w-xl mx-auto">Reach out to us for any inquiries, partnerships, or distributor opportunities.</p>
@@ -743,8 +730,7 @@ export default function SellerPublicPage() {
                     </div>
                   </div>
 
-                  {/* Social icons */}
-                  {Object.values(social).some(Boolean) && (
+                                    {Object.values(social).some(Boolean) && (
                     <div className="mt-10 pt-8 border-t border-white/20">
                       <p className="text-white/60 text-xs font-black uppercase tracking-widest mb-4">Follow Us</p>
                       <div className="flex gap-3">
@@ -838,8 +824,7 @@ export default function SellerPublicPage() {
         const curTab = allProdTabs.find(t => t.id === prodTab) ? prodTab : (allProdTabs[0]?.id || "description");
         return (
           <div className="min-h-[80vh]" style={{ backgroundColor: productsBg || "#f8fafc" }}>
-            {/* Breadcrumb bar */}
-            <div className="border-b border-gray-200 bg-white px-4 sm:px-8 py-3 flex items-center gap-4">
+                        <div className="border-b border-gray-200 bg-white px-4 sm:px-8 py-3 flex items-center gap-4">
               <button onClick={() => setSelProd(null)}
                 className="flex items-center gap-2 text-sm font-black px-4 py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 transition cursor-pointer shadow-sm"
                 style={{ color: pc }}>
@@ -856,8 +841,7 @@ export default function SellerPublicPage() {
             <div className="max-w-6xl mx-auto px-4 sm:px-8 py-12">
               {/* Top: Image + Info grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                {/* Left: Product image */}
-                <div className="lg:sticky lg:top-24">
+                                <div className="lg:sticky lg:top-24">
                   <div className="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden relative">
                     {selProd.badge && (
                       <div className="absolute top-0 left-0 z-10 overflow-hidden w-28 h-28 pointer-events-none">
@@ -874,8 +858,7 @@ export default function SellerPublicPage() {
                   </div>
                 </div>
 
-                {/* Right: Details */}
-                <div className="space-y-6">
+                                <div className="space-y-6">
                   <div>
                     <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight mb-3" style={{ fontFamily: "Georgia, serif" }}>{selProd.name}</h1>
                     {selProd.tagline && <p className="text-base text-gray-600 font-medium mb-4">{selProd.tagline}</p>}
@@ -887,8 +870,7 @@ export default function SellerPublicPage() {
                     {selProd.description && <p className="text-gray-600 leading-relaxed text-sm mb-4">{selProd.description}</p>}
                   </div>
 
-                  {/* Quick meta grid */}
-                  <div className="grid grid-cols-2 gap-y-3 gap-x-6 border-b border-gray-200 pb-5">
+                                    <div className="grid grid-cols-2 gap-y-3 gap-x-6 border-b border-gray-200 pb-5">
                     <div><p className="text-xs font-bold text-gray-400 mb-0.5">Brand</p><p className="text-sm font-semibold text-gray-800">{seller.name}</p></div>
                     {selProd.netWeight && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Net Weight</p><p className="text-sm font-semibold text-gray-800">{selProd.netWeight}</p></div>}
                     {selProd.productType && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Product Type</p><p className="text-sm font-semibold text-gray-800">{selProd.productType}</p></div>}
@@ -897,8 +879,7 @@ export default function SellerPublicPage() {
                     {selProd.shelfLife && <div><p className="text-xs font-bold text-gray-400 mb-0.5">Shelf Life</p><p className="text-sm font-semibold text-gray-800">{selProd.shelfLife}</p></div>}
                   </div>
 
-                  {/* Pack sizes */}
-                  {(selProd.availablePackaging || selProd.availableVariants) && (
+                                    {(selProd.availablePackaging || selProd.availableVariants) && (
                     <div>
                       <p className="text-sm font-black text-gray-900 mb-3">Available Pack Sizes</p>
                       <div className="flex flex-wrap gap-2">
@@ -935,8 +916,7 @@ export default function SellerPublicPage() {
               {/* ── TABS SECTION ── */}
               {allProdTabs.length > 0 && (
                 <div className="mt-12 bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-10">
-                  {/* Tab nav */}
-                  <div className="border-b border-gray-200 overflow-x-auto scrollbar-none mb-10">
+                                    <div className="border-b border-gray-200 overflow-x-auto scrollbar-none mb-10">
                     <div className="flex min-w-max gap-2">
                       {allProdTabs.map(t => (
                         <button key={t.id} onClick={() => setProdTab(t.id)}
@@ -951,10 +931,8 @@ export default function SellerPublicPage() {
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
-                    {/* Left side: Tab content */}
-                    <div className="lg:col-span-3">
-                      {/* DESCRIPTION */}
-                      {curTab === "description" && (
+                                        <div className="lg:col-span-3">
+                                            {curTab === "description" && (
                         <div className="space-y-8">
                           {selProd.about && (
                             <div>
@@ -1009,8 +987,7 @@ export default function SellerPublicPage() {
                         </div>
                       )}
 
-                      {/* SPECIFICATIONS */}
-                      {curTab === "specifications" && (
+                                            {curTab === "specifications" && (
                         <div>
                           <table className="w-full">
                             <tbody>
@@ -1059,15 +1036,13 @@ export default function SellerPublicPage() {
                         </div>
                       )}
 
-                      {/* INGREDIENTS */}
-                      {curTab === "ingredients" && (
+                                            {curTab === "ingredients" && (
                         <div>
                           <p className="text-gray-600 leading-relaxed text-lg">{selProd.ingredientsList || selProd.ingredients}</p>
                         </div>
                       )}
 
-                      {/* APPLICATIONS */}
-                      {curTab === "applications" && (
+                                            {curTab === "applications" && (
                         <div className="space-y-6">
                           {selProd.industriesApplications && (
                             <div>
@@ -1091,8 +1066,7 @@ export default function SellerPublicPage() {
                         </div>
                       )}
 
-                      {/* BULK & EXPORT */}
-                      {curTab === "bulk" && (
+                                            {curTab === "bulk" && (
                         <div className="space-y-6">
                           {(selProd.availablePackaging || selProd.availableVariants) && (
                             <div>
@@ -1113,8 +1087,7 @@ export default function SellerPublicPage() {
                         </div>
                       )}
 
-                      {/* NUTRITION */}
-                      {curTab === "nutrition" && (
+                                            {curTab === "nutrition" && (
                         <div>
                           <p className="text-sm text-gray-500 mb-4 font-medium uppercase tracking-wider">Approximate values per 100g serving</p>
                           <table className="w-full">
@@ -1138,8 +1111,7 @@ export default function SellerPublicPage() {
                       )}
                     </div>
 
-                    {/* Right side: Wholesale Inquiry Form */}
-                    <div className="lg:col-span-2">
+                                        <div className="lg:col-span-2">
                       <div className="rounded-2xl p-6 sm:p-8" style={{ backgroundColor: productsBg === "#ffffff" ? "#f4ede4" : (productsBg || "#f4ede4") }}>
                         <h3 className="text-2xl font-bold text-gray-900 mb-6">Get Wholesale Price</h3>
                         {wsSuccess ? (

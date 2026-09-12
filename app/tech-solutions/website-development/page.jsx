@@ -28,7 +28,6 @@ import { useModal } from "@/context/ModalContext";
 const WebsiteDevelopmentPage = () => {
   const { isOpen, onOpenModal, onCloseModal } = useModal();
 
-  // SEO Keywords
   const seoKeywords = [
     "Website Development Services India",
     "Professional Web Development",
@@ -42,7 +41,6 @@ const WebsiteDevelopmentPage = () => {
     "Koop India Web Services",
   ].join(", ");
 
-  // FAQ Schema for Rich Snippets
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -101,8 +99,7 @@ const WebsiteDevelopmentPage = () => {
           href="https://www.koopindia.com/tech-solutions/website-development"
         />
 
-        {/* Open Graph */}
-        <meta
+                <meta
           property="og:title"
           content="Professional Website Development Services | Koop India"
         />
@@ -120,8 +117,7 @@ const WebsiteDevelopmentPage = () => {
           content="https://www.koopindia.com/images/web-dev-og.jpg"
         />
 
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
           content="Website Development Services | Koop India"
@@ -131,8 +127,7 @@ const WebsiteDevelopmentPage = () => {
           content="Build a powerful digital presence with conversion-focused websites. Free consultation available."
         />
 
-        {/* Structured Data */}
-        <script
+                <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
@@ -166,15 +161,13 @@ const WebsiteDevelopmentPage = () => {
       <div className="bg-white text-gray-700 font-sans antialiased">
         {/* ================= HERO SECTION ================= */}
         <section className="relative py-14 px-5 bg-gradient-to-br from-[#0F172A] via-[#141D32] to-[#1a2340] text-white overflow-hidden">
-          {/* Decorative Elements */}
-          <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0 opacity-10">
             <div className="absolute top-20 right-10 w-72 h-72 bg-[#F97316] rounded-full blur-3xl"></div>
             <div className="absolute bottom-10 left-10 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
           </div>
 
           <div className="relative max-w-7xl mx-auto text-center">
-            {/* Badge */}
-
+            
             <h1 className="text-4xl md:text-5xl  font-bold mb-6 leading-tight">
               Professional{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-orange-400">
@@ -203,8 +196,7 @@ const WebsiteDevelopmentPage = () => {
               </button>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
+                        <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-[#F97316]" />
                 <span>50+ Websites Delivered</span>
@@ -220,8 +212,7 @@ const WebsiteDevelopmentPage = () => {
             </div>
           </div>
 
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
             <ChevronDown className="w-6 h-6 text-gray-400" />
           </div>
         </section>
@@ -300,8 +291,7 @@ const WebsiteDevelopmentPage = () => {
                     ))}
                   </ul>
                 </div>
-                {/* Decorative */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#F97316]/20 rounded-full blur-2xl"></div>
+                                <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#F97316]/20 rounded-full blur-2xl"></div>
                 <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl"></div>
               </div>
             </div>
@@ -547,8 +537,7 @@ const WebsiteDevelopmentPage = () => {
             </div>
 
             <div className="relative">
-              {/* Connection Line */}
-              <div className="hidden lg:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-[#F97316]/20 via-[#F97316] to-[#F97316]/20"></div>
+                            <div className="hidden lg:block absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-[#F97316]/20 via-[#F97316] to-[#F97316]/20"></div>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
@@ -587,8 +576,7 @@ const WebsiteDevelopmentPage = () => {
                     key={i}
                     className="relative bg-white p-6 rounded-2xl border border-slate-200 hover:border-[#F97316] hover:shadow-lg transition-all duration-300 group"
                   >
-                    {/* Step Number */}
-                    <div className="absolute -top-4 left-6 w-8 h-8 bg-[#F97316] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/30">
+                                        <div className="absolute -top-4 left-6 w-8 h-8 bg-[#F97316] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-orange-500/30">
                       {item.step}
                     </div>
 
@@ -603,8 +591,7 @@ const WebsiteDevelopmentPage = () => {
               </div>
             </div>
 
-            {/* Timeline Note */}
-            <div className="mt-10 text-center">
+                        <div className="mt-10 text-center">
               <div className="inline-flex items-center gap-3 bg-slate-100 px-6 py-3 rounded-full">
                 <Clock className="w-5 h-5 text-[#F97316]" />
                 <span className="text-gray-700">
@@ -721,8 +708,7 @@ const WebsiteDevelopmentPage = () => {
               ))}
             </div>
 
-            {/* Testimonial */}
-            <div className="mt-12 bg-white rounded-3xl p-8 border border-slate-200 max-w-5xl mx-auto">
+                        <div className="mt-12 bg-white rounded-3xl p-8 border border-slate-200 max-w-5xl mx-auto">
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star

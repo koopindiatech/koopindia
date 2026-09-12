@@ -128,8 +128,7 @@ export const metadata = {
 export default function Page() {
   return (
     <>
-      {/* Structured Data */}
-      <script
+            <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />

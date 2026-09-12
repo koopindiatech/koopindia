@@ -87,8 +87,7 @@ const Page = () => {
   
   return (
     <div className="bg-[#141d32] text-white px-6 md:px-10 py-20">
-      {/* Section Heading */}
-      <div className="text-center mb-16">
+            <div className="text-center mb-16">
         <h1 className="text-5xl font-extrabold mb-6">
           Our <span className="text-[#F97316]">Packages</span>
         </h1>
@@ -99,27 +98,23 @@ const Page = () => {
         </p>
       </div>
 
-      {/* Packages Grid */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
         {packages.map((pkg, index) => (
           <div
             key={index}
             className="bg-white text-[#141d32] rounded-2xl border-t-4 border-[#F97316] hover:shadow-2xl transition-transform transform hover:-translate-y-2 p-4 flex flex-col"
           >
-            {/* Image */}
-            <Image
+                        <Image
               src={pkg.image}
               alt={pkg.title}
               width={400} height={300}
               className="w-full object-cover rounded-xl mb-6 h-90"
             />
 
-            {/* Title */}
-            <h2 className="text-2xl font-bold mb-2">{pkg.title}</h2>
+                        <h2 className="text-2xl font-bold mb-2">{pkg.title}</h2>
             <p className="text-gray-600 mb-6">{pkg.subtitle}</p>
 
-            {/* Why Choose */}
-            <h3 className="text-xl font-semibold text-[#F97316] mb-3">
+                        <h3 className="text-xl font-semibold text-[#F97316] mb-3">
               Why Choose?
             </h3>
             <ul className="list-disc list-inside text-gray-700 mb-6 space-y-2">
@@ -128,8 +123,7 @@ const Page = () => {
               ))}
             </ul>
 
-            {/* Deliverables */}
-            <h3 className="text-xl font-semibold text-[#F97316] mb-3">
+                        <h3 className="text-xl font-semibold text-[#F97316] mb-3">
               Deliverables
             </h3>
             <table className="w-full text-sm text-left mb-6 border-collapse">
@@ -143,8 +137,7 @@ const Page = () => {
               </tbody>
             </table>
 
-            {/* Price */}
-            <div className="mt-auto">
+                        <div className="mt-auto">
               <p className="text-2xl font-bold text-[#F97316] mb-4">
                 {pkg.price}
               </p>
@@ -154,8 +147,7 @@ const Page = () => {
         ))}
       </div>
 
-      {/* Final CTA Section */}
-      <div className="max-w-6xl mx-auto mt-24 bg-[#141d32]">
+            <div className="max-w-6xl mx-auto mt-24 bg-[#141d32]">
         <section className="py-16 px-6 md:px-12 bg-gradient-to-r from-[#4b515d] via-[#1b2439] to-[#141d32] text-center rounded-3xl shadow-xl">
           <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-white leading-tight">
             Let’s Build Your <span className="text-[#F97316]">Growth Story</span>{" "}

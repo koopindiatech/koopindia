@@ -119,8 +119,7 @@ const DistributorPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-blue-50/30">
-      {/* Hero Section */}
-      <section className="pt-24 pb-16 px-6 lg:px-8 bg-gradient-to-br from-white via-orange-50/20 to-slate-50/50">
+            <section className="pt-24 pb-16 px-6 lg:px-8 bg-gradient-to-br from-white via-orange-50/20 to-slate-50/50">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-[#141d32]">
@@ -163,8 +162,7 @@ const DistributorPage = () => {
         </div>
       </section>
 
-      {/* Quick Features */}
-      <section className="py-16 px-6 lg:px-8 bg-gradient-to-r from-gray-50/80 via-white to-yellow-50/40">
+            <section className="py-16 px-6 lg:px-8 bg-gradient-to-r from-gray-50/80 via-white to-yellow-50/40">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-6">
             {quickFeatures.map((feature, index) => (
@@ -180,8 +178,7 @@ const DistributorPage = () => {
         </div>
       </section>
 
-      {/* Where Distributors Meet Innovation */}
-      <section className="py-20 px-6 lg:px-8 bg-gradient-to-b from-white via-slate-50/30 to-orange-50/20">
+            <section className="py-20 px-6 lg:px-8 bg-gradient-to-b from-white via-slate-50/30 to-orange-50/20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-4xl font-bold text-[#141d32] mb-6">
@@ -206,8 +203,7 @@ const DistributorPage = () => {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 px-6 lg:px-8 bg-gradient-to-br from-gray-50/60 via-blue-50/30 to-slate-50/40">
+            <section className="py-20 px-6 lg:px-8 bg-gradient-to-br from-gray-50/60 via-blue-50/30 to-slate-50/40">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-4xl font-bold text-[#141d32] mb-4">
@@ -241,8 +237,7 @@ const DistributorPage = () => {
         </div>
       </section>
 
-      {/* Quality Section */}
-      <section className="py-20 px-6 lg:px-8 bg-gradient-to-t from-slate-50/50 via-white to-yellow-50/30">
+            <section className="py-20 px-6 lg:px-8 bg-gradient-to-t from-slate-50/50 via-white to-yellow-50/30">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-4xl font-bold text-[#141d32] mb-4">
@@ -267,8 +262,7 @@ const DistributorPage = () => {
         </div>
       </section>
 
-      {/* Mobile App Promotion */}
-      <section className="py-20 px-6 lg:px-8 bg-gradient-to-r from-gray-50/80 via-white to-orange-50/40">
+            <section className="py-20 px-6 lg:px-8 bg-gradient-to-r from-gray-50/80 via-white to-orange-50/40">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -318,8 +312,7 @@ const DistributorPage = () => {
         </div>
       </section>
 
-      {/* Process Section */}
-      <section className="py-20 px-6 lg:px-8 bg-gradient-to-b from-white via-slate-50/30 to-blue-50/20">
+            <section className="py-20 px-6 lg:px-8 bg-gradient-to-b from-white via-slate-50/30 to-blue-50/20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-[#141d32] mb-4">
@@ -363,8 +356,7 @@ const DistributorPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-6 lg:px-8 bg-[#F97316]">
+            <section className="py-20 px-6 lg:px-8 bg-[#F97316]">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-4">
             Ready to Find Your Next Top Seller?

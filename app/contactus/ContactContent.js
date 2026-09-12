@@ -52,8 +52,7 @@ const Page = () => {
   return (
     <section className="bg-gradient-to-br from-white to-gray-50 text-[#141d32] px-6 md:px-8 py-14">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
+                <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
             Contact <span className="text-[#F97316]">Us</span>
           </h1>
@@ -64,8 +63,7 @@ const Page = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left Side - Contact Info & CTA */}
-          <div className="space-y-8">
+                    <div className="space-y-8">
             <div>
               <h2 className="text-4xl font-bold mb-6">
                 Let&apos;s Start Your{" "}
@@ -78,8 +76,7 @@ const Page = () => {
                 we&apos;re your trusted growth partner.
               </p>
 
-              {/* Enquiry Button */}
-              <button
+                            <button
                 onClick={onOpenModal}
                 className="bg-gradient-to-r from-[#F97316] to-orange-500 text-white px-8 py-3 rounded-xl 
                 font-semibold text-lg shadow-xl hover:shadow-2xl hover:from-orange-600 hover:to-orange-600 
@@ -102,13 +99,11 @@ const Page = () => {
               </button>
             </div>
 
-            {/* Contact Methods */}
-            <div className="space-y-6">
+                        <div className="space-y-6">
               <h3 className="text-2xl font-bold mb-6">Get In Touch</h3>
 
               <div className="space-y-4">
-                {/* Email */}
-                <div className="flex items-center space-x-4 p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                                <div className="flex items-center space-x-4 p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-[#F97316] to-orange-500 rounded-full flex items-center justify-center">
                     <svg
                       className="w-6 h-6 text-white"
@@ -132,8 +127,7 @@ const Page = () => {
                   </div>
                 </div>
 
-                {/* Phone */}
-                <div className="flex items-center space-x-4 p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                                <div className="flex items-center space-x-4 p-4 bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                   <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-[#F97316] to-orange-500 rounded-full flex items-center justify-center">
                     <svg
                       className="w-6 h-6 text-white"
@@ -157,8 +151,7 @@ const Page = () => {
                   </div>
                 </div>
 
-                {/* Address */}
-                <div className="space-y-4">
+                                <div className="space-y-4">
                   {branches.map((branch, index) => (
                     <div
                       key={index}
@@ -200,11 +193,9 @@ const Page = () => {
             </div>
           </div>
 
-          {/* Right Side - Contact Form */}
-          <div className="relative">
+                    <div className="relative">
             <div className="bg-gradient-to-br from-[#141d32] to-gray-800 rounded-2xl p-8 text-white relative overflow-hidden">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-10">
+                            <div className="absolute inset-0 opacity-10">
                 <div className="absolute top-4 right-4 w-20 h-20 border border-white/20 rounded-full"></div>
                 <div className="absolute top-12 right-12 w-8 h-8 border border-white/20 rounded-full"></div>
                 <div className="absolute bottom-8 left-8 w-16 h-16 border border-white/20 rounded-full"></div>
@@ -293,8 +284,7 @@ const Page = () => {
                   </button>
                 </form>
 
-                {/* Stats */}
-                <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/10">
+                                <div className="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-white/10">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-[#F97316]">100+</div>
                     <div className="text-sm text-gray-300">Happy Clients</div>

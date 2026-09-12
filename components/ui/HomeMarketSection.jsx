@@ -66,8 +66,7 @@ export function HomeLatestSellers() {
     <section className="py-12 px-4 sm:px-6 bg-[#f8fafc]">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header row */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <p className="text-[#F97316] text-xs font-black uppercase tracking-widest mb-1">Buyer Directory</p>
             <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight">
@@ -80,8 +79,7 @@ export function HomeLatestSellers() {
           </Link>
         </div>
 
-        {/* Seller search bar */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 mb-6">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-3 mb-6">
           <div className="flex gap-2">
             <div className="flex items-center flex-1 gap-2 px-3 bg-[#f8fafc] rounded-xl border border-gray-200">
               <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth={2.5}>
@@ -106,8 +104,7 @@ export function HomeLatestSellers() {
             </button>
           </div>
 
-          {/* Quick filters */}
-          <div className="flex flex-wrap gap-1.5 mt-2.5">
+                    <div className="flex flex-wrap gap-1.5 mt-2.5">
             {SELLER_CATS.map(cat => (
               <button key={cat} onClick={() => { setSearch(cat); runSearch(cat); }}
                 className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-gray-100 hover:bg-[#1e3a5f] hover:text-white text-gray-600 transition-all">
@@ -117,8 +114,7 @@ export function HomeLatestSellers() {
           </div>
         </div>
 
-        {/* Status bar when searching */}
-        {results !== null && (
+                {results !== null && (
           <div ref={resultsRef} className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <p className="text-sm font-bold text-[#1e3a5f]">
               {searching ? "Searching..." : results.length > 0
@@ -132,8 +128,7 @@ export function HomeLatestSellers() {
           </div>
         )}
 
-        {/* Grid */}
-        {searching ? (
+                {searching ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[...Array(6)].map((_, i) => <Skeleton key={i} cls="h-44" />)}
           </div>
@@ -206,8 +201,7 @@ export function HomeLatestBuyers() {
     <section className="py-12 px-4 sm:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header row */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <p className="text-[#F97316] text-xs font-black uppercase tracking-widest mb-1">Buyer Listings</p>
             <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight">
@@ -220,8 +214,7 @@ export function HomeLatestBuyers() {
           </Link>
         </div>
 
-        {/* Buyer search bar */}
-        <div className="bg-[#fff8f3] rounded-2xl border border-orange-100 shadow-sm p-3 mb-6">
+                <div className="bg-[#fff8f3] rounded-2xl border border-orange-100 shadow-sm p-3 mb-6">
           <div className="flex gap-2">
             <div className="flex items-center flex-1 gap-2 px-3 bg-white rounded-xl border border-orange-100">
               <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth={2.5}>
@@ -246,8 +239,7 @@ export function HomeLatestBuyers() {
             </button>
           </div>
 
-          {/* Quick filters */}
-          <div className="flex flex-wrap gap-1.5 mt-2.5">
+                    <div className="flex flex-wrap gap-1.5 mt-2.5">
             {BUYER_CATS.map(cat => (
               <button key={cat} onClick={() => { setSearch(cat); runSearch(cat); }}
                 className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-orange-50 hover:bg-[#F97316] hover:text-white text-orange-600 border border-orange-100 transition-all">
@@ -257,8 +249,7 @@ export function HomeLatestBuyers() {
           </div>
         </div>
 
-        {/* Status bar */}
-        {results !== null && (
+                {results !== null && (
           <div ref={resultsRef} className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <p className="text-sm font-bold text-[#1e3a5f]">
               {searching ? "Searching..." : results.length > 0
@@ -272,8 +263,7 @@ export function HomeLatestBuyers() {
           </div>
         )}
 
-        {/* Grid */}
-        {searching ? (
+                {searching ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {[...Array(6)].map((_, i) => <Skeleton key={i} cls="h-44" />)}
           </div>
@@ -295,8 +285,7 @@ export function HomeLatestBuyers() {
           </div>
         )}
 
-        {/* Bottom CTA */}
-        <div className="mt-10 text-center">
+                <div className="mt-10 text-center">
           <div className="inline-flex items-center gap-4 bg-gradient-to-r from-[#1e3a5f] to-[#2d5a8f] text-white rounded-2xl px-8 py-5 shadow-xl flex-wrap justify-center">
             <span className="text-3xl">🚀</span>
             <div className="text-left">

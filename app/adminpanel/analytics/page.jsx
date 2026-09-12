@@ -16,8 +16,7 @@ export default function AnalyticsPage() {
         <p className="text-gray-500 text-sm">Platform performance overview — last 12 months.</p>
       </div>
 
-      {/* KPI row */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {[
           { label: "Total Page Views", value: "28,400", change: "+18%", icon: Eye, color: "from-orange-500 to-amber-400" },
           { label: "Unique Visitors", value: "14,200", change: "+24%", icon: Users, color: "from-blue-500 to-cyan-400" },
@@ -42,10 +41,8 @@ export default function AnalyticsPage() {
         })}
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Page Views chart */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
           <h2 className="text-gray-900 font-bold text-sm mb-1">Page Views</h2>
           <p className="text-gray-400 text-xs mb-5">Monthly website traffic</p>
           <div className="flex items-end gap-2 h-40">
@@ -65,8 +62,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        {/* Leads chart */}
-        <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+                <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
           <h2 className="text-gray-900 font-bold text-sm mb-1">Lead Generation</h2>
           <p className="text-gray-400 text-xs mb-5">Monthly leads acquired</p>
           <div className="flex items-end gap-2 h-40">
@@ -87,8 +83,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Top pages */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+            <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
         <h2 className="text-gray-900 font-bold text-sm mb-4">Top Pages by Traffic</h2>
         <div className="space-y-3">
           {[

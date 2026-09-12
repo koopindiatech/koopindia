@@ -68,8 +68,7 @@ export default function BlogPage() {
             your business thrive
           </p>
 
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mt-7">
+                    <div className="max-w-2xl mx-auto mt-7">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -84,8 +83,7 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* SECOND SECTION: Grid View */}
-      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6">
+            <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6">
         {currentBlogs.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
@@ -113,8 +111,7 @@ export default function BlogPage() {
                     
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent" />
 
-                    {/* Date Badge */}
-                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl p-2.5 text-center shadow-md min-w-[55px] border border-slate-100 z-10">
+                                        <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl p-2.5 text-center shadow-md min-w-[55px] border border-slate-100 z-10">
                       <p className="text-lg font-black text-slate-800 leading-none">
                         {blog.date ? new Date(blog.date).getDate() : "17"}
                       </p>
@@ -124,11 +121,9 @@ export default function BlogPage() {
                     </div>
                   </div>
 
-                  {/* Lower Content Section */}
-                  <div className="p-6 sm:p-7 flex flex-col flex-1 justify-between bg-white">
+                                    <div className="p-6 sm:p-7 flex flex-col flex-1 justify-between bg-white">
                     <div>
-                    {/* Categories */}
-                      {blog.categories?.length > 0 && (
+                                          {blog.categories?.length > 0 && (
                         <div className="flex flex-wrap gap-1 mb-2">
                           {blog.categories.slice(0, 2).map((cat, i) => (
                             <span key={i} className="text-[10px] font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">
@@ -157,8 +152,7 @@ export default function BlogPage() {
                       </p>
                     </div>
 
-                    {/* Clean Animated Link Text */}
-                    <div className="pt-2">
+                                        <div className="pt-2">
                       <span className="inline-flex items-center gap-1.5 text-[#F97316] font-bold text-sm tracking-wide group-hover:text-orange-600">
                         Continue Reading
                         <span className="transform group-hover:translate-x-1 transition-transform duration-200 text-base">
@@ -173,8 +167,7 @@ export default function BlogPage() {
 
             {totalPages > 1 && (
               <div className="flex items-center justify-center space-x-2 mt-14 pt-8 border-t border-slate-200">
-                {/* Previous Button */}
-                <button
+                                <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                   className="p-2 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white transition cursor-pointer"
@@ -182,8 +175,7 @@ export default function BlogPage() {
                   <ChevronLeft className="w-5 h-5" />
                 </button>
 
-                {/* Page Numbers */}
-                {Array.from({ length: totalPages }, (_, index) => {
+                                {Array.from({ length: totalPages }, (_, index) => {
                   const pageNum = index + 1;
                   return (
                     <button
@@ -200,8 +192,7 @@ export default function BlogPage() {
                   );
                 })}
 
-                {/* Next Button */}
-                <button
+                                <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
                   className="p-2 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white transition cursor-pointer"

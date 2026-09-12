@@ -57,8 +57,7 @@ export default function BlogPage() {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-gray-900">Blog Manager</h1>
           <p className="text-gray-500 text-sm">Create and manage blog posts for SEO and buyer awareness.</p>
@@ -71,8 +70,7 @@ export default function BlogPage() {
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: "Total Posts", value: posts.length, color: "text-gray-900", icon: FileText },
           { label: "Published", value: posts.filter(p => p.status === "Published").length, color: "text-emerald-600", icon: CheckCircle2 },
@@ -92,8 +90,7 @@ export default function BlogPage() {
         })}
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-48">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
@@ -115,8 +112,7 @@ export default function BlogPage() {
         ))}
       </div>
 
-      {/* Category filter */}
-      <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2">
         {categories.map((c) => (
           <button
             key={c}
@@ -128,8 +124,7 @@ export default function BlogPage() {
         ))}
       </div>
 
-      {/* Posts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {filtered.map((post) => {
           const cfg = statusConfig[post.status];
           const Icon = cfg.icon;
@@ -159,8 +154,7 @@ export default function BlogPage() {
                 )}
               </div>
 
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1.5 mb-4">
+                            <div className="flex flex-wrap gap-1.5 mb-4">
                 {post.tags.map((tag) => (
                   <span key={tag} className="text-[9px] font-semibold bg-gray-100 text-gray-500 border border-gray-200 px-2 py-0.5 rounded-full">
                     #{tag}
@@ -168,8 +162,7 @@ export default function BlogPage() {
                 ))}
               </div>
 
-              {/* Actions */}
-              <div className="flex gap-2">
+                            <div className="flex gap-2">
                 <button className="flex-1 flex items-center justify-center gap-1.5 bg-orange-50 hover:bg-orange-500 text-orange-500 hover:text-white text-xs font-bold py-2 rounded-lg transition-all border border-orange-200 hover:border-orange-500">
                   <Edit2 size={12} /> Edit
                 </button>
@@ -185,8 +178,7 @@ export default function BlogPage() {
         })}
       </div>
 
-      {/* New Post Modal */}
-      {showModal && (
+            {showModal && (
         <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-gray-200 rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <h2 className="text-gray-900 font-bold text-lg mb-5">Create New Blog Post</h2>

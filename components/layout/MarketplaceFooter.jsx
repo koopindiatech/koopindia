@@ -18,8 +18,7 @@ const MarketplaceFooter = () => {
 
   return (
     <footer className="bg-[#0d1b2e] text-gray-300">
-      {/* Main footer grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
 
           {/* Logo + Description + Socials */}
@@ -40,8 +39,7 @@ const MarketplaceFooter = () => {
             <p className="text-[13px] text-gray-400 leading-relaxed mb-5">
               Empowering Indian Brands by connecting them with the right business opportunities across India and beyond.
             </p>
-            {/* Social icons */}
-            <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3">
               {[
                 { icon: <FaFacebook size={15} />, href: "https://www.facebook.com/KoopIndiaa" },
                 { icon: <FaInstagram size={15} />, href: "https://www.instagram.com/koop_india/" },
@@ -61,8 +59,7 @@ const MarketplaceFooter = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
+                    <div>
             <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
               <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
               Quick Links
@@ -84,8 +81,7 @@ const MarketplaceFooter = () => {
             </ul>
           </div>
 
-          {/* Categories */}
-          <div>
+                    <div>
             <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
               <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
               Categories
@@ -108,8 +104,7 @@ const MarketplaceFooter = () => {
             </ul>
           </div>
 
-          {/* Resources */}
-          <div>
+                    <div>
             <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
               <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
               Resources
@@ -153,8 +148,7 @@ const MarketplaceFooter = () => {
               ))}
             </ul>
 
-            {/* Newsletter */}
-            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
               <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
               Newsletter
             </h4>
@@ -185,8 +179,7 @@ const MarketplaceFooter = () => {
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-white/10">
+            <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[12px] text-gray-500">© 2026 Koop India. All Rights Reserved.</p>
           <p className="text-[12px] text-gray-500">

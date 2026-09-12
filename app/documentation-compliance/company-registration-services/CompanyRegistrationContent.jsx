@@ -881,8 +881,7 @@ export default function CompanyRegistration() {
         </div>
       </section>
 
-      {/* --- NEW BUSINESS COMPLIANCE SECTION --- */}
-      <section className="py-16 px-6 bg-white border-y border-slate-100">
+            <section className="py-16 px-6 bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-14 items-center mb-16">
             <div>
@@ -908,8 +907,7 @@ export default function CompanyRegistration() {
             </div>
           </div>
 
-          {/* Vendors vs Us */}
-          <div className="bg-slate-50 rounded-3xl p-8 md:p-12 mb-16 border border-slate-100">
+                    <div className="bg-slate-50 rounded-3xl p-8 md:p-12 mb-16 border border-slate-100">
             <div className="text-center mb-10">
               <h3 className="text-2xl font-bold text-[#0F172A] mb-4">Still Managing Compliance with Multiple Vendors?</h3>
               <p className="text-slate-500 text-sm">One for GST, Another for TDS, Someone else for PF/ESIC = Missed deadlines & Heavy penalties.</p>
@@ -936,16 +934,14 @@ export default function CompanyRegistration() {
             </div>
           </div>
 
-          {/* Pricing */}
-          <div className="text-center mb-12">
+                    <div className="text-center mb-12">
             <Tag>Professional Plans</Tag>
             <h2 className="text-3xl font-bold text-[#0F172A] mt-4 mb-3 tracking-tight">Annual Compliance <span className="text-orange-500">Plans</span></h2>
             <p className="text-slate-500 text-xs">Contact us to get a custom quote tailored for your business needs.</p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 mb-16">
-            {/* Starter Plan */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-orange-200 transition-colors">
+                        <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-orange-200 transition-colors">
               <h3 className="text-xl font-bold text-[#0F172A] mb-2">Starter Plan</h3>
               <p className="text-slate-400 text-sm mb-6">For small businesses & proprietorships</p>
               <ul className="space-y-4 mb-8">
@@ -957,8 +953,7 @@ export default function CompanyRegistration() {
               <button onClick={onOpenModal} className="w-full bg-slate-50 cursor-pointer hover:bg-slate-100 text-slate-800 font-semibold py-3 rounded-xl transition-colors border border-slate-200">Contact for Pricing</button>
             </div>
 
-            {/* Growth Plan */}
-            <div className="bg-[#0F172A] rounded-3xl p-8 relative transform md:-translate-y-4 shadow-2xl">
+                        <div className="bg-[#0F172A] rounded-3xl p-8 relative transform md:-translate-y-4 shadow-2xl">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-orange-500 to-orange-400 text-white text-[10px] font-bold uppercase tracking-wider px-4 py-1.5 rounded-full">
                 Most Popular
               </div>
@@ -975,8 +970,7 @@ export default function CompanyRegistration() {
               <button onClick={onOpenModal} className="w-full cursor-pointer bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-xl transition-colors">Contact for Pricing</button>
             </div>
 
-            {/* Pro Plan */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-orange-200 transition-colors">
+                        <div className="bg-white border border-slate-200 rounded-3xl p-8 hover:border-orange-200 transition-colors">
               <h3 className="text-xl font-bold text-[#0F172A] mb-2">Pro Plan</h3>
               <p className="text-slate-400 text-sm mb-6">For high-growth companies with complex needs</p>
               <ul className="space-y-4 mb-8">
@@ -990,8 +984,7 @@ export default function CompanyRegistration() {
             </div>
           </div>
 
-          {/* Advantage */}
-          <div className="grid md:grid-cols-4 gap-6 text-center border-t border-slate-100 pt-16">
+                    <div className="grid md:grid-cols-4 gap-6 text-center border-t border-slate-100 pt-16">
             {[
               { title: "English & Hindi", sub: "Customer Support Available" },
               { title: "Experienced Team", sub: "Handling your accounts" },
@@ -1043,8 +1036,7 @@ export default function CompanyRegistration() {
         </div>
       </section>
 
-      {/* --- SEO KEYWORDS SECTION --- */}
-      <section className="py-12 px-6 bg-slate-50 border-t border-slate-200">
+            <section className="py-12 px-6 bg-slate-50 border-t border-slate-200">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8">
             <h3 className="text-lg font-bold text-[#0F172A]">Our Specialised Services &amp; Consulting Locations</h3>
@@ -1098,8 +1090,7 @@ export default function CompanyRegistration() {
       </section>
 
       <section className="py-20 px-6 bg-gradient-to-br from-orange-500 via-orange-400 to-orange-600 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white/10 blur-[80px] pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white/10 blur-[80px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-orange-800/20 blur-[60px] pointer-events-none" />
         <div
           className="absolute inset-0 opacity-[0.06] pointer-events-none"
@@ -1158,8 +1149,7 @@ export default function CompanyRegistration() {
             <p className="text-slate-500 text-sm max-w-2xl mx-auto leading-relaxed mb-5">
               Koop India is a leading company registration consultant in Delhi, Noida &amp; Gurugram — serving founders &amp; businesses across Delhi NCR and all major cities in India. 100% online, CA/CS supervised, no office visits needed.
             </p>
-            {/* City Pills Sub-heading */}
-            <div className="flex flex-wrap justify-center gap-2">
+                        <div className="flex flex-wrap justify-center gap-2">
               {[
                 { label: "Delhi", hot: true },
                 { label: "Noida", hot: true },
@@ -1222,8 +1212,7 @@ export default function CompanyRegistration() {
             ))}
           </div>
 
-          {/* Delhi-specific rich content block */}
-          <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 md:p-8 mb-8">
+                    <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 md:p-8 mb-8">
             <h3 className="text-xl font-bold text-[#0F172A] mb-3">
               Company Registration Consultant in <span className="text-orange-500">Delhi</span> — Why Businesses Trust Koop India
             </h3>
@@ -1253,8 +1242,7 @@ export default function CompanyRegistration() {
             </div>
           </div>
 
-          {/* Gurugram & Noida content blocks */}
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
+                    <div className="grid md:grid-cols-2 gap-6 mb-8">
             <div className="bg-white border border-slate-200 rounded-2xl p-6">
               <h3 className="text-base font-bold text-[#0F172A] mb-2">
                 Company Registration Consultant in <span className="text-orange-500">Noida</span>

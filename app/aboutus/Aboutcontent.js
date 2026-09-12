@@ -38,8 +38,7 @@ const AboutPage = () => {
 
   return (
     <div className="w-full">
-      {/* Hero Section with Image */}
-      <section className="bg-[#141d32] text-white py-20">
+            <section className="bg-[#141d32] text-white py-20">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h1 className="text-5xl font-extrabold leading-tight">
@@ -61,8 +60,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-gradient-to-r from-[#F97316] to-[#ea580c] py-16">
+            <section className="bg-gradient-to-r from-[#F97316] to-[#ea580c] py-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -77,8 +75,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Who We Are */}
-      <section className="bg-gradient-to-r from-[#141d32] via-[#1c2545] to-[#141d32] py-20">
+            <section className="bg-gradient-to-r from-[#141d32] via-[#1c2545] to-[#141d32] py-20">
         <div className="max-w-6xl mx-auto px-4">
           <div className="space-y-6">
             <h2 className="text-3xl font-bold text-[#F97316]">Who We Are</h2>
@@ -92,8 +89,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Mission & Vision */}
-      <section className="bg-white py-20">
+            <section className="bg-white py-20">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-8">
           <div className="space-y-4 bg-[#f9fafb] p-8 rounded-xl shadow hover:shadow-lg border-l-4 border-[#F97316] transition-shadow duration-300">
             <h3 className="text-2xl font-semibold text-[#141d32]">Our Mission</h3>
@@ -114,8 +110,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* What We Offer */}
-      <section className="bg-[#f3f4f9] py-20">
+            <section className="bg-[#f3f4f9] py-20">
         <div className="max-w-6xl mx-auto px-4 space-y-12">
           <h2 className="text-3xl font-bold text-center text-[#141d32]">
             What We Offer
@@ -138,8 +133,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="bg-[#141d32] text-white py-20">
+            <section className="bg-[#141d32] text-white py-20">
         <div className="max-w-6xl mx-auto px-4 space-y-8">
           <h2 className="text-3xl font-bold text-center text-[#F97316]">
             Why Choose Koop India?
@@ -155,8 +149,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Our Approach */}
-      <section className="bg-white py-20">
+            <section className="bg-white py-20">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -196,8 +189,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Contact CTA Section */}
-      <section className="bg-gradient-to-r from-[#F97316] to-[#ea580c] text-white py-20">
+            <section className="bg-gradient-to-r from-[#F97316] to-[#ea580c] text-white py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Launch Your Business?</h2>
           <p className="text-xl mb-8 opacity-90">

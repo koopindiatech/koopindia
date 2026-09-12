@@ -94,15 +94,13 @@ const Header = ({ onOpenModal }) => {
     <>
       <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-sm shadow-md">
         <div className="flex items-center justify-between gap-2 xl:gap-4 px-4 sm:px-6 py-3.5 sm:py-4">
-          {/* Logo */}
-          <Link href="/" className="z-[80] flex-shrink-0 text-2xl sm:text-3xl font-extrabold">
+                    <Link href="/" className="z-[80] flex-shrink-0 text-2xl sm:text-3xl font-extrabold">
             <span className="text-orange-500">koop</span>
             <span className="text-slate-800">india</span>
             <span className="text-orange-500">.</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden xl:flex items-center gap-0.5 text-[13.5px] font-bold text-gray-800">
+                    <nav className="hidden xl:flex items-center gap-0.5 text-[13.5px] font-bold text-gray-800">
             {navigationItems.map((item) => (
               <div
                 key={item.name}
@@ -118,24 +116,20 @@ const Header = ({ onOpenModal }) => {
                       <ChevronDown size={13} className={`transition-transform duration-200 ${openDropdown === item.name ? "rotate-180 text-orange-500" : "text-gray-400"}`} />
                     </button>
 
-                    {/* Premium Dropdown Panel */}
-                    <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-1
+                                        <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-1
                       bg-white rounded-2xl shadow-2xl border border-gray-100/80 transition-all duration-200 overflow-hidden
                       ${openDropdown === item.name ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"}`}
                       style={{ minWidth: "260px" }}
                     >
-                      {/* Colored top strip */}
-                      <div className={`h-1 w-full bg-gradient-to-r ${item.color}`} />
+                                            <div className={`h-1 w-full bg-gradient-to-r ${item.color}`} />
 
-                      {/* Header label */}
-                      <div className={`px-4 py-2.5 border-b border-gray-100 ${item.light}`}>
+                                            <div className={`px-4 py-2.5 border-b border-gray-100 ${item.light}`}>
                         <span className={`text-[11px] font-extrabold tracking-widest uppercase ${item.accent}`}>
                           {item.name}
                         </span>
                       </div>
 
-                      {/* Items */}
-                      <div className="p-2">
+                                            <div className="p-2">
                         {item.dropdown.map((sub) => (
                           <Link
                             key={sub.name}
@@ -165,8 +159,7 @@ const Header = ({ onOpenModal }) => {
             ))}
           </nav>
 
-          {/* Desktop CTA */}
-          <div className="hidden xl:block flex-shrink-0">
+                    <div className="hidden xl:block flex-shrink-0">
             <button
               onClick={onOpenModal}
               className="bg-orange-500 hover:bg-orange-600 text-white cursor-pointer px-5 py-2.5 rounded-lg font-bold text-sm transition-colors whitespace-nowrap shadow-md shadow-orange-500/20"
@@ -175,8 +168,7 @@ const Header = ({ onOpenModal }) => {
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
+                    <button
             onClick={() => setIsOpen(true)}
             className="xl:hidden p-2 rounded hover:bg-gray-100 active:bg-gray-200 transition-colors z-[80]"
             aria-label="Open menu"
@@ -200,8 +192,7 @@ const Header = ({ onOpenModal }) => {
         shadow-2xl transform transition-transform duration-300 ease-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b bg-gradient-to-r from-orange-50 to-white">
+                <div className="flex items-center justify-between px-5 py-4 border-b bg-gradient-to-r from-orange-50 to-white">
           <Link href="/" onClick={closeMobileMenu} className="text-xl font-extrabold">
             <span className="text-orange-500">koop</span>
             <span className="text-slate-800">india</span>
@@ -216,8 +207,7 @@ const Header = ({ onOpenModal }) => {
           </button>
         </div>
 
-        {/* Menu Content */}
-        <div className="flex flex-col h-[calc(100%-65px)]">
+                <div className="flex flex-col h-[calc(100%-65px)]">
           <div className="flex-1 overflow-y-auto overscroll-contain">
             <ul className="py-2">
               {navigationItems.map((item) => (
@@ -241,8 +231,7 @@ const Header = ({ onOpenModal }) => {
 
                       <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openDropdown === item.name ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
                         }`}>
-                        {/* Colored strip in mobile */}
-                        <div className={`h-0.5 mx-4 bg-gradient-to-r ${item.color} rounded-full mb-1`} />
+                                                <div className={`h-0.5 mx-4 bg-gradient-to-r ${item.color} rounded-full mb-1`} />
                         <div className="py-1 px-3">
                           {item.dropdown.map((sub) => (
                             <button
@@ -281,8 +270,7 @@ const Header = ({ onOpenModal }) => {
             </ul>
           </div>
 
-          {/* Bottom CTA */}
-          <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+                    <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
             <button
               type="button"
               onClick={(e) => {

@@ -138,8 +138,7 @@ const CompanyAccountingServicesPage = () => {
           rel="canonical"
           href="https://www.koopindia.com/company-accounting-services"
         />
-        {/* Google Font */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
@@ -152,10 +151,8 @@ const CompanyAccountingServicesPage = () => {
       </Head>
 
       <div className="overflow-x-hidden">
-        {/*  HERO  */}
-        <section className="relative py-14 px-5 bg-gradient-to-br from-[#0A1020] via-[#0F172A] to-[#141D32] text-white overflow-hidden hero-grid">
-          {/* decorative orange glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
+                <section className="relative py-14 px-5 bg-gradient-to-br from-[#0A1020] via-[#0F172A] to-[#141D32] text-white overflow-hidden hero-grid">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative max-w-7xl mx-auto text-center">
             <div className="fade-up inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-xs text-gray-300 mb-6">
@@ -196,8 +193,7 @@ const CompanyAccountingServicesPage = () => {
               </button>
             </div>
 
-            {/* trust badges */}
-            <div className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-gray-500">
+                        <div className="mt-12 flex flex-wrap justify-center gap-6 text-xs text-gray-500">
               {[
                 "Tally Certified",
                 "GST Compliant",
@@ -212,8 +208,7 @@ const CompanyAccountingServicesPage = () => {
           </div>
         </section>
 
-        {/* WHAT IS ACCOUNTING  */}
-        <section className="py-14 px-5">
+                <section className="py-14 px-5">
           <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
               <SectionHeading
@@ -242,8 +237,7 @@ const CompanyAccountingServicesPage = () => {
               </div>
             </div>
 
-            {/* stat card cluster */}
-            <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
               {[
                 { num: "500+", label: "Businesses Served" },
                 { num: "99%", label: "Compliance Rate" },
@@ -264,8 +258,7 @@ const CompanyAccountingServicesPage = () => {
           </div>
         </section>
 
-        {/*  SERVICES  */}
-        <section className="pb-14 px-5">
+                <section className="pb-14 px-5">
           <div className="max-w-7xl mx-auto">
             <SectionHeading
               tag="What We Do"
@@ -301,8 +294,7 @@ const CompanyAccountingServicesPage = () => {
           </div>
         </section>
 
-        {/*  PROCESS */}
-        <section className="py-14 px-5 bg-gradient-to-br from-[#0A1020] to-[#141D32] text-white">
+                <section className="py-14 px-5 bg-gradient-to-br from-[#0A1020] to-[#141D32] text-white">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <Tag>How It Works</Tag>
@@ -339,8 +331,7 @@ const CompanyAccountingServicesPage = () => {
           </div>
         </section>
 
-        {/* COMPLIANCE*/}
-        <section className="py-14 px-5">
+                <section className="py-14 px-5">
           <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <div>
               <SectionHeading
@@ -414,8 +405,7 @@ const CompanyAccountingServicesPage = () => {
           </div>
         </section>
 
-        {/*  WHY KOOP  */}
-        <section className="py-14 px-5">
+                <section className="py-14 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <SectionHeading
@@ -440,10 +430,8 @@ const CompanyAccountingServicesPage = () => {
           </div>
         </section>
 
-        {/* CTA  */}
-        <section className="relative py-16 px-5 bg-[#eb680a] text-[#141D32] overflow-hidden">
-          {/* Soft background glow for depth */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <section className="relative py-16 px-5 bg-[#eb680a] text-[#141D32] overflow-hidden">
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-[600px] h-[300px] bg-white/20 rounded-full blur-3xl" />
           </div>
 
@@ -472,15 +460,13 @@ const CompanyAccountingServicesPage = () => {
               </button>
             </div>
 
-            {/* Small trust indicator */}
-            <p className="mt-8 text-xs text-[#141D32]/60 font-semibold uppercase tracking-widest">
+                        <p className="mt-8 text-xs text-[#141D32]/60 font-semibold uppercase tracking-widest">
               Trusted by 100+ Businesses
             </p>
           </div>
         </section>
 
-        {/* Enquiry Modal */}
-        <EnquiryModal isOpen={isOpen} onClose={onCloseModal} />
+                <EnquiryModal isOpen={isOpen} onClose={onCloseModal} />
       </div>
     </>
   );

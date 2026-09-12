@@ -140,8 +140,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
             {/* ── HERO HEADER CARD ── */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-              {/* Cover image */}
-              <div className="relative h-56 sm:h-72 overflow-hidden" style={{ backgroundColor: pc + "22" }}>
+                            <div className="relative h-56 sm:h-72 overflow-hidden" style={{ backgroundColor: pc + "22" }}>
                 {buyer.coverImageUrl ? (
                   <img src={buyer.coverImageUrl} alt={buyer.buyerName} className="w-full h-full object-cover" />
                 ) : (
@@ -149,8 +148,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                     <span className="text-6xl font-black opacity-20" style={{ color: pc }}>{initials}</span>
                   </div>
                 )}
-                {/* Share button */}
-                <button onClick={handleShare}
+                                <button onClick={handleShare}
                   className="absolute top-3 right-3 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-gray-700 font-bold text-xs px-3 py-1.5 rounded-full shadow hover:bg-white transition">
                   <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx={18} cy={5} r={3} /><circle cx={6} cy={12} r={3} /><circle cx={18} cy={19} r={3} /><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" /></svg>
                   {copied ? "Copied!" : "Share Profile"}
@@ -159,8 +157,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
               <div className="px-5 pb-5">
                 <div className="flex items-end gap-4 -mt-8 mb-4">
-                  {/* Logo */}
-                  <div className="w-20 h-20 rounded-2xl border-4 border-white shadow-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0" style={{ backgroundColor: buyer.logoUrl ? "#fff" : pc }}>
+                                    <div className="w-20 h-20 rounded-2xl border-4 border-white shadow-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0" style={{ backgroundColor: buyer.logoUrl ? "#fff" : pc }}>
                     {buyer.logoUrl
                       ? <img src={buyer.logoUrl} alt={buyer.buyerName} className="w-full h-full object-contain p-1" />
                       : <span className="text-white font-black text-xl">{initials}</span>}
@@ -185,8 +182,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                   </div>
                 </div>
 
-                {/* Info bar */}
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 py-3 border-t border-gray-100">
+                                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 py-3 border-t border-gray-100">
                   {buyer.businessType && (
                     <div className="flex items-center gap-1.5 text-xs text-gray-600 font-semibold">
                       <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>
@@ -227,8 +223,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
             {/* ── TWO COLUMN: SIDEBAR INFO + MAIN CONTENT ── */}
             <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-5">
-              {/* Left info sidebar */}
-              <div className="space-y-3">
+                            <div className="space-y-3">
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                   <div className="space-y-3">
                     {[
@@ -267,10 +262,8 @@ export default function BuyerClientPage({ initialBuyer }) {
                 </div>
               </div>
 
-              {/* Main content area */}
-              <div className="space-y-5">
-                {/* About */}
-                {buyer.about && (
+                            <div className="space-y-5">
+                                {buyer.about && (
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: pc + "20" }}>
@@ -282,8 +275,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                   </div>
                 )}
 
-                {/* Product Categories */}
-                {productCategories.length > 0 && (
+                                {productCategories.length > 0 && (
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: pc + "20" }}>
@@ -311,8 +303,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                   </div>
                 )}
 
-                {/* Buyers we work with */}
-                {buyersWeWorkWith.length > 0 && (
+                                {buyersWeWorkWith.length > 0 && (
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: pc + "20" }}>
@@ -373,8 +364,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                   </div>
                 )}
 
-                {/* Preferred States */}
-                {preferredStates.length > 0 && (
+                                {preferredStates.length > 0 && (
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-base">🗺️</span>
@@ -411,8 +401,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
           {/* ── RIGHT SIDEBAR ── */}
           <div className="space-y-5">
-            {/* Connect Form */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5 sticky top-4">
+                        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5 sticky top-4">
               <h3 className="font-black text-gray-900 text-base mb-1">
                 Connect with this {buyer.businessType || "Buyer"}
               </h3>
@@ -465,8 +454,7 @@ export default function BuyerClientPage({ initialBuyer }) {
               )}
             </div>
 
-            {/* Key Contact Person */}
-            {buyer.contactName && (
+                        {buyer.contactName && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
@@ -499,8 +487,7 @@ export default function BuyerClientPage({ initialBuyer }) {
               </div>
             )}
 
-            {/* Company Address */}
-            {buyer.address && (
+                        {buyer.address && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
@@ -523,8 +510,7 @@ export default function BuyerClientPage({ initialBuyer }) {
               </div>
             )}
 
-            {/* Documents Verified */}
-            {(buyer.gstVerified || buyer.panVerified || buyer.companyVerified) && (
+                        {(buyer.gstVerified || buyer.panVerified || buyer.companyVerified) && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>

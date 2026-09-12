@@ -8,13 +8,9 @@ import {
 import {
   getFirestoreUsers, createFirestoreUser, updateFirestoreUser,
   deleteFirestoreUser, getCurrentUser, isAdmin as checkIsAdmin,
-} from "../lib/auth";
-import {
   getFirestoreSellerUsers, createSellerUser, updateSellerUser, deleteSellerUser,
-} from "../../seller-portal/lib/auth";
-import {
   getFirestoreBuyerUsers, createBuyerUser, updateBuyerUser, deleteBuyerUser,
-} from "../../buyer-portal/lib/auth";
+} from "../lib/auth";
 import { db } from "../../../lib/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
@@ -167,8 +163,7 @@ function AdminUsersTab() {
         </div>
       )}
 
-      {/* Modal */}
-      {showModal && (
+            {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-5">
@@ -310,8 +305,6 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
         </div>
       </div>
 
-
-
       {loading ? (
         <div className="flex items-center justify-center py-20 gap-3 text-gray-400">
           <Loader2 size={24} className="animate-spin" style={{ color: accent }} />
@@ -328,8 +321,8 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {portalUsers.map((u) => (
-            <div key={u.firestoreId} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-5">
+          {portalUsers.map((u, index) => (
+            <div key={u.firestoreId || u.id || u.uid || index} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-5">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm text-white font-black text-base"
                   style={{ background: `linear-gradient(135deg, ${accent}dd, ${accent}99)` }}>
@@ -344,8 +337,7 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                 </div>
               </div>
 
-              {/* Linked slug */}
-              <div className="flex items-center gap-2 rounded-xl px-3 py-2 mb-4 border"
+                            <div className="flex items-center gap-2 rounded-xl px-3 py-2 mb-4 border"
                 style={{ background: `${accent}08`, borderColor: `${accent}20` }}>
                 <LinkIcon size={11} style={{ color: accent }} className="flex-shrink-0" />
                 <span className="text-xs font-bold truncate" style={{ color: accent }}>
@@ -373,8 +365,7 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
         </div>
       )}
 
-      {/* Modal */}
-      {showModal && (
+            {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-5">
@@ -521,14 +512,12 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">User Management</h1>
         <p className="text-gray-500 text-sm mt-0.5">Manage admin team members, seller portal accounts, and buyer portal accounts.</p>
       </div>
 
-      {/* Tab switcher */}
-      <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap">
         {tabs.map((t) => {
           const Icon = t.icon;
           const active = tab === t.id;
@@ -546,8 +535,7 @@ export default function UsersPage() {
         })}
       </div>
 
-      {/* Tab content */}
-      {tab === "admin" && <AdminUsersTab />}
+            {tab === "admin" && <AdminUsersTab />}
       {tab === "seller" && (
         <PortalUsersTab
           type="Seller"

@@ -7,7 +7,6 @@ const Footer = ({ onOpenModal }) => {
   const servicesRef = useRef(null);
   const scrollRef = useRef(0);
 
-  // SMOOTH AUTO SCROLL
   useEffect(() => {
     const el = servicesRef.current;
     if (!el) return;
@@ -33,8 +32,7 @@ const Footer = ({ onOpenModal }) => {
   return (
     <footer className="bg-[#0F172A] text-[#CBD5E1] border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 md:grid-cols-5 gap-8">
-        {/* Logo */}
-        <div className="text-center md:text-left">
+                <div className="text-center md:text-left">
           <Link href="/">
             <h1 className="text-3xl font-extrabold">
               <span className="text-[#F97316]">koop</span>
@@ -49,8 +47,7 @@ const Footer = ({ onOpenModal }) => {
           </p>
         </div>
 
-        {/* Product */}
-        <div className="text-center md:text-left">
+                <div className="text-center md:text-left">
           <h3 className="font-bold text-lg mb-4 text-[#F97316]">PRODUCT</h3>
           <ul className="space-y-2">
             <li>
@@ -79,8 +76,7 @@ const Footer = ({ onOpenModal }) => {
           </ul>
         </div>
 
-        {/* Company */}
-        <div className="text-center md:text-left">
+                <div className="text-center md:text-left">
           <h3 className="font-bold text-lg mb-4 text-[#F97316]">COMPANY</h3>
           <ul className="space-y-2">
             <li>
@@ -280,8 +276,7 @@ const Footer = ({ onOpenModal }) => {
           </div>
         </div>
 
-        {/* Social */}
-        <div className="text-center md:text-left">
+                <div className="text-center md:text-left">
           <h3 className="font-bold text-lg mb-4 text-[#F97316]">FOLLOW US ON</h3>
           <ul className="space-y-2">
             <li className="flex items-center gap-2 justify-center md:justify-start hover:text-[#F97316]">
@@ -308,8 +303,7 @@ const Footer = ({ onOpenModal }) => {
         </div>
       </div>
 
-      {/* Copyright */}
-      <div className="text-[#94A3B8] text-center pb-5 px-4 border-t border-white/10">
+            <div className="text-[#94A3B8] text-center pb-5 px-4 border-t border-white/10">
         <p className="text-sm">© 2026 Koop India. All rights reserved.</p>
         <p className="text-xs mt-2">
           <Link href="/privacy" className="hover:text-[#F97316]">

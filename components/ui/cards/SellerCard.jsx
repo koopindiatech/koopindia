@@ -1,8 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 
-
-
 const ini = (n = "") =>
   n
     .split(" ")
@@ -29,8 +27,7 @@ export default function SellerCard({ s }) {
       className="flex flex-col bg-white rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
       style={{ boxShadow: "0 1px 8px rgba(0,0,0,0.07)" }}
     >
-      {/* Badge */}
-      <div className="px-3 pt-3 pb-0">
+            <div className="px-3 pt-3 pb-0">
         <span
           className="inline-flex items-center gap-0.5 text-[9px] font-extrabold px-2 py-0.5 rounded text-white"
           style={{ background: badge === "Premium" ? "#1e3a5f" : "#6b7280" }}
@@ -40,8 +37,7 @@ export default function SellerCard({ s }) {
         </span>
       </div>
 
-      {/* Logo */}
-      <div className="flex items-center justify-center pt-2 pb-1.5 px-3">
+            <div className="flex items-center justify-center pt-2 pb-1.5 px-3">
         <div className="w-full h-[90px] rounded-lg overflow-hidden bg-gray-50 border border-gray-100 flex items-center justify-center relative">
           {s.logoUrl ? (
             <Image
@@ -69,8 +65,7 @@ export default function SellerCard({ s }) {
         </p>
       </div>
 
-      {/* Details */}
-      <div className="px-3 pb-2 flex-1">
+            <div className="px-3 pb-2 flex-1">
         <div className="border-t border-gray-100 pt-1.5 space-y-1">
           {rows.map((r) => (
             <div key={r.label} className="flex items-start justify-between gap-1">
@@ -83,8 +78,7 @@ export default function SellerCard({ s }) {
         </div>
       </div>
 
-      {/* CTA */}
-      <div className="px-3 pb-3">
+            <div className="px-3 pb-3">
         <span
           className="block w-full text-center text-[11px] font-bold py-1.5 rounded-lg border-2 transition-all"
           style={{ color, borderColor: color, background: "transparent" }}

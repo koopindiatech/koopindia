@@ -49,8 +49,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-[64px] gap-4">
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0" onClick={close}>
+                    <Link href="/" className="flex items-center gap-2 flex-shrink-0" onClick={close}>
             <div className="flex items-center gap-1.5">
               <div className="w-8 h-8 bg-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-black text-sm leading-none">K</span>
@@ -66,8 +65,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1 text-[13px] font-semibold text-gray-700">
+                    <nav className="hidden lg:flex items-center gap-1 text-[13px] font-semibold text-gray-700">
             <Link href="/" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
               Home
             </Link>
@@ -75,8 +73,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
               Brands
             </Link>
 
-            {/* Categories dropdown */}
-            <div
+                        <div
               className="relative"
               onMouseEnter={() => setOpenDropdown("categories")}
               onMouseLeave={() => setOpenDropdown(null)}
@@ -105,8 +102,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
               About Us
             </Link>
 
-            {/* Resources dropdown */}
-            <div
+                        <div
               className="relative"
               onMouseEnter={() => setOpenDropdown("resources")}
               onMouseLeave={() => setOpenDropdown(null)}
@@ -136,8 +132,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
             </Link>
           </nav>
 
-          {/* Desktop CTA */}
-          <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
+                    <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
             <Link
               href="/seller-onboarding"
               className="bg-[#f97316] hover:bg-[#ea580c] text-white font-bold text-[13px] px-5 py-2.5 rounded-lg transition-colors shadow-md shadow-orange-500/20 whitespace-nowrap flex items-center gap-1.5"
@@ -149,8 +144,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
             </Link>
           </div>
 
-          {/* Mobile menu button */}
-          <button
+                    <button
             onClick={() => setIsOpen(true)}
             className="lg:hidden p-2 rounded hover:bg-gray-100 transition-colors"
             aria-label="Open menu"
@@ -160,19 +154,16 @@ const MarketplaceHeader = ({ onOpenModal }) => {
         </div>
       </header>
 
-      {/* Mobile overlay */}
-      {isOpen && (
+            {isOpen && (
         <div className="fixed inset-0 bg-black/60 z-[100] lg:hidden" onClick={close} />
       )}
 
-      {/* Mobile sidebar */}
-      <aside
+            <aside
         className={`fixed top-0 left-0 h-full w-[85%] max-w-[340px] bg-white z-[110] lg:hidden shadow-2xl transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Sidebar header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b bg-gradient-to-r from-[#1e3a5f] to-[#2d5a8f]">
+                <div className="flex items-center justify-between px-5 py-4 border-b bg-gradient-to-r from-[#1e3a5f] to-[#2d5a8f]">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center">
               <span className="text-white font-black text-sm">K</span>
@@ -226,8 +217,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
             <Link href="/contactus" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Contact Us</Link>
           </div>
 
-          {/* Bottom CTA */}
-          <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
+                    <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
             <Link
               href="/seller-onboarding"
               onClick={close}

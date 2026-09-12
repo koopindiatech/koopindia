@@ -316,8 +316,7 @@ const ISOCertificationPage = () => {
       <div className="bg-white text-gray-700 font-[Outfit,sans-serif]">
         {/* ─── HERO ─── */}
         <section className="relative py-14 px-5 bg-gradient-to-br from-[#0A1020] via-[#0F172A] to-[#141D32] text-white overflow-hidden">
-          {/* background texture */}
-          <div
+                    <div
             className="absolute inset-0 opacity-5"
             style={{
               backgroundImage:
@@ -329,8 +328,7 @@ const ISOCertificationPage = () => {
           <div className="relative max-w-7xl mx-auto">
             <div className="flex flex-col lg:flex-row items-center gap-12">
               <div className="flex-1 text-center lg:text-left">
-                {/* badge */}
-                <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-4 py-1.5 mb-6">
+                                <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-4 py-1.5 mb-6">
                   <Star className="w-3.5 h-3.5 text-[#F97316]" />
                   <span className="text-xs text-orange-300 font-medium tracking-wide uppercase">
                     India's Trusted ISO Consultant
@@ -374,8 +372,7 @@ const ISOCertificationPage = () => {
                 </div>
               </div>
 
-              {/* Hero stats card */}
-              <div className="flex-shrink-0 w-full lg:w-80">
+                            <div className="flex-shrink-0 w-full lg:w-80">
                 <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-sm">
                   <div className="grid grid-cols-2 gap-4">
                     {stats.map((s, i) => (

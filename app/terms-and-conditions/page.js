@@ -111,8 +111,7 @@ const termsData = [
 const TermsAndConditions = () => {
   return (
     <main className="bg-gray-50/70 text-[#141d32] min-h-screen">
-      {/* Header Section */}
-      <header className="bg-gradient-to-r from-[#141d32] via-[#1f2a48] to-[#F97316] py-20 text-center text-white relative overflow-hidden">
+            <header className="bg-gradient-to-r from-[#141d32] via-[#1f2a48] to-[#F97316] py-20 text-center text-white relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           <span className="text-xs font-bold uppercase tracking-widest bg-white/10 px-3.5 py-1.5 rounded-full text-[#F97316] mb-4 inline-block backdrop-blur-sm border border-white/10">
             Legal &amp; Policy
@@ -126,8 +125,7 @@ const TermsAndConditions = () => {
         </div>
       </header>
 
-      {/* Content Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
+            <section className="py-16 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="bg-white rounded-3xl border border-gray-200/80 shadow-sm p-6 sm:p-10 lg:p-14 space-y-10">
           
           <div className="border-b border-gray-100 pb-8">

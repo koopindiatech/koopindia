@@ -201,8 +201,6 @@ export default function KoopIndiaHomepage() {
 
   const selectedCatData = CATEGORIES.find(c => c.label === catSel);
 
-
-
   return (
     <div className="bg-white text-gray-800 font-sans" style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
 
@@ -291,8 +289,7 @@ export default function KoopIndiaHomepage() {
               />
             </div>
 
-            {/* Category dropdown with subcategories */}
-            <div className="relative hidden md:block" ref={catRef}>
+                        <div className="relative hidden md:block" ref={catRef}>
               <button
                 onClick={() => setCatDropOpen(o => !o)}
                 className="flex items-center gap-2 appearance-none bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 pl-3 pr-3 py-2.5 rounded-xl outline-none cursor-pointer hover:border-gray-300 min-w-[160px]">
@@ -333,16 +330,14 @@ export default function KoopIndiaHomepage() {
               )}
             </div>
 
-            {/* State dropdown */}
-            <div className="relative hidden md:block">
+                        <div className="relative hidden md:block">
               <select value={stateSel} onChange={e => setStateSel(e.target.value)}
                 className="appearance-none bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 pl-3 pr-7 py-2.5 rounded-xl outline-none cursor-pointer hover:border-gray-300 min-w-[130px]">
                 {STATES.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
 
-            {/* Cert dropdown */}
-            <div className="relative hidden md:block">
+                        <div className="relative hidden md:block">
               <select value={certSel} onChange={e => setCertSel(e.target.value)}
                 className="appearance-none bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 pl-3 pr-7 py-2.5 rounded-xl outline-none cursor-pointer hover:border-gray-300 min-w-[150px]">
                 {CERTS.map(o => <option key={o}>{o}</option>)}
@@ -355,8 +350,7 @@ export default function KoopIndiaHomepage() {
             </button>
           </div>
 
-          {/* Active filters pill */}
-          {(catSel !== "All Categories" || stateSel !== "All States") && (
+                    {(catSel !== "All Categories" || stateSel !== "All States") && (
             <div className="flex flex-wrap gap-2 mt-2 px-1">
               {catSel !== "All Categories" && (
                 <span className="text-[10px] font-bold bg-white/20 text-white px-3 py-1 rounded-full flex items-center gap-1">
@@ -422,8 +416,7 @@ export default function KoopIndiaHomepage() {
             ))}
           </div>
 
-          {/* Subcategories */}
-          {catSel !== "All Categories" && selectedCatData && (
+                    {catSel !== "All Categories" && selectedCatData && (
             <div className="mt-5 flex flex-wrap gap-2 justify-center animate-fadeIn">
               <button onClick={() => setSubCatSel("All")}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold border transition ${subCatSel === "All" ? "bg-[#1e3a5f] text-white border-[#1e3a5f]" : "border-gray-200 text-gray-600 hover:border-gray-400"}`}>
@@ -508,8 +501,7 @@ export default function KoopIndiaHomepage() {
       <section className="py-14 px-4 sm:px-6 bg-white">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* Latest Sellers */}
-          <div>
+                    <div>
             <div className="flex items-center justify-between mb-5">
               <div>
                 <p className="text-[10px] font-extrabold text-[#F97316] uppercase tracking-widest">Recently Joined</p>
@@ -537,8 +529,7 @@ export default function KoopIndiaHomepage() {
             </div>
           </div>
 
-          {/* Latest Buyers */}
-          <div>
+                    <div>
             <div className="flex items-center justify-between mb-5">
               <div>
                 <p className="text-[10px] font-extrabold text-[#F97316] uppercase tracking-widest">Recently Joined</p>
@@ -566,8 +557,7 @@ export default function KoopIndiaHomepage() {
             </div>
           </div>
 
-          {/* Latest Blogs */}
-          <div>
+                    <div>
             <div className="flex items-center justify-between mb-5">
               <h3 className="font-black text-[#1e3a5f] text-sm uppercase tracking-wide">LATEST BLOGS</h3>
               <Link href="/blog" className="text-xs font-bold text-[#F97316] hover:underline">View All →</Link>

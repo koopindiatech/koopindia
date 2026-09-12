@@ -9,9 +9,10 @@ import {
 import { db, storage } from "../../../lib/firebase";
 import {
   collection, addDoc, getDocs, updateDoc, deleteDoc, doc,
-  serverTimestamp, query, orderBy,
+  serverTimestamp, query, orderBy, where
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getCurrentUser } from "../lib/auth";
 
 /* ─── helpers ─── */
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -47,20 +48,13 @@ const statusCfg = {
 const blank = () => ({
   buyerName: "", tagline: "", category: "", businessType: "Manufacturer",
   estYear: "", city: "", state: "", address: "",
-  // Contact
   contactName: "", contactRole: "", contactPhone: "", contactEmail: "", contactPhotoUrl: "",
   phone: "", email: "", website: "", whatsapp: "",
-  // Verification
-  gstVerified: false, panVerified: false, companyVerified: false,
   gstNumber: "", panNumber: "",
-  // Rating
   rating: "4.5", reviewCount: "0",
-  // Visuals
   logoUrl: "", coverImageUrl: "",
   primaryColor: "#16a34a",
-  // About
   about: "",
-  // Product categories displayed on page
   productCategories: [],
   // Buyers they work with (logo list)
   buyersWeWorkWith: [{ id: uid(), name: "", logoUrl: "" }],
@@ -68,7 +62,6 @@ const blank = () => ({
   whyUs: ["Pan India presence", "Timely payments", "Quality products"],
   requirements: ["Standard packaging", "Competitive pricing", "Timely delivery"],
   preferredStates: ["Delhi NCR", "Maharashtra", "Gujarat"],
-  // Stats
   stats: [
     { id: uid(), icon: "", value: "", label: "Outlets" },
     { id: uid(), icon: "", value: "", label: "Cities" },
@@ -77,12 +70,9 @@ const blank = () => ({
     { id: uid(), icon: "", value: "", label: "Annual Turnover" },
     { id: uid(), icon: "", value: "", label: "Years in Business" },
   ],
-  // Business details sidebar
   annualTurnover: "", numberOfOutlets: "", presence: "",
   buyingFrequency: "", paymentTerms: "", deliveryArea: "",
-  // Map
   mapEmbedUrl: "",
-  // Status
   status: "draft",
 });
 
@@ -130,6 +120,7 @@ const ProgPill = ({ field, uploadStatus, uploadProgress }) =>
 
 /* ══════════════════════════════════════════════════════════ */
 export default function BuyersAdminPage() {
+  const [user, setUser] = useState(null);
   const [buyers, setBuyers] = useState([]);
   const [search, setSearch] = useState("");
   const [dbLoading, setDbLoading] = useState(true);
@@ -149,8 +140,22 @@ export default function BuyersAdminPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
-        setBuyers(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        const u = getCurrentUser();
+        setUser(u);
+        if (u?.role === "buyer") {
+          const snap = await getDocs(query(collection(db, "buyers"), where("slug", "==", u.linkedSlug)));
+          if (!snap.empty) {
+            const data = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            setBuyers([data]);
+            openForm(data);
+          } else {
+            setBuyers([]);
+            openForm({ slug: u.linkedSlug, buyerName: u.name, contactEmail: u.email });
+          }
+        } else {
+          const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
+          setBuyers(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        }
       } catch (e) { console.error(e); }
       finally { setDbLoading(false); }
     };
@@ -293,8 +298,7 @@ export default function BuyersAdminPage() {
     <div className="min-h-screen bg-[#f4f6fb]" style={{ fontFamily: "'Inter',sans-serif" }}>
       {!formOpen && (
         <>
-          {/* Top bar */}
-          <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
+                    <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center">
                 <Building2 className="text-white" size={18} />
@@ -310,8 +314,7 @@ export default function BuyersAdminPage() {
             </button>
           </div>
 
-          {/* Filter bar */}
-          <div className="px-6 pt-5 pb-4 flex gap-3">
+                    <div className="px-6 pt-5 pb-4 flex gap-3">
             <div className="flex-1 relative">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
               <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search buyers..."
@@ -334,8 +337,7 @@ export default function BuyersAdminPage() {
             </div>
           )}
 
-          {/* Buyer Cards */}
-          <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {filtered.map((b) => {
               const cfg = statusCfg[b.status] || statusCfg.draft;
               const color = b.primaryColor || "#f97316";
@@ -398,12 +400,13 @@ export default function BuyersAdminPage() {
       {/* ═══════════════ BUYER STUDIO ═══════════════ */}
       {formOpen && (
         <div className="w-full flex flex-col" style={{ minHeight: "100vh", background: "#f1f5f9" }}>
-          {/* Studio Header */}
-          <div className="px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-4 sticky top-0 z-30">
+                    <div className="px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-4 sticky top-0 z-30">
             <div className="flex items-center gap-4">
-              <button type="button" onClick={() => setFormOpen(false)} className="w-9 h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer">
-                <ArrowLeft size={16} />
-              </button>
+              {user?.role !== "buyer" && (
+                <button type="button" onClick={() => setFormOpen(false)} className="w-9 h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer">
+                  <ArrowLeft size={16} />
+                </button>
+              )}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md" style={{ backgroundColor: pc }}>
                   {form.logoUrl
@@ -429,8 +432,7 @@ export default function BuyersAdminPage() {
           </div>
 
           <div className="flex flex-1 overflow-hidden">
-            {/* Form Body - Full Width Scrollable */}
-            <div className="flex-1 overflow-y-auto" onScroll={(e) => {
+                        <div className="flex-1 overflow-y-auto" onScroll={(e) => {
               const sections = ["section-identity", "section-visuals", "section-about", "section-categories", "section-stats", "section-contact"];
               const scrollPos = e.target.scrollTop;
               for (const id of [...sections].reverse()) {
@@ -486,7 +488,8 @@ export default function BuyersAdminPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className={fieldLabel}>Buyer Name *</label>
-                            <input type="text" value={form.buyerName} onChange={(e) => sf("buyerName", e.target.value)} placeholder="e.g. FreshMart Supermarket" className={inp} />
+                            <input type="text" value={form.buyerName} disabled={user?.role === "buyer"} onChange={e => sf("buyerName", e.target.value)} placeholder="e.g. Global Imports LLC" className={`${inp} ${user?.role === "buyer" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
+                            {user?.role === "buyer" && <p className="text-[10px] text-gray-400 mt-1">Contact admin to change Business Name.</p>}
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
@@ -784,8 +787,7 @@ export default function BuyersAdminPage() {
 
               </div>
 
-              {/* Data Lists for Dropdowns */}
-              <datalist id="business-type-list">
+                            <datalist id="business-type-list">
                 <option value="Manufacturer" />
                 <option value="Distributor" />
                 <option value="Retailer" />
@@ -834,8 +836,7 @@ export default function BuyersAdminPage() {
         </div>
       )}
 
-      {/* Delete Confirm Modal */}
-      {delId && (
+            {delId && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
             <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4"><Trash2 className="text-red-500" size={24} /></div>

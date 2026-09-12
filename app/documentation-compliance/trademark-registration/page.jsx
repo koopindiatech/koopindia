@@ -406,9 +406,7 @@ const TrademarkRegistrationPage = () => {
   // Dynamically import useModal if available; otherwise mock
   let onOpenModal = () => {};
   try {
-    // eslint-disable-next-line
     const { useModal } = require("@/context/ModalContext");
-    // eslint-disable-next-line
     ({ onOpenModal } = useModal());
   } catch (_) {}
 
@@ -458,8 +456,7 @@ const TrademarkRegistrationPage = () => {
           className="relative py-20 px-5 overflow-hidden"
           style={{ background: "linear-gradient(135deg, #0F172A 0%, #141D32 60%, #1a1f3a 100%)" }}
         >
-          {/* Decorative shield shape */}
-          <div
+                    <div
             className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none opacity-5"
             style={{
               background: "radial-gradient(ellipse at 80% 50%, #F97316 0%, transparent 70%)",
@@ -473,8 +470,7 @@ const TrademarkRegistrationPage = () => {
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
-                {/* Badge */}
-                <div
+                                <div
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-6"
                   style={{ background: "rgba(249,115,22,0.15)", color: "#F97316", border: "1px solid rgba(249,115,22,0.3)" }}
                 >
@@ -526,8 +522,7 @@ const TrademarkRegistrationPage = () => {
                 </p>
               </div>
 
-              {/* Stat cards */}
-              <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-4">
                 {[
                   { label: "Trademark Classes", value: "45", sub: "Goods & Services", color: "#F97316" },
                   { label: "Validity Period", value: "10 Yrs", sub: "Renewable Forever", color: "#8b5cf6" },
@@ -545,8 +540,7 @@ const TrademarkRegistrationPage = () => {
                   </div>
                 ))}
 
-                {/* Quick facts */}
-                <div
+                                <div
                   className="col-span-2 rounded-2xl p-5"
                   style={{ background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.2)" }}
                 >
@@ -610,8 +604,7 @@ const TrademarkRegistrationPage = () => {
                 </div>
               </div>
 
-              {/* What can be trademarked */}
-              <div>
+                            <div>
                 <h3 className="text-xl font-bold text-[#141D32] mb-6">
                   What Can Be <span className="text-[#F97316]">Trademarked?</span>
                 </h3>
@@ -643,8 +636,7 @@ const TrademarkRegistrationPage = () => {
                   ))}
                 </div>
 
-                {/* Cannot be trademarked */}
-                <div
+                                <div
                   className="rounded-2xl p-5"
                   style={{ background: "#fff1f2", border: "1px solid #fecdd3" }}
                 >
@@ -845,8 +837,7 @@ const TrademarkRegistrationPage = () => {
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
-              {/* Individual */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-xl transition hover:border-orange-200">
+                            <div className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-xl transition hover:border-orange-200">
                 <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
                   <User className="w-6 h-6 text-[#F97316]" />
                 </div>
@@ -874,8 +865,7 @@ const TrademarkRegistrationPage = () => {
                 ))}
               </div>
 
-              {/* Company */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-xl transition hover:border-orange-200">
+                            <div className="bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-xl transition hover:border-orange-200">
                 <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
                   <Building2 className="w-6 h-6 text-[#F97316]" />
                 </div>
@@ -925,8 +915,7 @@ const TrademarkRegistrationPage = () => {
                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#fed7aa"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#f3f4f6"; }}
                   >
-                    {/* Step badge */}
-                    <div
+                                        <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-white text-sm mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300"
                       style={{ background: "linear-gradient(135deg, #F97316, #f59e0b)", boxShadow: "0 4px 12px rgba(249,115,22,0.3)" }}
                     >

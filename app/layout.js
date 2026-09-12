@@ -27,8 +27,7 @@ export default function RootLayout({ children }) {
           content="script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://www.google-analytics.com; img-src 'self' data: https://www.facebook.com https://www.googletagmanager.com https://firebasestorage.googleapis.com;"
         />
         
-        {/* Google Tag Manager */}
-        <Script id="gtm-script" strategy="afterInteractive">
+                <Script id="gtm-script" strategy="afterInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -38,8 +37,19 @@ export default function RootLayout({ children }) {
           `}
         </Script>
 
-        {/* Meta Pixel Code */}
-        <Script id="fb-pixel" strategy="afterInteractive">
+        {/* Google Analytics (gtag.js) */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-RTR76SBCNM" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-RTR76SBCNM');
+          `}
+        </Script>
+
+                <Script id="fb-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -57,8 +67,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* GTM Noscript */}
-        <noscript>
+                <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-KD68V3ZG"
             height="0"
@@ -67,8 +76,7 @@ export default function RootLayout({ children }) {
           />
         </noscript>
 
-        {/* Meta Pixel Noscript */}
-        <noscript>
+                <noscript>
           <img 
             height="1" 
             width="1" 
