@@ -516,7 +516,25 @@ export default function SellersPage() {
 
   const openForm = (s = null) => {
     setEditing(s);
-    setForm(s ? { ...blank(), ...s } : blank());
+    
+    let nextForm = blank();
+    if (s) {
+      nextForm = { ...nextForm, ...s };
+      
+      // Fix type collisions or missing arrays
+      if (!Array.isArray(nextForm.products)) {
+        nextForm.registrationProducts = nextForm.products;
+        nextForm.products = blank().products;
+      }
+      if (!Array.isArray(nextForm.infrastructure)) {
+        nextForm.infrastructure = blank().infrastructure;
+      }
+      if (!Array.isArray(nextForm.certifications)) {
+        nextForm.certifications = blank().certifications;
+      }
+    }
+    
+    setForm(nextForm);
     setStep(0);
     setFormOpen(true);
     setUploadProgress({});
@@ -635,7 +653,7 @@ export default function SellersPage() {
       {/* ═══════════════ BUYER STUDIO ═══════════════ */}
       {formOpen && (
         <div className="w-full flex flex-col" style={{ minHeight: '100vh', background: '#f1f5f9' }}>
-                    <div className="px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-4 sticky top-0 z-30">
+                    <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
             <div className="flex items-center gap-4">
               {user?.role !== "seller" && (
                 <button type="button" onClick={() => setFormOpen(false)} className="w-9 h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer">
@@ -649,7 +667,7 @@ export default function SellersPage() {
                     : <span className="text-white font-black text-sm">{ini(form.name || "BR")}</span>}
                 </div>
                 <div>
-                  <h1 className="font-black text-gray-900 text-base leading-tight">{editing ? (form.name || "Edit Buyer") : "New Buyer Studio"}</h1>
+                  <h1 className="font-black text-gray-900 text-base leading-tight">{editing ? (form.name || "Edit Seller") : "New Seller Studio"}</h1>
                   {form.name && <p className="text-indigo-600 text-[11px] font-bold mt-0.5">/{slugify(form.name)}</p>}
                 </div>
               </div>
@@ -679,8 +697,8 @@ export default function SellersPage() {
           <div className="flex flex-col flex-1 overflow-hidden">
 
             {/* ── Sticky Top Section Nav (Floating Capsule) ── */}
-            <div className="sticky top-[72px] z-20 flex justify-center mt-3 mb-6 pointer-events-none px-4">
-              <div className="bg-white/90 backdrop-blur-md border border-gray-200/60 shadow-xl shadow-gray-200/50 rounded-full p-1.5 flex items-center gap-1 overflow-x-auto pointer-events-auto w-max max-w-full" style={{ scrollbarWidth: 'none' }}>
+            <div className="sticky top-[72px] z-20 flex justify-center mt-3 mb-6 pointer-events-none px-2 sm:px-4">
+              <div className="bg-white/90 backdrop-blur-md border border-gray-200/60 shadow-xl shadow-gray-200/50 rounded-full p-1.5 flex items-center gap-1 overflow-x-auto pointer-events-auto w-full sm:w-max max-w-full" style={{ scrollbarWidth: 'none' }}>
                 {[
                   { id: "section-identity", icon: "🏠", label: "Identity & Branding" },
                   { id: "section-about", icon: "ℹ️", label: "About & Vision" },
@@ -704,15 +722,16 @@ export default function SellersPage() {
 
             {/* Form Body — all sections scrollable */}
             <div className="flex-1 overflow-y-auto" ref={scrollRef}>
-              <div className="max-w-5xl mx-auto p-5 sm:p-8 space-y-10">
+              <div className="max-w-5xl mx-auto p-3 sm:p-5 md:p-8 space-y-10">
 
                 {/* ══ IDENTITY & BRANDING ══ */}
-                <div className="flex items-center gap-5 py-4 mb-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-indigo-200/50 rotate-[-4deg] transition-transform hover:rotate-0 duration-300">1</div>
-                  <div>
-                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">Identity & Branding</h2>
-                    <p className="text-sm text-gray-500 font-bold mt-0.5">Company details, colors, banners and navigation</p>
+                <div className="mb-6">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="px-2.5 py-1 bg-indigo-100 text-indigo-700 font-black text-[10px] rounded-lg uppercase tracking-widest">Step 1</span>
+                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Identity & Branding</h2>
+                    <div className="h-px flex-1 bg-gray-100 ml-2 hidden sm:block"></div>
                   </div>
+                  <p className="text-xs sm:text-sm text-gray-500 font-semibold pl-1">Company details, colors, banners and navigation</p>
                 </div>
                 <div id="section-identity" className="space-y-6 scroll-mt-6">
                                         <div className={sectionCard}>
@@ -726,7 +745,7 @@ export default function SellersPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className={fieldLabel}>Company Name *</label>
-                            <input type="text" value={form.name} disabled={user?.role === "seller"} onChange={e => sf("name", e.target.value)} placeholder="e.g. Nayana Masala Pvt Ltd" className={`${inp} ${user?.role === "seller" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
+                            <input type="text" value={form.name} disabled={user?.role === "seller"} onChange={e => sf("name", e.target.value)} placeholder="Enter company name" className={`${inp} ${user?.role === "seller" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
                             {user?.role === "seller" && <p className="text-[10px] text-gray-400 mt-1">Contact admin to change Business Name.</p>}
                           </div>
                           <div>
@@ -929,7 +948,7 @@ export default function SellersPage() {
                         </div>
                         <div>
                           <label className={fieldLabel}>Footer Copyright Text</label>
-                          <input type="text" value={form.footerText || ""} onChange={e => sf("footerText", e.target.value)} placeholder="e.g. Managed by Koop India" className={inp} />
+                          <input type="text" value={form.footerText || ""} onChange={e => sf("footerText", e.target.value)} placeholder="Enter footer text" className={inp} />
                         </div>
                         <div className="pt-4 border-t border-gray-100 mt-4">
                           <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Header Colors & Navigation</p>
@@ -945,11 +964,11 @@ export default function SellersPage() {
                           </div>
                           <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Navigation Labels</p>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div><label className={fieldLabel}>Home Label</label><input type="text" value={form.navHomeLabel || ""} onChange={e => sf("navHomeLabel", e.target.value)} placeholder="Home" className={inp} /></div>
-                            <div><label className={fieldLabel}>About Us Label</label><input type="text" value={form.navAboutLabel || ""} onChange={e => sf("navAboutLabel", e.target.value)} placeholder="About Us" className={inp} /></div>
-                            <div><label className={fieldLabel}>Products Label</label><input type="text" value={form.navProductsLabel || ""} onChange={e => sf("navProductsLabel", e.target.value)} placeholder="Products" className={inp} /></div>
-                            <div><label className={fieldLabel}>Contact Us Label</label><input type="text" value={form.navContactLabel || ""} onChange={e => sf("navContactLabel", e.target.value)} placeholder="Contact Us" className={inp} /></div>
-                            <div className="sm:col-span-2"><label className={fieldLabel}>CTA Button Text (Header nav)</label><input type="text" value={form.navCtaLabel || ""} onChange={e => sf("navCtaLabel", e.target.value)} placeholder="Request For Quotation" className={inp} /></div>
+                            <div><label className={fieldLabel}>Home Label</label><input type="text" value={form.navHomeLabel || ""} onChange={e => sf("navHomeLabel", e.target.value)} placeholder="Enter home label" className={inp} /></div>
+                            <div><label className={fieldLabel}>About Us Label</label><input type="text" value={form.navAboutLabel || ""} onChange={e => sf("navAboutLabel", e.target.value)} placeholder="Enter about us label" className={inp} /></div>
+                            <div><label className={fieldLabel}>Products Label</label><input type="text" value={form.navProductsLabel || ""} onChange={e => sf("navProductsLabel", e.target.value)} placeholder="Enter products label" className={inp} /></div>
+                            <div><label className={fieldLabel}>Contact Us Label</label><input type="text" value={form.navContactLabel || ""} onChange={e => sf("navContactLabel", e.target.value)} placeholder="Enter contact us label" className={inp} /></div>
+                            <div className="sm:col-span-2"><label className={fieldLabel}>CTA Button Text (Header nav)</label><input type="text" value={form.navCtaLabel || ""} onChange={e => sf("navCtaLabel", e.target.value)} placeholder="Enter CTA button text" className={inp} /></div>
                           </div>
                         </div>
                       </div>
@@ -982,11 +1001,11 @@ export default function SellersPage() {
                         <div className="grid grid-cols-2 gap-3 pt-2">
                           <div>
                             <label className={fieldLabel}>Button 1 Text</label>
-                            <input type="text" value={form.heroBtn1Text || ""} onChange={e => sf("heroBtn1Text", e.target.value)} placeholder="View Our Products" className={inp} />
+                            <input type="text" value={form.heroBtn1Text || ""} onChange={e => sf("heroBtn1Text", e.target.value)} placeholder="Enter button text" className={inp} />
                           </div>
                           <div>
                             <label className={fieldLabel}>Button 2 Text</label>
-                            <input type="text" value={form.heroBtn2Text || ""} onChange={e => sf("heroBtn2Text", e.target.value)} placeholder="Distributors / Buyers Inquiry" className={inp} />
+                            <input type="text" value={form.heroBtn2Text || ""} onChange={e => sf("heroBtn2Text", e.target.value)} placeholder="Enter button text" className={inp} />
                           </div>
                         </div>
                       </div>
@@ -1002,7 +1021,7 @@ export default function SellersPage() {
                       <div className="space-y-4">
                         <div>
                           <label className={fieldLabel}>Short About Text (shown on Home)</label>
-                          <textarea rows={4} value={form.homeAbout || ""} onChange={e => sf("homeAbout", e.target.value)} placeholder="Brief company introduction shown centred on the home page..." className={ta} />
+                          <textarea rows={4} value={form.homeAbout || ""} onChange={e => sf("homeAbout", e.target.value)} placeholder="Enter home about text" className={ta} />
                         </div>
                         <label className="flex items-center gap-3 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors">
                           <input type="checkbox" checked={form.showContactOnHome !== false} onChange={e => sf("showContactOnHome", e.target.checked)} className="w-5 h-5 text-indigo-600 rounded cursor-pointer accent-indigo-600" />
@@ -1028,19 +1047,19 @@ export default function SellersPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                           <div>
                             <label className={fieldLabel}>Section Label (small text above heading)</label>
-                            <input type="text" value={form.whyTitle || ""} onChange={e => sf("whyTitle", e.target.value)} placeholder="WHY KATA KIRR" className={inp} />
+                            <input type="text" value={form.whyTitle || ""} onChange={e => sf("whyTitle", e.target.value)} placeholder="Enter section label" className={inp} />
                           </div>
                           <div className="sm:col-span-2">
                             <label className={fieldLabel}>Main Heading</label>
-                            <input type="text" value={form.whySubtitle || ""} onChange={e => sf("whySubtitle", e.target.value)} placeholder="Tradition in every blend." className={inp} />
+                            <input type="text" value={form.whySubtitle || ""} onChange={e => sf("whySubtitle", e.target.value)} placeholder="Enter main heading" className={inp} />
                           </div>
                         </div>
                         <div className="space-y-2">
                           {(form.whyCards || []).map((card, i) => (
                             <div key={card.id || i} className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                              <input type="text" value={card.number} onChange={e => setArr("whyCards", i, "number", e.target.value)} placeholder="01" className="w-14 text-center bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none" style={{ padding: "8px 4px" }} />
-                              <input type="text" value={card.title} onChange={e => setArr("whyCards", i, "title", e.target.value)} placeholder="Feature title (e.g. Authentic Taste)" className={inp_sm + " flex-1"} />
-                              <input type="text" value={card.description} onChange={e => setArr("whyCards", i, "description", e.target.value)} placeholder="Short description..." className={inp_sm + " flex-1"} />
+                              <input type="text" value={card.number} onChange={e => setArr("whyCards", i, "number", e.target.value)} placeholder="Enter number" className="w-14 text-center bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none" style={{ padding: "8px 4px" }} />
+                              <input type="text" value={card.title} onChange={e => setArr("whyCards", i, "title", e.target.value)} placeholder="Enter feature title" className={inp_sm + " flex-1"} />
+                              <input type="text" value={card.description} onChange={e => setArr("whyCards", i, "description", e.target.value)} placeholder="Enter short description" className={inp_sm + " flex-1"} />
                               <button type="button" onClick={() => delArr("whyCards", i)} className={delBtn}><X size={14} /></button>
                             </div>
                           ))}
@@ -1149,9 +1168,9 @@ export default function SellersPage() {
                       <div className="space-y-2">
                         {form.stats.map((s, i) => (
                           <div key={s.id || i} className="flex items-center gap-2 p-2 bg-gray-50 rounded-xl border border-gray-100">
-                            <input type="text" value={s.icon} onChange={e => setArr("stats", i, "icon", e.target.value)} placeholder="📦" className="w-12 text-center bg-white rounded-lg border border-gray-200 text-sm outline-none" style={{ padding: "8px 4px" }} />
-                            <input type="text" value={s.value} onChange={e => setArr("stats", i, "value", e.target.value)} placeholder="25+" className="w-20 bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none" style={{ padding: "8px 10px" }} />
-                            <input type="text" value={s.label} onChange={e => setArr("stats", i, "label", e.target.value)} placeholder="Products" className={inp + " flex-1"} />
+                            <input type="text" value={s.icon} onChange={e => setArr("stats", i, "icon", e.target.value)} placeholder="Enter icon" className="w-12 text-center bg-white rounded-lg border border-gray-200 text-sm outline-none" style={{ padding: "8px 4px" }} />
+                            <input type="text" value={s.value} onChange={e => setArr("stats", i, "value", e.target.value)} placeholder="Enter value" className="w-20 bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none" style={{ padding: "8px 10px" }} />
+                            <input type="text" value={s.label} onChange={e => setArr("stats", i, "label", e.target.value)} placeholder="Enter products label" className={inp + " flex-1"} />
                             <button type="button" onClick={() => delArr("stats", i)} className={delBtn}><X size={14} /></button>
                           </div>
                         ))}
@@ -1271,8 +1290,8 @@ export default function SellersPage() {
                               {ProgPill({field:`certifications_${i}`,uploadStatus,uploadProgress})}
                             </div>
                             <div className="flex-1 space-y-2">
-                              <input type="text" value={cert.name} onChange={e => setArr("certifications", i, "name", e.target.value)} placeholder="e.g. FSSAI Approved" className={inp} />
-                              <input type="text" value={cert.description} onChange={e => setArr("certifications", i, "description", e.target.value)} placeholder="Short description" className={inp} />
+                              <input type="text" value={cert.name} onChange={e => setArr("certifications", i, "name", e.target.value)} placeholder="Enter certification name" className={inp} />
+                              <input type="text" value={cert.description} onChange={e => setArr("certifications", i, "description", e.target.value)} placeholder="Enter short description" className={inp} />
                               <label className="flex items-center gap-2 cursor-pointer mt-1">
                                 <input type="checkbox" checked={cert.checked !== false} onChange={e => setArr("certifications", i, "checked", e.target.checked)} className="w-4 h-4 accent-emerald-600" />
                                 <span className="text-xs font-bold text-gray-700">Show on public page</span>
@@ -1285,12 +1304,13 @@ export default function SellersPage() {
                     </div>
                 </div>
                 {/* ══ ABOUT & VISION ══ */}
-                <div className="flex items-center gap-5 py-4 mb-4 mt-20">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-emerald-200/50 rotate-[-4deg] transition-transform hover:rotate-0 duration-300">2</div>
-                  <div>
-                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">About & Vision</h2>
-                    <p className="text-sm text-gray-500 font-bold mt-0.5">Company story, mission, stats, and infrastructure</p>
+                <div className="mb-6 mt-16">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 font-black text-[10px] rounded-lg uppercase tracking-widest">Step 2</span>
+                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">About & Vision</h2>
+                    <div className="h-px flex-1 bg-gray-100 ml-2 hidden sm:block"></div>
                   </div>
+                  <p className="text-xs sm:text-sm text-gray-500 font-semibold pl-1">Company story, mission, stats, and infrastructure</p>
                 </div>
                 <div id="section-about" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
@@ -1300,7 +1320,7 @@ export default function SellersPage() {
                       <div className="space-y-4">
                         <div>
                           <label className={fieldLabel}>About / Description (use blank lines between paragraphs)</label>
-                          <textarea rows={7} value={form.about} onChange={e => sf("about", e.target.value)} placeholder={"First paragraph about your company...\n\nSecond paragraph with more details...\n\nThird paragraph about your values..."} className={ta} />
+                          <textarea rows={7} value={form.about} onChange={e => sf("about", e.target.value)} placeholder="Enter about company details..." className={ta} />
                           <p className="text-[10px] text-indigo-600 font-semibold mt-1">💡 Tip: Press Enter twice between text to create separate paragraphs on the page.</p>
                         </div>
                         <div>
@@ -1333,7 +1353,7 @@ export default function SellersPage() {
                           <div key={bodyKey} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <div className="flex items-center gap-2 mb-3">
                               <span className="text-xl">{icon}</span>
-                              <input type="text" value={form[titleKey]} onChange={e => sf(titleKey, e.target.value)} className="flex-1 font-black text-gray-800 text-xs bg-transparent outline-none border-b border-gray-200 pb-1 focus:border-indigo-400" placeholder="Section title" />
+                              <input type="text" value={form[titleKey]} onChange={e => sf(titleKey, e.target.value)} className="flex-1 font-black text-gray-800 text-xs bg-transparent outline-none border-b border-gray-200 pb-1 focus:border-indigo-400" placeholder="Enter section title" />
                             </div>
                             <textarea rows={3} value={form[bodyKey]} onChange={e => sf(bodyKey, e.target.value)} placeholder={ph} className={ta + " text-xs"} />
                           </div>
@@ -1347,22 +1367,22 @@ export default function SellersPage() {
                       </div>
                       <div className="space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div><label className={fieldLabel}>Company / Legal Name</label><input type="text" value={form.companyName} onChange={e => sf("companyName", e.target.value)} placeholder="e.g. Vasudevhari Foods Pvt Ltd" className={inp} /></div>
-                          <div><label className={fieldLabel}>Nature of Business</label><input type="text" value={form.natureOfBusiness} onChange={e => sf("natureOfBusiness", e.target.value)} placeholder="e.g. Manufacturer, Packaging" className={inp} /></div>
+                          <div><label className={fieldLabel}>Company / Legal Name</label><input type="text" value={form.companyName} onChange={e => sf("companyName", e.target.value)} placeholder="Enter company name" className={inp} /></div>
+                          <div><label className={fieldLabel}>Nature of Business</label><input type="text" value={form.natureOfBusiness} onChange={e => sf("natureOfBusiness", e.target.value)} placeholder="Enter nature of business" className={inp} /></div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <div><label className={fieldLabel}>Established Year</label><input type="text" value={form.establishmentYear} onChange={e => sf("establishmentYear", e.target.value)} placeholder="e.g. 2010" className={inp} /></div>
-                          <div><label className={fieldLabel}>No. of Employees</label><input type="text" value={form.employees} onChange={e => sf("employees", e.target.value)} placeholder="e.g. 50" className={inp} /></div>
-                          <div><label className={fieldLabel}>GST Number</label><input type="text" value={form.gstNumber} onChange={e => sf("gstNumber", e.target.value)} placeholder="e.g. 24AAJCV..." className={inp} /></div>
+                          <div><label className={fieldLabel}>Established Year</label><input type="text" value={form.establishmentYear} onChange={e => sf("establishmentYear", e.target.value)} placeholder="Enter establishment year" className={inp} /></div>
+                          <div><label className={fieldLabel}>No. of Employees</label><input type="text" value={form.employees} onChange={e => sf("employees", e.target.value)} placeholder="Enter number of employees" className={inp} /></div>
+                          <div><label className={fieldLabel}>GST Number</label><input type="text" value={form.gstNumber} onChange={e => sf("gstNumber", e.target.value)} placeholder="Enter GST number" className={inp} /></div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div><label className={fieldLabel}>FSSAI License</label><input type="text" value={form.fssaiLicense} onChange={e => sf("fssaiLicense", e.target.value)} placeholder="e.g. 10723998000196" className={inp} /></div>
-                          <div><label className={fieldLabel}>Full Address</label><input type="text" value={form.address} onChange={e => sf("address", e.target.value)} placeholder="Plot No., Street, Area" className={inp} /></div>
+                          <div><label className={fieldLabel}>FSSAI License</label><input type="text" value={form.fssaiLicense} onChange={e => sf("fssaiLicense", e.target.value)} placeholder="Enter FSSAI number" className={inp} /></div>
+                          <div><label className={fieldLabel}>Full Address</label><input type="text" value={form.address} onChange={e => sf("address", e.target.value)} placeholder="Enter full address" className={inp} /></div>
                         </div>
                         <div className="grid grid-cols-3 gap-3">
-                          <div><label className={fieldLabel}>City</label><input type="text" value={form.city} onChange={e => sf("city", e.target.value)} placeholder="City" className={inp} /></div>
-                          <div><label className={fieldLabel}>State</label><input type="text" value={form.state} onChange={e => sf("state", e.target.value)} placeholder="State" className={inp} /></div>
-                          <div><label className={fieldLabel}>PIN Code</label><input type="text" value={form.pincode} onChange={e => sf("pincode", e.target.value)} placeholder="641035" className={inp} /></div>
+                          <div><label className={fieldLabel}>City</label><input type="text" value={form.city} onChange={e => sf("city", e.target.value)} placeholder="Enter city" className={inp} /></div>
+                          <div><label className={fieldLabel}>State</label><input type="text" value={form.state} onChange={e => sf("state", e.target.value)} placeholder="Enter state" className={inp} /></div>
+                          <div><label className={fieldLabel}>PIN Code</label><input type="text" value={form.pincode} onChange={e => sf("pincode", e.target.value)} placeholder="Enter PIN code" className={inp} /></div>
                         </div>
                       </div>
                     </div>
@@ -1380,20 +1400,21 @@ export default function SellersPage() {
                             <button type="button" onClick={() => delArr("infrastructure", i)} className="absolute top-2 right-2 w-6 h-6 bg-red-100 hover:bg-red-200 text-red-500 rounded-lg flex items-center justify-center cursor-pointer"><X size={12} /></button>
                             <UploadBox field={`infra_${i}`} value={item.imageUrl} onPick={e => handleArrayImagePick(e, "infrastructure", i)} />
                             {ProgPill({field:`infrastructure_${i}`,uploadStatus,uploadProgress})}
-                            <input type="text" value={item.title} onChange={e => setArr("infrastructure", i, "title", e.target.value)} placeholder="Facility name" className={inp_sm} />
-                            <input type="text" value={item.description} onChange={e => setArr("infrastructure", i, "description", e.target.value)} placeholder="Short description" className={inp_sm} />
+                            <input type="text" value={item.title} onChange={e => setArr("infrastructure", i, "title", e.target.value)} placeholder="Enter facility name" className={inp_sm} />
+                            <input type="text" value={item.description} onChange={e => setArr("infrastructure", i, "description", e.target.value)} placeholder="Enter short description" className={inp_sm} />
                           </div>
                         ))}
                       </div>
                     </div>
                 </div>
                 {/* ══ PRODUCTS / SERVICES ══ */}
-                <div className="flex items-center gap-5 py-4 mb-4 mt-20">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-500 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-blue-200/50 rotate-[-4deg] transition-transform hover:rotate-0 duration-300">3</div>
-                  <div>
-                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">Products & Services</h2>
-                    <p className="text-sm text-gray-500 font-bold mt-0.5">Showcase your offerings, images, and prices</p>
+                <div className="mb-6 mt-16">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="px-2.5 py-1 bg-blue-100 text-blue-700 font-black text-[10px] rounded-lg uppercase tracking-widest">Step 3</span>
+                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Products & Services</h2>
+                    <div className="h-px flex-1 bg-gray-100 ml-2 hidden sm:block"></div>
                   </div>
+                  <p className="text-xs sm:text-sm text-gray-500 font-semibold pl-1">Showcase your offerings, images, and prices</p>
                 </div>
                 <div id="section-products" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
@@ -1527,38 +1548,38 @@ export default function SellersPage() {
                                   </div>
                                   <div>
                                     <label className={fieldLabel}>Price / MOQ</label>
-                                    <input type="text" value={prod.price} onChange={e => setArr("products", i, "price", e.target.value)} placeholder="₹200/kg" className={inp_sm} />
+                                    <input type="text" value={prod.price} onChange={e => setArr("products", i, "price", e.target.value)} placeholder="Enter price / MOQ" className={inp_sm} />
                                   </div>
                                   <div>
                                     <label className={fieldLabel}>Badge</label>
-                                    <input type="text" value={prod.badge} onChange={e => setArr("products", i, "badge", e.target.value)} placeholder="e.g. Bestseller" className={inp_sm} />
+                                    <input type="text" value={prod.badge} onChange={e => setArr("products", i, "badge", e.target.value)} placeholder="Enter badge" className={inp_sm} />
                                   </div>
                                 </div>
                                 <div>
                                   <label className={fieldLabel}>Short Description</label>
-                                  <textarea rows={2} value={prod.description} onChange={e => setArr("products", i, "description", e.target.value)} placeholder="Product description..." className={ta + " text-xs"} />
+                                  <textarea rows={2} value={prod.description} onChange={e => setArr("products", i, "description", e.target.value)} placeholder="Enter product description" className={ta + " text-xs"} />
                                 </div>
                                 <div>
                                   <label className={fieldLabel}>Tagline</label>
-                                  <input type="text" value={prod.tagline || ""} onChange={e => setArr("products", i, "tagline", e.target.value)} placeholder="e.g. Pure. Authentic. Premium." className={inp_sm} />
+                                  <input type="text" value={prod.tagline || ""} onChange={e => setArr("products", i, "tagline", e.target.value)} placeholder="Enter tagline" className={inp_sm} />
                                 </div>
                                 <div>
                                   <label className={fieldLabel}>Key Highlights (one per line)</label>
-                                  <textarea rows={3} value={prod.keyHighlights || ""} onChange={e => setArr("products", i, "keyHighlights", e.target.value)} placeholder="100% Natural\nNo Preservatives\nRich Aroma" className={ta + " text-xs"} />
+                                  <textarea rows={3} value={prod.keyHighlights || ""} onChange={e => setArr("products", i, "keyHighlights", e.target.value)} placeholder="Enter key highlights" className={ta + " text-xs"} />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                  <div><label className={fieldLabel}>Suitable For</label><input type="text" value={prod.suitableFor || ""} onChange={e => setArr("products", i, "suitableFor", e.target.value)} placeholder="e.g. All age groups" className={inp_sm} /></div>
-                                  <div><label className={fieldLabel}>Available Variants (comma sep.)</label><input type="text" value={prod.availableVariants || ""} onChange={e => setArr("products", i, "availableVariants", e.target.value)} placeholder="e.g. 100g, 500g, 1kg" className={inp_sm} /></div>
+                                  <div><label className={fieldLabel}>Suitable For</label><input type="text" value={prod.suitableFor || ""} onChange={e => setArr("products", i, "suitableFor", e.target.value)} placeholder="Enter suitable for" className={inp_sm} /></div>
+                                  <div><label className={fieldLabel}>Available Variants (comma sep.)</label><input type="text" value={prod.availableVariants || ""} onChange={e => setArr("products", i, "availableVariants", e.target.value)} placeholder="Enter available variants" className={inp_sm} /></div>
                                 </div>
 
                                                                 <div className="pt-2 border-t border-gray-100">
                                   <label className={fieldLabel}>Product Features (one per line, up to 4)</label>
-                                  <textarea rows={4} value={prod.features || ""} onChange={e => setArr("products", i, "features", e.target.value)} placeholder="Feature 1\nFeature 2\nFeature 3\nFeature 4" className={ta + " text-xs"} />
+                                  <textarea rows={4} value={prod.features || ""} onChange={e => setArr("products", i, "features", e.target.value)} placeholder="Enter product features" className={ta + " text-xs"} />
                                 </div>
 
                                                                 <div className="pt-2 border-t border-gray-100">
                                   <label className={fieldLabel}>Ingredients / Composition</label>
-                                  <textarea rows={2} value={prod.ingredientsList || prod.ingredients || ""} onChange={e => setArr("products", i, "ingredientsList", e.target.value)} placeholder="e.g. Red Chili, Salt, Turmeric" className={ta + " text-xs"} />
+                                  <textarea rows={2} value={prod.ingredientsList || prod.ingredients || ""} onChange={e => setArr("products", i, "ingredientsList", e.target.value)} placeholder="Enter ingredients" className={ta + " text-xs"} />
                                   <div className="flex gap-4 mt-2 flex-wrap">
                                     {[["isNatural", "🌱 Natural"], ["isOrganic", "🌾 Organic"], ["isPreservativeFree", "✅ Preservative-Free"]].map(([key, label]) => (
                                       <label key={key} className="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-gray-600">
@@ -1572,14 +1593,14 @@ export default function SellersPage() {
                                                                 <div className="pt-2 border-t border-gray-100">
                                   <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Specifications</p>
                                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                    <div><label className={fieldLabel}>Product Type</label><input type="text" value={prod.productType || ""} onChange={e => setArr("products", i, "productType", e.target.value)} placeholder="e.g. Spice" className={inp_sm} /></div>
-                                    <div><label className={fieldLabel}>Net Weight</label><input type="text" value={prod.netWeight || ""} onChange={e => setArr("products", i, "netWeight", e.target.value)} placeholder="e.g. 100g" className={inp_sm} /></div>
-                                    <div><label className={fieldLabel}>Shelf Life</label><input type="text" value={prod.shelfLife || ""} onChange={e => setArr("products", i, "shelfLife", e.target.value)} placeholder="e.g. 12 months" className={inp_sm} /></div>
-                                    <div><label className={fieldLabel}>Storage</label><input type="text" value={prod.storageInstructions || ""} onChange={e => setArr("products", i, "storageInstructions", e.target.value)} placeholder="e.g. Cool dry place" className={inp_sm} /></div>
-                                    <div><label className={fieldLabel}>Packaging Type</label><input type="text" value={prod.packagingType || prod.packaging || ""} onChange={e => setArr("products", i, "packagingType", e.target.value)} placeholder="e.g. Pouch" className={inp_sm} /></div>
-                                    <div><label className={fieldLabel}>Country of Origin</label><input type="text" value={prod.countryOfOrigin || ""} onChange={e => setArr("products", i, "countryOfOrigin", e.target.value)} placeholder="India" className={inp_sm} /></div>
-                                    <div><label className={fieldLabel}>FSSAI Number</label><input type="text" value={prod.fssaiNumber || ""} onChange={e => setArr("products", i, "fssaiNumber", e.target.value)} placeholder="e.g. 1072399..." className={inp_sm} /></div>
-                                    <div><label className={fieldLabel}>SKU / Product Code</label><input type="text" value={prod.skuCode || ""} onChange={e => setArr("products", i, "skuCode", e.target.value)} placeholder="e.g. KI-MC-001" className={inp_sm} /></div>
+                                    <div><label className={fieldLabel}>Product Type</label><input type="text" value={prod.productType || ""} onChange={e => setArr("products", i, "productType", e.target.value)} placeholder="Enter product type" className={inp_sm} /></div>
+                                    <div><label className={fieldLabel}>Net Weight</label><input type="text" value={prod.netWeight || ""} onChange={e => setArr("products", i, "netWeight", e.target.value)} placeholder="Enter net weight" className={inp_sm} /></div>
+                                    <div><label className={fieldLabel}>Shelf Life</label><input type="text" value={prod.shelfLife || ""} onChange={e => setArr("products", i, "shelfLife", e.target.value)} placeholder="Enter shelf life" className={inp_sm} /></div>
+                                    <div><label className={fieldLabel}>Storage</label><input type="text" value={prod.storageInstructions || ""} onChange={e => setArr("products", i, "storageInstructions", e.target.value)} placeholder="Enter storage instructions" className={inp_sm} /></div>
+                                    <div><label className={fieldLabel}>Packaging Type</label><input type="text" value={prod.packagingType || prod.packaging || ""} onChange={e => setArr("products", i, "packagingType", e.target.value)} placeholder="Enter packaging type" className={inp_sm} /></div>
+                                    <div><label className={fieldLabel}>Country of Origin</label><input type="text" value={prod.countryOfOrigin || ""} onChange={e => setArr("products", i, "countryOfOrigin", e.target.value)} placeholder="Enter country of origin" className={inp_sm} /></div>
+                                    <div><label className={fieldLabel}>FSSAI Number</label><input type="text" value={prod.fssaiNumber || ""} onChange={e => setArr("products", i, "fssaiNumber", e.target.value)} placeholder="Enter FSSAI number" className={inp_sm} /></div>
+                                    <div><label className={fieldLabel}>SKU / Product Code</label><input type="text" value={prod.skuCode || ""} onChange={e => setArr("products", i, "skuCode", e.target.value)} placeholder="Enter SKU code" className={inp_sm} /></div>
                                   </div>
                                   <label className="flex items-center gap-2 mt-2 cursor-pointer text-xs font-bold text-gray-600">
                                     <input type="checkbox" checked={!!prod.isVegetarian} onChange={e => setArr("products", i, "isVegetarian", e.target.checked)} className="accent-green-600" />
@@ -1589,17 +1610,17 @@ export default function SellersPage() {
 
                                                                 <div>
                                   <label className={fieldLabel}>Available Packaging (comma sep.)</label>
-                                  <input type="text" value={prod.availablePackaging || ""} onChange={e => setArr("products", i, "availablePackaging", e.target.value)} placeholder="50g, 100g, 200g, 500g, 1kg, Bulk" className={inp_sm} />
+                                  <input type="text" value={prod.availablePackaging || ""} onChange={e => setArr("products", i, "availablePackaging", e.target.value)} placeholder="Enter available packaging" className={inp_sm} />
                                 </div>
 
                                                                 <div>
                                   <label className={fieldLabel}>Benefits (one per line)</label>
-                                  <textarea rows={3} value={prod.benefits || ""} onChange={e => setArr("products", i, "benefits", e.target.value)} placeholder="Authentic Taste\nPremium Ingredients\nNo Artificial Colours" className={ta + " text-xs"} />
+                                  <textarea rows={3} value={prod.benefits || ""} onChange={e => setArr("products", i, "benefits", e.target.value)} placeholder="Enter benefits" className={ta + " text-xs"} />
                                 </div>
 
                                                                 <div>
                                   <label className={fieldLabel}>Usage Instructions</label>
-                                  <textarea rows={3} value={prod.usageInstructions || ""} onChange={e => setArr("products", i, "usageInstructions", e.target.value)} placeholder="Add 1 tsp to your recipe..." className={ta + " text-xs"} />
+                                  <textarea rows={3} value={prod.usageInstructions || ""} onChange={e => setArr("products", i, "usageInstructions", e.target.value)} placeholder="Enter usage instructions" className={ta + " text-xs"} />
                                 </div>
 
                                                                 <div className="pt-2 border-t border-gray-100">
@@ -1625,12 +1646,12 @@ export default function SellersPage() {
 
                                                                 <div>
                                   <label className={fieldLabel}>Why Choose (one point per line)</label>
-                                  <textarea rows={3} value={prod.whyChoose || ""} onChange={e => setArr("products", i, "whyChoose", e.target.value)} placeholder="Premium Raw Materials\nTraditional Recipe\nExport Quality" className={ta + " text-xs"} />
+                                  <textarea rows={3} value={prod.whyChoose || ""} onChange={e => setArr("products", i, "whyChoose", e.target.value)} placeholder="Enter why choose us points" className={ta + " text-xs"} />
                                 </div>
 
                                                                 <div>
                                   <label className={fieldLabel}>Industries / Applications (comma sep.)</label>
-                                  <input type="text" value={prod.industriesApplications || ""} onChange={e => setArr("products", i, "industriesApplications", e.target.value)} placeholder="Food Industry, Restaurants, Hotels" className={inp_sm} />
+                                  <input type="text" value={prod.industriesApplications || ""} onChange={e => setArr("products", i, "industriesApplications", e.target.value)} placeholder="Enter industries / applications" className={inp_sm} />
                                 </div>
                                 </div>
                               </div>
@@ -1643,12 +1664,13 @@ export default function SellersPage() {
                     </div>
                 </div>
                 {/* ══ CONTACT & SOCIAL ══ */}
-                <div className="flex items-center gap-5 py-4 mb-4 mt-20">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-rose-200/50 rotate-[-4deg] transition-transform hover:rotate-0 duration-300">4</div>
-                  <div>
-                    <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 tracking-tight">Contact & Social</h2>
-                    <p className="text-sm text-gray-500 font-bold mt-0.5">Location, contact person, and social links</p>
+                <div className="mb-6 mt-16">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="px-2.5 py-1 bg-rose-100 text-rose-700 font-black text-[10px] rounded-lg uppercase tracking-widest">Step 4</span>
+                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Contact & Social</h2>
+                    <div className="h-px flex-1 bg-gray-100 ml-2 hidden sm:block"></div>
                   </div>
+                  <p className="text-xs sm:text-sm text-gray-500 font-semibold pl-1">Location, contact person, and social links</p>
                 </div>
                 <div id="section-contact" className="space-y-6 scroll-mt-6">
                     <div className={sectionCard}>
@@ -1659,7 +1681,7 @@ export default function SellersPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
                             <label className={fieldLabel}>Contact Person Name</label>
-                            <input type="text" value={form.contact} onChange={e => sf("contact", e.target.value)} placeholder="e.g. Rajesh Kumar" className={inp} />
+                            <input type="text" value={form.contact} onChange={e => sf("contact", e.target.value)} placeholder="Enter contact person name" className={inp} />
                           </div>
                           <div>
                             <label className={fieldLabel}>Phone Number</label>
@@ -1680,7 +1702,7 @@ export default function SellersPage() {
                         )}
                         <div>
                           <label className={fieldLabel}>Email Address</label>
-                          <input type="email" value={form.email} onChange={e => sf("email", e.target.value)} placeholder="info@yourbuyer.com" className={inp} />
+                          <input type="email" value={form.email} onChange={e => sf("email", e.target.value)} placeholder="Enter email address" className={inp} />
                         </div>
                       </div>
                     </div>

@@ -25,17 +25,20 @@ const miniBarData = [40, 65, 50, 80, 55, 90, 70, 85, 60, 95, 75, 88];
 
 export default function AdminDashboard() {
   const [sellers, setSellers] = useState([]);
+  const [buyers, setBuyers] = useState([]);
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [sellersSnap, leadsSnap] = await Promise.all([
+        const [sellersSnap, buyersSnap, leadsSnap] = await Promise.all([
           getDocs(collection(db, "sellers")),
+          getDocs(collection(db, "buyers")),
           getDocs(query(collection(db, "leads"), orderBy("createdAt", "desc"))),
         ]);
         setSellers(sellersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+        setBuyers(buyersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         setLeads(leadsSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       } catch (e) {
         console.error("Dashboard load error:", e);
@@ -46,26 +49,37 @@ export default function AdminDashboard() {
     load();
   }, []);
 
-  const totalBuyers = sellers.length;
-  const liveBuyers = sellers.filter(s => s.status === "live").length;
+  const totalSellers = sellers.length;
+  const liveSellers = sellers.filter(s => s.status === "live").length;
+  const totalBuyers = buyers.length;
+  const liveBuyers = buyers.filter(b => b.status === "live").length;
   const totalLeads = leads.length;
   const newLeads = leads.filter(l => l.status === "New").length;
-  const productLeads = leads.filter(l => l.source === "product_page").length;
-  const contactLeads = leads.filter(l => l.source === "contact_page").length;
+  const assignedLeads = leads.filter(l => l.status === "In Progress" || l.status === "Closed").length;
 
   const recentLeads = leads.slice(0, 5);
-  const recentBuyers = sellers.slice(0, 4);
+  const recentSellers = sellers.slice(0, 4);
 
   const stats = [
     {
-      label: "Total Buyers Listed",
-      value: loading ? "—" : String(totalBuyers),
-      change: loading ? "" : `${liveBuyers} live`,
+      label: "Total Sellers Listed",
+      value: loading ? "—" : String(totalSellers),
+      change: loading ? "" : `${liveSellers} live`,
       up: true,
       icon: Building2,
       color: "from-orange-500 to-amber-400",
       bg: "bg-orange-50",
       href: "/adminpanel/sellers",
+    },
+    {
+      label: "Total Buyers Listed",
+      value: loading ? "—" : String(totalBuyers),
+      change: loading ? "" : `${liveBuyers} live`,
+      up: true,
+      icon: ShoppingBag,
+      color: "from-violet-500 to-purple-400",
+      bg: "bg-violet-50",
+      href: "/adminpanel/buyers",
     },
     {
       label: "Total Leads",
@@ -78,23 +92,13 @@ export default function AdminDashboard() {
       href: "/adminpanel/leads",
     },
     {
-      label: "Product Inquiries",
-      value: loading ? "—" : String(productLeads),
-      change: loading ? "" : "from product pages",
-      up: true,
-      icon: ShoppingBag,
+      label: "Assigned Leads",
+      value: loading ? "—" : String(assignedLeads),
+      change: loading ? "" : "in progress / closed",
+      up: assignedLeads > 0,
+      icon: CheckCircle2,
       color: "from-emerald-500 to-teal-400",
       bg: "bg-emerald-50",
-      href: "/adminpanel/leads",
-    },
-    {
-      label: "Contact Page Leads",
-      value: loading ? "—" : String(contactLeads),
-      change: loading ? "" : "from contact forms",
-      up: false,
-      icon: FileText,
-      color: "from-violet-500 to-purple-400",
-      bg: "bg-violet-50",
       href: "/adminpanel/leads",
     },
   ];
@@ -228,37 +232,37 @@ export default function AdminDashboard() {
 
                 <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-gray-900 font-bold text-sm">Buyer Listings</h2>
+            <h2 className="text-gray-900 font-bold text-sm">Seller Listings</h2>
             <Link href="/adminpanel/sellers" className="text-orange-500 text-xs hover:underline">Manage →</Link>
           </div>
           {loading ? (
             <div className="space-y-3">
               {[1,2,3].map(i => <div key={i} className="h-12 bg-gray-100 rounded-xl animate-pulse" />)}
             </div>
-          ) : recentBuyers.length === 0 ? (
+          ) : recentSellers.length === 0 ? (
             <div className="text-center py-8 text-gray-400">
-              <p className="text-2xl mb-2">🏪</p>
-              <p className="text-xs">No buyers yet</p>
+              <p className="text-2xl mb-2">🏤</p>
+              <p className="text-xs">No sellers yet</p>
             </div>
           ) : (
             <div className="space-y-2">
-              {recentBuyers.map((buyer, i) => (
-                <div key={buyer.id || i} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
+              {recentSellers.map((seller, i) => (
+                <div key={seller.id || i} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
                   <div className="w-8 h-8 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center flex-shrink-0">
-                    {buyer.logoUrl
-                      ? <img src={buyer.logoUrl} alt="" className="w-7 h-7 object-contain rounded" />
+                    {seller.logoUrl
+                      ? <img src={seller.logoUrl} alt="" className="w-7 h-7 object-contain rounded" />
                       : <Globe size={14} className="text-orange-500" />
                     }
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-gray-900 text-xs font-semibold truncate">{buyer.name}</p>
-                    <p className="text-gray-400 text-[10px] truncate">/{buyer.slug}</p>
+                    <p className="text-gray-900 text-xs font-semibold truncate">{seller.name}</p>
+                    <p className="text-gray-400 text-[10px] truncate">/{seller.slug}</p>
                   </div>
-                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${buyer.type === "product" ? "bg-orange-100 text-orange-600" : "bg-blue-100 text-blue-600"}`}>
-                    {buyer.type === "product" ? "Product" : "Service"}
+                  <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${seller.type === "product" ? "bg-orange-100 text-orange-600" : "bg-blue-100 text-blue-600"}`}>
+                    {seller.type === "product" ? "Product" : "Service"}
                   </span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColor[buyer.status] || "bg-gray-100 text-gray-500"}`}>
-                    {buyer.status || "draft"}
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColor[seller.status] || "bg-gray-100 text-gray-500"}`}>
+                    {seller.status || "draft"}
                   </span>
                 </div>
               ))}

@@ -233,19 +233,19 @@ export default function AdminLayout({ children }) {
 
             <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar — darker */}
-        <header className="h-13 bg-white border-b border-gray-200 shadow-sm flex items-center px-4 gap-4 flex-shrink-0" style={{ height: "52px" }}>
-          <button onClick={() => setMobileOpen(true)} className="md:hidden text-gray-500 hover:text-gray-800">
+        <header className="h-13 bg-white border-b border-gray-200 shadow-sm flex items-center px-3 sm:px-4 gap-2 sm:gap-4 flex-shrink-0" style={{ height: "52px" }}>
+          <button onClick={() => setMobileOpen(true)} className="md:hidden text-gray-500 hover:text-gray-800 flex-shrink-0">
             <Menu size={20} />
           </button>
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="hidden md:flex w-6 h-6 items-center justify-center rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all"
+            className="hidden md:flex w-6 h-6 items-center justify-center rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all flex-shrink-0"
           >
             {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
 
-                    <div className="flex-1 max-w-md">
-            <div className="relative">
+          <div className="hidden sm:flex flex-1 max-w-md">
+            <div className="relative w-full">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"

@@ -12,6 +12,30 @@ function serialize(obj) {
   );
 }
 
+export async function generateMetadata({ params }) {
+  const resolvedParams = await params;
+  const { slug } = resolvedParams;
+  
+  try {
+    const q = query(collection(db, "buyers"), where("slug", "==", slug));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      const data = snap.docs[0].data();
+      return {
+        title: `${data.companyName} | Koop India Buyer`,
+        description: data.aboutCompany || `View ${data.companyName}'s buyer profile on Koop India. See their distribution network, sourcing requirements, and partner with them.`,
+        openGraph: {
+          title: data.companyName,
+          description: data.aboutCompany,
+          images: data.logoUrl ? [data.logoUrl] : [],
+        }
+      };
+    }
+  } catch (error) {}
+  
+  return { title: 'Buyer Profile | Koop India' };
+}
+
 export default async function BuyerPage({ params }) {
   const resolvedParams = await params;
   const { slug } = resolvedParams;
@@ -38,7 +62,7 @@ export default async function BuyerPage({ params }) {
         // Support both old 'coverUrl' field and new 'coverImageUrl' field
         coverImageUrl: proxy(data.coverImageUrl || data.coverUrl),
         contactPhotoUrl: proxy(data.contactPhotoUrl),
-        buyersWeWorkWith: (data.buyersWeWorkWith || []).map((b) => ({ ...b, logoUrl: proxy(b.logoUrl) })),
+        buyersWeWorkWith: (Array.isArray(data.buyersWeWorkWith) ? data.buyersWeWorkWith : []).map((b) => ({ ...b, logoUrl: proxy(b.logoUrl) })),
       };
 
       initialBuyer = serialize(raw);

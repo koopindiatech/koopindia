@@ -256,8 +256,8 @@ export default function SellerClientPage({ initialSeller }) {
   /* ── Product Card — shows only name + size/weight ── */
   const ProdCard = ({ p }) => (
     <div onClick={() => { setSelProd(p); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
-      className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1.5 cursor-pointer group overflow-hidden flex flex-col" style={{ width: '280px', minWidth: '280px' }}>
-      <div className="bg-slate-50 flex items-center justify-center p-6 relative" style={{ height: '240px' }}>
+      className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1.5 cursor-pointer group overflow-hidden flex flex-col w-full sm:w-[280px]">
+      <div className="bg-slate-50 flex items-center justify-center p-6 relative" style={{ height: '200px' }}>
         {p.imageUrl
           ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
           : <span className="text-6xl">{p.emoji || "📦"}</span>}
@@ -276,7 +276,7 @@ export default function SellerClientPage({ initialSeller }) {
   );
 
   const ProdGrid = ({ list }) => (
-    <div className="flex flex-wrap gap-5 justify-center">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 justify-items-center">
       {list.map((p, i) => (
         <ProdCard key={i} p={p} />
       ))}
@@ -412,66 +412,62 @@ export default function SellerClientPage({ initialSeller }) {
       {/* ══ HOME ══ */}
       {tab === "home" && !selProd && (
         <div>
-          <div className="relative overflow-hidden flex items-end pb-12 group" style={{ backgroundColor: heroBannerBg, minHeight: "clamp(600px, 75vh, 900px)" }}>
-            {banners.map((url, idx) => (
-              <div key={idx}
-                className={`absolute inset-0 transition-opacity duration-1000 ${currentSlide === idx ? "opacity-100" : "opacity-0 z-0"}`}
-                style={{ backgroundImage: `url("${url}")`, backgroundSize: "cover", backgroundPosition: "center" }} />
-            ))}
-            {banners.length > 1 && (
-              <>
-                <button onClick={() => setCurrentSlide(s => (s - 1 + banners.length) % banners.length)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-md">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6" /></svg>
-                </button>
-                <button onClick={() => setCurrentSlide(s => (s + 1) % banners.length)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-md">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
-                </button>
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
-                  {banners.map((_, idx) => (
-                    <button key={idx} onClick={() => setCurrentSlide(idx)}
-                      className={`h-2 rounded-full transition-all shadow-sm cursor-pointer border border-black/10 ${currentSlide === idx ? "bg-white w-6" : "bg-white/60 w-2 hover:bg-white"}`} />
-                  ))}
+          <div className="relative overflow-hidden group flex flex-col" style={{ backgroundColor: heroBannerBg }}>
+            <div className="relative w-full flex items-center justify-center">
+              {banners.map((url, idx) => (
+                <img key={idx} src={url} alt={`Banner ${idx}`}
+                  className={`w-full h-auto object-contain transition-opacity duration-1000 ${currentSlide === idx ? "opacity-100 relative z-10" : "opacity-0 absolute top-0 left-0 z-0"}`}
+                />
+              ))}
+              
+              {banners.length > 1 && (
+                <>
+                  <button onClick={() => setCurrentSlide(s => (s - 1 + banners.length) % banners.length)}
+                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-md">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6" /></svg>
+                  </button>
+                  <button onClick={() => setCurrentSlide(s => (s + 1) % banners.length)}
+                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-20 cursor-pointer shadow-md">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
+                  </button>
+                  <div className="absolute bottom-2 sm:bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+                    {banners.map((_, idx) => (
+                      <button key={idx} onClick={() => setCurrentSlide(idx)}
+                        className={`h-2 rounded-full transition-all shadow-sm cursor-pointer border border-black/10 ${currentSlide === idx ? "bg-white w-6" : "bg-white/60 w-2 hover:bg-white"}`} />
+                    ))}
+                  </div>
+                </>
+              )}
+              
+              <div className="absolute bottom-8 sm:bottom-12 lg:bottom-16 left-0 right-0 z-20 max-w-7xl mx-auto px-4 sm:px-10 w-full flex justify-center sm:justify-start">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto px-2 sm:px-0">
+                  <button onClick={() => setTab("products")}
+                    className="text-white font-bold px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm shadow-lg hover:opacity-95 transition cursor-pointer"
+                    style={{ backgroundColor: pc }}>{btn1}</button>
+                  <button onClick={() => openInquiry()}
+                    className="font-bold px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm border border-gray-200 bg-white hover:bg-gray-50 transition shadow-lg cursor-pointer"
+                    style={{ color: pc }}>{btn2}</button>
                 </div>
-              </>
-            )}
-            <div className="relative z-20 max-w-7xl mx-auto px-6 sm:px-10 w-full flex justify-center sm:justify-start">
-              <div className="flex flex-wrap gap-3">
-                <button onClick={() => setTab("products")}
-                  className="text-white font-bold px-6 py-3 rounded-xl text-sm shadow-lg hover:opacity-95 transition cursor-pointer"
-                  style={{ backgroundColor: pc }}>{btn1}</button>
-                <button onClick={() => openInquiry()}
-                  className="font-bold px-6 py-3 rounded-xl text-sm border border-gray-200 bg-white hover:bg-gray-50 transition shadow-lg cursor-pointer"
-                  style={{ color: pc }}>{btn2}</button>
               </div>
             </div>
           </div>
 
           {stats.filter(s => s.value).length > 0 && (
             <div className="shadow-sm" style={{ backgroundColor: statsBgColor || homeBg }}>
-              <div className={`max-w-7xl mx-auto px-5 py-8 flex flex-wrap gap-0 ${stats.filter(s => s.value).length >= 4 ? 'justify-center sm:justify-around' : 'justify-center'}`}>
-                {stats.filter(s => s.value).map((s, i, arr) => (
-                  <div key={i} className="flex items-center">
-                    <div className="flex flex-col items-center gap-1 px-8 py-3 text-center">
-                      <p
-                        className="font-black text-2xl sm:text-3xl leading-tight"
-                        style={{
-                          color: statsValueColor || "#f5c842",
-                          fontFamily: "Georgia, serif"
-                        }}
-                      >{s.value}</p>
-                      <p
-                        className="text-xs font-bold uppercase tracking-widest mt-1"
-                        style={{ color: statsTextColor || (statsBgColor ? "#ffffff" : "#4b5563") }}
-                      >{s.label}</p>
-                    </div>
-                    {i < arr.length - 1 && (
-                      <div
-                        className="w-px self-stretch opacity-25 mx-1"
-                        style={{ backgroundColor: statsTextColor || "#ffffff" }}
-                      />
-                    )}
+              <div className={`max-w-7xl mx-auto px-5 py-8 grid gap-0 ${stats.filter(s => s.value).length >= 4 ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5' : stats.filter(s => s.value).length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+                {stats.filter(s => s.value).map((s, i) => (
+                  <div key={i} className="flex flex-col items-center gap-1 px-4 py-3 text-center border-r border-gray-200/30 last:border-r-0">
+                    <p
+                      className="font-black text-xl sm:text-2xl lg:text-3xl leading-tight"
+                      style={{
+                        color: statsValueColor || "#f5c842",
+                        fontFamily: "Georgia, serif"
+                      }}
+                    >{s.value}</p>
+                    <p
+                      className="text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1"
+                      style={{ color: statsTextColor || (statsBgColor ? "#ffffff" : "#4b5563") }}
+                    >{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -540,24 +536,24 @@ export default function SellerClientPage({ initialSeller }) {
           )}
 
           {seller.showContactOnHome !== false && (
-            <div className="py-12 px-5" style={{ backgroundColor: homeContactBg }}>
-              <div className="max-w-5xl mx-auto rounded-[2.5rem] shadow-2xl px-10 py-14 flex flex-col md:flex-row items-center justify-between gap-10 relative overflow-hidden" style={{ backgroundColor: pc }}>
+            <div className="py-10 px-4 sm:py-12 sm:px-5" style={{ backgroundColor: homeContactBg }}>
+              <div className="max-w-5xl mx-auto rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl px-6 py-10 sm:px-10 sm:py-14 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden" style={{ backgroundColor: pc }}>
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-black opacity-10 rounded-full blur-2xl translate-y-1/3 -translate-x-1/4"></div>
                 
-                <div className="flex-1 relative z-10">
-                  <p className="text-xs font-black uppercase tracking-[0.25em] mb-4" style={{ color: sc }}>Let's Talk</p>
-                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-5 leading-[1.15]" style={{ fontFamily: "Georgia, serif" }}>
+                <div className="flex-1 relative z-10 text-center md:text-left">
+                  <p className="text-xs font-black uppercase tracking-[0.25em] mb-3" style={{ color: sc }}>Let's Talk</p>
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-4 leading-[1.15]" style={{ fontFamily: "Georgia, serif" }}>
                     Looking for a reliable<br/>
                     <span className="opacity-70">partner?</span>
                   </h2>
-                  <p className="text-white/80 text-base md:text-lg leading-relaxed max-w-xl font-medium">
+                  <p className="text-white/80 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-medium">
                     {seller.homeContactDesc || `For retail, distribution, hotel, catering and bulk requirements, connect with ${seller.name}.`}
                   </p>
                 </div>
-                <div className="flex-shrink-0 relative z-10">
+                <div className="flex-shrink-0 relative z-10 w-full md:w-auto">
                   <button onClick={() => openInquiry()}
-                    className="px-8 py-4 rounded-full font-bold text-base transition-transform hover:scale-105 shadow-xl flex items-center gap-3 cursor-pointer"
+                    className="w-full md:w-auto px-8 py-4 rounded-full font-bold text-base transition-transform hover:scale-105 shadow-xl flex items-center justify-center gap-3 cursor-pointer"
                     style={{ backgroundColor: sc, color: pc }}>
                     Send an Enquiry <span className="text-xl">&rarr;</span>
                   </button>
@@ -730,8 +726,8 @@ export default function SellerClientPage({ initialSeller }) {
         <div>
           {/* Contact Banner — taller, bold visual */}
           {seller.contactBannerUrl && (
-            <div className="w-full overflow-hidden shadow-lg" style={{ maxHeight: "480px" }}>
-              <img src={seller.contactBannerUrl} alt="Contact Banner" className="w-full object-cover" style={{ height: "480px", objectPosition: "center" }} />
+            <div className="w-full overflow-hidden shadow-lg">
+              <img src={seller.contactBannerUrl} alt="Contact Banner" className="w-full object-cover" style={{ maxHeight: "320px", objectPosition: "center" }} />
             </div>
           )}
           <div className="min-h-screen" style={{ backgroundColor: contactBg }}>
@@ -743,7 +739,7 @@ export default function SellerClientPage({ initialSeller }) {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 rounded-3xl overflow-hidden shadow-2xl border border-gray-200">
-                <div className="lg:col-span-2 p-10 flex flex-col justify-between" style={{ backgroundColor: pc }}>
+                <div className="lg:col-span-2 p-6 sm:p-10 flex flex-col justify-between" style={{ backgroundColor: pc }}>
                   <div>
                     <h3 className="text-white font-black text-2xl mb-2">Contact Information</h3>
                     <p className="text-white/70 text-sm mb-10">Fill out the form or reach us directly through the options below.</p>
@@ -827,7 +823,7 @@ export default function SellerClientPage({ initialSeller }) {
                   )}
                 </div>
 
-                <div className="lg:col-span-3 bg-white p-10">
+                <div className="lg:col-span-3 bg-white p-6 sm:p-10">
                   <h3 className="font-black text-gray-900 text-2xl mb-1">Send Us a Message</h3>
                   <p className="text-gray-400 text-sm mb-8">We'll get back to you within 24 hours.</p>
 
@@ -1334,7 +1330,7 @@ export default function SellerClientPage({ initialSeller }) {
                 </div>
               ) : (
                 <form onSubmit={onInquirySubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Your Name *</label>
                       <input type="text" required placeholder="e.g. Rahul Sharma" value={inquiryForm.name}

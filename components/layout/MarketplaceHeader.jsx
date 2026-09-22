@@ -134,7 +134,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
 
                     <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
             <Link
-              href="/seller-onboarding"
+              href="/seller-buyer-registration"
               className="bg-[#f97316] hover:bg-[#ea580c] text-white font-bold text-[13px] px-5 py-2.5 rounded-lg transition-colors shadow-md shadow-orange-500/20 whitespace-nowrap flex items-center gap-1.5"
             >
               List Your Brand →
@@ -219,7 +219,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
 
                     <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
             <Link
-              href="/seller-onboarding"
+              href="/seller-buyer-registration?type=seller"
               onClick={close}
               className="block w-full text-center bg-[#f97316] hover:bg-[#ea580c] text-white font-bold py-3 rounded-lg transition-colors shadow-md"
             >

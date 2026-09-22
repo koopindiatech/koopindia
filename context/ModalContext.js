@@ -21,7 +21,7 @@ function isSellerPage(path) {
 }
 
 const NO_MODAL_PAGES = ["/services"];
-const isNoModal = (path) => NO_MODAL_PAGES.includes(path) || path.startsWith("/adminpanel") || isSellerPage(path);
+const isNoModal = (path) => NO_MODAL_PAGES.includes(path) || path.startsWith("/adminpanel") || path.startsWith("/marketplace") || isSellerPage(path);
 
 
 export const ModalProvider = ({ children }) => {

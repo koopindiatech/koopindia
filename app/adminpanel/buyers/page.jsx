@@ -276,7 +276,25 @@ export default function BuyersAdminPage() {
 
   const openForm = (b = null) => {
     setEditing(b);
-    setForm(b ? { ...blank(), ...b } : blank());
+    
+    let nextForm = blank();
+    if (b) {
+      nextForm = { ...nextForm, ...b };
+      
+      // Fix type collisions or missing arrays
+      if (!Array.isArray(nextForm.requirements)) {
+        nextForm.registrationRequirements = nextForm.requirements;
+        nextForm.requirements = blank().requirements;
+      }
+      if (!Array.isArray(nextForm.preferredStates)) {
+        nextForm.preferredStates = blank().preferredStates;
+      }
+      if (!Array.isArray(nextForm.stats)) {
+        nextForm.stats = blank().stats;
+      }
+    }
+    
+    setForm(nextForm);
     setStep(0);
     setFormOpen(true);
     setUploadProgress({});
@@ -400,7 +418,7 @@ export default function BuyersAdminPage() {
       {/* ═══════════════ BUYER STUDIO ═══════════════ */}
       {formOpen && (
         <div className="w-full flex flex-col" style={{ minHeight: "100vh", background: "#f1f5f9" }}>
-                    <div className="px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-4 sticky top-0 z-30">
+                    <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
             <div className="flex items-center gap-4">
               {user?.role !== "buyer" && (
                 <button type="button" onClick={() => setFormOpen(false)} className="w-9 h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer">
@@ -445,7 +463,7 @@ export default function BuyersAdminPage() {
             }}>
               {/* ── Sticky Top Section Nav (horizontal) ── */}
               <div className="bg-white border-b border-gray-100 sticky top-0 z-20 flex-shrink-0 shadow-sm">
-                <div className="max-w-4xl mx-auto px-4 sm:px-8">
+                <div className="max-w-4xl mx-auto px-2 sm:px-4 md:px-8">
                   <div className="flex items-center gap-1 py-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                     {[
                       { id: "section-identity", icon: "🏠", label: "Identity & Basic Info" },
@@ -471,7 +489,7 @@ export default function BuyersAdminPage() {
                 </div>
               </div>
 
-              <div className="max-w-4xl mx-auto p-4 sm:p-8 pb-32 space-y-8 relative">
+              <div className="max-w-4xl mx-auto p-3 sm:p-4 md:p-8 pb-32 space-y-8 relative">
 
                 {/* ══ STEP 0: BUYER IDENTITY ══ */}
                 <div className="space-y-6 pt-6" id="section-identity">
@@ -488,21 +506,21 @@ export default function BuyersAdminPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className={fieldLabel}>Buyer Name *</label>
-                            <input type="text" value={form.buyerName} disabled={user?.role === "buyer"} onChange={e => sf("buyerName", e.target.value)} placeholder="e.g. Global Imports LLC" className={`${inp} ${user?.role === "buyer" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
+                            <input type="text" value={form.buyerName} disabled={user?.role === "buyer"} onChange={e => sf("buyerName", e.target.value)} placeholder="Enter company name" className={`${inp} ${user?.role === "buyer" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
                             {user?.role === "buyer" && <p className="text-[10px] text-gray-400 mt-1">Contact admin to change Business Name.</p>}
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
-                            <input type="text" list="category-list" value={form.category} onChange={(e) => sf("category", e.target.value)} placeholder="e.g. Supermarket Chain" className={inp} />
+                            <input type="text" list="category-list" value={form.category} onChange={(e) => sf("category", e.target.value)} placeholder="Enter category" className={inp} />
                           </div>
                         </div>
                         <div>
                           <label className={fieldLabel}>Tagline</label>
-                          <input type="text" value={form.tagline} onChange={(e) => sf("tagline", e.target.value)} placeholder="e.g. Fresh Choices. Better Living." className={inp} />
+                          <input type="text" value={form.tagline} onChange={(e) => sf("tagline", e.target.value)} placeholder="Enter tagline" className={inp} />
                         </div>
                         <div>
                           <label className={fieldLabel}>Business Type</label>
-                          <input type="text" list="business-type-list" value={form.businessType || ""} onChange={(e) => sf("businessType", e.target.value)} placeholder="Select or type..." className={inp} />
+                          <input type="text" list="business-type-list" value={form.businessType || ""} onChange={(e) => sf("businessType", e.target.value)} placeholder="Select or enter business type" className={inp} />
                           <div className="flex flex-wrap gap-2 mt-2">
                             {["Manufacturer", "Distributor", "Retailer", "Wholesaler", "Supermarket Chain", "Buyer", "Importer / Exporter"].map((t) => (
                               <button key={t} type="button" onClick={() => sf("businessType", t)}
@@ -518,12 +536,12 @@ export default function BuyersAdminPage() {
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Location & Basic Info</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div><label className={fieldLabel}>City</label><input list="city-list" value={form.city} onChange={(e) => sf("city", e.target.value)} placeholder="e.g. Bangalore" className={inp} /></div>
-                        <div><label className={fieldLabel}>State</label><input list="state-list" value={form.state} onChange={(e) => sf("state", e.target.value)} placeholder="e.g. Karnataka" className={inp} /></div>
-                        <div><label className={fieldLabel}>Establishment Year</label><input value={form.estYear} onChange={(e) => sf("estYear", e.target.value)} placeholder="e.g. 2014" className={inp} /></div>
-                        <div><label className={fieldLabel}>Delivery / Presence Area</label><input value={form.deliveryArea} onChange={(e) => sf("deliveryArea", e.target.value)} placeholder="e.g. All Over India" className={inp} /></div>
+                        <div><label className={fieldLabel}>City</label><input list="city-list" value={form.city} onChange={(e) => sf("city", e.target.value)} placeholder="Enter city" className={inp} /></div>
+                        <div><label className={fieldLabel}>State</label><input list="state-list" value={form.state} onChange={(e) => sf("state", e.target.value)} placeholder="Enter state" className={inp} /></div>
+                        <div><label className={fieldLabel}>Establishment Year</label><input value={form.estYear} onChange={(e) => sf("estYear", e.target.value)} placeholder="Enter establishment year" className={inp} /></div>
+                        <div><label className={fieldLabel}>Delivery / Presence Area</label><input value={form.deliveryArea} onChange={(e) => sf("deliveryArea", e.target.value)} placeholder="Enter delivery area" className={inp} /></div>
                       </div>
-                      <div><label className={fieldLabel}>Full Address</label><textarea value={form.address} onChange={(e) => sf("address", e.target.value)} placeholder="Full company address..." className={ta} rows={2} /></div>
+                      <div><label className={fieldLabel}>Full Address</label><textarea value={form.address} onChange={(e) => sf("address", e.target.value)} placeholder="Enter full address" className={ta} rows={2} /></div>
                     </div>
 
                     <div className={sectionCard}>
@@ -541,8 +559,8 @@ export default function BuyersAdminPage() {
                         ))}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        <div><label className={fieldLabel}>GST Number</label><input value={form.gstNumber} onChange={(e) => sf("gstNumber", e.target.value)} placeholder="29ABCDE1234F1Z5" className={inp} /></div>
-                        <div><label className={fieldLabel}>PAN Number</label><input value={form.panNumber} onChange={(e) => sf("panNumber", e.target.value)} placeholder="ABCDE1234F" className={inp} /></div>
+                        <div><label className={fieldLabel}>GST Number</label><input value={form.gstNumber} onChange={(e) => sf("gstNumber", e.target.value)} placeholder="Enter GST number" className={inp} /></div>
+                        <div><label className={fieldLabel}>PAN Number</label><input value={form.panNumber} onChange={(e) => sf("panNumber", e.target.value)} placeholder="Enter PAN number" className={inp} /></div>
                       </div>
                     </div>
                   </div>
@@ -588,8 +606,8 @@ export default function BuyersAdminPage() {
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Rating</h3>
                       <div className="grid grid-cols-2 gap-4">
-                        <div><label className={fieldLabel}>Rating (out of 5)</label><input value={form.rating} onChange={(e) => sf("rating", e.target.value)} placeholder="4.8" className={inp} /></div>
-                        <div><label className={fieldLabel}>Review Count</label><input value={form.reviewCount} onChange={(e) => sf("reviewCount", e.target.value)} placeholder="45" className={inp} /></div>
+                        <div><label className={fieldLabel}>Rating (out of 5)</label><input value={form.rating} onChange={(e) => sf("rating", e.target.value)} placeholder="Enter rating" className={inp} /></div>
+                        <div><label className={fieldLabel}>Review Count</label><input value={form.reviewCount} onChange={(e) => sf("reviewCount", e.target.value)} placeholder="Enter review count" className={inp} /></div>
                       </div>
                     </div>
                   </div>
@@ -605,19 +623,19 @@ export default function BuyersAdminPage() {
                   </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">About Company</h3>
-                      <textarea value={form.about} onChange={(e) => sf("about", e.target.value)} placeholder="Describe the company, its history, what it does..." className={ta} rows={5} />
+                      <textarea value={form.about} onChange={(e) => sf("about", e.target.value)} placeholder="Enter about company" className={ta} rows={5} />
                     </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Business Details</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div><label className={fieldLabel}>Annual Turnover</label><input value={form.annualTurnover} onChange={(e) => sf("annualTurnover", e.target.value)} placeholder="e.g. ₹ 250 Cr+" className={inp} /></div>
-                        <div><label className={fieldLabel}>Number of Outlets</label><input value={form.numberOfOutlets} onChange={(e) => sf("numberOfOutlets", e.target.value)} placeholder="e.g. 28+" className={inp} /></div>
-                        <div><label className={fieldLabel}>State / City Presence</label><input value={form.presence} onChange={(e) => sf("presence", e.target.value)} placeholder="e.g. 4 States | 18 Cities" className={inp} /></div>
-                        <div><label className={fieldLabel}>Buying Frequency</label><input value={form.buyingFrequency} onChange={(e) => sf("buyingFrequency", e.target.value)} placeholder="e.g. Weekly / Monthly" className={inp} /></div>
-                        <div><label className={fieldLabel}>Payment Terms</label><input value={form.paymentTerms} onChange={(e) => sf("paymentTerms", e.target.value)} placeholder="e.g. 30 – 45 Days" className={inp} /></div>
-                        <div><label className={fieldLabel}>Phone</label><input value={form.phone} onChange={(e) => sf("phone", e.target.value)} placeholder="+91 98765 43210" className={inp} /></div>
-                        <div><label className={fieldLabel}>Email</label><input value={form.email} onChange={(e) => sf("email", e.target.value)} placeholder="info@buyer.com" className={inp} /></div>
-                        <div><label className={fieldLabel}>WhatsApp</label><input value={form.whatsapp} onChange={(e) => sf("whatsapp", e.target.value)} placeholder="+91 98765 43210" className={inp} /></div>
+                        <div><label className={fieldLabel}>Annual Turnover</label><input value={form.annualTurnover} onChange={(e) => sf("annualTurnover", e.target.value)} placeholder="Enter annual turnover" className={inp} /></div>
+                        <div><label className={fieldLabel}>Number of Outlets</label><input value={form.numberOfOutlets} onChange={(e) => sf("numberOfOutlets", e.target.value)} placeholder="Enter number of outlets" className={inp} /></div>
+                        <div><label className={fieldLabel}>State / City Presence</label><input value={form.presence} onChange={(e) => sf("presence", e.target.value)} placeholder="Enter presence area" className={inp} /></div>
+                        <div><label className={fieldLabel}>Buying Frequency</label><input value={form.buyingFrequency} onChange={(e) => sf("buyingFrequency", e.target.value)} placeholder="Enter buying frequency" className={inp} /></div>
+                        <div><label className={fieldLabel}>Payment Terms</label><input value={form.paymentTerms} onChange={(e) => sf("paymentTerms", e.target.value)} placeholder="Enter payment terms" className={inp} /></div>
+                        <div><label className={fieldLabel}>Phone</label><input value={form.phone} onChange={(e) => sf("phone", e.target.value)} placeholder="Enter phone number" className={inp} /></div>
+                        <div><label className={fieldLabel}>Email</label><input value={form.email} onChange={(e) => sf("email", e.target.value)} placeholder="Enter email address" className={inp} /></div>
+                        <div><label className={fieldLabel}>WhatsApp</label><input value={form.whatsapp} onChange={(e) => sf("whatsapp", e.target.value)} placeholder="Enter phone number" className={inp} /></div>
                       </div>
                     </div>
                   </div>
@@ -669,7 +687,7 @@ export default function BuyersAdminPage() {
                               <input id={`bw-logo-${i}`} type="file" accept="image/*" className="sr-only" onChange={(e) => handleArrayImagePick(e, "buyersWeWorkWith", i)} />
                               {ProgPill({ field: `buyersWeWorkWith_${i}`, uploadStatus, uploadProgress })}
                             </div>
-                            <input value={bw.name} onChange={(e) => setArr("buyersWeWorkWith", i, "name", e.target.value)} placeholder="Buyer name (e.g. Amul)" className={`flex-1 ${inp_sm}`} />
+                            <input value={bw.name} onChange={(e) => setArr("buyersWeWorkWith", i, "name", e.target.value)} placeholder="Enter buyer name" className={`flex-1 ${inp_sm}`} />
                             <button type="button" onClick={() => delArr("buyersWeWorkWith", i)} className={delBtn}><X size={12} /></button>
                           </div>
                         ))}
@@ -681,7 +699,7 @@ export default function BuyersAdminPage() {
                       <div className="space-y-2">
                         {(form.preferredStates || []).map((s, i) => (
                           <div key={i} className="flex items-center gap-2">
-                            <input value={s} onChange={(e) => setListItem("preferredStates", i, e.target.value)} placeholder="e.g. Maharashtra" className={`flex-1 ${inp_sm}`} />
+                            <input value={s} onChange={(e) => setListItem("preferredStates", i, e.target.value)} placeholder="Enter preferred state" className={`flex-1 ${inp_sm}`} />
                             <button type="button" onClick={() => delListItem("preferredStates", i)} className={delBtn}><X size={12} /></button>
                           </div>
                         ))}
@@ -708,7 +726,7 @@ export default function BuyersAdminPage() {
                         {(form.whyUs || []).map((item, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <span className="text-emerald-500 text-sm">✓</span>
-                            <input value={item} onChange={(e) => setListItem("whyUs", i, e.target.value)} placeholder="e.g. Pan India retail presence" className={`flex-1 ${inp_sm}`} />
+                            <input value={item} onChange={(e) => setListItem("whyUs", i, e.target.value)} placeholder="Enter why choose us point" className={`flex-1 ${inp_sm}`} />
                             <button type="button" onClick={() => delListItem("whyUs", i)} className={delBtn}><X size={12} /></button>
                           </div>
                         ))}
@@ -724,7 +742,7 @@ export default function BuyersAdminPage() {
                         {(form.requirements || []).map((item, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <span className="text-orange-500 text-sm">→</span>
-                            <input value={item} onChange={(e) => setListItem("requirements", i, e.target.value)} placeholder="e.g. Quality products with standard packaging" className={`flex-1 ${inp_sm}`} />
+                            <input value={item} onChange={(e) => setListItem("requirements", i, e.target.value)} placeholder="Enter requirement" className={`flex-1 ${inp_sm}`} />
                             <button type="button" onClick={() => delListItem("requirements", i)} className={delBtn}><X size={12} /></button>
                           </div>
                         ))}
@@ -737,8 +755,8 @@ export default function BuyersAdminPage() {
                         {(form.stats || []).map((stat, i) => (
                           <div key={stat.id || i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                             <input value={stat.icon} onChange={(e) => setArr("stats", i, "icon", e.target.value)} placeholder="🏪" className="w-12 text-center text-lg border border-gray-200 rounded-lg px-2 py-1.5 outline-none" />
-                            <input value={stat.value} onChange={(e) => setArr("stats", i, "value", e.target.value)} placeholder="28+" className={`w-24 ${inp_sm}`} />
-                            <input value={stat.label} onChange={(e) => setArr("stats", i, "label", e.target.value)} placeholder="Outlets" className={`flex-1 ${inp_sm}`} />
+                            <input value={stat.value} onChange={(e) => setArr("stats", i, "value", e.target.value)} placeholder="Enter value" className={`w-24 ${inp_sm}`} />
+                            <input value={stat.label} onChange={(e) => setArr("stats", i, "label", e.target.value)} placeholder="Enter label" className={`flex-1 ${inp_sm}`} />
                             <button type="button" onClick={() => delArr("stats", i)} className={delBtn}><X size={12} /></button>
                           </div>
                         ))}
@@ -764,10 +782,10 @@ export default function BuyersAdminPage() {
                           {ProgPill({ field: "contactPhoto", uploadStatus, uploadProgress })}
                         </div>
                         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div><label className={fieldLabel}>Name</label><input value={form.contactName} onChange={(e) => sf("contactName", e.target.value)} placeholder="e.g. Mr. Arvind Sharma" className={inp} /></div>
-                          <div><label className={fieldLabel}>Role / Designation</label><input value={form.contactRole} onChange={(e) => sf("contactRole", e.target.value)} placeholder="e.g. Head - Procurement" className={inp} /></div>
-                          <div><label className={fieldLabel}>Phone</label><input value={form.contactPhone} onChange={(e) => sf("contactPhone", e.target.value)} placeholder="+91 98765 43210" className={inp} /></div>
-                          <div><label className={fieldLabel}>Email</label><input value={form.contactEmail} onChange={(e) => sf("contactEmail", e.target.value)} placeholder="person@company.com" className={inp} /></div>
+                          <div><label className={fieldLabel}>Name</label><input value={form.contactName} onChange={(e) => sf("contactName", e.target.value)} placeholder="Enter contact person name" className={inp} /></div>
+                          <div><label className={fieldLabel}>Role / Designation</label><input value={form.contactRole} onChange={(e) => sf("contactRole", e.target.value)} placeholder="Enter role / designation" className={inp} /></div>
+                          <div><label className={fieldLabel}>Phone</label><input value={form.contactPhone} onChange={(e) => sf("contactPhone", e.target.value)} placeholder="Enter phone number" className={inp} /></div>
+                          <div><label className={fieldLabel}>Email</label><input value={form.contactEmail} onChange={(e) => sf("contactEmail", e.target.value)} placeholder="Enter email address" className={inp} /></div>
                         </div>
                       </div>
                     </div>

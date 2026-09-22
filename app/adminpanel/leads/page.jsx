@@ -83,21 +83,40 @@ function LeadDetailsModal({ lead, onClose, onUpdate, sellers, buyers, currentUse
   const leadIdFormatted = `KI${(lead?.id || "").slice(0, 5).toUpperCase().padStart(5, '0')}`;
   
   const InfoRow = ({ label, value, isBadge }) => (
-    <div className="flex py-1 border-b border-gray-50/80 last:border-0 items-start">
-      <div className="w-[120px] text-gray-500 font-medium text-[13px] shrink-0">{label}</div>
-      <div className="flex-1 text-gray-900 font-semibold text-[13px]">
+    <div className="flex py-2 border-b border-gray-50/80 last:border-0 items-start gap-2">
+      <div className="w-[100px] sm:w-[120px] text-gray-500 font-medium text-[12px] sm:text-[13px] shrink-0">{label}</div>
+      <div className="flex-1 text-gray-900 font-semibold text-[12px] sm:text-[13px] break-words min-w-0">
         {isBadge ? (value && value !== "—" ? <span className="inline-flex px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[11px] font-bold border border-indigo-100/50">{value}</span> : "—") : (value || "—")}
       </div>
     </div>
   );
 
+  const [mobileTab, setMobileTab] = useState("info");
+
   return (
-    <div className="fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl flex flex-col h-[85vh] max-h-[650px] overflow-hidden border border-gray-100">
-                <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
+    <div className="fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center sm:p-4">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-4xl shadow-2xl flex flex-col" style={{ height: '90vh', maxHeight: '700px' }}>
+
+        {/* Mobile tab switcher — only visible on small screens */}
+        <div className="flex md:hidden border-b border-gray-100 bg-gray-50/80 rounded-t-3xl">
+          <button onClick={() => setMobileTab("info")}
+            className={`flex-1 py-3 text-xs font-bold rounded-tl-3xl transition-all ${mobileTab === "info" ? "bg-white text-orange-600 border-b-2 border-orange-500" : "text-gray-500"}`}>
+            Lead Info
+          </button>
+          <button onClick={() => setMobileTab("history")}
+            className={`flex-1 py-3 text-xs font-bold rounded-tr-3xl transition-all ${mobileTab === "history" ? "bg-white text-orange-600 border-b-2 border-orange-500" : "text-gray-500"}`}>
+            History ({Array.isArray(lead?.history) ? lead.history.length : 0})
+          </button>
+          <button onClick={onClose} className="px-4 text-gray-400 hover:text-gray-700 transition">
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
           
-                    <div className="flex-1 w-1/2 flex flex-col border-r border-gray-100 bg-white min-w-0">
-            <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-6">
+          {/* LEFT PANEL — Lead Info + Actions */}
+          <div className={`flex-1 md:w-1/2 flex flex-col border-r border-gray-100 bg-white min-w-0 ${mobileTab === "info" ? "flex" : "hidden md:flex"}`}>
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar space-y-6">
               
                             <div>
                 <h4 className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-4">Lead Information</h4>
@@ -143,8 +162,10 @@ function LeadDetailsModal({ lead, onClose, onUpdate, sellers, buyers, currentUse
             </div>
           </div>
 
-                    <div className="flex-1 w-1/2 bg-gray-50/50 flex flex-col min-w-0">
-                        <div className="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-gray-50/50 backdrop-blur-sm z-10">
+          {/* RIGHT PANEL — Comment History */}
+          <div className={`flex-1 md:w-1/2 bg-gray-50/50 flex flex-col min-w-0 ${mobileTab === "history" ? "flex" : "hidden md:flex"}`}>
+            {/* Header with close button — only on desktop (mobile uses top tab bar) */}
+            <div className="p-4 sm:p-5 border-b border-gray-100 hidden md:flex items-center justify-between sticky top-0 bg-gray-50/50 backdrop-blur-sm z-10">
               <h4 className="text-[11px] font-black text-gray-500 uppercase tracking-widest flex items-center gap-2">
                 <History size={14}/> Comment History
               </h4>
