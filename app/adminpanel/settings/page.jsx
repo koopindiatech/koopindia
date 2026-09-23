@@ -550,7 +550,14 @@ export default function SettingsPage() {
 
               {/* ── Top Banners (Before Categories) ── */}
               <div className="border-t border-gray-100 pt-5">
-                <label className="text-gray-800 text-sm font-bold block mb-1">Top Banners (Before Categories)</label>
+                <label className="text-gray-800 text-sm font-bold block mb-1">Top Banners <span className="text-gray-400 font-normal">(Before Categories)</span></label>
+                <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-3">
+                  <span className="text-lg flex-shrink-0">📐</span>
+                  <div>
+                    <p className="text-blue-800 text-xs font-bold mb-0.5">Recommended Banner Size: 1400 × 350 px &nbsp;(4:1 ratio)</p>
+                    <p className="text-blue-600 text-[11px] leading-relaxed">Banner display on the marketplace: full width, max height 350px, min height 150px. For best quality upload a <strong>wide horizontal image</strong> (e.g. 1400 × 350 or 1920 × 480). Max file size: <strong>2 MB</strong>. Supported formats: JPG, PNG, WebP.</p>
+                  </div>
+                </div>
                 <p className="text-gray-400 text-xs mb-4">Upload up to 5 banners. They will be displayed above the categories section. Links open in a new tab.</p>
 
                 {topBanners.length > 0 && (
@@ -598,7 +605,14 @@ export default function SettingsPage() {
 
               {/* ── Bottom Banners (Before Featured Sellers) ── */}
               <div className="border-t border-gray-100 pt-5">
-                <label className="text-gray-800 text-sm font-bold block mb-1">Bottom Banners (Before Sellers)</label>
+                <label className="text-gray-800 text-sm font-bold block mb-1">Bottom Banners <span className="text-gray-400 font-normal">(Before Sellers)</span></label>
+                <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-3">
+                  <span className="text-lg flex-shrink-0">📐</span>
+                  <div>
+                    <p className="text-blue-800 text-xs font-bold mb-0.5">Recommended Banner Size: 1400 × 350 px &nbsp;(4:1 ratio)</p>
+                    <p className="text-blue-600 text-[11px] leading-relaxed">Same size as Top Banners. Upload a <strong>wide horizontal image</strong> (e.g. 1400 × 350 or 1920 × 480). Max file size: <strong>2 MB</strong>. Supported formats: JPG, PNG, WebP.</p>
+                  </div>
+                </div>
                 <p className="text-gray-400 text-xs mb-4">Upload up to 5 banners. They will be displayed above the featured sellers section. Links open in a new tab.</p>
 
                 {bottomBanners.length > 0 && (

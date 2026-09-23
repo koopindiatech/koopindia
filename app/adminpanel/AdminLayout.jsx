@@ -109,7 +109,7 @@ export default function AdminLayout({ children }) {
   const [checking, setChecking]     = useState(true);
   const [collapsed, setCollapsed]   = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [counts, setCounts]         = useState({ sellers: 0, buyers: 0, leads: 0, buyers: 0 });
+  const [counts, setCounts]         = useState({ sellers: 0, buyers: 0, leads: 0, newLeads: 0 });
 
   // ── Auth guard ──────────────────────────────────────────────
   useEffect(() => {

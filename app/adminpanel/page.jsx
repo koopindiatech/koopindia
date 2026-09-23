@@ -175,7 +175,7 @@ export default function AdminDashboard() {
           <h2 className="text-gray-900 font-bold text-sm mb-4">Quick Actions</h2>
           <div className="space-y-1">
             {[
-              { label: "Add New Buyer", href: "/adminpanel/sellers", icon: Building2, color: "text-orange-500" },
+              { label: "Add New Buyer", href: "/adminpanel/buyers", icon: Building2, color: "text-orange-500" },
               { label: "View All Leads", href: "/adminpanel/leads", icon: Users, color: "text-blue-500", badge: newLeads > 0 ? `${newLeads} new` : null },
               { label: "Manage Buyers", href: "/adminpanel/buyers", icon: ShoppingBag, color: "text-emerald-500" },
               { label: "Analytics Report", href: "/adminpanel/analytics", icon: BarChart3, color: "text-cyan-500" },

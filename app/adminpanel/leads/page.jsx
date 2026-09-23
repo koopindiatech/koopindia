@@ -118,14 +118,21 @@ function LeadDetailsModal({ lead, onClose, onUpdate, sellers, buyers, currentUse
           <div className={`flex-1 md:w-1/2 flex flex-col border-r border-gray-100 bg-white min-w-0 ${mobileTab === "info" ? "flex" : "hidden md:flex"}`}>
             <div className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar space-y-6">
               
-                            <div>
+              <div>
                 <h4 className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-4">Lead Information</h4>
                 <div className="flex flex-col">
+                  <InfoRow label="Profile ID" value={lead?.profileId} />
+                  <InfoRow label="Source" value={lead?.source} isBadge={true} />
                   <InfoRow label="Name" value={lead?.name} />
+                  <InfoRow label="Company" value={lead?.company || lead?.buyerName} />
                   <InfoRow label="Email" value={lead?.email} />
                   <InfoRow label="Mobile" value={lead?.phone} />
-                  <InfoRow label="Follow Up" value={lead?.followUpDate} />
+                  <InfoRow label="Location" value={lead?.location || lead?.city} />
+                  <InfoRow label="Product / Service" value={lead?.productName || lead?.service} isBadge={!!(lead?.productName || lead?.service)} />
+                  <InfoRow label="Target Seller" value={lead?.sellerName} isBadge={!!lead?.sellerName} />
+                  <InfoRow label="Requirement" value={lead?.requirements} />
                   <InfoRow label="Message" value={lead?.message} />
+                  <InfoRow label="Follow Up" value={lead?.followUpDate} />
                 </div>
               </div>
 
@@ -229,7 +236,7 @@ function LeadDetailsModal({ lead, onClose, onUpdate, sellers, buyers, currentUse
   );
 }
 
-function BulkAssignModal({ onClose, onConfirm, sellers, buyers, assigning }) {
+function BulkAssignModal({ onClose, onConfirm, sellers, buyers, assigning, isBulk = true }) {
   const [activeTab, setActiveTab] = useState("seller");
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
@@ -245,8 +252,8 @@ function BulkAssignModal({ onClose, onConfirm, sellers, buyers, assigning }) {
       <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl flex flex-col overflow-hidden">
         <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
           <div>
-            <h3 className="font-black text-gray-900 text-lg">Bulk Assign Leads</h3>
-            <p className="text-gray-500 text-xs mt-1">Select a user to assign all selected leads.</p>
+            <h3 className="font-black text-gray-900 text-lg">{isBulk ? "Bulk Assign Leads" : "Assign Lead"}</h3>
+            <p className="text-gray-500 text-xs mt-1">{isBulk ? "Select a user to assign all selected leads." : "Select a user to assign to this lead."}</p>
           </div>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-900 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition">
             <X size={16} />
@@ -629,12 +636,7 @@ export default function LeadsPage() {
           </div>
         )}
 
-        {["All", "contact_page", "product_page", "buyer_page"].map((src) => (
-          <button key={src} onClick={() => setFilterSource(src)}
-            className={`px-4 py-2 text-sm font-semibold rounded-xl border transition-all ${filterSource === src ? "bg-orange-500 border-orange-500 text-white shadow-md shadow-orange-500/20" : "border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-300 bg-white shadow-sm"}`}>
-            {src === "All" ? "All Sources" : sourceLabels[src]}
-          </button>
-        ))}
+
       </div>
 
       <div className="flex gap-4">
@@ -675,8 +677,8 @@ export default function LeadsPage() {
                         />
                       </th>
                     )}
-                    {["Lead", "Listing / Product", "Source", "Status", isAdmin && "Assigned To", "Time", ""].filter(Boolean).map((h) => (
-                      <th key={h} className="text-left px-4 py-3 text-gray-400 text-xs font-semibold uppercase tracking-wider">{h}</th>
+                    {["Profile ID", "Company Name", "Mobile Number", "Mail ID", "City", "Requirement", "Status", isAdmin && "Assigned To", "Time", ""].filter(Boolean).map((h) => (
+                      <th key={h} className="text-left px-4 py-3 text-gray-400 text-xs font-semibold uppercase tracking-wider whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -704,24 +706,40 @@ export default function LeadsPage() {
                           </td>
                         )}
                         <td className="px-4 py-3">
+                          <span className="text-orange-600 font-bold text-xs bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">{lead.profileId || "—"}</span>
+                        </td>
+                        <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center flex-shrink-0">
-                              <span className="text-white text-[10px] font-bold">{(lead.name || "?")[0].toUpperCase()}</span>
+                              <span className="text-white text-[10px] font-bold">{((lead.company || lead.name || "?")[0]).toUpperCase()}</span>
                             </div>
                             <div>
-                              <p className="text-gray-900 text-xs font-semibold">{lead.name || "—"}</p>
-                              <p className="text-gray-400 text-[10px]">{lead.phone || lead.email || "—"}</p>
+                              <p className="text-gray-900 text-xs font-semibold">{lead.company || lead.name || "—"}</p>
+                              {isAdmin && (
+                                <p className="text-gray-400 text-[10px]">
+                                  {(lead.source === "buyer_page" || lead.source === "buyer_listing" || lead.buyerId)
+                                    ? "Buyer Lead"
+                                    : (lead.source === "product_enquiry" || lead.source === "product_page" || lead.source === "contact_page" || lead.sellerName)
+                                    ? "Seller Lead"
+                                    : "Lead"}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <p className="text-gray-700 text-xs font-semibold">{lead.sellerName || lead.buyerName || lead.buyer || "—"}</p>
-                          {lead.productName && <p className="text-gray-400 text-[10px] flex items-center gap-1"><Package size={9} /> {lead.productName}</p>}
+                          <p className="text-gray-700 text-xs font-medium">{lead.phone || "—"}</p>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md ${lead.source === "product_page" ? "bg-orange-100 text-orange-600" : lead.source === "buyer_page" ? "bg-purple-100 text-purple-600" : "bg-blue-100 text-blue-600"}`}>
-                            {sourceLabels[lead.source] || lead.source || "—"}
-                          </span>
+                          <p className="text-gray-700 text-xs font-medium">{lead.email || "—"}</p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="text-gray-700 text-xs font-medium capitalize">{lead.location || lead.city || "—"}</p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="text-gray-700 text-xs truncate max-w-[150px]" title={lead.requirements || lead.productName || lead.service || "—"}>
+                            {lead.requirements || lead.productName || lead.service || "—"}
+                          </p>
                         </td>
                         <td className="px-4 py-3">
                           <span className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full border w-fit ${cfg.bg} ${cfg.color}`}>
@@ -815,8 +833,24 @@ export default function LeadsPage() {
           sellers={sellers}
           buyers={buyers}
           assigning={bulkAssigning}
+          isBulk={true}
           onClose={() => setShowBulkAssign(false)}
           onConfirm={handleBulkAssignConfirm}
+        />
+      )}
+
+      {showClientModal && (
+        <BulkAssignModal 
+          sellers={sellers}
+          buyers={buyers}
+          assigning={assigning}
+          isBulk={false}
+          onClose={() => setShowClientModal(false)}
+          onConfirm={async (user, type) => {
+            if (type === "seller") await handleAssignSeller(selected, user);
+            else await handleAssignBuyer(selected, user);
+            setShowClientModal(false);
+          }}
         />
       )}
 

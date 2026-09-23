@@ -100,6 +100,7 @@ const blank = () => ({
     { id: uid(), icon: "⚗️", label: "GMP Compliant" },
     { id: uid(), icon: "🌍", label: "Export Quality" },
   ],
+  preferredStates: [],
 });
 
 const SECTIONS = [
@@ -251,10 +252,64 @@ const addBtn = "inline-flex items-center gap-2 text-xs font-bold text-indigo-700
 const delBtn = "w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl bg-red-50 hover:bg-red-100 text-red-500 transition-all duration-150 cursor-pointer border border-red-100 hover:border-red-200";
 const sectionCard = "bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5 hover:shadow-md transition-shadow duration-200";
 const fieldLabel = "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5";
+
 /* ─── PROXY HELPER to ensure images display clearly without ad-blocker or CORS interruptions ─── */
 const getImg = (url) => (url && typeof url === "string" && url.startsWith("http") && url.includes("firebase") ? `/api/img?url=${encodeURIComponent(url)}` : url);
 
-/* ─── UPLOAD BOX helper (input is NOT nested inside label to prevent Chrome repaint bug) ─── */
+const INDIA_ZONES = [
+  { zone: "North Zone", color: "blue", states: ["Jammu & Kashmir", "Himachal Pradesh", "Punjab", "Chandigarh", "Uttarakhand", "Haryana", "Delhi", "Uttar Pradesh"] },
+  { zone: "West Zone", color: "orange", states: ["Rajasthan", "Madhya Pradesh", "Gujarat", "Daman & Diu", "Dadra & Nagar Haveli", "Maharashtra", "Goa"] },
+  { zone: "South Zone", color: "emerald", states: ["Andhra Pradesh", "Karnataka", "Lakshadweep", "Kerala", "Tamil Nadu", "Telangana", "Puducherry", "Andaman & Nicobar"] },
+  { zone: "East Zone", color: "violet", states: ["Bihar", "Sikkim", "Arunachal Pradesh", "Nagaland", "Manipur", "Mizoram", "Tripura", "Meghalaya", "Assam", "West Bengal", "Jharkhand", "Odisha", "Chhattisgarh"] },
+];
+const ZONE_COLORS_S = {
+  blue: { bg: "bg-blue-50/70 border-blue-200", badge: "bg-blue-100 text-blue-700 border-blue-200", check: "accent-blue-600", toggle: "text-blue-700 hover:bg-blue-100 border-blue-200 bg-white" },
+  orange: { bg: "bg-orange-50/70 border-orange-200", badge: "bg-orange-100 text-orange-700 border-orange-200", check: "accent-orange-500", toggle: "text-orange-700 hover:bg-orange-100 border-orange-200 bg-white" },
+  emerald: { bg: "bg-emerald-50/70 border-emerald-200", badge: "bg-emerald-100 text-emerald-700 border-emerald-200", check: "accent-emerald-600", toggle: "text-emerald-700 hover:bg-emerald-100 border-emerald-200 bg-white" },
+  violet: { bg: "bg-violet-50/70 border-violet-200", badge: "bg-violet-100 text-violet-700 border-violet-200", check: "accent-violet-600", toggle: "text-violet-700 hover:bg-violet-100 border-violet-200 bg-white" },
+};
+const ZoneStateSelector = ({ selected = [], onChange }) => {
+  const toggle = (state) => onChange(selected.includes(state) ? selected.filter(s => s !== state) : [...selected, state]);
+  const toggleAll = (states) => {
+    const allSel = states.every(s => selected.includes(s));
+    onChange(allSel ? selected.filter(s => !states.includes(s)) : [...new Set([...selected, ...states])]);
+  };
+  return (
+    <div className="space-y-3">
+      {INDIA_ZONES.map(({ zone, color, states }) => {
+        const c = ZONE_COLORS_S[color];
+        const allSel = states.every(s => selected.includes(s));
+        const someSel = states.some(s => selected.includes(s));
+        return (
+          <div key={zone} className={`rounded-xl border p-3 ${c.bg}`}>
+            <div className="flex items-center gap-2 mb-2">
+              <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${c.badge}`}>{zone}</span>
+              <button type="button" onClick={() => toggleAll(states)} className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all cursor-pointer ${c.toggle}`}>
+                {allSel ? "Deselect All" : someSel ? "Select All" : "Toggle All"}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+              {states.map(state => (
+                <label key={state} className="flex items-center gap-1.5 cursor-pointer group">
+                  <input type="checkbox" checked={selected.includes(state)} onChange={() => toggle(state)} className={`${c.check} w-3.5 h-3.5 rounded cursor-pointer`} />
+                  <span className="text-xs font-semibold text-gray-700 group-hover:text-gray-900">{state}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-gray-100">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider self-center">Selected ({selected.length}):</span>
+          {selected.map(s => <span key={s} className="text-[10px] font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-lg">{s}</span>)}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
 const UploadBox = ({ field, label, value, onPick, small = false }) => {
   const inputId = `upload-input-${field}`;
   return (
@@ -1727,6 +1782,16 @@ export default function SellersPage() {
                           </button>
                         )}
                       </div>
+                    </div>
+
+                    <div className={sectionCard}>
+                      <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
+                        <div><h3 className="text-sm font-black text-gray-900">Preferred Distribution States</h3><p className="text-[11px] text-gray-400 font-medium">Select states zone-wise where you distribute or want to expand</p></div>
+                      </div>
+                      <ZoneStateSelector
+                        selected={Array.isArray(form.preferredStates) ? form.preferredStates : []}
+                        onChange={(states) => sf("preferredStates", states)}
+                      />
                     </div>
 
                     <div className={sectionCard}>

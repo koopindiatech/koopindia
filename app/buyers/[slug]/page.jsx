@@ -21,12 +21,14 @@ export async function generateMetadata({ params }) {
     const snap = await getDocs(q);
     if (!snap.empty) {
       const data = snap.docs[0].data();
+      const displayName = data.buyerName || data.companyName || "Buyer";
+      const description = data.about || data.aboutCompany || `View ${displayName}'s buyer profile on Koop India. See their distribution network, sourcing requirements, and partner with them.`;
       return {
-        title: `${data.companyName} | Koop India Buyer`,
-        description: data.aboutCompany || `View ${data.companyName}'s buyer profile on Koop India. See their distribution network, sourcing requirements, and partner with them.`,
+        title: `${displayName} | Koop India Buyer`,
+        description: description,
         openGraph: {
-          title: data.companyName,
-          description: data.aboutCompany,
+          title: displayName,
+          description: description,
           images: data.logoUrl ? [data.logoUrl] : [],
         }
       };

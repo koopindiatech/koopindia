@@ -158,28 +158,104 @@ function RegistrationForm() {
 
   if (!tab) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
-        <button
-          onClick={() => setTab("seller")}
-          className="group relative flex flex-col items-center justify-center p-8 bg-white border-2 border-gray-100 rounded-3xl hover:border-orange-500 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300"
-        >
-          <div className="w-20 h-20 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300 shadow-sm">
-            <Store size={36} />
-          </div>
-          <h3 className="text-xl font-black text-[#1e3a5f] mb-3">Register as Seller</h3>
-          <p className="text-gray-500 text-sm text-center">List your products and expand your distribution network.</p>
-        </button>
+      <div className="space-y-4 pb-4">
+        <div className="text-center mb-6">
+          <p className="text-sm text-gray-500 font-medium">Choose how you want to join India's fastest growing B2B network</p>
+        </div>
 
-        <button
-          onClick={() => setTab("buyer")}
-          className="group relative flex flex-col items-center justify-center p-8 bg-white border-2 border-gray-100 rounded-3xl hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300"
-        >
-          <div className="w-20 h-20 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shadow-sm">
-            <ShoppingBag size={36} />
-          </div>
-          <h3 className="text-xl font-black text-[#1e3a5f] mb-3">Register as Buyer</h3>
-          <p className="text-gray-500 text-sm text-center">Find trusted brands, manufacturers, and distributors.</p>
-        </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Seller Card */}
+          <button
+            onClick={() => setTab("seller")}
+            className="group relative text-left flex flex-col p-6 bg-gradient-to-br from-[#fff8f3] to-white border-2 border-orange-100 rounded-3xl hover:border-orange-500 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300 overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-40 h-40 bg-orange-400/5 rounded-full -translate-y-1/2 translate-x-1/4 group-hover:bg-orange-400/10 transition-all" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-300/5 rounded-full translate-y-1/2 -translate-x-1/4 group-hover:bg-orange-300/8 transition-all" />
+
+            <div className="relative z-10">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-orange-300/40 group-hover:scale-110 group-hover:shadow-orange-400/50 transition-all duration-300">
+                <Store size={30} className="text-white" />
+              </div>
+
+              <div className="mb-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-orange-500 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-100">For Manufacturers & Brands</span>
+              </div>
+              <h3 className="text-xl font-black text-[#1e3a5f] mb-2 tracking-tight">Register as Seller</h3>
+              <p className="text-gray-500 text-sm leading-relaxed mb-5">List your products and build a professional B2B presence to attract distributors nationwide.</p>
+
+              <div className="space-y-2.5 mb-6">
+                {[
+                  "Get a white-label brand microsite",
+                  "Reach verified buyers & distributors",
+                  "Manage leads & inquiries in one place",
+                  "Boost visibility across 28+ states",
+                ].map((f, i) => (
+                  <div key={i} className="flex items-start gap-2.5">
+                    <div className="w-4 h-4 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle size={10} className="text-orange-500" />
+                    </div>
+                    <span className="text-xs text-gray-600 font-medium leading-snug">{f}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-orange-100">
+                <span className="text-xs font-bold text-orange-600">Start for Free</span>
+                <div className="w-8 h-8 rounded-xl bg-orange-500 flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+                  <ArrowRight size={14} className="text-white" />
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Buyer Card */}
+          <button
+            onClick={() => setTab("buyer")}
+            className="group relative text-left flex flex-col p-6 bg-gradient-to-br from-[#f0f7ff] to-white border-2 border-blue-100 rounded-3xl hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-40 h-40 bg-blue-400/5 rounded-full -translate-y-1/2 translate-x-1/4 group-hover:bg-blue-400/10 transition-all" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-300/5 rounded-full translate-y-1/2 -translate-x-1/4 group-hover:bg-blue-300/8 transition-all" />
+
+            <div className="relative z-10">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-700 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-300/40 group-hover:scale-110 group-hover:shadow-blue-400/50 transition-all duration-300">
+                <ShoppingBag size={30} className="text-white" />
+              </div>
+
+              <div className="mb-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-100">For Distributors & Retailers</span>
+              </div>
+              <h3 className="text-xl font-black text-[#1e3a5f] mb-2 tracking-tight">Register as Buyer</h3>
+              <p className="text-gray-500 text-sm leading-relaxed mb-5">Find trusted manufacturers, brands, and products to grow your distribution network.</p>
+
+              <div className="space-y-2.5 mb-6">
+                {[
+                  "Discover verified manufacturers & brands",
+                  "Get exclusive leads from top sellers",
+                  "Build a professional buyer profile",
+                  "Connect across categories & states",
+                ].map((f, i) => (
+                  <div key={i} className="flex items-start gap-2.5">
+                    <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle size={10} className="text-blue-500" />
+                    </div>
+                    <span className="text-xs text-gray-600 font-medium leading-snug">{f}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-blue-100">
+                <span className="text-xs font-bold text-blue-600">Start for Free</span>
+                <div className="w-8 h-8 rounded-xl bg-blue-500 flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+                  <ArrowRight size={14} className="text-white" />
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <p className="text-center text-[11px] text-gray-400 pt-2">
+          🔒 Free to register · Reviewed within 24-48 hours · No credit card needed
+        </p>
       </div>
     );
   }

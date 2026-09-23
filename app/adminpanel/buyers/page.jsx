@@ -84,6 +84,87 @@ const delBtn = "w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-x
 const sectionCard = "bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5 hover:shadow-md transition-shadow duration-200";
 const fieldLabel = "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2";
 
+const INDIA_ZONES = [
+  {
+    zone: "North Zone", color: "blue",
+    states: ["Jammu & Kashmir", "Himachal Pradesh", "Punjab", "Chandigarh", "Uttarakhand", "Haryana", "Delhi", "Uttar Pradesh"],
+  },
+  {
+    zone: "West Zone", color: "orange",
+    states: ["Rajasthan", "Madhya Pradesh", "Gujarat", "Daman & Diu", "Dadra & Nagar Haveli", "Maharashtra", "Goa"],
+  },
+  {
+    zone: "South Zone", color: "emerald",
+    states: ["Andhra Pradesh", "Karnataka", "Lakshadweep", "Kerala", "Tamil Nadu", "Telangana", "Puducherry", "Andaman & Nicobar"],
+  },
+  {
+    zone: "East Zone", color: "violet",
+    states: ["Bihar", "Sikkim", "Arunachal Pradesh", "Nagaland", "Manipur", "Mizoram", "Tripura", "Meghalaya", "Assam", "West Bengal", "Jharkhand", "Odisha", "Chhattisgarh"],
+  },
+];
+
+const ZONE_COLORS = {
+  blue: { badge: "bg-blue-50 text-blue-700 border-blue-200", check: "accent-blue-600", toggle: "text-blue-700 hover:bg-blue-50 border-blue-100" },
+  orange: { badge: "bg-orange-50 text-orange-700 border-orange-200", check: "accent-orange-500", toggle: "text-orange-700 hover:bg-orange-50 border-orange-100" },
+  emerald: { badge: "bg-emerald-50 text-emerald-700 border-emerald-200", check: "accent-emerald-600", toggle: "text-emerald-700 hover:bg-emerald-50 border-emerald-100" },
+  violet: { badge: "bg-violet-50 text-violet-700 border-violet-200", check: "accent-violet-600", toggle: "text-violet-700 hover:bg-violet-50 border-violet-100" },
+};
+
+const ZoneStateSelector = ({ selected = [], onChange }) => {
+  const toggle = (state) => {
+    onChange(selected.includes(state) ? selected.filter(s => s !== state) : [...selected, state]);
+  };
+  const toggleAll = (states) => {
+    const allSelected = states.every(s => selected.includes(s));
+    if (allSelected) onChange(selected.filter(s => !states.includes(s)));
+    else onChange([...new Set([...selected, ...states])]);
+  };
+  return (
+    <div className="space-y-4">
+      {INDIA_ZONES.map(({ zone, color, states }) => {
+        const c = ZONE_COLORS[color];
+        const allSel = states.every(s => selected.includes(s));
+        const someSel = states.some(s => selected.includes(s));
+        return (
+          <div key={zone} className={`rounded-xl border p-4 ${c.badge} border-opacity-60`}>
+            <div className="flex items-center gap-3 mb-3">
+              <span className={`text-xs font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border ${c.badge}`}>{zone}</span>
+              <button
+                type="button"
+                onClick={() => toggleAll(states)}
+                className={`text-[10px] font-bold px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${c.toggle}`}
+              >
+                {allSel ? "Deselect All" : someSel ? "Select All" : "Toggle All"}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {states.map(state => (
+                <label key={state} className="flex items-center gap-1.5 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(state)}
+                    onChange={() => toggle(state)}
+                    className={`${c.check} w-3.5 h-3.5 rounded cursor-pointer`}
+                  />
+                  <span className={`text-xs font-semibold text-gray-700 group-hover:text-gray-900 transition-colors`}>{state}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-2 border-t border-gray-100">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider self-center">Selected:</span>
+          {selected.map(s => (
+            <span key={s} className="text-[10px] font-bold bg-gray-100 text-gray-600 px-2 py-1 rounded-lg">{s}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const UploadBox = ({ field, label, value, onPick, small = false }) => {
   const inputId = `buyer-upload-${field}`;
   return (
@@ -236,8 +317,29 @@ export default function BuyersAdminPage() {
         await updateDoc(doc(db, "buyers", editing.id), { ...payload, updatedAt: serverTimestamp() });
         setBuyers((p) => p.map((b) => b.id === editing.id ? { ...b, ...payload } : b));
       } else {
-        const docRef = await addDoc(collection(db, "buyers"), { ...payload, views: 0, createdAt: serverTimestamp() });
-        setBuyers((p) => [{ id: docRef.id, ...payload, views: 0 }, ...p]);
+        const count = buyers.length + 1;
+        const profileId = `KIB${String(count).padStart(5, '0')}`;
+        const newPayload = { ...payload, profileId, views: 0, createdAt: serverTimestamp() };
+
+        const docRef = await addDoc(collection(db, "buyers"), newPayload);
+        setBuyers((p) => [{ id: docRef.id, ...newPayload }, ...p]);
+
+        // Auto-generate a Lead from this Buyer
+        await addDoc(collection(db, "leads"), {
+          profileId: profileId,
+          name: newPayload.contactName || newPayload.buyerName || "Unknown",
+          company: newPayload.buyerName || "",
+          email: newPayload.contactEmail || newPayload.email || "",
+          phone: newPayload.contactPhone || newPayload.phone || "",
+          location: `${newPayload.city || ''} ${newPayload.state || ''}`.trim(),
+          service: newPayload.category || "Buyer Listing",
+          requirements: Array.isArray(newPayload.requirements) ? newPayload.requirements.join(", ") : (newPayload.requirements || ""),
+          source: "buyer_listing",
+          status: "New",
+          createdAt: serverTimestamp(),
+          buyerId: docRef.id,
+          assignedTo: null
+        });
       }
       setFormOpen(false);
     } catch (err) {
@@ -505,9 +607,9 @@ export default function BuyersAdminPage() {
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
-                            <label className={fieldLabel}>Buyer Name *</label>
+                            <label className={fieldLabel}>Company Name *</label>
                             <input type="text" value={form.buyerName} disabled={user?.role === "buyer"} onChange={e => sf("buyerName", e.target.value)} placeholder="Enter company name" className={`${inp} ${user?.role === "buyer" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
-                            {user?.role === "buyer" && <p className="text-[10px] text-gray-400 mt-1">Contact admin to change Business Name.</p>}
+                            {user?.role === "buyer" && <p className="text-[10px] text-gray-400 mt-1">Contact admin to change Company Name.</p>}
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
@@ -575,17 +677,12 @@ export default function BuyersAdminPage() {
                     </div>
                   </div>
                     <div className={sectionCard}>
-                      <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Logo & Cover Image</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Buyer Logo</h3>
+                      <div className="gap-6">
                         <div>
                           <label className={fieldLabel}>Buyer Logo</label>
                           <UploadBox field="logo" value={form.logoUrl} onPick={(e) => handleImagePick(e, "logo")} small />
                           {ProgPill({ field: "logo", uploadStatus, uploadProgress })}
-                        </div>
-                        <div>
-                          <label className={fieldLabel}>Cover / Banner Image</label>
-                          <UploadBox field="coverImage" value={form.coverImageUrl} onPick={(e) => handleImagePick(e, "coverImage")} />
-                          {ProgPill({ field: "coverImage", uploadStatus, uploadProgress })}
                         </div>
                       </div>
                     </div>
@@ -671,8 +768,8 @@ export default function BuyersAdminPage() {
 
                     <div className={sectionCard}>
                       <div className="flex items-center justify-between pb-3 border-b border-gray-50">
-                        <h3 className="text-sm font-black text-gray-900">Buyers We Work With</h3>
-                        <button type="button" onClick={() => addArr("buyersWeWorkWith", { id: uid(), name: "", logoUrl: "" })} className={addBtn}><Plus size={12} /> Add Buyer</button>
+                        <h3 className="text-sm font-black text-gray-900">Brands We Work With</h3>
+                        <button type="button" onClick={() => addArr("buyersWeWorkWith", { id: uid(), name: "", logoUrl: "" })} className={addBtn}><Plus size={12} /> Add Brand</button>
                       </div>
                       <div className="space-y-3">
                         {(form.buyersWeWorkWith || []).map((bw, i) => (
@@ -687,7 +784,7 @@ export default function BuyersAdminPage() {
                               <input id={`bw-logo-${i}`} type="file" accept="image/*" className="sr-only" onChange={(e) => handleArrayImagePick(e, "buyersWeWorkWith", i)} />
                               {ProgPill({ field: `buyersWeWorkWith_${i}`, uploadStatus, uploadProgress })}
                             </div>
-                            <input value={bw.name} onChange={(e) => setArr("buyersWeWorkWith", i, "name", e.target.value)} placeholder="Enter buyer name" className={`flex-1 ${inp_sm}`} />
+                            <input value={bw.name} onChange={(e) => setArr("buyersWeWorkWith", i, "name", e.target.value)} placeholder="Enter brand name" className={`flex-1 ${inp_sm}`} />
                             <button type="button" onClick={() => delArr("buyersWeWorkWith", i)} className={delBtn}><X size={12} /></button>
                           </div>
                         ))}
@@ -696,15 +793,11 @@ export default function BuyersAdminPage() {
 
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Preferred Business States</h3>
-                      <div className="space-y-2">
-                        {(form.preferredStates || []).map((s, i) => (
-                          <div key={i} className="flex items-center gap-2">
-                            <input value={s} onChange={(e) => setListItem("preferredStates", i, e.target.value)} placeholder="Enter preferred state" className={`flex-1 ${inp_sm}`} />
-                            <button type="button" onClick={() => delListItem("preferredStates", i)} className={delBtn}><X size={12} /></button>
-                          </div>
-                        ))}
-                        <button type="button" onClick={() => addListItem("preferredStates", "")} className={addBtn}><Plus size={12} /> Add State</button>
-                      </div>
+                      <p className="text-xs text-gray-400 -mt-2 mb-3">Select states zone-wise where you prefer to do business</p>
+                      <ZoneStateSelector
+                        selected={form.preferredStates || []}
+                        onChange={(states) => sf("preferredStates", states)}
+                      />
                     </div>
                   </div>
 
