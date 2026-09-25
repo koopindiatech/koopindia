@@ -49,7 +49,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-[64px] gap-4">
 
-                    <Link href="/" className="flex items-center gap-2 flex-shrink-0" onClick={close}>
+                    <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); close(); }} className="flex items-center gap-2 flex-shrink-0">
             <div className="flex items-center gap-1.5">
               <div className="w-8 h-8 bg-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-black text-sm leading-none">K</span>
@@ -66,70 +66,22 @@ const MarketplaceHeader = ({ onOpenModal }) => {
           </Link>
 
                     <nav className="hidden lg:flex items-center gap-1 text-[13px] font-semibold text-gray-700">
-            <Link href="/" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+            <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
               Home
             </Link>
-            <Link href="/marketplace" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
-              Brands
-            </Link>
+            <button onClick={(e) => { e.preventDefault(); document.getElementById('sellers-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+              Sellers
+            </button>
+            <button onClick={(e) => { e.preventDefault(); document.getElementById('buyers-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+              Buyers
+            </button>
 
-                        <div
-              className="relative"
-              onMouseEnter={() => setOpenDropdown("categories")}
-              onMouseLeave={() => setOpenDropdown(null)}
-            >
-              <button className={`flex items-center gap-1 px-3 py-2 rounded transition-colors whitespace-nowrap ${openDropdown === "categories" ? "text-[#f97316]" : "hover:text-[#f97316]"}`}>
-                Categories <ChevronDown size={13} className={`transition-transform duration-200 ${openDropdown === "categories" ? "rotate-180 text-[#f97316]" : "text-gray-400"}`} />
-              </button>
-              {openDropdown === "categories" && (
-                <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 min-w-[220px] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="h-0.5 w-full bg-gradient-to-r from-[#1e3a5f] to-[#f97316] rounded-full mb-1" />
-                  {CATEGORIES.map((cat) => (
-                    <Link
-                      key={cat}
-                      href={`/marketplace?category=${encodeURIComponent(cat)}`}
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2.5 text-[13px] text-gray-700 font-semibold hover:bg-orange-50 hover:text-[#f97316] transition-colors"
-                    >
-                      {cat}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <Link href="/aboutus" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
-              About Us
-            </Link>
-
-                        <div
-              className="relative"
-              onMouseEnter={() => setOpenDropdown("resources")}
-              onMouseLeave={() => setOpenDropdown(null)}
-            >
-              <button className={`flex items-center gap-1 px-3 py-2 rounded transition-colors whitespace-nowrap ${openDropdown === "resources" ? "text-[#f97316]" : "hover:text-[#f97316]"}`}>
-                Resources <ChevronDown size={13} className={`transition-transform duration-200 ${openDropdown === "resources" ? "rotate-180 text-[#f97316]" : "text-gray-400"}`} />
-              </button>
-              {openDropdown === "resources" && (
-                <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 min-w-[200px] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="h-0.5 w-full bg-gradient-to-r from-[#1e3a5f] to-[#f97316] rounded-full mb-1" />
-                  {RESOURCES.map((r) => (
-                    <Link
-                      key={r.label}
-                      href={r.href}
-                      onClick={() => setOpenDropdown(null)}
-                      className="block px-4 py-2.5 text-[13px] text-gray-700 font-semibold hover:bg-orange-50 hover:text-[#f97316] transition-colors"
-                    >
-                      {r.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <Link href="/contactus" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
-              Contact Us
-            </Link>
+            <button onClick={(e) => { e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+              How It Works
+            </button>
+            <button onClick={(e) => { e.preventDefault(); document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+              Success Stories
+            </button>
           </nav>
 
                     <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
@@ -177,44 +129,12 @@ const MarketplaceHeader = ({ onOpenModal }) => {
 
         <div className="flex flex-col h-[calc(100%-65px)]">
           <div className="flex-1 overflow-y-auto py-2">
-            <Link href="/" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Home</Link>
-            <Link href="/marketplace" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Brands</Link>
+            <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); close(); }} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Home</Link>
+            <button onClick={(e) => { e.preventDefault(); document.getElementById('sellers-section')?.scrollIntoView({ behavior: 'smooth' }); close(); }} className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Sellers</button>
+            <button onClick={(e) => { e.preventDefault(); document.getElementById('buyers-section')?.scrollIntoView({ behavior: 'smooth' }); close(); }} className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Buyers</button>
 
-            <button
-              onClick={() => setOpenDropdown(openDropdown === "categories" ? null : "categories")}
-              className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100"
-            >
-              Categories <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "categories" ? "rotate-180 text-[#f97316]" : ""}`} />
-            </button>
-            {openDropdown === "categories" && (
-              <div className="bg-orange-50/60 border-b border-gray-100">
-                {CATEGORIES.map(cat => (
-                  <Link key={cat} href={`/marketplace?category=${encodeURIComponent(cat)}`} onClick={close} className="block px-8 py-2.5 text-[13px] font-medium text-gray-700 hover:text-[#f97316]">
-                    {cat}
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            <Link href="/aboutus" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">About Us</Link>
-
-            <button
-              onClick={() => setOpenDropdown(openDropdown === "resources" ? null : "resources")}
-              className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100"
-            >
-              Resources <ChevronDown size={16} className={`text-gray-400 transition-transform ${openDropdown === "resources" ? "rotate-180 text-[#f97316]" : ""}`} />
-            </button>
-            {openDropdown === "resources" && (
-              <div className="bg-orange-50/60 border-b border-gray-100">
-                {RESOURCES.map(r => (
-                  <Link key={r.label} href={r.href} onClick={close} className="block px-8 py-2.5 text-[13px] font-medium text-gray-700 hover:text-[#f97316]">
-                    {r.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            <Link href="/contactus" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Contact Us</Link>
+            <button onClick={(e) => { e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }); close(); }} className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">How It Works</button>
+            <button onClick={(e) => { e.preventDefault(); document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }); close(); }} className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Success Stories</button>
           </div>
 
                     <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">

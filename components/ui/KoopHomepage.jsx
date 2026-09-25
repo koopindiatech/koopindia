@@ -152,7 +152,14 @@ export default function KoopIndiaHomepage() {
 
   /* ── state ── */
   const [search, setSearch] = useState(searchParams.get("q") || "");
-  const [catSel, setCatSel] = useState(searchParams.get("cat") || "All Categories");
+
+  const urlCat = searchParams.get("category");
+  let initCat = "All Categories";
+  if (urlCat) {
+    const found = CATEGORIES.find(c => c.label.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-') === urlCat);
+    if (found) initCat = found.label;
+  }
+  const [catSel, setCatSel] = useState(initCat);
   const [subCatSel, setSubCatSel] = useState("All");
   const [stateSel, setStateSel] = useState("All States");
   const [certSel, setCertSel] = useState("All Certifications");
@@ -174,7 +181,7 @@ export default function KoopIndiaHomepage() {
 
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
-  const [searched, setSearched] = useState(!!(searchParams.get("q") || searchParams.get("cat")));
+  const [searched, setSearched] = useState(!!(searchParams.get("q") || urlCat));
 
   /* ── fetch ── */
   useEffect(() => {
@@ -507,80 +514,45 @@ export default function KoopIndiaHomepage() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
             <div>
               <p className="text-[11px] font-extrabold text-[#F97316] uppercase tracking-widest mb-1">Browse By</p>
-              <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight">Explore All Categories</h2>
+              <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight whitespace-nowrap">Explore All Categories</h2>
             </div>
-            {catSel !== "All Categories" && (
-              <button
-                onClick={() => { setCatSel("All Categories"); setSubCatSel("All"); performSearch(search, "All Categories", "All", stateSel); }}
-                className="text-xs font-bold text-orange-600 bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-xl hover:bg-orange-100 transition-all flex items-center gap-1.5"
-              >
-                ✕ Clear: {catSel}
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-            {/* Category Dropdown */}
-            <div className="relative w-full sm:w-72">
-              <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xl">
-                {catSel !== "All Categories" ? (CATEGORIES.find(c => c.label === catSel)?.emoji || "📂") : "📂"}
-              </div>
-              <select
-                value={catSel}
-                onChange={e => {
-                  const val = e.target.value;
-                  setCatSel(val);
-                  setSubCatSel("All");
-                  performSearch(search, val, "All", stateSel);
-                  document.getElementById("sellers-section")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="w-full pl-10 pr-10 py-3.5 rounded-2xl border-2 border-gray-200 bg-white text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-orange-400/25 focus:border-orange-400 transition-all appearance-none cursor-pointer shadow-sm hover:border-gray-300"
-              >
-                <option value="All Categories">All Categories</option>
-                {CATEGORIES.map(c => (
-                  <option key={c.label} value={c.label}>{c.emoji} {c.label}</option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
-              </div>
-            </div>
-
-            {/* Sub-category pills (shown when a category is selected) */}
-            {catSel !== "All Categories" && (() => {
-              const selectedCat = CATEGORIES.find(c => c.label === catSel);
-              if (!selectedCat?.subs?.length) return null;
-              return (
-                <div className="flex flex-wrap gap-2 flex-1">
-                  <button
-                    onClick={() => { setSubCatSel("All"); performSearch(search, catSel, "All", stateSel); }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${subCatSel === "All" ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50"}`}
-                  >
-                    All {catSel}
-                  </button>
-                  {selectedCat.subs.map(sub => (
-                    <button key={sub}
-                      onClick={() => { setSubCatSel(sub); performSearch(search, catSel, sub, stateSel); document.getElementById("sellers-section")?.scrollIntoView({ behavior: "smooth" }); }}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${subCatSel === sub ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 text-gray-500 hover:border-gray-300 hover:bg-gray-50"}`}
-                    >
-                      {sub}
-                    </button>
-                  ))}
+            
+            <div className="flex items-center gap-4 w-full sm:w-auto sm:ml-auto">
+              {/* Category Dropdown */}
+              <div className="relative w-full sm:w-72 flex-shrink-0">
+                <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xl">
+                  {catSel !== "All Categories" ? (CATEGORIES.find(c => c.label === catSel)?.emoji || "📂") : "📂"}
                 </div>
-              );
-            })()}
-          </div>
+                <select
+                  value={catSel}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setCatSel(val);
+                    setSubCatSel("All");
+                    performSearch(search, val, "All", stateSel);
+                    document.getElementById("sellers-section")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="w-full pl-10 pr-10 py-3 rounded-2xl border-2 border-gray-200 bg-white text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-orange-400/25 focus:border-orange-400 transition-all appearance-none cursor-pointer shadow-sm hover:border-gray-300"
+                >
+                  <option value="All Categories">All Categories</option>
+                  {CATEGORIES.map(c => (
+                    <option key={c.label} value={c.label}>{c.emoji} {c.label}</option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
+              </div>
 
-          {/* Quick-pick emoji pills row */}
-          <div className="flex gap-2 mt-4 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-            {CATEGORIES.slice(0, 12).map(c => (
-              <button key={c.label}
-                onClick={() => { setCatSel(c.label); setSubCatSel("All"); performSearch(search, c.label, "All", stateSel); document.getElementById("sellers-section")?.scrollIntoView({ behavior: "smooth" }); }}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-xs font-bold transition-all whitespace-nowrap ${catSel === c.label ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 text-gray-600 hover:border-orange-300 hover:bg-orange-50"}`}
-              >
-                <span className="text-base">{c.emoji}</span> {c.label}
-              </button>
-            ))}
+              {catSel !== "All Categories" && (
+                <button
+                  onClick={() => { setCatSel("All Categories"); setSubCatSel("All"); performSearch(search, "All Categories", "All", stateSel); }}
+                  className="text-xs font-bold text-orange-600 bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-xl hover:bg-orange-100 transition-all flex items-center gap-1.5 whitespace-nowrap"
+                >
+                  ✕ Clear: {catSel}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </section>
@@ -621,7 +593,7 @@ export default function KoopIndiaHomepage() {
       <BannerSection banners={bottomBanners} />
 
       {/* ══════════════ FEATURED BUYERS ══════════════ */}
-      <section className="py-14 px-4 sm:px-6 bg-white">
+      <section className="py-14 px-4 sm:px-6 bg-white" id="buyers-section">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -765,7 +737,7 @@ export default function KoopIndiaHomepage() {
       </section>
 
       {/* ══════════════ TESTIMONIALS ══════════════ */}
-      <section className="py-14 px-4 sm:px-6 bg-[#f8fafc]">
+      <section className="py-14 px-4 sm:px-6 bg-[#f8fafc]" id="testimonials">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight">BUYER SUCCESS STORIES</h2>
@@ -789,7 +761,7 @@ export default function KoopIndiaHomepage() {
       </section>
 
       {/* ══════════════ HOW IT WORKS ══════════════ */}
-      <section className="py-14 px-4 sm:px-6 bg-white">
+      <section className="py-14 px-4 sm:px-6 bg-white" id="how-it-works">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold text-[#1e3a5f] text-center mb-10 tracking-tight uppercase">HOW IT WORKS?</h2>
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-0">

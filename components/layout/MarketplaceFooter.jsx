@@ -22,8 +22,8 @@ const MarketplaceFooter = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
 
           {/* Logo + Description + Socials */}
-          <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4">
+          <div className="lg:col-span-2">
+            <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); }} className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-black text-sm">K</span>
               </div>
@@ -41,20 +41,18 @@ const MarketplaceFooter = () => {
             </p>
                         <div className="flex items-center gap-3">
               {[
-                { icon: <FaFacebook size={15} />, href: "https://www.facebook.com/KoopIndiaa" },
-                { icon: <FaInstagram size={15} />, href: "https://www.instagram.com/koop_india/" },
-                { icon: <FaLinkedin size={15} />, href: "https://www.linkedin.com/company/koop-india/" },
-                { icon: <FaYoutube size={15} />, href: "https://www.youtube.com/@KoopIndia" },
+                { icon: <FaFacebook size={15} />, href: "#" },
+                { icon: <FaInstagram size={15} />, href: "#" },
+                { icon: <FaLinkedin size={15} />, href: "#" },
+                { icon: <FaYoutube size={15} />, href: "#" },
               ].map(({ icon, href }, i) => (
-                <Link
+                <a
                   key={i}
                   href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#f97316] flex items-center justify-center transition-colors text-gray-300 hover:text-white"
                 >
                   {icon}
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -66,11 +64,9 @@ const MarketplaceFooter = () => {
             </h4>
             <ul className="space-y-2.5">
               {[
-                { label: "Home", href: "/" },
+                { label: "Home", href: "/marketplace" },
                 { label: "All Brands", href: "/marketplace" },
                 { label: "Categories", href: "/marketplace" },
-                { label: "About Us", href: "/aboutus" },
-                { label: "Contact Us", href: "/contactus" },
               ].map(({ label, href }) => (
                 <li key={label}>
                   <Link href={href} className="text-[13px] text-gray-400 hover:text-[#f97316] transition-colors">
@@ -94,61 +90,22 @@ const MarketplaceFooter = () => {
                 "Home Care & Essentials",
                 "Business Tools",
                 "View All Categories",
-              ].map((cat) => (
+              ].map((cat) => {
+                const slug = cat === "View All Categories" ? "" : cat.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-');
+                const href = cat === "View All Categories" ? "/marketplace" : `/marketplace?category=${slug}`;
+                return (
                 <li key={cat}>
-                  <Link href={`/marketplace?category=${encodeURIComponent(cat)}`} className="text-[13px] text-gray-400 hover:text-[#f97316] transition-colors">
+                  <Link href={href} className="text-[13px] text-gray-400 hover:text-[#f97316] transition-colors">
                     {cat}
                   </Link>
                 </li>
-              ))}
+              )})}
             </ul>
           </div>
 
-                    <div>
-            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
-              Resources
-            </h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: "Blog", href: "/blog" },
-                { label: "Branding Guide", href: "/resources/branding-guide" },
-                { label: "Export Guide", href: "/resources/export-guide" },
-                { label: "Business Tools", href: "/resources/business-tools" },
-                { label: "Success Stories", href: "/resources/success-stories" },
-              ].map(({ label, href }) => (
-                <li key={label}>
-                  <Link href={href} className="text-[13px] text-gray-400 hover:text-[#f97316] transition-colors">
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support + Newsletter */}
-          <div>
-            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
-              Support
-            </h4>
-            <ul className="space-y-2.5 mb-6">
-              {[
-                { label: "Help Center", href: "/contactus" },
-                { label: "FAQs", href: "/contactus" },
-                { label: "Terms & Conditions", href: "/terms-and-conditions" },
-                { label: "Privacy Policy", href: "/privacy" },
-                { label: "Contact Support", href: "/contactus" },
-              ].map(({ label, href }) => (
-                <li key={label}>
-                  <Link href={href} className="text-[13px] text-gray-400 hover:text-[#f97316] transition-colors">
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-                        <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+          {/* Newsletter */}
+          <div className="lg:col-span-1">
+            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
               <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
               Newsletter
             </h4>

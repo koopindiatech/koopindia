@@ -1270,7 +1270,7 @@ export default function SellerClientPage({ initialSeller }) {
             </div>
 
             <div>
-              <h4 className="font-bold text-base mb-5" style={{ color: sc, fontFamily: 'Georgia, serif' }}>OUR MASALE</h4>
+              <h4 className="font-bold text-base mb-5" style={{ color: sc, fontFamily: 'Georgia, serif' }}>OUR PRODUCTS</h4>
               <ul className="space-y-2.5 text-sm font-medium opacity-90">
                 {products.slice(0, 5).map((p, i) => (
                   <li key={i}>
