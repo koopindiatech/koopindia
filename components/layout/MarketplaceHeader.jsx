@@ -49,7 +49,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-[64px] gap-4">
 
-                    <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); close(); }} className="flex items-center gap-2 flex-shrink-0">
+                    <Link href="/marketplace" onClick={close} className="flex items-center gap-2 flex-shrink-0">
             <div className="flex items-center gap-1.5">
               <div className="w-8 h-8 bg-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-black text-sm leading-none">K</span>
@@ -66,22 +66,15 @@ const MarketplaceHeader = ({ onOpenModal }) => {
           </Link>
 
                     <nav className="hidden lg:flex items-center gap-1 text-[13px] font-semibold text-gray-700">
-            <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+            <Link href="/marketplace" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
               Home
             </Link>
-            <button onClick={(e) => { e.preventDefault(); document.getElementById('sellers-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+            <Link href="/sellers" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
               Sellers
-            </button>
-            <button onClick={(e) => { e.preventDefault(); document.getElementById('buyers-section')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+            </Link>
+            <Link href="/buyers" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
               Buyers
-            </button>
-
-            <button onClick={(e) => { e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
-              How It Works
-            </button>
-            <button onClick={(e) => { e.preventDefault(); document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }); }} className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
-              Success Stories
-            </button>
+            </Link>
           </nav>
 
                     <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
@@ -129,12 +122,9 @@ const MarketplaceHeader = ({ onOpenModal }) => {
 
         <div className="flex flex-col h-[calc(100%-65px)]">
           <div className="flex-1 overflow-y-auto py-2">
-            <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); close(); }} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Home</Link>
-            <button onClick={(e) => { e.preventDefault(); document.getElementById('sellers-section')?.scrollIntoView({ behavior: 'smooth' }); close(); }} className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Sellers</button>
-            <button onClick={(e) => { e.preventDefault(); document.getElementById('buyers-section')?.scrollIntoView({ behavior: 'smooth' }); close(); }} className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Buyers</button>
-
-            <button onClick={(e) => { e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }); close(); }} className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">How It Works</button>
-            <button onClick={(e) => { e.preventDefault(); document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }); close(); }} className="w-full flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Success Stories</button>
+            <Link href="/marketplace" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Home</Link>
+            <Link href="/sellers" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Sellers</Link>
+            <Link href="/buyers" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Buyers</Link>
           </div>
 
                     <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)]">
