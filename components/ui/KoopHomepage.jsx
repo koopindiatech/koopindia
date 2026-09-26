@@ -121,7 +121,7 @@ const BannerSection = ({ banners }) => {
             {banners.map((b, i) => (
               <a key={i} href={b.link || "#"} target={b.link ? "_blank" : "_self"} rel="noopener noreferrer" 
                  className="flex-shrink-0 w-full">
-                <img src={b.imageUrl} alt={`Banner ${i}`} className="w-full h-auto min-h-[150px] max-h-[350px] object-cover" />
+                <img src={b.imageUrl} alt={`Banner ${i}`} className="w-full h-auto min-h-[150px] max-h-[500px] object-cover" />
               </a>
             ))}
           </div>
@@ -415,8 +415,10 @@ export default function KoopIndiaHomepage() {
         </div>
       </section>
 
+
+
       {/* ══════════════ SEARCH BAR ══════════════ */}
-      <section className="bg-[#1e3a5f] py-5 px-4 sm:px-6 sticky top-0 z-40 shadow-xl">
+      <section className="bg-[#1e3a5f] py-5 px-4 sm:px-6 sticky top-[64px] z-40 shadow-xl">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row items-stretch gap-2 bg-white rounded-2xl p-2 shadow-2xl shadow-blue-900/30">
             <div className="flex items-center flex-1 gap-2 px-3">
@@ -506,56 +508,7 @@ export default function KoopIndiaHomepage() {
         </div>
       </section>
 
-      <BannerSection banners={topBanners} />
 
-      {/* ══════════════ EXPLORE TOP CATEGORIES ══════════════ */}
-      <section className="bg-white py-10 px-4 sm:px-6 relative border-t border-gray-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-            <div>
-              <p className="text-[11px] font-extrabold text-[#F97316] uppercase tracking-widest mb-1">Browse By</p>
-              <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight whitespace-nowrap">Explore All Categories</h2>
-            </div>
-            
-            <div className="flex items-center gap-4 w-full sm:w-auto sm:ml-auto">
-              {/* Category Dropdown */}
-              <div className="relative w-full sm:w-72 flex-shrink-0">
-                <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xl">
-                  {catSel !== "All Categories" ? (CATEGORIES.find(c => c.label === catSel)?.emoji || "📂") : "📂"}
-                </div>
-                <select
-                  value={catSel}
-                  onChange={e => {
-                    const val = e.target.value;
-                    setCatSel(val);
-                    setSubCatSel("All");
-                    performSearch(search, val, "All", stateSel);
-                    document.getElementById("sellers-section")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="w-full pl-10 pr-10 py-3 rounded-2xl border-2 border-gray-200 bg-white text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-orange-400/25 focus:border-orange-400 transition-all appearance-none cursor-pointer shadow-sm hover:border-gray-300"
-                >
-                  <option value="All Categories">All Categories</option>
-                  {CATEGORIES.map(c => (
-                    <option key={c.label} value={c.label}>{c.emoji} {c.label}</option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
-              </div>
-
-              {catSel !== "All Categories" && (
-                <button
-                  onClick={() => { setCatSel("All Categories"); setSubCatSel("All"); performSearch(search, "All Categories", "All", stateSel); }}
-                  className="text-xs font-bold text-orange-600 bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-xl hover:bg-orange-100 transition-all flex items-center gap-1.5 whitespace-nowrap"
-                >
-                  ✕ Clear: {catSel}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ══════════════ FEATURED SELLERS / SEARCH RESULTS ══════════════ */}
       <section className="py-14 px-4 sm:px-6 bg-[#f8fafc]" id="sellers-section">
@@ -590,7 +543,7 @@ export default function KoopIndiaHomepage() {
         </div>
       </section>
 
-      <BannerSection banners={bottomBanners} />
+      <BannerSection banners={topBanners} />
 
       {/* ══════════════ FEATURED BUYERS ══════════════ */}
       <section className="py-14 px-4 sm:px-6 bg-white" id="buyers-section">
@@ -614,6 +567,8 @@ export default function KoopIndiaHomepage() {
           </div>
         </div>
       </section>
+
+      <BannerSection banners={bottomBanners} />
 
       {/* ══════════════ WHY KOOP INDIA ══════════════ */}
       <section className="py-14 px-4 sm:px-6 bg-[#f8fafc]">

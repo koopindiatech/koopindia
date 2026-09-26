@@ -158,12 +158,7 @@ function RegistrationForm() {
 
   if (!tab) {
     return (
-      <div className="space-y-4 pb-4">
-        <div className="text-center mb-6">
-          <p className="text-sm text-gray-500 font-medium">Choose how you want to join India's fastest growing B2B network</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="space-y-4 pb-4 mt-4">        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Seller Card */}
           <button
             onClick={() => setTab("seller")}
@@ -173,8 +168,8 @@ function RegistrationForm() {
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-300/5 rounded-full translate-y-1/2 -translate-x-1/4 group-hover:bg-orange-300/8 transition-all" />
 
             <div className="relative z-10">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-orange-300/40 group-hover:scale-110 group-hover:shadow-orange-400/50 transition-all duration-300">
-                <Store size={30} className="text-white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-orange-300/40 group-hover:scale-110 group-hover:shadow-orange-400/50 transition-all duration-300">
+                <Store size={24} className="text-white" />
               </div>
 
               <div className="mb-2">
@@ -182,22 +177,6 @@ function RegistrationForm() {
               </div>
               <h3 className="text-xl font-black text-[#1e3a5f] mb-2 tracking-tight">Register as Seller</h3>
               <p className="text-gray-500 text-sm leading-relaxed mb-5">List your products and build a professional B2B presence to attract distributors nationwide.</p>
-
-              <div className="space-y-2.5 mb-6">
-                {[
-                  "Get a white-label brand microsite",
-                  "Reach verified buyers & distributors",
-                  "Manage leads & inquiries in one place",
-                  "Boost visibility across 28+ states",
-                ].map((f, i) => (
-                  <div key={i} className="flex items-start gap-2.5">
-                    <div className="w-4 h-4 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <CheckCircle size={10} className="text-orange-500" />
-                    </div>
-                    <span className="text-xs text-gray-600 font-medium leading-snug">{f}</span>
-                  </div>
-                ))}
-              </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-orange-100">
                 <span className="text-xs font-bold text-orange-600">Start for Free</span>
@@ -217,8 +196,8 @@ function RegistrationForm() {
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-300/5 rounded-full translate-y-1/2 -translate-x-1/4 group-hover:bg-blue-300/8 transition-all" />
 
             <div className="relative z-10">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-700 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-blue-300/40 group-hover:scale-110 group-hover:shadow-blue-400/50 transition-all duration-300">
-                <ShoppingBag size={30} className="text-white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-300/40 group-hover:scale-110 group-hover:shadow-blue-400/50 transition-all duration-300">
+                <ShoppingBag size={24} className="text-white" />
               </div>
 
               <div className="mb-2">
@@ -226,22 +205,6 @@ function RegistrationForm() {
               </div>
               <h3 className="text-xl font-black text-[#1e3a5f] mb-2 tracking-tight">Register as Buyer</h3>
               <p className="text-gray-500 text-sm leading-relaxed mb-5">Find trusted manufacturers, brands, and products to grow your distribution network.</p>
-
-              <div className="space-y-2.5 mb-6">
-                {[
-                  "Discover verified manufacturers & brands",
-                  "Get exclusive leads from top sellers",
-                  "Build a professional buyer profile",
-                  "Connect across categories & states",
-                ].map((f, i) => (
-                  <div key={i} className="flex items-start gap-2.5">
-                    <div className="w-4 h-4 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <CheckCircle size={10} className="text-blue-500" />
-                    </div>
-                    <span className="text-xs text-gray-600 font-medium leading-snug">{f}</span>
-                  </div>
-                ))}
-              </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-blue-100">
                 <span className="text-xs font-bold text-blue-600">Start for Free</span>
@@ -500,7 +463,7 @@ export default function RegistrationPage() {
         </div>
         
         <div className="relative z-10">
-          <Link href="/" className="inline-flex items-center gap-3 mb-16 hover:opacity-80 transition-opacity">
+          <Link href="/" className="inline-flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30">
               <span className="text-white font-black text-lg leading-none">K</span>
             </div>
@@ -511,14 +474,14 @@ export default function RegistrationPage() {
             </div>
           </Link>
 
-          <h1 className="text-5xl font-black text-white leading-tight tracking-tight mb-6">
+          <h1 className="text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight mb-4">
             Join India's Fastest Growing B2B Network.
           </h1>
-          <p className="text-blue-100/80 text-lg max-w-md leading-relaxed mb-12">
+          <p className="text-blue-100/80 text-base max-w-md leading-relaxed mb-8">
             Whether you are a manufacturer looking for distributors, or a buyer looking for trusted brands—you've come to the right place.
           </p>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {[
               { icon: Users, title: "Verified Partners", desc: "Connect with 100% verified businesses." },
               { icon: TrendingUp, title: "Grow Faster", desc: "Expand your distribution network across India." },
@@ -537,13 +500,13 @@ export default function RegistrationPage() {
           </div>
         </div>
 
-        <div className="relative z-10 mt-16 text-blue-300/50 text-xs font-medium">
+        <div className="relative z-10 mt-8 text-blue-300/50 text-xs font-medium">
           © {new Date().getFullYear()} Koop India Network. All rights reserved.
         </div>
       </div>
 
       {/* RIGHT SIDE: FORM */}
-      <div className="w-full lg:w-7/12 xl:w-1/2 flex flex-col p-4 sm:p-8 md:p-12 h-screen overflow-y-auto">
+      <div className="w-full lg:w-7/12 xl:w-1/2 flex flex-col p-4 sm:p-6 md:p-8 h-screen overflow-y-auto">
         <div className="w-full max-w-2xl m-auto py-8 lg:py-0">
           {/* Mobile Logo Header */}
           <div className="lg:hidden flex justify-center mb-8">
@@ -557,18 +520,18 @@ export default function RegistrationPage() {
             </Link>
           </div>
 
-          <div className="mb-8 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-orange-600 text-xs font-bold uppercase tracking-wider mb-3">
+          <div className="mb-5 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-orange-600 text-xs font-bold uppercase tracking-wider mb-2">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
               </span>
               B2B Marketplace
             </div>
-            <h2 className="text-3xl md:text-4xl font-black text-[#1e3a5f] mb-3 tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-black text-[#1e3a5f] mb-2 tracking-tight">
               Create Your Profile
             </h2>
-            <p className="text-gray-500 text-sm md:text-base leading-relaxed">
+            <p className="text-gray-500 text-sm leading-relaxed">
               Join as a <strong className="text-[#1e3a5f]">Seller</strong> to expand your reach, or as a <strong className="text-[#1e3a5f]">Buyer</strong> to connect with top brands.
             </p>
           </div>

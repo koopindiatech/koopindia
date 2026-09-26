@@ -103,35 +103,26 @@ const MarketplaceFooter = () => {
             </ul>
           </div>
 
-          {/* Newsletter */}
+          {/* Contact Info */}
           <div className="lg:col-span-1">
             <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
               <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
-              Newsletter
+              Contact Us
             </h4>
-            <p className="text-[12px] text-gray-500 mb-3 leading-relaxed">
-              Subscribe to get updates on latest brands, trends and opportunities.
-            </p>
-            {subscribed ? (
-              <p className="text-[12px] text-green-400 font-semibold">✓ Thanks for subscribing!</p>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className="flex-1 min-w-0 bg-white/10 border border-white/10 rounded-lg px-3 py-2 text-[12px] text-white placeholder-gray-500 focus:outline-none focus:border-[#f97316] transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="bg-[#f97316] hover:bg-[#ea580c] text-white text-[12px] font-bold px-3 py-2 rounded-lg transition-colors flex-shrink-0"
-                >
-                  →
-                </button>
-              </form>
-            )}
+            <div className="text-[13px] text-gray-400 space-y-3">
+              <p className="flex items-start gap-2">
+                <span className="text-[#f97316]">📍</span>
+                <span>New Delhi, India</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <span className="text-[#f97316]">✉️</span>
+                <a href="mailto:support@koopindia.com" className="hover:text-white transition-colors">support@koopindia.com</a>
+              </p>
+              <p className="flex items-center gap-2">
+                <span className="text-[#f97316]">📞</span>
+                <a href="tel:+919876543210" className="hover:text-white transition-colors">+91 98765 43210</a>
+              </p>
+            </div>
           </div>
         </div>
       </div>

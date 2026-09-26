@@ -839,13 +839,13 @@ export default function SellerClientPage({ initialSeller }) {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Your Name *</label>
-                          <input type="text" required placeholder="e.g. Rahul Sharma" value={contactForm.name} onChange={e => setContactForm(p => ({ ...p, name: e.target.value }))}
+                          <input type="text" required placeholder="Enter your name" value={contactForm.name} onChange={e => setContactForm(p => ({ ...p, name: e.target.value }))}
                             className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-100 text-sm outline-none transition bg-gray-50 placeholder:text-gray-400 font-medium"
                             onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider">Phone *</label>
-                          <input type="tel" required placeholder="+91 98765 43210" value={contactForm.phone} onChange={e => setContactForm(p => ({ ...p, phone: e.target.value }))}
+                          <input type="tel" required placeholder="Enter your phone number" value={contactForm.phone} onChange={e => setContactForm(p => ({ ...p, phone: e.target.value }))}
                             className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-100 text-sm outline-none transition bg-gray-50 placeholder:text-gray-400 font-medium"
                             onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
                         </div>
@@ -1333,14 +1333,14 @@ export default function SellerClientPage({ initialSeller }) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Your Name *</label>
-                      <input type="text" required placeholder="e.g. Rahul Sharma" value={inquiryForm.name}
+                      <input type="text" required placeholder="Enter your name" value={inquiryForm.name}
                         onChange={e => setInquiryForm(p => ({ ...p, name: e.target.value }))}
                         className="w-full px-3.5 py-3 rounded-xl border-2 border-gray-100 text-sm outline-none bg-gray-50 font-medium transition"
                         onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Phone *</label>
-                      <input type="tel" required placeholder="+91 98765 43210" value={inquiryForm.phone}
+                      <input type="tel" required placeholder="Enter your phone number" value={inquiryForm.phone}
                         onChange={e => setInquiryForm(p => ({ ...p, phone: e.target.value }))}
                         className="w-full px-3.5 py-3 rounded-xl border-2 border-gray-100 text-sm outline-none bg-gray-50 font-medium transition"
                         onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
@@ -1348,14 +1348,14 @@ export default function SellerClientPage({ initialSeller }) {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Email</label>
-                    <input type="email" placeholder="you@example.com" value={inquiryForm.email}
+                    <input type="email" placeholder="Enter your email address" value={inquiryForm.email}
                       onChange={e => setInquiryForm(p => ({ ...p, email: e.target.value }))}
                       className="w-full px-3.5 py-3 rounded-xl border-2 border-gray-100 text-sm outline-none bg-gray-50 font-medium transition"
                       onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-600 mb-1 uppercase tracking-wider">Message</label>
-                    <textarea rows={3} placeholder="Tell us about your requirement..." value={inquiryForm.message}
+                    <textarea rows={3} placeholder="Enter your message..." value={inquiryForm.message}
                       onChange={e => setInquiryForm(p => ({ ...p, message: e.target.value }))}
                       className="w-full px-3.5 py-3 rounded-xl border-2 border-gray-100 text-sm outline-none resize-none bg-gray-50 font-medium transition"
                       onFocus={e => e.target.style.borderColor = pc} onBlur={e => e.target.style.borderColor = '#f3f4f6'} />
