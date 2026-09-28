@@ -140,12 +140,11 @@ export default function BuyerClientPage({ initialBuyer }) {
 
             {/* ── HERO HEADER CARD ── */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-                            <div className="relative h-56 sm:h-72 overflow-hidden" style={{ backgroundColor: pc + "22" }}>
+                            <div className={`relative overflow-hidden ${buyer.coverImageUrl ? 'h-56 sm:h-72' : 'h-24 sm:h-32'}`} style={{ backgroundColor: pc + "22" }}>
                 {buyer.coverImageUrl ? (
                   <img src={buyer.coverImageUrl} alt={buyer.buyerName} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${pc}33, ${pc}11)` }}>
-                    <span className="text-6xl font-black opacity-20" style={{ color: pc }}>{initials}</span>
                   </div>
                 )}
                                 <button onClick={handleShare}
@@ -401,7 +400,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
           {/* ── RIGHT SIDEBAR ── */}
           <div className="space-y-5">
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5 sticky top-4">
+                        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
               <h3 className="font-black text-gray-900 text-base mb-1">
                 Connect with this {buyer.businessType || "Buyer"}
               </h3>

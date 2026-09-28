@@ -65,28 +65,30 @@ const MarketplaceHeader = ({ onOpenModal }) => {
             </div>
           </Link>
 
-                    <nav className="hidden lg:flex items-center gap-1 text-[13px] font-semibold text-gray-700">
-            <Link href="/marketplace" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
-              Home
-            </Link>
-            <Link href="/sellers" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
-              Sellers
-            </Link>
-            <Link href="/buyers" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
-              Buyers
-            </Link>
-          </nav>
+          <div className="hidden lg:flex items-center gap-6">
+            <nav className="flex items-center gap-1 text-[13px] font-semibold text-gray-700">
+              <Link href="/marketplace" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+                Home
+              </Link>
+              <Link href="/sellers" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+                Sellers
+              </Link>
+              <Link href="/buyers" className="px-3 py-2 rounded hover:text-[#f97316] transition-colors whitespace-nowrap">
+                Buyers
+              </Link>
+            </nav>
 
-                    <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
-            <Link
-              href="/seller-buyer-registration"
-              className="bg-[#f97316] hover:bg-[#ea580c] text-white font-bold text-[13px] px-5 py-2.5 rounded-lg transition-colors shadow-md shadow-orange-500/20 whitespace-nowrap flex items-center gap-1.5"
-            >
-              List Your Brand →
-            </Link>
-            <Link href="/adminpanel/login" className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:border-[#f97316] text-gray-500 hover:text-[#f97316] transition-colors">
-              <User size={16} />
-            </Link>
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <Link
+                href="/seller-buyer-registration"
+                className="bg-[#f97316] hover:bg-[#ea580c] text-white font-bold text-[13px] px-5 py-2.5 rounded-lg transition-colors shadow-md shadow-orange-500/20 whitespace-nowrap flex items-center gap-1.5"
+              >
+                List Your Brand →
+              </Link>
+              <Link href="/adminpanel/login" className="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 hover:border-[#f97316] text-gray-500 hover:text-[#f97316] transition-colors">
+                <User size={16} />
+              </Link>
+            </div>
           </div>
 
                     <button

@@ -131,32 +131,7 @@ export default function SellersPage() {
                 />
               </div>
 
-              <div className="relative hidden md:block">
-                <button
-                  onClick={() => setCatDropOpen(o => !o)}
-                  className="flex items-center justify-between gap-2 appearance-none bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 pl-3 pr-3 py-2.5 rounded-xl outline-none cursor-pointer hover:border-gray-300 min-w-[160px]">
-                  <span className="flex-1 text-left truncate">{catSel === "All Categories" ? "All Categories" : catSel}</span>
-                  <ChevronDown />
-                </button>
-                {catDropOpen && (
-                  <div className="absolute top-full left-0 md:right-0 md:left-auto mt-1 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden" style={{ width: "280px" }}>
-                    <div className="p-2 max-h-[400px] overflow-y-auto">
-                      <button onClick={() => { setCatSel("All Categories"); setCatDropOpen(false); }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition ${catSel === "All Categories" ? "bg-orange-50 text-orange-600" : "hover:bg-gray-50 text-gray-600"}`}>
-                        All Categories
-                      </button>
-                      {CATEGORIES.map(cat => (
-                        <button key={cat.label} onClick={() => { setCatSel(cat.label); setCatDropOpen(false); }}
-                          className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${catSel === cat.label ? "bg-orange-50 text-orange-600" : "hover:bg-gray-50 text-gray-700"}`}>
-                          <span>{cat.emoji}</span> {cat.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="relative hidden md:block">
+                            <div className="relative hidden md:block">
                 <select value={stateSel} onChange={e => setStateSel(e.target.value)}
                   className="appearance-none bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 pl-3 pr-7 py-2.5 rounded-xl outline-none cursor-pointer hover:border-gray-300 min-w-[130px]">
                   {STATES.map(o => <option key={o}>{o}</option>)}
@@ -184,6 +159,34 @@ export default function SellersPage() {
                 )}
               </div>
             )}
+          </div>
+        </section>
+
+        {/* ══════════════ CATEGORIES FILTER ══════════════ */}
+        <section className="bg-white py-6 px-4 sm:px-6 border-b border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-4">
+              <span className="text-[10px] font-black uppercase tracking-widest text-orange-500">BROWSE BY</span>
+              <h2 className="text-2xl font-black text-[#1e3a5f] mt-1 tracking-tight">Explore All Categories</h2>
+            </div>
+            
+            <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+              <button
+                onClick={() => setCatSel("All Categories")}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === "All Categories" ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+              >
+                <span>📁</span> All Categories
+              </button>
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat.label}
+                  onClick={() => setCatSel(cat.label)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === cat.label ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+                >
+                  <span>{cat.emoji}</span> {cat.label}
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
