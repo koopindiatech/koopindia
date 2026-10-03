@@ -362,6 +362,8 @@ export default function SellersPage() {
   const [user, setUser] = useState(null);
   const [sellers, setSellers] = useState([]);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
   const [dbLoading, setDbLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState(blank());
@@ -534,6 +536,22 @@ export default function SellersPage() {
       } else {
         const docRef = await addDoc(collection(db, "sellers"), { ...payload, views: 0, createdAt: serverTimestamp() });
         setSellers((p) => [{ id: docRef.id, ...payload, views: 0 }, ...p]);
+
+        // Auto-generate a Lead from this Seller Listing
+        await addDoc(collection(db, "leads"), {
+          name: payload.contact || payload.name || "Unknown",
+          company: payload.companyName || payload.name || "",
+          email: payload.email || "",
+          phone: payload.phone || "",
+          location: `${payload.city || ''} ${payload.state || ''}`.trim(),
+          service: payload.category || "Seller Listing",
+          requirements: payload.natureOfBusiness || "",
+          source: "seller_listing",
+          status: "New",
+          createdAt: serverTimestamp(),
+          sellerId: docRef.id,
+          assignedTo: null
+        });
       }
       setFormOpen(false);
     } catch (err) {
@@ -547,6 +565,13 @@ export default function SellersPage() {
     const next = current === "live" ? "paused" : "live";
     await updateDoc(doc(db, "sellers", id), { status: next });
     setSellers((p) => p.map((s) => s.id === id ? { ...s, status: next } : s));
+    setMenuId(null);
+  };
+
+  const toggleFeatured = async (id, current) => {
+    const next = !current;
+    await updateDoc(doc(db, "sellers", id), { isFeatured: next });
+    setSellers((p) => p.map((s) => s.id === id ? { ...s, isFeatured: next } : s));
     setMenuId(null);
   };
 
@@ -568,6 +593,13 @@ export default function SellersPage() {
     const q = search.toLowerCase();
     return !q || s.name?.toLowerCase().includes(q) || s.category?.toLowerCase().includes(q) || s.slug?.includes(q);
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedSellers = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const openForm = (s = null) => {
     setEditing(s);
@@ -646,7 +678,7 @@ export default function SellersPage() {
 
           {/* ── Seller Cards ── */}
           <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {filtered.map((s) => {
+            {paginatedSellers.map((s) => {
               const cfg = statusCfg[s.status] || statusCfg.draft;
               const color = s.primaryColor || "#7c3aed";
               return (
@@ -670,6 +702,9 @@ export default function SellersPage() {
                             <button onClick={() => toggleStatus(s.id, s.status)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
                               {s.status === "live" ? <><PauseCircle size={13} /> Pause</> : <><PlayCircle size={13} /> Activate</>}
                             </button>
+                            <button onClick={() => toggleFeatured(s.id, s.isFeatured)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
+                              <Star size={13} className={s.isFeatured ? "text-orange-500 fill-orange-500" : ""} /> {s.isFeatured ? "Unfeature" : "Feature on Marketplace"}
+                            </button>
                             <button onClick={() => { window.open(`/${s.slug}`, "_blank"); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><ExternalLink size={13} /> View Site</button>
                             <div className="border-t border-gray-100 my-1" />
                             <button onClick={() => { setDelId(s.id); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 text-left"><Trash2 size={13} /> Delete</button>
@@ -684,6 +719,12 @@ export default function SellersPage() {
                       </span>
                       <span className="text-gray-300 text-[10px]">·</span>
                       <span className="text-gray-400 text-[10px] font-semibold">{s.type === "product" ? "🛒 Product" : "🏢 Service"}</span>
+                      {s.isFeatured && (
+                        <>
+                          <span className="text-gray-300 text-[10px]">·</span>
+                          <span className="text-orange-500 text-[10px] font-bold flex items-center gap-1"><Star size={10} className="fill-orange-500"/> Featured</span>
+                        </>
+                      )}
                     </div>
 
                     <div className="bg-gray-50 rounded-xl px-3 py-2 flex items-center gap-2">
@@ -702,6 +743,45 @@ export default function SellersPage() {
               );
             })}
           </div>
+
+          {totalPages > 1 && (
+            <div className="px-6 pb-10 flex items-center justify-between">
+              <span className="text-sm text-gray-500 font-medium">
+                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} sellers
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .map((p, i, arr) => (
+                    <span key={p} className="flex items-center">
+                      {i > 0 && p - arr[i - 1] > 1 && <span className="px-2 text-gray-400">...</span>}
+                      <button
+                        onClick={() => setCurrentPage(p)}
+                        className={`w-9 h-9 rounded-xl text-sm font-bold transition flex items-center justify-center ${
+                          currentPage === p ? "bg-violet-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    </span>
+                  ))}
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </>
       )}
 

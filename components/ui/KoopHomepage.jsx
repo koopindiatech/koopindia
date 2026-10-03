@@ -189,14 +189,21 @@ export default function KoopIndiaHomepage() {
       setLoading(true);
       try {
         const [sellSnap, buyerSnap, blogSnap] = await Promise.all([
-          getDocs(query(collection(db, "sellers"), orderBy("createdAt", "desc"), limit(10))),
-          getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc"), limit(10))),
+          getDocs(query(collection(db, "sellers"), where("isFeatured", "==", true))),
+          getDocs(query(collection(db, "buyers"), where("isFeatured", "==", true))),
           getDocs(query(collection(db, "blog"), orderBy("date", "desc"), limit(5))).catch(() =>
             getDocs(query(collection(db, "blogs"), orderBy("date", "desc"), limit(5))).catch(() => ({ docs: [] }))
           ),
         ]);
-        setSellers(sellSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-        setBuyers(buyerSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+        
+        const fetchedSellers = sellSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const fetchedBuyers = buyerSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        fetchedSellers.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+        fetchedBuyers.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+        setSellers(fetchedSellers);
+        setBuyers(fetchedBuyers);
         setBlogs(blogSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       } catch (e) { console.error("Marketplace fetch error:", e); }
       finally { setLoading(false); }
@@ -301,12 +308,12 @@ export default function KoopIndiaHomepage() {
                 <Link
                   href="/seller-buyer-registration"
                   className="flex items-center gap-2 bg-[#1e3a5f] hover:bg-[#162c4a] text-white font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-blue-900/20 hover:scale-105">
-                  Register as Seller <ArrowRight />
+                  List Your Brand <ArrowRight />
                 </Link>
                 <Link
                   href="/seller-buyer-registration"
                   className="flex items-center gap-2 border-2 border-[#F97316] text-[#F97316] font-bold px-6 py-3 rounded-xl hover:bg-orange-50 transition-all hover:scale-105">
-                  List Your Buyer <ArrowRight />
+                  Find Buyers <ArrowRight />
                 </Link>
               </div>
               <div className="flex flex-wrap gap-6">
@@ -326,7 +333,7 @@ export default function KoopIndiaHomepage() {
                 ))}
               </div>
             </div>
-            <div className="hidden lg:grid grid-cols-3 gap-3 relative">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 relative mt-8 lg:mt-0">
               {logosLoading
                 ? ["", "", "", "", "", ""].map((_, i) => (
                     <div key={i}
@@ -435,9 +442,9 @@ export default function KoopIndiaHomepage() {
 
               
 
-                        <div className="relative hidden md:block">
+            <div className="relative w-full sm:w-auto">
               <select value={stateSel} onChange={e => { setStateSel(e.target.value); performSearch(search, catSel, subCatSel, e.target.value); }}
-                className="appearance-none bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 pl-3 pr-7 py-2.5 rounded-xl outline-none cursor-pointer hover:border-gray-300 min-w-[130px]">
+                className="w-full appearance-none bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 pl-3 pr-7 py-2.5 rounded-xl outline-none cursor-pointer hover:border-gray-300 min-w-[130px]">
                 {STATES.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>

@@ -110,18 +110,30 @@ const MarketplaceFooter = () => {
               Contact Us
             </h4>
             <div className="text-[13px] text-gray-400 space-y-3">
-              <p className="flex items-start gap-2">
-                <span className="text-[#f97316]">📍</span>
-                <span>New Delhi, India</span>
-              </p>
               <p className="flex items-center gap-2">
                 <span className="text-[#f97316]">✉️</span>
-                <a href="mailto:support@koopindia.com" className="hover:text-white transition-colors">support@koopindia.com</a>
+                <a href="mailto:koopindiadl@gmail.com" className="hover:text-white transition-colors">koopindiadl@gmail.com</a>
               </p>
               <p className="flex items-center gap-2">
                 <span className="text-[#f97316]">📞</span>
-                <a href="tel:+919876543210" className="hover:text-white transition-colors">+91 98765 43210</a>
+                <a href="tel:+919599826131" className="hover:text-white transition-colors">+91 95998 26131</a>
               </p>
+              <div className="pt-2 border-t border-white/5 space-y-3">
+                <p className="flex items-start gap-2">
+                  <span className="text-[#f97316] mt-0.5">📍</span>
+                  <span className="leading-relaxed">
+                    <span className="block text-gray-300 font-semibold">Registered Office:</span>
+                    D-455, Pul Prahladpur<br/>New Delhi 110044
+                  </span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span className="text-[#f97316] mt-0.5">📍</span>
+                  <span className="leading-relaxed">
+                    <span className="block text-gray-300 font-semibold">Corporate Office:</span>
+                    C-3 Third Floor Sector 6 Noida,<br/>Uttar Pradesh 201301 India
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
         </div>

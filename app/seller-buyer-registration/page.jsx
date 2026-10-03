@@ -82,7 +82,7 @@ function RegistrationForm() {
     setSubmitting(true);
     try {
       if (tab === "seller") {
-        await addDoc(collection(db, "sellers"), {
+        const docRef = await addDoc(collection(db, "sellers"), {
           name: seller.companyName, companyName: seller.companyName,
           contact: seller.contactName, phone: seller.mobile, email: seller.email,
           city: seller.city, state: seller.state, businessType: seller.businessType,
@@ -90,8 +90,25 @@ function RegistrationForm() {
           status: "paused", source: "marketplace_registration_page",
           slug: slugify(seller.companyName), createdAt: serverTimestamp(),
         });
+        
+        // Auto-generate a Lead from this Seller Registration
+        await addDoc(collection(db, "leads"), {
+          name: seller.contactName || seller.companyName || "Unknown",
+          company: seller.companyName || "",
+          email: seller.email || "",
+          phone: seller.mobile || "",
+          location: `${seller.city || ''} ${seller.state !== "Select State" ? seller.state : ''}`.trim(),
+          service: seller.businessType || "Seller Listing",
+          requirements: seller.products || "",
+          source: "marketplace_seller_registration",
+          status: "New",
+          createdAt: serverTimestamp(),
+          sellerId: docRef.id,
+          assignedTo: null
+        });
+
       } else {
-        await addDoc(collection(db, "buyers"), {
+        const docRef = await addDoc(collection(db, "buyers"), {
           buyerName: buyer.companyName, contactName: buyer.contactName,
           phone: buyer.mobile, email: buyer.email, city: buyer.city, state: buyer.state,
           buyerType: buyer.buyerType, requirements: buyer.requirements,
@@ -100,6 +117,22 @@ function RegistrationForm() {
           retailers: buyer.retailers, buyerTerritory: buyer.buyerTerritory, network: buyer.network,
           status: "paused", source: "marketplace_registration_page",
           slug: slugify(buyer.companyName), createdAt: serverTimestamp(),
+        });
+
+        // Auto-generate a Lead from this Buyer Registration
+        await addDoc(collection(db, "leads"), {
+          name: buyer.contactName || buyer.companyName || "Unknown",
+          company: buyer.companyName || "",
+          email: buyer.email || "",
+          phone: buyer.mobile || "",
+          location: `${buyer.city || ''} ${buyer.state !== "Select State" ? buyer.state : ''}`.trim(),
+          service: buyer.buyerType || "Buyer Listing",
+          requirements: buyer.requirements || "",
+          source: "marketplace_buyer_registration",
+          status: "New",
+          createdAt: serverTimestamp(),
+          buyerId: docRef.id,
+          assignedTo: null
         });
       }
       setSuccess(true);

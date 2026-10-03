@@ -204,6 +204,8 @@ export default function BuyersAdminPage() {
   const [user, setUser] = useState(null);
   const [buyers, setBuyers] = useState([]);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
   const [dbLoading, setDbLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState(blank());
@@ -355,6 +357,13 @@ export default function BuyersAdminPage() {
     setMenuId(null);
   };
 
+  const toggleFeatured = async (id, current) => {
+    const next = !current;
+    await updateDoc(doc(db, "buyers", id), { isFeatured: next });
+    setBuyers((p) => p.map((b) => b.id === id ? { ...b, isFeatured: next } : b));
+    setMenuId(null);
+  };
+
   const handleDelete = async () => {
     if (!delId) return;
     await deleteDoc(doc(db, "buyers", delId));
@@ -375,6 +384,13 @@ export default function BuyersAdminPage() {
     const q = search.toLowerCase();
     return !q || b.buyerName?.toLowerCase().includes(q) || b.category?.toLowerCase().includes(q) || b.slug?.includes(q);
   });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedBuyers = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const openForm = (b = null) => {
     setEditing(b);
@@ -458,7 +474,7 @@ export default function BuyersAdminPage() {
           )}
 
                     <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {filtered.map((b) => {
+            {paginatedBuyers.map((b) => {
               const cfg = statusCfg[b.status] || statusCfg.draft;
               const color = b.primaryColor || "#f97316";
               return (
@@ -482,6 +498,9 @@ export default function BuyersAdminPage() {
                             <button onClick={() => toggleStatus(b.id, b.status)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
                               {b.status === "live" ? <><PauseCircle size={13} /> Pause</> : <><PlayCircle size={13} /> Activate</>}
                             </button>
+                            <button onClick={() => toggleFeatured(b.id, b.isFeatured)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
+                              <Star size={13} className={b.isFeatured ? "text-orange-500 fill-orange-500" : ""} /> {b.isFeatured ? "Unfeature" : "Feature on Marketplace"}
+                            </button>
                             <button onClick={() => { window.open(`/buyers/${b.slug}`, "_blank"); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><ExternalLink size={13} /> View Page</button>
                             <div className="border-t border-gray-100 my-1" />
                             <button onClick={() => { setDelId(b.id); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 text-left"><Trash2 size={13} /> Delete</button>
@@ -496,6 +515,12 @@ export default function BuyersAdminPage() {
                       </span>
                       <span className="text-gray-300 text-[10px]">·</span>
                       <span className="text-gray-400 text-[10px] font-semibold">{b.businessType || "Buyer"}</span>
+                      {b.isFeatured && (
+                        <>
+                          <span className="text-gray-300 text-[10px]">·</span>
+                          <span className="text-orange-500 text-[10px] font-bold flex items-center gap-1"><Star size={10} className="fill-orange-500"/> Featured</span>
+                        </>
+                      )}
                     </div>
 
                     <div className="bg-gray-50 rounded-xl px-3 py-2 flex items-center gap-2">
@@ -514,6 +539,45 @@ export default function BuyersAdminPage() {
               );
             })}
           </div>
+
+          {totalPages > 1 && (
+            <div className="px-6 pb-10 flex items-center justify-between">
+              <span className="text-sm text-gray-500 font-medium">
+                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} buyers
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                  .map((p, i, arr) => (
+                    <span key={p} className="flex items-center">
+                      {i > 0 && p - arr[i - 1] > 1 && <span className="px-2 text-gray-400">...</span>}
+                      <button
+                        onClick={() => setCurrentPage(p)}
+                        className={`w-9 h-9 rounded-xl text-sm font-bold transition flex items-center justify-center ${
+                          currentPage === p ? "bg-orange-500 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    </span>
+                  ))}
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </>
       )}
 

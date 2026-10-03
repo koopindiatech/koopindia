@@ -315,6 +315,8 @@ export default function LeadsPage() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterSource, setFilterSource] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
   const [selected, setSelected] = useState(null);
   const [delConfirm, setDelConfirm] = useState(null);
   const [adminUsers, setAdminUsers] = useState([]);
@@ -444,6 +446,13 @@ export default function LeadsPage() {
     return matchSearch && matchStatus && matchSource;
   });
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, filterStatus, filterSource]);
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginatedLeads = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   const updateStatus = async (id, status) => {
     try {
       await updateDoc(doc(db, "leads", id), { status });
@@ -457,6 +466,7 @@ export default function LeadsPage() {
       await deleteDoc(doc(db, "leads", id));
       setLeads((p) => p.filter((l) => l.id !== id));
       if (selected?.id === id) setSelected(null);
+      setDelConfirm(null);
     } catch (e) {
       console.error(e);
       alert("Delete failed.");
@@ -683,7 +693,7 @@ export default function LeadsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((lead) => {
+                  {paginatedLeads.map((lead) => {
                     const cfg = statusConfig[lead.status] || statusConfig["New"];
                     const Icon = cfg.icon;
                     const hasSellerAssign = !!lead.assignedToSellerSlug;
@@ -790,6 +800,44 @@ export default function LeadsPage() {
                   })}
                 </tbody>
               </table>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-100">
+                  <span className="text-xs text-gray-500 font-medium">
+                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} leads
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
+                    >
+                      Prev
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                      .map((p, i, arr) => (
+                        <span key={p} className="flex items-center">
+                          {i > 0 && p - arr[i - 1] > 1 && <span className="px-2 text-gray-400 text-xs">...</span>}
+                          <button
+                            onClick={() => setCurrentPage(p)}
+                            className={`w-7 h-7 rounded-lg text-xs font-bold transition flex items-center justify-center ${
+                              currentPage === p ? "bg-orange-500 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        </span>
+                      ))}
+                    <button
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

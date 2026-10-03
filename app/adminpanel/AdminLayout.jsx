@@ -244,12 +244,12 @@ export default function AdminLayout({ children }) {
             {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
           </button>
 
-          <div className="hidden sm:flex flex-1 max-w-md">
+          <div className="flex flex-1 max-w-md mx-2 sm:mx-0">
             <div className="relative w-full">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search sellers, leads..."
+                placeholder="Search..."
                 className="w-full bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg pl-8 pr-4 py-1.5 placeholder:text-gray-400 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100 transition-colors"
               />
             </div>
