@@ -3,9 +3,11 @@ import { useState, useEffect, useRef } from "react";
 import {
   Settings, Globe, Save, CheckCircle2, Image as ImageIcon,
   Upload, Loader2, Trash2, AlertCircle, Eye, Palette,
+  UserCog, Store, ShoppingBag, ArrowRight, Plus,
 } from "lucide-react";
+import Link from "next/link";
 import { db } from "../../../lib/firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 const inputCls =
@@ -46,7 +48,10 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("general"); // "general" | "marketplace"
 
   const [marketplace, setMarketplace] = useState({
-    heroTitle: "Discover Trusted Indian Buyers Under One Roof",
+    heroBadge: "India's Growing Buyers",
+    heroTitleLine1: "Discover Trusted",
+    heroTitleLine2: "Indian Buyers",
+    heroHighlight: "Under One Roof",
     heroSubtitle: "Connect with verified manufacturers, startups and MSME buyers across multiple industries.",
     statsListedBuyers: "1000+",
     statsCategories: "500+",
@@ -60,6 +65,8 @@ export default function SettingsPage() {
   const [partnerLogos, setPartnerLogos] = useState([]);
   const [logoUploading, setLogoUploading] = useState(false);
   const [newLogoLink, setNewLogoLink] = useState("");
+  const [availableSellers, setAvailableSellers] = useState([]);
+  const [selectedSellerId, setSelectedSellerId] = useState("");
   const logoFileRef = useRef();
 
   // Banners: arrays of { imageUrl, link }
@@ -98,6 +105,16 @@ export default function SettingsPage() {
         console.error("Marketplace load error:", e);
       } finally {
         setMarketplaceLoading(false);
+      }
+
+      try {
+        const sSnap = await getDocs(collection(db, "sellers"));
+        const withLogos = sSnap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .filter((s) => s.logoUrl && (s.name || s.companyName));
+        setAvailableSellers(withLogos);
+      } catch (e) {
+        console.error("Sellers load error in settings:", e);
       }
     };
     load();
@@ -153,7 +170,7 @@ export default function SettingsPage() {
       // Normalize links — ensure they have https:// prefix
       const normalize = (arr) => arr.map(l => ({
         ...l,
-        link: l.link && !l.link.startsWith("http") ? `https://${l.link}` : l.link,
+        link: (l.link || "").trim() ? (l.link.startsWith("http") ? l.link : `https://${l.link}`) : "",
       }));
       
       const normalizedLogos = normalize(partnerLogos);
@@ -178,6 +195,21 @@ export default function SettingsPage() {
     setMarketplaceSaving(false);
   };
 
+  const savePartnerLogosDirectly = async (updatedLogos) => {
+    const normalized = normalize(updatedLogos);
+    setPartnerLogos(normalized);
+    try {
+      await setDoc(doc(db, "settings", "marketplace_page"), {
+        partnerLogos: normalized,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+      showBannerToast("success", "Partner logos updated & live on marketplace!");
+    } catch (err) {
+      console.error("Auto save error:", err);
+      showBannerToast("error", "Failed to save logo changes.");
+    }
+  };
+
   const handleLogoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -191,9 +223,9 @@ export default function SettingsPage() {
       const storageRef = ref(storage, `settings/partner_logos/${Date.now()}_${file.name}`);
       await uploadBytes(storageRef, file);
       const url = await getDownloadURL(storageRef);
-      setPartnerLogos((prev) => [...prev, { imageUrl: url, link: newLogoLink.trim() }]);
+      const updated = [...partnerLogos, { imageUrl: url, link: newLogoLink.trim() }];
       setNewLogoLink("");
-      showBannerToast("success", "Logo added! Click Save to apply.");
+      await savePartnerLogosDirectly(updated);
     } catch (e) {
       console.error("Logo upload error:", e);
       showBannerToast("error", "Upload failed.");
@@ -203,11 +235,33 @@ export default function SettingsPage() {
   };
 
   const handleRemoveLogo = (idx) => {
-    setPartnerLogos((prev) => prev.filter((_, i) => i !== idx));
+    const updated = partnerLogos.filter((_, i) => i !== idx);
+    savePartnerLogosDirectly(updated);
   };
 
   const handleLogoLinkChange = (idx, val) => {
     setPartnerLogos((prev) => prev.map((l, i) => i === idx ? { ...l, link: val } : l));
+  };
+
+  const handleLogoLinkBlur = () => {
+    savePartnerLogosDirectly(partnerLogos);
+  };
+
+  const handleAddSellerAsLogo = () => {
+    if (!selectedSellerId) return;
+    const s = availableSellers.find((item) => item.id === selectedSellerId);
+    if (!s || !s.logoUrl) {
+      showBannerToast("error", "Selected seller has no logo.");
+      return;
+    }
+    const link = s.slug ? `https://www.koopindia.com/${s.slug}` : "";
+    if (partnerLogos.some((p) => p.imageUrl === s.logoUrl)) {
+      showBannerToast("error", "This seller's logo is already added.");
+      return;
+    }
+    const updated = [...partnerLogos, { imageUrl: s.logoUrl, link }];
+    savePartnerLogosDirectly(updated);
+    setSelectedSellerId("");
   };
 
   const handleBannerUpload = async (e, type) => {
@@ -271,7 +325,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* ─── TABS ─── */}
+      {/* Settings Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-gray-200">
         <button
           onClick={() => setActiveTab("general")}
@@ -289,11 +343,19 @@ export default function SettingsPage() {
         >
           Marketplace Page
         </button>
+        <button
+          onClick={() => setActiveTab("users")}
+          className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-colors ${
+            activeTab === "users" ? "border-orange-500 text-orange-600" : "border-transparent text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          Users &amp; Portals
+        </button>
       </div>
 
       {activeTab === "general" && (
         <div className="space-y-6">
-          {/* ─── LOGIN BANNER SECTION ─── */}
+          {/* Login Banner Section */}
           <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="flex items-center gap-2.5 px-5 py-4 border-b border-gray-50">
           <div className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center">
@@ -383,7 +445,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* ─── GENERAL SETTINGS ─── */}
+      {/* General Settings */}
       <div className="bg-white border border-gray-100 rounded-2xl p-5 space-y-4 shadow-sm">
         <div className="flex items-center gap-2 mb-2">
           <Globe size={16} className="text-orange-500" />
@@ -417,7 +479,7 @@ export default function SettingsPage() {
       </div>
       )}
 
-      {/* ─── MARKETPLACE PAGE SETTINGS ─── */}
+      {/* Marketplace Page Settings */}
       {activeTab === "marketplace" && (
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="flex items-center gap-2.5 px-5 py-4 border-b border-gray-50">
@@ -437,15 +499,47 @@ export default function SettingsPage() {
             </div>
           ) : (
             <>
-              <div>
-                <label className="text-gray-500 text-xs font-semibold block mb-1.5">Hero Title</label>
-                <input
-                  type="text"
-                  value={marketplace.heroTitle}
-                  onChange={(e) => setMarketplace({ ...marketplace, heroTitle: e.target.value })}
-                  placeholder="Hero Title"
-                  className={inputCls}
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-gray-500 text-xs font-semibold block mb-1.5">Hero Badge</label>
+                  <input
+                    type="text"
+                    value={marketplace.heroBadge}
+                    onChange={(e) => setMarketplace({ ...marketplace, heroBadge: e.target.value })}
+                    placeholder="India's Growing Buyers"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className="text-gray-500 text-xs font-semibold block mb-1.5">Hero Highlight (Orange)</label>
+                  <input
+                    type="text"
+                    value={marketplace.heroHighlight}
+                    onChange={(e) => setMarketplace({ ...marketplace, heroHighlight: e.target.value })}
+                    placeholder="Under One Roof"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className="text-gray-500 text-xs font-semibold block mb-1.5">Hero Title Line 1</label>
+                  <input
+                    type="text"
+                    value={marketplace.heroTitleLine1}
+                    onChange={(e) => setMarketplace({ ...marketplace, heroTitleLine1: e.target.value })}
+                    placeholder="Discover Trusted"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className="text-gray-500 text-xs font-semibold block mb-1.5">Hero Title Line 2</label>
+                  <input
+                    type="text"
+                    value={marketplace.heroTitleLine2}
+                    onChange={(e) => setMarketplace({ ...marketplace, heroTitleLine2: e.target.value })}
+                    placeholder="Indian Buyers"
+                    className={inputCls}
+                  />
+                </div>
               </div>
               <div>
                 <label className="text-gray-500 text-xs font-semibold block mb-1.5">Hero Subtitle</label>
@@ -502,8 +596,46 @@ export default function SettingsPage() {
 
               {/* ── Partner / Marquee Logos ── */}
               <div className="border-t border-gray-100 pt-5">
-                <label className="text-gray-800 text-sm font-bold block mb-1">Partner / Marquee Logos</label>
-                <p className="text-gray-400 text-xs mb-4">Upload logos with links. They will scroll (marquee) on the marketplace page and open the link in a new tab when clicked.</p>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-gray-800 text-sm font-bold block">Partner / Marquee Logos</label>
+                  <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
+                    {partnerLogos.length} Logos Live
+                  </span>
+                </div>
+                <p className="text-gray-400 text-xs mb-4">
+                  Manage brand logos shown on the marketplace page. Adding or removing logos here automatically updates the marketplace in real-time.
+                </p>
+
+                {/* Quick Add from Listed Sellers */}
+                {availableSellers.length > 0 && (
+                  <div className="bg-blue-50/80 border border-blue-100 rounded-xl p-3.5 mb-3.5 space-y-2">
+                    <p className="text-blue-900 text-xs font-bold flex items-center gap-1.5">
+                      <span>⚡</span> Quick Add from Registered Sellers
+                    </p>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      <select
+                        value={selectedSellerId}
+                        onChange={(e) => setSelectedSellerId(e.target.value)}
+                        className="flex-1 bg-white border border-blue-200 text-gray-700 text-xs rounded-lg px-3 py-2.5 focus:outline-none focus:border-blue-400"
+                      >
+                        <option value="">-- Choose a registered seller to show --</option>
+                        {availableSellers.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name || s.companyName} {s.category ? `(${s.category})` : ""}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={handleAddSellerAsLogo}
+                        disabled={!selectedSellerId}
+                        className="px-4 py-2.5 rounded-xl bg-[#1e3a5f] hover:bg-blue-900 text-white text-xs font-bold transition disabled:opacity-40 flex items-center justify-center gap-1.5 flex-shrink-0"
+                      >
+                        <Plus size={14} /> Add Seller to Logos
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Existing logos */}
                 {partnerLogos.length > 0 && (
@@ -515,6 +647,7 @@ export default function SettingsPage() {
                           type="url"
                           value={logo.link}
                           onChange={(e) => handleLogoLinkChange(idx, e.target.value)}
+                          onBlur={handleLogoLinkBlur}
                           placeholder="https://partner-website.com"
                           className="flex-1 bg-white border border-gray-200 text-gray-700 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-orange-400 transition-colors"
                         />
@@ -527,9 +660,9 @@ export default function SettingsPage() {
                   </div>
                 )}
 
-                {/* Add new logo */}
+                {/* Add new custom logo */}
                 <div className="bg-orange-50 border border-orange-100 rounded-xl p-4 space-y-3">
-                  <p className="text-orange-800 text-xs font-bold">Add New Logo</p>
+                  <p className="text-orange-800 text-xs font-bold">Upload Custom Brand Logo</p>
                   <input
                     type="url"
                     value={newLogoLink}
@@ -669,6 +802,72 @@ export default function SettingsPage() {
           )}
         </div>
       </div>
+      )}
+
+      {activeTab === "users" && (
+        <div className="space-y-6">
+          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6 space-y-4">
+            <div>
+              <h3 className="text-base font-bold text-gray-900">Portal &amp; Admin Users</h3>
+              <p className="text-gray-500 text-xs mt-0.5">
+                Manage user credentials created during seller &amp; buyer listing and registration.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="p-4 rounded-xl border border-green-100 bg-green-50/50 flex flex-col justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center font-bold">
+                    <Store size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">Seller Portal Users</h4>
+                    <p className="text-[11px] text-gray-500">Collection: seller_users</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600">
+                  Sellers log in at <strong>/adminpanel/login</strong> to see only their listing form and assigned leads.
+                </p>
+                <Link
+                  href="/adminpanel/users?tab=seller"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-green-700 hover:text-green-800 transition"
+                >
+                  Manage Seller Users <ArrowRight size={14} />
+                </Link>
+              </div>
+
+              <div className="p-4 rounded-xl border border-purple-100 bg-purple-50/50 flex flex-col justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold">
+                    <ShoppingBag size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">Buyer Portal Users</h4>
+                    <p className="text-[11px] text-gray-500">Collection: buyer_users</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600">
+                  Buyers log in at <strong>/adminpanel/login</strong> to see only their profile and assigned leads.
+                </p>
+                <Link
+                  href="/adminpanel/users?tab=buyer"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-purple-700 hover:text-purple-800 transition"
+                >
+                  Manage Buyer Users <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100 flex justify-end">
+              <Link
+                href="/adminpanel/users"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition shadow-sm"
+              >
+                <UserCog size={15} /> Open Full User Management Panel
+              </Link>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

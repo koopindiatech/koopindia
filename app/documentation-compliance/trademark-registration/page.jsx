@@ -42,7 +42,7 @@ import {
   Shield,
 } from "lucide-react";
 
-/* ─── FAQ DATA ─── */
+// FAQ Data
 const faqs = [
   {
     q: "What is Trademark Registration and who should apply?",
@@ -451,7 +451,7 @@ const TrademarkRegistrationPage = () => {
 
       <div className="bg-white text-gray-700 font-sans">
 
-        {/* ══════════════ HERO ══════════════ */}
+        {/* Hero Section */}
         <section
           className="relative py-20 px-5 overflow-hidden"
           style={{ background: "linear-gradient(135deg, #0F172A 0%, #141D32 60%, #1a1f3a 100%)" }}
@@ -558,7 +558,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ WHAT IS TRADEMARK ══════════════ */}
+        {/* What is Trademark */}
         <section className="py-20 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -657,7 +657,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ WHY REGISTER ══════════════ */}
+        {/* Why Register */}
         <section
           className="py-20 px-5 relative overflow-hidden"
           style={{ background: "linear-gradient(160deg, #fafafa 0%, #fff7ed 55%, #fafafa 100%)" }}
@@ -717,7 +717,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ WHO CAN APPLY ══════════════ */}
+        {/* Who Can Apply */}
         <section className="py-10 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10">
@@ -750,7 +750,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ TYPES OF TRADEMARK ══════════════ */}
+        {/* Types of Trademark */}
         <section
           className="py-20 px-5 relative overflow-hidden"
           style={{ background: "linear-gradient(160deg, #f8fafc 0%, #f1f5f9 100%)" }}
@@ -822,7 +822,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ DOCUMENTS ══════════════ */}
+        {/* Documents Required */}
         <section id="documents" className="py-16 px-5 bg-slate-50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -890,7 +890,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ PROCESS ══════════════ */}
+        {/* Registration Process */}
         <section id="process" className="pb-16 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-14">
@@ -953,7 +953,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ CTA ══════════════ */}
+        {/* Call to Action */}
         <section
           className="py-16 px-5 text-white text-center"
           style={{ background: "linear-gradient(135deg, #0F172A 0%, #141D32 60%, #1a1f3a 100%)" }}
@@ -978,7 +978,7 @@ const TrademarkRegistrationPage = () => {
           </p>
         </section>
 
-        {/* ══════════════ WHY KOOP ══════════════ */}
+        {/* Why Koop */}
         <section
           className="relative py-20 px-5 overflow-hidden"
           style={{ background: "linear-gradient(135deg, #fafafa 0%, #fff7ed 50%, #fafafa 100%)" }}
@@ -1031,7 +1031,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ COMPLIANCE ══════════════ */}
+        {/* Compliance & Post-Registration */}
         <section className="py-16 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12">
@@ -1093,7 +1093,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-         {/* ══════════════ FINAL CTA ══════════════ */}
+         {/* Final Call to Action */}
         <section
           className="py-16 px-5 text-white text-center"
           style={{ background: "linear-gradient(135deg, #0F172A 0%, #141D32 100%)" }}
@@ -1123,7 +1123,7 @@ const TrademarkRegistrationPage = () => {
           </div>
         </section>
 
-        {/* ══════════════ FAQ ══════════════ */}
+        {/* Frequently Asked Questions */}
         <section
           className="py-20 px-5"
           style={{ background: "linear-gradient(160deg, #f8fafc 0%, #fff7ed 50%, #f8fafc 100%)" }}

@@ -6,7 +6,7 @@ import SellerCard from "@/components/ui/cards/SellerCard";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 
-/* ─── tiny icon helpers ─── */
+// SVG icon helpers
 const SearchIcon = () => (
   <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -108,15 +108,9 @@ export default function SellersPage() {
       <MarketplaceHeader />
 
       <main className="flex-1 pt-16">
-        <div className="bg-white py-8 px-4 sm:px-6">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-black text-[#1e3a5f] tracking-tight">
-              All Verified Sellers
-            </h1>
-          </div>
-        </div>
 
-        {/* ══════════════ SEARCH BAR ══════════════ */}
+
+        {/* Search Bar */}
         <section className="bg-[#1e3a5f] py-5 px-4 sm:px-6 shadow-md border-t border-white/5 relative z-40">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col sm:flex-row items-stretch gap-2 bg-white rounded-2xl p-2 shadow-xl shadow-blue-900/20">
@@ -162,7 +156,7 @@ export default function SellersPage() {
           </div>
         </section>
 
-        {/* ══════════════ CATEGORIES FILTER ══════════════ */}
+        {/* Categories Filter */}
         <section className="bg-white py-6 px-4 sm:px-6 border-b border-gray-100">
           <div className="max-w-7xl mx-auto">
             <div className="mb-4">

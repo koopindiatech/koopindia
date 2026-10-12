@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { db } from "../../lib/firebase";
 import { collection, query, where, getDocs, updateDoc, doc, increment, addDoc, serverTimestamp } from "firebase/firestore";
+import { getCurrentUser } from "../adminpanel/lib/auth";
 
 const ini = (n = "") => n.split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
 const SOCIAL_ICONS = {
@@ -14,6 +15,13 @@ const SOCIAL_ICONS = {
 const NAV = ["home", "about", "products", "contact"];
 const NL = { home: "Home", about: "About Us", products: "Products", contact: "Contact Us" };
 
+const formatRichHtml = (html = "") => {
+  if (!html) return "";
+  return String(html)
+    .replace(/&nbsp;/g, " ")
+    .replace(/\u00A0/g, " ");
+};
+
 export default function SellerClientPage({ initialSeller }) {
   const { slug } = useParams();
   const [seller, setSeller] = useState(initialSeller);
@@ -23,6 +31,11 @@ export default function SellerClientPage({ initialSeller }) {
   const [selProd, setSelProd] = useState(null);
   const [selPack, setSelPack] = useState(null);
   const [selCat, setSelCat] = useState("all");
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    setCurrentUser(getCurrentUser());
+  }, []);
   const [prodTab, setProdTab] = useState("description");
   const [contactForm, setContactForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
   const [contactSubmitting, setContactSubmitting] = useState(false);
@@ -129,7 +142,9 @@ export default function SellerClientPage({ initialSeller }) {
   const filtProd = selCat === "all" ? products : products.filter(p => p.categoryId === selCat);
   const btn1 = seller.heroBtn1Text || "View Our Products";
   const btn2 = seller.heroBtn2Text || "Distributors / Buyers Inquiry";
-  const displayPhone = seller.hidePhone ? null : seller.phone;
+  const shouldHide = (seller.hidePhone || seller.hideContact) && !currentUser;
+  const displayPhone = shouldHide ? "+91 95998 26131" : seller.phone;
+  const displayEmail = shouldHide ? null : seller.email;
   const navHomeLabel = seller.navHomeLabel || "Home";
   const navAboutLabel = seller.navAboutLabel || "About Us";
   const navProductsLabel = seller.navProductsLabel || "Products";
@@ -151,13 +166,25 @@ export default function SellerClientPage({ initialSeller }) {
   const whyCardTitleColor = seller.whyCardTitleColor || "";
   const whyCardDescColor = seller.whyCardDescColor || "";
 
+  const licenseRows = (Array.isArray(seller.licenses) && seller.licenses.length > 0)
+    ? seller.licenses
+        .filter(l => l && (l.name || l.value))
+        .map(l => ({ label: l.name || "License / Registration", value: l.value }))
+    : (seller.fssaiLicense ? [{ label: "FSSAI License", value: seller.fssaiLicense }] : []);
+
+  const preferredStates = Array.isArray(seller?.preferredStates)
+    ? seller.preferredStates.filter(Boolean)
+    : (typeof seller?.preferredStates === "string" && seller.preferredStates.trim())
+      ? seller.preferredStates.split(",").map(s => s.trim()).filter(Boolean)
+      : [];
+
   const compRows = [
     { label: "Company Name", value: seller.companyName || seller.name },
     { label: "Nature of Business", value: seller.natureOfBusiness },
     { label: "Establishment Year", value: seller.establishmentYear },
     { label: "No. of Employees", value: seller.employees },
     { label: "GST Number", value: seller.gstNumber },
-    { label: "FSSAI License", value: seller.fssaiLicense },
+    ...licenseRows,
     { label: "Address", value: [seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).join(", ") },
   ].filter(r => r.value);
 
@@ -439,15 +466,32 @@ export default function SellerClientPage({ initialSeller }) {
                 </>
               )}
               
-              <div className="absolute bottom-8 sm:bottom-12 lg:bottom-16 left-0 right-0 z-20 max-w-7xl mx-auto px-4 sm:px-10 w-full flex justify-center sm:justify-start">
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto px-2 sm:px-0">
+              {/* Desktop Floating Banner Buttons */}
+              <div className="hidden sm:flex absolute sm:bottom-10 lg:bottom-14 left-0 right-0 z-20 max-w-7xl mx-auto px-6 sm:px-10 justify-start pointer-events-none">
+                <div className="flex flex-row gap-3 pointer-events-auto">
                   <button onClick={() => setTab("products")}
-                    className="text-white font-bold px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm shadow-lg hover:opacity-95 transition cursor-pointer"
+                    className="text-white font-bold px-6 py-3 rounded-xl text-sm shadow-lg hover:opacity-95 transition cursor-pointer"
                     style={{ backgroundColor: pc }}>{btn1}</button>
                   <button onClick={() => openInquiry()}
-                    className="font-bold px-6 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm border border-gray-200 bg-white hover:bg-gray-50 transition shadow-lg cursor-pointer"
+                    className="font-bold px-6 py-3 rounded-xl text-sm border border-gray-200 bg-white hover:bg-gray-50 transition shadow-lg cursor-pointer"
                     style={{ color: pc }}>{btn2}</button>
                 </div>
+              </div>
+            </div>
+
+            {/* Mobile Action Bar (clean 2-column layout, unblocks hero banner) */}
+            <div className="sm:hidden px-3.5 py-3 bg-white border-b border-gray-100 shadow-xs">
+              <div className="grid grid-cols-2 gap-2.5">
+                <button onClick={() => setTab("products")}
+                  className="w-full text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow-sm hover:opacity-95 active:scale-95 transition cursor-pointer text-center truncate"
+                  style={{ backgroundColor: pc }}>
+                  {btn1}
+                </button>
+                <button onClick={() => openInquiry()}
+                  className="w-full font-bold py-2.5 px-3 rounded-xl text-xs border-2 hover:bg-gray-50 active:scale-95 transition cursor-pointer text-center truncate bg-white shadow-xs"
+                  style={{ borderColor: pc, color: pc }}>
+                  {btn2}
+                </button>
               </div>
             </div>
           </div>
@@ -479,7 +523,39 @@ export default function SellerClientPage({ initialSeller }) {
               <div className="max-w-5xl mx-auto text-center">
                 <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
                 <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-5">{seller.name}</h2>
-                <p className="text-gray-700 leading-relaxed text-base">{seller.homeAbout || seller.about || seller.description}</p>
+                {/<[a-z][\s\S]*>/i.test(seller.homeAbout || seller.about || seller.description || "") ? (
+                  <div
+                    className="prose max-w-4xl mx-auto text-base leading-relaxed text-gray-700 break-words [&>p]:mb-3 [&>p:last-child]:mb-0"
+                    dangerouslySetInnerHTML={{ __html: formatRichHtml(seller.homeAbout || seller.about || seller.description) }}
+                  />
+                ) : (
+                  <p className="text-gray-700 leading-relaxed text-base max-w-4xl mx-auto break-words">{formatRichHtml(seller.homeAbout || seller.about || seller.description)}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Preferred Distribution States (Home) */}
+          {preferredStates.length > 0 && (
+            <div className="py-12 px-5 sm:px-8" style={{ backgroundColor: homeBg }}>
+              <div className="max-w-7xl mx-auto text-center">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-3 shadow-xs" style={{ backgroundColor: pc + "15", color: pc }}>
+                  <span>📍</span> Where We Supply
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2">Distribution Network</h3>
+                <p className="text-sm text-gray-500 max-w-2xl mx-auto mb-8 font-medium">Currently distributing & actively seeking partners across these states</p>
+                <div className="flex flex-wrap justify-center gap-2.5 max-w-7xl mx-auto">
+                  {preferredStates.map((state, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-white border border-gray-200 shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                      style={{ color: "#1f2937" }}
+                    >
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: pc }} />
+                      {state}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -573,25 +649,60 @@ export default function SellerClientPage({ initialSeller }) {
               <div className="max-w-7xl mx-auto px-5 sm:px-8">
                 <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
                 <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">About {seller.name}</h2>
-                {/* Float image right — text wraps beside it, then goes full-width below naturally */}
-                <div style={{ overflow: 'hidden' }}>
+                {/* Responsive About Layout: image and full flowing text without clipping */}
+                <div className="flow-root">
                   {seller.aboutImageUrl && (
-                    <div style={{ float: 'right', width: '480px', marginLeft: '40px', marginBottom: '48px' }}
+                    <div style={{ float: 'right', maxWidth: '480px', width: '45%', marginLeft: '32px', marginBottom: '24px' }}
                       className="hidden lg:block rounded-2xl overflow-hidden shadow-xl flex-shrink-0">
                       <img src={seller.aboutImageUrl} alt={seller.name}
                         className="w-full object-cover rounded-2xl"
-                        style={{ height: '420px' }} />
+                        style={{ maxHeight: '420px' }} />
                     </div>
                   )}
-                                    {seller.aboutImageUrl && (
+                  {seller.aboutImageUrl && (
                     <div className="block lg:hidden mb-6 rounded-2xl overflow-hidden shadow-xl">
                       <img src={seller.aboutImageUrl} alt={seller.name}
-                        className="w-full object-cover rounded-2xl"
-                        style={{ height: '260px' }} />
+                        className="w-full object-cover rounded-2xl max-h-[300px]" />
                     </div>
                   )}
-                  {(seller.about || seller.description || "").split(/\n\n+/).filter(p => p.trim()).map((para, pi) => (
-                    <p key={pi} className="leading-relaxed text-base mb-4 last:mb-0" style={{ color: aboutTextColor }}>{para.trim()}</p>
+                  {/<[a-z][\s\S]*>/i.test(seller.about || seller.description || "") ? (
+                    <div
+                      className="prose max-w-none text-base leading-relaxed break-words [&>p]:mb-4 [&>p:last-child]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h2]:text-xl [&>h3]:text-lg [&>h1]:font-black [&>h2]:font-black [&>h3]:font-black"
+                      style={{ color: aboutTextColor }}
+                      dangerouslySetInnerHTML={{ __html: formatRichHtml(seller.about || seller.description || "") }}
+                    />
+                  ) : (
+                    formatRichHtml(seller.about || seller.description || "").split(/\n\n+/).filter(p => p.trim()).map((para, pi) => (
+                      <p key={pi} className="leading-relaxed text-base mb-4 last:mb-0 break-words" style={{ color: aboutTextColor }}>{para.trim()}</p>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Preferred Distribution States (About) */}
+          {preferredStates.length > 0 && (
+            <div className="py-16" style={{ backgroundColor: aboutBg }}>
+              <div className="max-w-7xl mx-auto px-5 sm:px-8">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-3 shadow-xs" style={{ backgroundColor: pc + "15", color: pc }}>
+                    <span>📍</span> Where We Supply
+                  </div>
+                  <h2 className="text-3xl font-black mb-2" style={{ color: aboutCompanyText }}>Distribution Network</h2>
+                  <div className="w-20 h-1 rounded-full mx-auto mb-3" style={{ backgroundColor: pc }} />
+                  <p className="text-sm text-gray-500 max-w-2xl mx-auto font-medium">Preferred distribution states and targeted expansion zones</p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-2.5 max-w-7xl mx-auto">
+                  {preferredStates.map((state, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                      style={{ borderColor: pc + "30", color: aboutCompanyText }}
+                    >
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: pc }} />
+                      {state}
+                    </span>
                   ))}
                 </div>
               </div>
@@ -762,12 +873,12 @@ export default function SellerClientPage({ initialSeller }) {
                           </div>
                         </a>
                       )}
-                      {seller.email && (
-                        <a href={`mailto:${seller.email}`} className="flex items-center gap-4 group cursor-pointer">
+                      {displayEmail && (
+                        <a href={`mailto:${displayEmail}`} className="flex items-center gap-4 group cursor-pointer">
                           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-white/25 transition">✉️</div>
                           <div>
                             <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Email Us</p>
-                            <p className="text-white font-bold text-sm group-hover:underline break-all">{seller.email}</p>
+                            <p className="text-white font-bold text-sm group-hover:underline break-all">{displayEmail}</p>
                           </div>
                         </a>
                       )}
@@ -1238,7 +1349,7 @@ export default function SellerClientPage({ initialSeller }) {
             <div className="lg:pr-4">
               <h3 className="text-xl font-bold mb-4" style={{ color: sc, fontFamily: 'Georgia, serif' }}>{seller.name.toUpperCase()}</h3>
               <p className="text-sm opacity-90 leading-relaxed font-medium mb-6">
-                {seller.aboutText ? seller.aboutText.slice(0, 150) + "..." : "Authentic products crafted with tradition, quality, and passion."}
+                {seller.aboutText || seller.footerAbout || "Authentic products crafted with tradition, quality, and passion."}
               </p>
               {Object.values(social).some(Boolean) && (
                 <div className="flex gap-3">
@@ -1284,7 +1395,7 @@ export default function SellerClientPage({ initialSeller }) {
               <h4 className="font-bold text-base mb-5" style={{ color: sc, fontFamily: 'Georgia, serif' }}>CONTACT</h4>
               <div className="space-y-3 text-sm font-medium opacity-90">
                 {[seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).length > 0 && <p className="leading-relaxed">{[seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).join(", ")}</p>}
-                {seller.email && <p><a href={`mailto:${seller.email}`} className="hover:opacity-100 transition break-all">{seller.email}</a></p>}
+                {displayEmail && <p><a href={`mailto:${displayEmail}`} className="hover:opacity-100 transition break-all">{displayEmail}</a></p>}
                 {displayPhone && <p><a href={`tel:${displayPhone}`} className="hover:opacity-100 transition">{displayPhone}</a></p>}
                 <p className="opacity-75 pt-2">Manufacturer | Brand Owner | Exporter</p>
               </div>

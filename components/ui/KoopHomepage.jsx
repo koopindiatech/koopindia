@@ -7,11 +7,11 @@ import MarketplaceFooter from "../layout/MarketplaceFooter";
 import SellerCard from "./cards/SellerCard";
 import BuyerCard from "./cards/BuyerCard";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, query, orderBy, limit, where, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit, where, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useModal } from "@/context/ModalContext";
 
 
-/* ─── tiny icon helpers ─── */
+// SVG icon helpers
 const Icon = ({ d, size = 20, cls = "" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={cls}>
@@ -93,10 +93,10 @@ const TESTIMONIALS = [
   { buyer: "Hindustan Doors", logo: "HD", color: "#dc2626", text: "\"Excellent platform for buyer promotion and generating quality leads. Highly recommended!\"", stars: 5 },
 ];
 
-/* ─── Skeleton ─── */
+// Skeleton loader
 const Skeleton = ({ cls }) => <div className={`animate-pulse bg-gray-200 rounded-lg ${cls}`} />;
 
-/* ─── Banner Section ─── */
+// Promotional banner carousel
 const BannerSection = ({ banners }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -144,13 +144,12 @@ const BannerSection = ({ banners }) => {
   );
 };
 
-/* ──────────────────────────────────────────────────────── */
 export default function KoopIndiaHomepage() {
   const { onOpenModal } = useModal();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  /* ── state ── */
+  // Search and filter state
   const [search, setSearch] = useState(searchParams.get("q") || "");
 
   const urlCat = searchParams.get("category");
@@ -165,11 +164,14 @@ export default function KoopIndiaHomepage() {
   const [certSel, setCertSel] = useState("All Certifications");
   const [catDropOpen, setCatDropOpen] = useState(false);
   const catRef = useRef(null);
+  const catScrollRef = useRef(null);
+  const scrollCats = (dir) => {
+    if (catScrollRef.current) {
+      catScrollRef.current.scrollBy({ left: dir * 300, behavior: "smooth" });
+    }
+  };
 
-  /* ── Registration modal ── */
-
-
-  /* ── Firestore data ── */
+  // Firestore entity data state
   const [sellers, setSellers] = useState([]);
   const [buyers, setBuyers] = useState([]);
   const [blogs, setBlogs] = useState([]);
@@ -178,22 +180,44 @@ export default function KoopIndiaHomepage() {
   const [topBanners, setTopBanners] = useState([]);
   const [bottomBanners, setBottomBanners] = useState([]);
   const [logosLoading, setLogosLoading] = useState(true);
+  const [logoIndex, setLogoIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLogoIndex(prev => prev + 1);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const [heroSettings, setHeroSettings] = useState({
+    badge: "India's Growing Buyers",
+    line1: "Discover Trusted",
+    line2: "Indian Buyers",
+    highlight: "Under One Roof",
+    subtitle: "Connect with verified manufacturers, startups and MSME buyers across multiple industries.",
+    statsListedBuyers: "1000+",
+    statsCategories: "500+",
+    statsStates: "28+",
+    statsConnections: "50K+"
+  });
 
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(!!(searchParams.get("q") || urlCat));
 
-  /* ── fetch ── */
+  // Firestore data synchronization
   useEffect(() => {
+    let unsubSettings = null;
+
     const fetchAll = async () => {
       setLoading(true);
       try {
         const [sellSnap, buyerSnap, blogSnap] = await Promise.all([
           getDocs(query(collection(db, "sellers"), where("isFeatured", "==", true))),
           getDocs(query(collection(db, "buyers"), where("isFeatured", "==", true))),
-          getDocs(query(collection(db, "blog"), orderBy("date", "desc"), limit(5))).catch(() =>
-            getDocs(query(collection(db, "blogs"), orderBy("date", "desc"), limit(5))).catch(() => ({ docs: [] }))
-          ),
+          getDocs(query(collection(db, "blogs"), orderBy("createdAt", "desc"), limit(5))).catch(async () => {
+            return getDocs(query(collection(db, "blogs"), orderBy("date", "desc"), limit(5))).catch(() => ({ docs: [] }));
+          }),
         ]);
         
         const fetchedSellers = sellSnap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -208,35 +232,53 @@ export default function KoopIndiaHomepage() {
       } catch (e) { console.error("Marketplace fetch error:", e); }
       finally { setLoading(false); }
 
-      // Fetch partner logos separately so main data isn't blocked
-      try {
-        const mSnap = await getDoc(doc(db, "settings", "marketplace_page"));
+      // Listen to partner logos and hero settings dynamically
+      unsubSettings = onSnapshot(doc(db, "settings", "marketplace_page"), (mSnap) => {
         if (mSnap.exists()) {
           const data = mSnap.data();
-          if (Array.isArray(data.partnerLogos) && data.partnerLogos.length > 0) {
-            setPartnerLogos(data.partnerLogos);
+          if (Array.isArray(data.partnerLogos)) {
+            setPartnerLogos(data.partnerLogos.length > 0 ? data.partnerLogos : []);
           }
-          if (Array.isArray(data.topBanners) && data.topBanners.length > 0) {
-            setTopBanners(data.topBanners);
+          if (Array.isArray(data.topBanners)) {
+            setTopBanners(data.topBanners.length > 0 ? data.topBanners : []);
           }
-          if (Array.isArray(data.bottomBanners) && data.bottomBanners.length > 0) {
-            setBottomBanners(data.bottomBanners);
+          if (Array.isArray(data.bottomBanners)) {
+            setBottomBanners(data.bottomBanners.length > 0 ? data.bottomBanners : []);
           }
+          setHeroSettings(prev => ({
+            badge: data.heroBadge !== undefined ? data.heroBadge : prev.badge,
+            line1: data.heroTitleLine1 !== undefined ? data.heroTitleLine1 : prev.line1,
+            line2: data.heroTitleLine2 !== undefined ? data.heroTitleLine2 : prev.line2,
+            highlight: data.heroHighlight !== undefined ? data.heroHighlight : prev.highlight,
+            subtitle: data.heroSubtitle !== undefined ? data.heroSubtitle : prev.subtitle,
+            statsListedBuyers: data.statsListedBuyers !== undefined ? data.statsListedBuyers : prev.statsListedBuyers,
+            statsCategories: data.statsCategories !== undefined ? data.statsCategories : prev.statsCategories,
+            statsStates: data.statsStates !== undefined ? data.statsStates : prev.statsStates,
+            statsConnections: data.statsConnections !== undefined ? data.statsConnections : prev.statsConnections
+          }));
         }
-      } catch (e) { console.error("Partner logos fetch error:", e); }
-      finally { setLogosLoading(false); }
+        setLogosLoading(false);
+      }, (e) => {
+        console.error("Marketplace settings fetch error:", e);
+        setLogosLoading(false);
+      });
     };
+    
     fetchAll();
+    
+    return () => { 
+      if (unsubSettings) unsubSettings(); 
+    };
   }, []);
 
-  /* ── close cat dropdown on outside click ── */
+  // Dismiss category dropdown on outside click
   useEffect(() => {
     const fn = (e) => { if (catRef.current && !catRef.current.contains(e.target)) setCatDropOpen(false); };
     document.addEventListener("mousedown", fn);
     return () => document.removeEventListener("mousedown", fn);
   }, []);
 
-  /* ── search ── */
+  // Search and filter execution
   const performSearch = async (currentSearch, currentCat, currentSub, currentState) => {
     setSearching(true);
     setSearched(true);
@@ -288,21 +330,23 @@ export default function KoopIndiaHomepage() {
 
       <MarketplaceHeader onOpenModal={onOpenModal} />
 
-      {/* ══════════════ HERO ══════════════ */}
+      {/* Hero Section */}
       <section className="bg-gradient-to-br from-[#f0f7ff] via-white to-[#fff8f3] pt-28 pb-14 px-4 sm:px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-full px-4 py-1.5 mb-5">
-                <span className="w-2 h-2 rounded-full bg-[#F97316] animate-pulse inline-block" />
-                <span className="text-xs font-bold text-[#F97316] uppercase tracking-widest">India's Growing Buyers</span>
-              </div>
+              {heroSettings.badge && (
+                <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-full px-4 py-1.5 mb-5">
+                  <span className="w-2 h-2 rounded-full bg-[#F97316] animate-pulse inline-block" />
+                  <span className="text-xs font-bold text-[#F97316] uppercase tracking-widest">{heroSettings.badge}</span>
+                </div>
+              )}
               <h1 className="text-4xl sm:text-5xl font-black text-[#1e3a5f] leading-tight mb-4">
-                Discover Trusted<br />Indian Buyers<br />
-                <span className="text-[#F97316]">Under One Roof</span>
+                {heroSettings.line1}<br />{heroSettings.line2}<br />
+                <span className="text-[#F97316]">{heroSettings.highlight}</span>
               </h1>
               <p className="text-gray-500 text-base mb-8 leading-relaxed max-w-md">
-                Connect with verified manufacturers, startups and MSME buyers across multiple industries.
+                {heroSettings.subtitle}
               </p>
               <div className="flex flex-wrap gap-3 mb-8">
                 <Link
@@ -318,10 +362,10 @@ export default function KoopIndiaHomepage() {
               </div>
               <div className="flex flex-wrap gap-6">
                 {[
-                  { icon: "🏪", val: "1000+", label: "Buyers Listed" },
-                  { icon: "📦", val: "500+", label: "Categories" },
-                  { icon: "📍", val: "28+", label: "States Covered" },
-                  { icon: "🤝", val: "50K+", label: "Business Connections" },
+                  { icon: "🏪", val: heroSettings.statsListedBuyers, label: "Buyers Listed" },
+                  { icon: "📦", val: heroSettings.statsCategories, label: "Categories" },
+                  { icon: "📍", val: heroSettings.statsStates, label: "States Covered" },
+                  { icon: "🤝", val: heroSettings.statsConnections, label: "Business Connections" },
                 ].map(s => (
                   <div key={s.label} className="flex items-center gap-2">
                     <span className="text-xl">{s.icon}</span>
@@ -333,68 +377,84 @@ export default function KoopIndiaHomepage() {
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 relative mt-8 lg:mt-0">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 relative mt-8 lg:mt-0">
               {logosLoading
-                ? ["", "", "", "", "", ""].map((_, i) => (
-                    <div key={i}
-                      className={`animate-pulse rounded-2xl bg-gray-100/50 shadow-sm border border-gray-50 ${i === 0 ? "row-span-2" : ""}`}
-                      style={{ minHeight: i === 0 ? 200 : 90 }}
+                ? Array.from({ length: 9 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="animate-pulse rounded-2xl bg-gray-100/50 shadow-sm border border-gray-50 h-[84px] sm:h-[96px] w-full"
                     />
                   ))
                 : partnerLogos.length > 0
-                ? partnerLogos.slice(0, 6).map((logo, i) => {
-                    const href = logo.link
-                      ? (logo.link.startsWith("http") ? logo.link : `https://${logo.link}`)
-                      : null;
-                    const imgSrc = proxyImg(logo.imageUrl);
-                    const bgColors = ["#fff8f3", "#f0f7ff", "#f0fdf4", "#fdf4ff", "#fffbeb", "#f0f9ff"];
-                    const glowColors = [
-                      "rgba(249,115,22,0.35)", "rgba(59,130,246,0.35)", "rgba(34,197,94,0.35)",
-                      "rgba(168,85,247,0.35)", "rgba(234,179,8,0.35)", "rgba(14,165,233,0.35)"
-                    ];
-                    const delay = `${i * 0.4}s`;
-                    const cardStyle = {
-                      minHeight: i === 0 ? 200 : 90,
-                      background: bgColors[i],
-                      animationDelay: delay,
-                    };
-                    const cardClass = `logo-card-anim rounded-2xl flex items-center justify-center shadow-lg border border-gray-100 hover:shadow-2xl hover:scale-110 transition-all duration-300 ${i === 0 ? "row-span-2" : ""}`;
-                    const cardContent = (
-                      <div className="text-center px-2 relative">
-                        {/* glow ring */}
-                        <div style={{
-                          position: "absolute", inset: -6, borderRadius: "50%",
-                          background: glowColors[i],
-                          filter: "blur(8px)",
-                          animation: `logo-glow 2.5s ease-in-out infinite alternate`,
-                          animationDelay: delay,
-                          zIndex: 0,
-                        }} />
-                        <img src={imgSrc} alt="Partner"
-                          className="max-h-14 w-auto object-contain mx-auto relative z-10" />
-                      </div>
-                    );
-                    return href ? (
-                      <a key={i} href={href} target="_blank" rel="noopener noreferrer"
-                        className={cardClass} style={cardStyle}>
-                        {cardContent}
-                      </a>
-                    ) : (
-                      <div key={i} className={cardClass} style={cardStyle}>
-                        {cardContent}
-                      </div>
-                    );
-                  })
-                : ["🌶️ Spices", "🏭 Factory", "🌿 Herbal", "🧴 Skincare", "📦 Exports", "🤝 Business"].map((item, i) => (
-                    <div key={i}
-                      className={`rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-gray-100 ${i === 0 ? "row-span-2" : ""}`}
-                      style={{ minHeight: i === 0 ? 200 : 90, background: ["#fff8f3", "#f0f7ff", "#f0fdf4", "#fdf4ff", "#fffbeb", "#f0f9ff"][i] }}>
-                      <div className="text-center">
-                        <div className="text-4xl">{item.split(" ")[0]}</div>
-                        <p className="text-[9px] font-bold text-gray-400 mt-1">{item.split(" ").slice(1).join(" ")}</p>
-                      </div>
-                    </div>
-                  ))
+                ? (() => {
+                    const numCards = Math.min(9, partnerLogos.length);
+                    return Array.from({ length: numCards }).map((_, i) => {
+                      const logosForCard = [];
+                      for (let j = i; j < partnerLogos.length; j += numCards) {
+                        logosForCard.push(partnerLogos[j]);
+                      }
+                      if (logosForCard.length === 0) return null;
+
+                      const activeIdx = logoIndex % logosForCard.length;
+                      const activeLogo = logosForCard[activeIdx];
+
+                      const href = activeLogo?.link
+                        ? (activeLogo.link.startsWith("http") ? activeLogo.link : (activeLogo.link.startsWith("/") ? activeLogo.link : `https://${activeLogo.link}`))
+                        : null;
+                      const bgColors = [
+                        "#fff8f3", "#f0f7ff", "#f0fdf4",
+                        "#fdf4ff", "#fffbeb", "#f0f9ff",
+                        "#fdf2f8", "#f5f3ff", "#ecfdf5"
+                      ];
+                      const glowColors = [
+                        "rgba(249,115,22,0.30)", "rgba(59,130,246,0.30)", "rgba(34,197,94,0.30)",
+                        "rgba(168,85,247,0.30)", "rgba(234,179,8,0.30)", "rgba(14,165,233,0.30)",
+                        "rgba(236,72,153,0.30)", "rgba(99,102,241,0.30)", "rgba(16,185,129,0.30)"
+                      ];
+                      const delay = `${(i % 3) * 0.3}s`;
+                      const cardStyle = {
+                        background: bgColors[i % bgColors.length],
+                        animationDelay: delay,
+                      };
+                      const cardClass = `logo-card-anim rounded-2xl flex items-center justify-center shadow-md border border-gray-100 hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden h-[84px] sm:h-[96px] w-full`;
+                      const cardContent = (
+                        <div className="w-full h-full flex items-center justify-center relative p-2.5 sm:p-3">
+                          {/* glow ring */}
+                          <div style={{
+                            position: "absolute", inset: -6, borderRadius: "50%",
+                            background: glowColors[i % glowColors.length],
+                            filter: "blur(8px)",
+                            animation: `logo-glow 2.5s ease-in-out infinite alternate`,
+                            animationDelay: delay,
+                            zIndex: 0,
+                          }} />
+                          {logosForCard.map((l, j) => (
+                            <img 
+                              key={j} 
+                              src={proxyImg(l.imageUrl)} 
+                              alt="Partner Brand" 
+                              className="object-contain drop-shadow-sm z-10 transition-opacity duration-700 absolute max-w-[85%] max-h-[75%]"
+                              style={{ 
+                                opacity: j === activeIdx ? 1 : 0, 
+                                pointerEvents: j === activeIdx ? "auto" : "none" 
+                              }} 
+                            />
+                          ))}
+                        </div>
+                      );
+
+                      return href ? (
+                        <a key={i} href={href} target="_blank" rel="noopener noreferrer" style={cardStyle} className={cardClass}>
+                          {cardContent}
+                        </a>
+                      ) : (
+                        <div key={i} style={cardStyle} className={cardClass}>
+                          {cardContent}
+                        </div>
+                      );
+                    });
+                  })()
+                : null
               }
               <style>{`
                 @keyframes logo-float {
@@ -424,7 +484,7 @@ export default function KoopIndiaHomepage() {
 
 
 
-      {/* ══════════════ SEARCH BAR ══════════════ */}
+      {/* Search Bar */}
       <section className="bg-[#1e3a5f] py-5 px-4 sm:px-6 sticky top-[64px] z-40 shadow-xl">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row items-stretch gap-2 bg-white rounded-2xl p-2 shadow-2xl shadow-blue-900/30">
@@ -478,7 +538,7 @@ export default function KoopIndiaHomepage() {
 
 
 
-      {/* ══════════════ CATEGORIES FILTER ══════════════ */}
+      {/* Categories Filter */}
       <section className="bg-white py-6 px-4 sm:px-6 border-b border-gray-100">
         <div className="max-w-7xl mx-auto">
           <div className="mb-4">
@@ -486,28 +546,50 @@ export default function KoopIndiaHomepage() {
             <h2 className="text-2xl font-black text-[#1e3a5f] mt-1 tracking-tight">Explore All Categories</h2>
           </div>
           
-          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-            <button
-              onClick={() => { setCatSel("All Categories"); setSubCatSel("All"); performSearch(search, "All Categories", "All", stateSel); }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === "All Categories" ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+          <div className="relative">
+            {/* Left Scroll Button */}
+            <button 
+              onClick={() => scrollCats(-1)} 
+              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-[calc(50%+8px)] -ml-4 z-10 w-10 h-10 items-center justify-center bg-white border border-gray-200 shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 transition-all hover:scale-105"
             >
-              <span>📁</span> All Categories
+              <ChevronLeft />
             </button>
-            {CATEGORIES.map(cat => (
+
+            {/* Right Scroll Button */}
+            <button 
+              onClick={() => scrollCats(1)} 
+              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-[calc(50%+8px)] -mr-4 z-10 w-10 h-10 items-center justify-center bg-white border border-gray-200 shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 transition-all hover:scale-105"
+            >
+              <ChevronRight2 />
+            </button>
+
+            <div 
+              ref={catScrollRef}
+              className="flex gap-3 overflow-x-auto pb-4 px-1 scrollbar-hide" 
+              style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+            >
               <button
-                key={cat.label}
-                onClick={() => { setCatSel(cat.label); setSubCatSel("All"); performSearch(search, cat.label, "All", stateSel); }}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === cat.label ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+                onClick={() => { setCatSel("All Categories"); setSubCatSel("All"); performSearch(search, "All Categories", "All", stateSel); }}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === "All Categories" ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
               >
-                <span>{cat.emoji}</span> {cat.label}
+                <span>📁</span> All Categories
               </button>
-            ))}
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat.label}
+                  onClick={() => { setCatSel(cat.label); setSubCatSel("All"); performSearch(search, cat.label, "All", stateSel); }}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === cat.label ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+                >
+                  <span>{cat.emoji}</span> {cat.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════ FEATURED SELLERS / SEARCH RESULTS ══════════════ */}
-      <section className="py-14 px-4 sm:px-6 bg-[#f8fafc]" id="sellers-section">
+      {/* Featured Sellers / Search Results */}
+      <section className="py-14 px-4 sm:px-6 bg-orange-100" id="sellers-section">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -541,8 +623,8 @@ export default function KoopIndiaHomepage() {
 
       <BannerSection banners={topBanners} />
 
-      {/* ══════════════ FEATURED BUYERS ══════════════ */}
-      <section className="py-14 px-4 sm:px-6 bg-white" id="buyers-section">
+      {/* Featured Buyers */}
+      <section className="py-14 px-4 sm:px-6 bg-rose-100" id="buyers-section">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -566,8 +648,8 @@ export default function KoopIndiaHomepage() {
 
       <BannerSection banners={bottomBanners} />
 
-      {/* ══════════════ WHY KOOP INDIA ══════════════ */}
-      <section className="py-14 px-4 sm:px-6 bg-[#f8fafc]">
+      {/* Value Proposition */}
+      <section className="py-14 px-4 sm:px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold text-[#1e3a5f] text-center mb-8 tracking-tight uppercase">WHY CHOOSE KOOP INDIA?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -584,8 +666,8 @@ export default function KoopIndiaHomepage() {
         </div>
       </section>
 
-      {/* ══════════════ LATEST: 3 COLUMNS ══════════════ */}
-      <section className="py-14 px-4 sm:px-6 bg-white">
+      {/* Latest Highlights (Sellers, Buyers, Blogs) */}
+      <section className="py-14 px-4 sm:px-6 bg-orange-100">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     <div>
@@ -649,20 +731,20 @@ export default function KoopIndiaHomepage() {
               <h3 className="font-black text-[#1e3a5f] text-sm uppercase tracking-wide">LATEST BLOGS</h3>
               <Link href="/blog" className="text-xs font-bold text-[#F97316] hover:underline">View All →</Link>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {loading
-                ? [...Array(5)].map((_, i) => <Skeleton key={i} cls="h-20" />)
+                ? [...Array(5)].map((_, i) => <Skeleton key={i} cls="h-16" />)
                 : blogs.length > 0
                   ? blogs.map(b => (
-                    <Link key={b.id} href={b.slug ? `/blog/${b.slug}` : "/blog"}
-                      className="bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-orange-200 hover:shadow-sm transition-all flex gap-3 p-3 cursor-pointer">
-                      <div className="w-16 h-14 rounded-xl flex items-center justify-center text-3xl flex-shrink-0 overflow-hidden bg-gray-100">
-                        {b.coverImage || b.image
-                          ? <img src={proxyImg(b.coverImage || b.image)} alt={b.title} className="w-full h-full object-cover" />
+                    <Link key={b.id} href={b.slug ? `/blog/${b.slug}` : (b.id ? `/blog/${b.id}` : "/blog")}
+                      className="bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-orange-200 hover:shadow-sm transition-all flex items-center gap-3 px-3 py-2 cursor-pointer">
+                      <div className="w-14 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0 overflow-hidden bg-gray-100">
+                        {b.imageUrl || b.coverImage || b.image
+                          ? <img src={proxyImg(b.imageUrl || b.coverImage || b.image)} alt={b.title} className="w-full h-full object-cover" />
                           : "📝"}
                       </div>
-                      <div className="flex-1">
-                        <p className="font-bold text-gray-700 text-xs leading-snug mb-2 line-clamp-2">{b.title}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-gray-700 text-xs leading-snug mb-1 line-clamp-2">{b.title}</p>
                         <span className="text-[10px] font-bold text-[#F97316] hover:underline">Read More →</span>
                       </div>
                     </Link>
@@ -673,10 +755,10 @@ export default function KoopIndiaHomepage() {
                     { title: "Buyering Tips for Startups to Stand Out in 2026", img: "🚀" },
                   ].map((b, i) => (
                     <Link key={i} href="/blog"
-                      className="bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-orange-200 hover:shadow-sm transition-all flex gap-3 p-3 cursor-pointer">
-                      <div className="w-16 h-14 rounded-xl flex items-center justify-center text-3xl flex-shrink-0 bg-gray-50">{b.img}</div>
+                      className="bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-orange-200 hover:shadow-sm transition-all flex items-center gap-3 px-3 py-2 cursor-pointer">
+                      <div className="w-14 h-12 rounded-lg flex items-center justify-center text-2xl flex-shrink-0 bg-gray-50">{b.img}</div>
                       <div className="flex-1">
-                        <p className="font-bold text-gray-700 text-xs leading-snug mb-2">{b.title}</p>
+                        <p className="font-bold text-gray-700 text-xs leading-snug mb-1">{b.title}</p>
                         <span className="text-[10px] font-bold text-[#F97316]">Read More →</span>
                       </div>
                     </Link>
@@ -687,8 +769,8 @@ export default function KoopIndiaHomepage() {
         </div>
       </section>
 
-      {/* ══════════════ TESTIMONIALS ══════════════ */}
-      <section className="py-14 px-4 sm:px-6 bg-[#f8fafc]" id="testimonials">
+      {/* Testimonials & Success Stories */}
+      <section className="py-14 px-4 sm:px-6 bg-pink-100" id="testimonials">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight">BUYER SUCCESS STORIES</h2>
@@ -711,7 +793,7 @@ export default function KoopIndiaHomepage() {
         </div>
       </section>
 
-      {/* ══════════════ HOW IT WORKS ══════════════ */}
+      {/* How It Works */}
       <section className="py-14 px-4 sm:px-6 bg-white" id="how-it-works">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold text-[#1e3a5f] text-center mb-10 tracking-tight uppercase">HOW IT WORKS?</h2>
@@ -739,7 +821,7 @@ export default function KoopIndiaHomepage() {
         </div>
       </section>
 
-      {/* ══════════════ CTA BANNER ══════════════ */}
+      {/* Call to Action Banner */}
       <section className="py-14 px-4 sm:px-6">
         <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 text-center lg:text-left bg-[#05193B] rounded-3xl px-8 py-10 lg:px-16 relative overflow-hidden">
           <div className="absolute inset-0 pointer-events-none">
@@ -754,10 +836,10 @@ export default function KoopIndiaHomepage() {
             </div>
             <div className="flex-1">
               <h2 className="text-[26px] sm:text-3xl font-bold text-white mb-2 leading-snug tracking-wide">
-                Ready to Grow Your Buyer Across India?
+                Ready to Grow Your Business Across India?
               </h2>
               <p className="text-gray-200 text-sm sm:text-[15px] max-w-xl font-normal leading-relaxed mx-auto lg:mx-0">
-                List your buyer on Koop India and connect with thousands of business buyers, distributors and retailers.
+                List your brand on Koop India and connect with thousands of business buyers, distributors and retailers.
               </p>
             </div>
           </div>

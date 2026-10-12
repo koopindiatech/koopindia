@@ -4,16 +4,19 @@ import {
   Store, Plus, Search, Globe, Edit2, Trash2, PauseCircle, PlayCircle, X,
   Phone, Package, ExternalLink, MoreVertical, Check, Building2, Palette,
   FileText, Rocket, Star, Image as ImageIcon, Loader2, MapPin, Shield,
-  Camera, Save, ArrowLeft, ArrowRight, AlertCircle, Mail,
+  Camera, Save, ArrowLeft, ArrowRight, AlertCircle, Mail, ArrowRightLeft,
 } from "lucide-react";
 import { db, storage } from "../../../lib/firebase";
 import {
-  collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, where
+  collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, where
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getCurrentUser } from "../lib/auth";
-
-/* ─── helpers ─── */
+import imageCompression from 'browser-image-compression';
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+import 'react-quill-new/dist/quill.snow.css';
+// Helper utilities
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const slugify = (s) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const ini = (n = "") => n.split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
@@ -31,14 +34,14 @@ const statusCfg = {
   draft: { label: "Draft", dot: "bg-gray-300", badge: "bg-gray-100 text-gray-500 border-gray-200" },
 };
 
-/* ─── DEFAULT DATA MODEL ─── */
+// Default seller data model
 const blank = () => ({
   type: "product",
-  name: "", category: "", subcategory: "", contact: "", phone: "", email: "",
+  name: "", category: "", subcategory: "", contact: "", phone: "", email: "", password: "",
   hideContact: false,
   address: "", city: "", state: "", pincode: "",
   companyName: "", natureOfBusiness: "", establishmentYear: "",
-  employees: "", gstNumber: "", fssaiLicense: "",
+  employees: "", gstNumber: "", fssaiLicense: "", licenses: [],
   logoUrl: "", primaryColor: "#2d5a27", secondaryColor: "#f5a623",
   homeBgColor: "#ffffff", aboutBgColor: "#ffffff", productsBgColor: "#ffffff", contactBgColor: "#ffffff",
   homeProductsBgColor: "", homeProductsTextColor: "",
@@ -52,7 +55,7 @@ const blank = () => ({
   navAlignment: "right",
   navHomeLabel: "", navAboutLabel: "", navProductsLabel: "", navContactLabel: "", navCtaLabel: "",
   headerBgColor: "#ffffff", headerTextColor: "#4b5563",
-  footerBgColor: "", footerTextColor: "#ffffff", footerText: "",
+  footerBgColor: "", footerTextColor: "#ffffff", footerText: "", footerAbout: "", aboutText: "",
   statsBgColor: "", statsValueColor: "#f5c842", statsTextColor: "",
   aboutTextColor: "",
   whyTitle: "WHY US", whySubtitle: "", whyBgColor: "#f5f0e8",
@@ -244,16 +247,16 @@ const CATEGORY_SUBCATEGORIES = {
   ],
 };
 
-/* ─── Tailwind helpers ─── */
+// Tailwind UI style constants
 const inp = "w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 placeholder:text-gray-400 transition-all duration-150 shadow-sm hover:border-gray-300";
 const inp_sm = "w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 placeholder:text-gray-400 transition-all duration-150 shadow-sm";
 const ta = `${inp} resize-none`;
 const addBtn = "inline-flex items-center gap-2 text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-all duration-150 shadow-sm hover:shadow-md";
 const delBtn = "w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl bg-red-50 hover:bg-red-100 text-red-500 transition-all duration-150 cursor-pointer border border-red-100 hover:border-red-200";
-const sectionCard = "bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5 hover:shadow-md transition-shadow duration-200";
+const sectionCard = "bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6 space-y-5 hover:shadow-md transition-shadow duration-200";
 const fieldLabel = "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-1.5";
 
-/* ─── PROXY HELPER to ensure images display clearly without ad-blocker or CORS interruptions ─── */
+// Image proxy helper to ensure images display reliably
 const getImg = (url) => (url && typeof url === "string" && url.startsWith("http") && url.includes("firebase") ? `/api/img?url=${encodeURIComponent(url)}` : url);
 
 const INDIA_ZONES = [
@@ -347,17 +350,17 @@ const UploadBox = ({ field, label, value, onPick, small = false }) => {
   );
 };
 
-/* ─── PROGRESS PILL helper (outside component to prevent re-mount) ─── */
+// Progress pill indicator component
 const ProgPill = ({ field, uploadStatus, uploadProgress }) =>
   uploadStatus?.[field] === "uploading"
     ? <span className="text-[10px] text-violet-500 font-bold">{uploadProgress?.[field] || 0}% uploading...</span>
     : uploadStatus?.[field] === "done"
       ? <span className="text-[10px] text-emerald-500 font-bold">✓ Uploaded</span>
       : uploadStatus?.[field] === "error"
-        ? <span className="text-[10px] text-red-500 font-bold">⚠️ Upload failed — check Firebase Storage rules</span>
+        ? <span className="inline-flex items-center gap-1 text-[10px] text-red-600 font-semibold"><AlertCircle size={11} /> Upload failed — verify storage permissions</span>
         : null;
 
-/* ══════════════════════════════════════════════════════════ */
+// Sellers Management Component
 export default function SellersPage() {
   const [user, setUser] = useState(null);
   const [sellers, setSellers] = useState([]);
@@ -406,14 +409,33 @@ export default function SellersPage() {
         const u = getCurrentUser();
         setUser(u);
         if (u?.role === "seller") {
-          const snap = await getDocs(query(collection(db, "sellers"), where("slug", "==", u.linkedSlug)));
-          if (!snap.empty) {
-            const data = { id: snap.docs[0].id, ...snap.docs[0].data() };
-            setSellers([data]);
-            openForm(data);
+          let sellerData = null;
+          if (u.linkedId) {
+            try {
+              const byId = await getDoc(doc(db, "sellers", u.linkedId));
+              if (byId.exists()) {
+                sellerData = { id: byId.id, ...byId.data() };
+              }
+            } catch (err) {
+              console.error("Seller lookup by linkedId error:", err);
+            }
+          }
+          if (!sellerData && u.linkedSlug) {
+            try {
+              const snap = await getDocs(query(collection(db, "sellers"), where("slug", "==", u.linkedSlug)));
+              if (!snap.empty) {
+                sellerData = { id: snap.docs[0].id, ...snap.docs[0].data() };
+              }
+            } catch (err) {
+              console.error("Seller lookup by linkedSlug error:", err);
+            }
+          }
+          if (sellerData) {
+            setSellers([sellerData]);
+            openForm(sellerData);
           } else {
             setSellers([]);
-            openForm({ slug: u.linkedSlug, name: u.name, email: u.email });
+            openForm({ slug: u.linkedSlug || "", name: u.name || "", email: u.email || "" });
           }
         } else {
           const snap = await getDocs(query(collection(db, "sellers"), orderBy("createdAt", "desc")));
@@ -425,33 +447,53 @@ export default function SellersPage() {
     load();
   }, []);
 
-  /* ─── Upload file to Firebase Storage → return permanent URL ─── */
-  const uploadToStorage = (file, path, uiKey) => new Promise((resolve, reject) => {
-    const storageRef = ref(storage, path);
-    const task = uploadBytesResumable(storageRef, file);
-    task.on(
-      "state_changed",
-      (snap) => {
-        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-        setUploadProgress((p) => ({ ...p, [uiKey]: pct }));
-      },
-      (err) => {
-        console.error("Storage upload error:", err.code, err.message);
-        reject(err);
-      },
-      async () => {
-        const url = await getDownloadURL(task.snapshot.ref);
-        resolve(url);
+  // Uploads file to Firebase Storage with compression and returns permanent URL
+  const uploadToStorage = async (file, path, uiKey) => {
+    let fileToUpload = file;
+    // Compress image if it's an image file
+    if (file.type.startsWith("image/")) {
+      const options = {
+        maxSizeMB: 0.5, // High compression
+        maxWidthOrHeight: 1200, // Reasonable max dimension
+        useWebWorker: true,
+        fileType: "image/webp" // Convert to WebP for modern optimization
+      };
+      try {
+        fileToUpload = await imageCompression(file, options);
+        // adjust extension in path to webp since we compress to webp
+        path = path.replace(/\.[^/.]+$/, ".webp");
+      } catch (error) {
+        console.error("Image compression error:", error);
       }
-    );
-  });
+    }
 
-  /* ─── Upload state per UI key ─── */
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(storage, path);
+      const task = uploadBytesResumable(storageRef, fileToUpload);
+      task.on(
+        "state_changed",
+        (snap) => {
+          const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+          setUploadProgress((p) => ({ ...p, [uiKey]: pct }));
+        },
+        (err) => {
+          console.error("Storage upload error:", err.code, err.message);
+          reject(err);
+        },
+        async () => {
+          const url = await getDownloadURL(task.snapshot.ref);
+          resolve(url);
+        }
+      );
+    });
+  };
+
+  // Upload status helpers
   const setUploading = (key) => setUploadStatus((s) => ({ ...s, [key]: "uploading" }));
   const setDone = (key) => setUploadStatus((s) => ({ ...s, [key]: "done" }));
   const setError = (key) => setUploadStatus((s) => ({ ...s, [key]: "error" }));
 
-  /* ─── Generic: upload a File → Storage → update form field ─── */
+  // Image picker and upload handler for top-level fields
   const handleImagePick = async (e, field) => {
     const file = e.target.files?.[0]; if (!file) return;
     const uiKey = field;
@@ -474,7 +516,7 @@ export default function SellersPage() {
     }
   };
 
-  /* ─── Array item image upload (products, infrastructure, certifications) ─── */
+  // Array item image upload (products, infrastructure, certifications)
   const handleArrayImagePick = async (e, arrayKey, index, imgField = "imageUrl") => {
     const file = e.target.files?.[0]; if (!file) return;
     const uiKey = `${arrayKey}_${index}`;
@@ -492,7 +534,7 @@ export default function SellersPage() {
     }
   };
 
-  /* ─── Strip any accidental Base64 blobs or oversized data from payload before Firestore write ─── */
+  // Sanitize payload to strip large binary/base64 blobs before Firestore write
   const cleanPayload = (val) => {
     if (typeof val === "string") {
       const s = val.trim();
@@ -514,13 +556,24 @@ export default function SellersPage() {
     return val;
   };
 
-  /* ─── Save full form to Firestore ─── */
+  // Persist seller record to Firestore
   const handleSave = async (asDraft = false) => {
     if (!form.name.trim()) return;
     setSaving(true);
     try {
       const clean = cleanPayload({ ...form });
       const slug = slugify(clean.name || "buyer");
+      // Keep fssaiLicense in sync with licenses array if an FSSAI license was added
+      if (Array.isArray(clean.licenses)) {
+        const fssaiLic = clean.licenses.find(l => l && (l.name || "").toLowerCase().includes("fssai"));
+        if (fssaiLic && fssaiLic.value) clean.fssaiLicense = fssaiLic.value;
+      }
+      if (typeof clean.about === "string") {
+        clean.about = clean.about.replace(/&nbsp;/g, " ").replace(/\u00A0/g, " ");
+      }
+      if (typeof clean.homeAbout === "string") {
+        clean.homeAbout = clean.homeAbout.replace(/&nbsp;/g, " ").replace(/\u00A0/g, " ");
+      }
       const payload = {
         ...clean,
         slug,
@@ -533,12 +586,59 @@ export default function SellersPage() {
       if (editing) {
         await updateDoc(doc(db, "sellers", editing.id), { ...payload, updatedAt: serverTimestamp() });
         setSellers((p) => p.map((s) => s.id === editing.id ? { ...s, ...payload } : s));
+
+        // Sync or Create seller_users credential
+        if (payload.email) {
+          const emailLower = payload.email.toLowerCase().trim();
+          const userStatus = payload.status === "live" ? "active" : "paused";
+          try {
+            let userDoc = null;
+            const byId = await getDocs(query(collection(db, "seller_users"), where("linkedId", "==", editing.id)));
+            if (!byId.empty) {
+              userDoc = byId.docs[0];
+            } else {
+              const bySlug = await getDocs(query(collection(db, "seller_users"), where("linkedSlug", "==", editing.slug || slug)));
+              if (!bySlug.empty) userDoc = bySlug.docs[0];
+            }
+
+            if (userDoc) {
+              const updateData = {
+                name: payload.contact || payload.name,
+                email: emailLower,
+                linkedId: editing.id,
+                linkedSlug: slug,
+                status: userStatus,
+                updatedAt: serverTimestamp(),
+              };
+              if (payload.password) updateData.password = payload.password;
+              await updateDoc(doc(db, "seller_users", userDoc.id), updateData);
+            } else if (payload.password) {
+              await addDoc(collection(db, "seller_users"), {
+                name: payload.contact || payload.name,
+                email: emailLower,
+                password: payload.password,
+                status: userStatus,
+                linkedId: editing.id,
+                linkedSlug: slug,
+                role: "seller",
+                createdAt: serverTimestamp(),
+              });
+            }
+          } catch (userSyncErr) {
+            console.error("Failed to sync seller_users:", userSyncErr);
+          }
+        }
       } else {
-        const docRef = await addDoc(collection(db, "sellers"), { ...payload, views: 0, createdAt: serverTimestamp() });
-        setSellers((p) => [{ id: docRef.id, ...payload, views: 0 }, ...p]);
+        const count = sellers.length + 1;
+        const profileId = `KIS${String(count).padStart(5, '0')}`;
+        const newPayload = { ...payload, profileId, views: 0, createdAt: serverTimestamp() };
+
+        const docRef = await addDoc(collection(db, "sellers"), newPayload);
+        setSellers((p) => [{ id: docRef.id, ...newPayload }, ...p]);
 
         // Auto-generate a Lead from this Seller Listing
         await addDoc(collection(db, "leads"), {
+          profileId: profileId,
           name: payload.contact || payload.name || "Unknown",
           company: payload.companyName || payload.name || "",
           email: payload.email || "",
@@ -550,13 +650,37 @@ export default function SellersPage() {
           status: "New",
           createdAt: serverTimestamp(),
           sellerId: docRef.id,
+          sellerSlug: slug,
+          sellerName: payload.name || payload.companyName,
+          assignedToSellerSlug: slug,
+          assignedToSellerName: payload.name || payload.companyName,
           assignedTo: null
         });
+
+        // Create User Credential
+        if (payload.email && payload.password) {
+          const userStatus = payload.status === "live" ? "active" : "paused";
+          await addDoc(collection(db, "seller_users"), {
+            name: payload.contact || payload.name,
+            email: payload.email.toLowerCase().trim(),
+            password: payload.password,
+            status: userStatus,
+            linkedId: docRef.id,
+            linkedSlug: slugify(payload.name || "seller"),
+            role: "seller",
+            createdAt: serverTimestamp()
+          });
+        }
       }
-      setFormOpen(false);
+      if (user?.role === "seller") {
+        alert("Listing updated successfully!");
+        setFormOpen(true);
+      } else {
+        setFormOpen(false);
+      }
     } catch (err) {
       console.error("Save error:", err);
-      alert("Save failed: " + (err?.message || "Unknown error"));
+      alert("Failed to save listing: " + (err?.message || "An unexpected error occurred."));
     }
     finally { setSaving(false); }
   };
@@ -565,6 +689,28 @@ export default function SellersPage() {
     const next = current === "live" ? "paused" : "live";
     await updateDoc(doc(db, "sellers", id), { status: next });
     setSellers((p) => p.map((s) => s.id === id ? { ...s, status: next } : s));
+
+    // Sync linked seller_users status
+    try {
+      const userStatus = next === "live" ? "active" : "paused";
+      const byId = await getDocs(query(collection(db, "seller_users"), where("linkedId", "==", id)));
+      if (!byId.empty) {
+        for (const d of byId.docs) {
+          await updateDoc(doc(db, "seller_users", d.id), { status: userStatus });
+        }
+      } else {
+        const sellerItem = sellers.find(s => s.id === id);
+        if (sellerItem?.slug) {
+          const bySlug = await getDocs(query(collection(db, "seller_users"), where("linkedSlug", "==", sellerItem.slug)));
+          for (const d of bySlug.docs) {
+            await updateDoc(doc(db, "seller_users", d.id), { status: userStatus, linkedId: id });
+          }
+        }
+      }
+    } catch (userErr) {
+      console.error("Error syncing seller user status on toggle:", userErr);
+    }
+
     setMenuId(null);
   };
 
@@ -582,10 +728,30 @@ export default function SellersPage() {
     setDelId(null);
   };
 
+  const handleTransferToBuyer = async (sellerId) => {
+    const confirmTransfer = confirm("Are you sure you want to transfer this listing to Buyers?");
+    if (!confirmTransfer) return;
+    const sellerToTransfer = sellers.find(s => s.id === sellerId);
+    if (!sellerToTransfer) return;
+    try {
+      const newBuyerData = { ...sellerToTransfer, buyerName: sellerToTransfer.name || sellerToTransfer.companyName || "" };
+      delete newBuyerData.id;
+      delete newBuyerData.name;
+      await addDoc(collection(db, "buyers"), newBuyerData);
+      await deleteDoc(doc(db, "sellers", sellerId));
+      setSellers((p) => p.filter((s) => s.id !== sellerId));
+      setMenuId(null);
+      alert("Successfully transferred to Buyers section.");
+    } catch (error) {
+      console.error("Transfer error:", error);
+      alert("Failed to transfer listing. Please try again.");
+    }
+  };
+
   /* ── Array helpers ── */
-  const setArr = (key, i, k, v) => setForm((p) => { const a = [...p[key]]; a[i] = { ...a[i], [k]: v }; return { ...p, [key]: a }; });
-  const addArr = (key, def) => setForm((p) => ({ ...p, [key]: [...p[key], def] }));
-  const delArr = (key, i) => setForm((p) => ({ ...p, [key]: p[key].filter((_, j) => j !== i) }));
+  const setArr = (key, i, k, v) => setForm((p) => { const a = [...(p[key] || [])]; a[i] = { ...a[i], [k]: v }; return { ...p, [key]: a }; });
+  const addArr = (key, def) => setForm((p) => ({ ...p, [key]: [...(p[key] || []), def] }));
+  const delArr = (key, i) => setForm((p) => ({ ...p, [key]: (p[key] || []).filter((_, j) => j !== i) }));
   const sf = (k, v) => setForm((p) => ({ ...p, [k]: v }));
   const sfSocial = (k, v) => setForm((p) => ({ ...p, social: { ...p.social, [k]: v } }));
 
@@ -619,6 +785,16 @@ export default function SellersPage() {
       if (!Array.isArray(nextForm.certifications)) {
         nextForm.certifications = blank().certifications;
       }
+      if (!Array.isArray(nextForm.licenses)) {
+        if (s.fssaiLicense) {
+          nextForm.licenses = [{ id: uid(), name: "FSSAI License", value: s.fssaiLicense }];
+        } else {
+          nextForm.licenses = [];
+        }
+      }
+      if (!Array.isArray(nextForm.preferredStates)) {
+        nextForm.preferredStates = [];
+      }
     }
     
     setForm(nextForm);
@@ -630,7 +806,7 @@ export default function SellersPage() {
 
   const pc = form.primaryColor || "#2d5a27";
 
-  /* ══════════════════════════════════════════════════ RENDER */
+  // Render view
   return (
     <div className="min-h-screen bg-[#f4f6fb]" style={{ fontFamily: "'Inter',sans-serif" }}>
       {!formOpen && (
@@ -643,7 +819,11 @@ export default function SellersPage() {
               </div>
               <div>
                 <h1 className="font-black text-gray-900 text-base leading-none">Seller Portals</h1>
-                <p className="text-gray-400 text-[11px] mt-0.5 font-medium">{sellers.length} sellers listed</p>
+                {user?.role === "admin" ? (
+                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">{sellers.length} sellers listed</p>
+                ) : (
+                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">Manage seller profile</p>
+                )}
               </div>
             </div>
             <button onClick={() => openForm()}
@@ -707,6 +887,7 @@ export default function SellersPage() {
                             </button>
                             <button onClick={() => { window.open(`/${s.slug}`, "_blank"); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><ExternalLink size={13} /> View Site</button>
                             <div className="border-t border-gray-100 my-1" />
+                            <button onClick={() => { handleTransferToBuyer(s.id); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 text-left"><ArrowRightLeft size={13} /> Transfer to Buyer</button>
                             <button onClick={() => { setDelId(s.id); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 text-left"><Trash2 size={13} /> Delete</button>
                           </div>
                         )}
@@ -785,7 +966,7 @@ export default function SellersPage() {
         </>
       )}
 
-      {/* ═══════════════ BUYER STUDIO ═══════════════ */}
+      {/* Seller Form Studio */}
       {formOpen && (
         <div className="w-full flex flex-col" style={{ minHeight: '100vh', background: '#f1f5f9' }}>
                     <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
@@ -802,8 +983,8 @@ export default function SellersPage() {
                     : <span className="text-white font-black text-sm">{ini(form.name || "BR")}</span>}
                 </div>
                 <div>
-                  <h1 className="font-black text-gray-900 text-base leading-tight">{editing ? (form.name || "Edit Seller") : "New Seller Studio"}</h1>
-                  {form.name && <p className="text-indigo-600 text-[11px] font-bold mt-0.5">/{slugify(form.name)}</p>}
+                  <h1 className="font-black text-gray-900 text-sm sm:text-base leading-tight truncate max-w-[130px] min-[400px]:max-w-[200px] sm:max-w-none">{editing ? (form.name || "Edit Seller") : "New Seller Studio"}</h1>
+                  {form.name && <p className="text-indigo-600 text-[10px] sm:text-[11px] font-bold mt-0.5 truncate max-w-[130px] min-[400px]:max-w-[200px] sm:max-w-none">/{slugify(form.name)}</p>}
                 </div>
               </div>
             </div>
@@ -859,7 +1040,7 @@ export default function SellersPage() {
             <div className="flex-1 overflow-y-auto" ref={scrollRef}>
               <div className="max-w-5xl mx-auto p-3 sm:p-5 md:p-8 space-y-10">
 
-                {/* ══ IDENTITY & BRANDING ══ */}
+                {/* Identity & Branding */}
                 <div className="mb-6">
                   <div className="flex items-center gap-3 mb-1">
                     <span className="px-2.5 py-1 bg-indigo-100 text-indigo-700 font-black text-[10px] rounded-lg uppercase tracking-widest">Step 1</span>
@@ -1063,7 +1244,7 @@ export default function SellersPage() {
                         </div>
                       </div>
                       <div className="space-y-4">
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                           <div>
                             <label className={fieldLabel}>Header BG</label>
                             <input type="color" value={form.headerBgColor || "#ffffff"} onChange={e => sf("headerBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
@@ -1082,12 +1263,26 @@ export default function SellersPage() {
                           </div>
                         </div>
                         <div>
+                          <label className={fieldLabel}>Footer Tagline / Description (Under Company Name)</label>
+                          <textarea
+                            rows={2}
+                            value={form.aboutText || form.footerAbout || ""}
+                            onChange={e => {
+                              sf("aboutText", e.target.value);
+                              sf("footerAbout", e.target.value);
+                            }}
+                            placeholder="e.g. Authentic products crafted with tradition, quality, and passion."
+                            className={inp}
+                          />
+                          <p className="text-[11px] text-gray-400 mt-1">This text appears directly under the company name in the website footer.</p>
+                        </div>
+                        <div>
                           <label className={fieldLabel}>Footer Copyright Text</label>
-                          <input type="text" value={form.footerText || ""} onChange={e => sf("footerText", e.target.value)} placeholder="Enter footer text" className={inp} />
+                          <input type="text" value={form.footerText || ""} onChange={e => sf("footerText", e.target.value)} placeholder="Enter footer copyright text (e.g. Managed by Koop India)" className={inp} />
                         </div>
                         <div className="pt-4 border-t border-gray-100 mt-4">
                           <p className="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Header Colors & Navigation</p>
-                          <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                             <div>
                               <label className={fieldLabel}>Header Background</label>
                               <input type="color" value={form.headerBgColor || "#ffffff"} onChange={e => sf("headerBgColor", e.target.value)} className="w-full h-10 rounded-xl cursor-pointer border border-gray-200" />
@@ -1133,7 +1328,7 @@ export default function SellersPage() {
                             <button type="button" onClick={() => delArr("heroBanners", i)} className={delBtn}><X size={14} /></button>
                           </div>
                         ))}
-                        <div className="grid grid-cols-2 gap-3 pt-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                           <div>
                             <label className={fieldLabel}>Button 1 Text</label>
                             <input type="text" value={form.heroBtn1Text || ""} onChange={e => sf("heroBtn1Text", e.target.value)} placeholder="Enter button text" className={inp} />
@@ -1191,11 +1386,14 @@ export default function SellersPage() {
                         </div>
                         <div className="space-y-2">
                           {(form.whyCards || []).map((card, i) => (
-                            <div key={card.id || i} className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                              <input type="text" value={card.number} onChange={e => setArr("whyCards", i, "number", e.target.value)} placeholder="Enter number" className="w-14 text-center bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none" style={{ padding: "8px 4px" }} />
-                              <input type="text" value={card.title} onChange={e => setArr("whyCards", i, "title", e.target.value)} placeholder="Enter feature title" className={inp_sm + " flex-1"} />
-                              <input type="text" value={card.description} onChange={e => setArr("whyCards", i, "description", e.target.value)} placeholder="Enter short description" className={inp_sm + " flex-1"} />
-                              <button type="button" onClick={() => delArr("whyCards", i)} className={delBtn}><X size={14} /></button>
+                            <div key={card.id || i} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:gap-2">
+                              <div className="flex items-center justify-between gap-2 sm:justify-start">
+                                <input type="text" value={card.number} onChange={e => setArr("whyCards", i, "number", e.target.value)} placeholder="01" className="w-14 text-center bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none py-2" />
+                                <button type="button" onClick={() => delArr("whyCards", i)} className={`sm:hidden ${delBtn}`}><X size={14} /></button>
+                              </div>
+                              <input type="text" value={card.title} onChange={e => setArr("whyCards", i, "title", e.target.value)} placeholder="Enter feature title" className={inp_sm + " sm:flex-1"} />
+                              <input type="text" value={card.description} onChange={e => setArr("whyCards", i, "description", e.target.value)} placeholder="Enter short description" className={inp_sm + " sm:flex-1"} />
+                              <button type="button" onClick={() => delArr("whyCards", i)} className={`hidden sm:flex ${delBtn}`}><X size={14} /></button>
                             </div>
                           ))}
                         </div>
@@ -1205,20 +1403,20 @@ export default function SellersPage() {
 
                           {/* 🔴 LIVE PREVIEW STRIP */}
                           <div className="rounded-2xl overflow-hidden shadow-inner border border-gray-200" style={{ backgroundColor: form.whyBgColor || "#f5f0e8" }}>
-                            <div className="p-6">
+                            <div className="p-4 sm:p-6">
                               <p className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: form.whyLabelColor || form.secondaryColor || "#f5a623" }}>{form.whyTitle || "WHY US"}</p>
-                              <h2 className="text-xl font-black mb-6 leading-tight" style={{ color: form.whyHeadingColor || "#111827" }}>
+                              <h2 className="text-xl font-black mb-4 sm:mb-6 leading-tight" style={{ color: form.whyHeadingColor || "#111827" }}>
                                 {form.whySubtitle || "Tradition in every blend."}
                               </h2>
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="rounded-3xl p-6 shadow-sm min-h-[200px] flex flex-col" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}>
-                                  <p className="font-black text-2xl mb-4" style={{ color: form.whyNumberColor || form.secondaryColor || "#f5a623", fontFamily: "Georgia, serif" }}>01</p>
-                                  <h3 className="font-black text-sm mb-2" style={{ color: form.whyCardTitleColor || "#111827" }}>Premium Quality</h3>
-                                  <p className="text-xs leading-relaxed" style={{ color: form.whyCardDescColor || "#6b7280" }}>Carefully selected spices for consistent flavour.</p>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm min-h-[140px] sm:min-h-[200px] flex flex-col" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}>
+                                  <p className="font-black text-2xl mb-2 sm:mb-4" style={{ color: form.whyNumberColor || form.secondaryColor || "#f5a623", fontFamily: "Georgia, serif" }}>01</p>
+                                  <h3 className="font-black text-sm mb-1 sm:mb-2" style={{ color: form.whyCardTitleColor || "#111827" }}>Premium Quality</h3>
+                                  <p className="text-xs leading-relaxed break-words" style={{ color: form.whyCardDescColor || "#6b7280" }}>Carefully selected spices for consistent flavour.</p>
                                 </div>
-                                <div className="rounded-3xl p-6 shadow-sm opacity-60 min-h-[200px] flex flex-col" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}>
-                                  <p className="font-black text-2xl mb-4" style={{ color: form.whyNumberColor || form.secondaryColor || "#f5a623", fontFamily: "Georgia, serif" }}>02</p>
-                                  <h3 className="font-black text-sm mb-2" style={{ color: form.whyCardTitleColor || "#111827" }}>Authentic Taste</h3>
+                                <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm opacity-60 min-h-[140px] sm:min-h-[200px] flex flex-col" style={{ backgroundColor: form.whyCardBgColor || "#ffffff" }}>
+                                  <p className="font-black text-2xl mb-2 sm:mb-4" style={{ color: form.whyNumberColor || form.secondaryColor || "#f5a623", fontFamily: "Georgia, serif" }}>02</p>
+                                  <h3 className="font-black text-sm mb-1 sm:mb-2" style={{ color: form.whyCardTitleColor || "#111827" }}>Authentic Taste</h3>
                                   <div className="h-2 w-3/4 rounded-full mt-2 opacity-20" style={{ backgroundColor: form.whyCardDescColor || "#6b7280" }}></div>
                                   <div className="h-2 w-1/2 rounded-full mt-2 opacity-20" style={{ backgroundColor: form.whyCardDescColor || "#6b7280" }}></div>
                                 </div>
@@ -1227,7 +1425,7 @@ export default function SellersPage() {
                           </div>
 
                           {/* 🎨 COLOR CONTROLS GRID */}
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-3 gap-3">
                             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
                               <div className="h-10 border-b border-gray-100 flex-shrink-0" style={{ backgroundColor: form.whyBgColor || "#f5f0e8" }} />
                               <div className="p-3 flex items-center justify-between flex-1">
@@ -1302,11 +1500,14 @@ export default function SellersPage() {
                       </div>
                       <div className="space-y-2">
                         {form.stats.map((s, i) => (
-                          <div key={s.id || i} className="flex items-center gap-2 p-2 bg-gray-50 rounded-xl border border-gray-100">
-                            <input type="text" value={s.icon} onChange={e => setArr("stats", i, "icon", e.target.value)} placeholder="Enter icon" className="w-12 text-center bg-white rounded-lg border border-gray-200 text-sm outline-none" style={{ padding: "8px 4px" }} />
-                            <input type="text" value={s.value} onChange={e => setArr("stats", i, "value", e.target.value)} placeholder="Enter value" className="w-20 bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none" style={{ padding: "8px 10px" }} />
-                            <input type="text" value={s.label} onChange={e => setArr("stats", i, "label", e.target.value)} placeholder="Enter products label" className={inp + " flex-1"} />
-                            <button type="button" onClick={() => delArr("stats", i)} className={delBtn}><X size={14} /></button>
+                          <div key={s.id || i} className="p-2.5 bg-gray-50 rounded-xl border border-gray-100 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:gap-2">
+                            <div className="flex items-center gap-2">
+                              <input type="text" value={s.icon} onChange={e => setArr("stats", i, "icon", e.target.value)} placeholder="📦" className="w-12 text-center bg-white rounded-lg border border-gray-200 text-sm outline-none py-2" />
+                              <input type="text" value={s.value} onChange={e => setArr("stats", i, "value", e.target.value)} placeholder="Value" className="w-24 sm:w-20 bg-white rounded-lg border border-gray-200 text-sm font-bold outline-none py-2 px-2.5" />
+                              <button type="button" onClick={() => delArr("stats", i)} className={`sm:hidden ml-auto ${delBtn}`}><X size={14} /></button>
+                            </div>
+                            <input type="text" value={s.label} onChange={e => setArr("stats", i, "label", e.target.value)} placeholder="Enter products label" className={inp_sm + " sm:flex-1"} />
+                            <button type="button" onClick={() => delArr("stats", i)} className={`hidden sm:flex ${delBtn}`}><X size={14} /></button>
                           </div>
                         ))}
                       </div>
@@ -1314,30 +1515,30 @@ export default function SellersPage() {
                       <div className="pt-4 border-t border-gray-100 space-y-4">
                         <p className="text-xs font-black text-gray-800 uppercase tracking-widest">Stats Bar Styling</p>
 
-                                                <div
+                        <div
                           className="w-full rounded-2xl overflow-hidden shadow-md"
                           style={{ backgroundColor: form.statsBgColor || "#7b1a1a" }}
                         >
-                          <div className="flex items-center justify-around px-4 py-5 gap-2 flex-wrap">
+                          <div className="grid grid-cols-2 min-[480px]:grid-cols-3 md:flex md:items-center md:justify-around p-3 sm:p-5 gap-3 sm:gap-2">
                             {(form.stats || []).filter(s => s.value || s.label).slice(0, 5).map((s, i, arr) => (
-                              <div key={i} className="flex items-center flex-1 min-w-0 justify-center">
-                                <div className="text-center px-4 py-1">
+                              <div key={i} className="flex items-center justify-center min-w-0">
+                                <div className="text-center px-2 sm:px-4 py-1 w-full">
                                   <p
-                                    className="text-2xl font-black leading-tight"
+                                    className="text-lg sm:text-2xl font-black leading-tight truncate"
                                     style={{ color: form.statsValueColor || "#f5c842", fontFamily: "Georgia, serif" }}
                                   >{s.value || "—"}</p>
                                   <p
-                                    className="text-[10px] font-bold tracking-widest uppercase mt-1"
+                                    className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mt-1 break-words line-clamp-2"
                                     style={{ color: form.statsTextColor || "#ffffff" }}
                                   >{s.label || "Label"}</p>
                                 </div>
                                 {i < arr.length - 1 && (
-                                  <div className="w-px self-stretch mx-1 opacity-30" style={{ backgroundColor: form.statsTextColor || "#ffffff" }} />
+                                  <div className="hidden md:block w-px self-stretch mx-1 opacity-30" style={{ backgroundColor: form.statsTextColor || "#ffffff" }} />
                                 )}
                               </div>
                             ))}
                             {(form.stats || []).filter(s => s.value || s.label).length === 0 && (
-                              <p className="text-xs opacity-40 py-2" style={{ color: form.statsTextColor || "#ffffff" }}>Add stats above to see preview</p>
+                              <p className="col-span-full text-xs opacity-40 py-2 text-center" style={{ color: form.statsTextColor || "#ffffff" }}>Add stats above to see preview</p>
                             )}
                           </div>
                         </div>
@@ -1438,7 +1639,7 @@ export default function SellersPage() {
                       </div>
                     </div>
                 </div>
-                {/* ══ ABOUT & VISION ══ */}
+                {/* About & Vision */}
                 <div className="mb-6 mt-16">
                   <div className="flex items-center gap-3 mb-1">
                     <span className="px-2.5 py-1 bg-emerald-100 text-emerald-700 font-black text-[10px] rounded-lg uppercase tracking-widest">Step 2</span>
@@ -1454,9 +1655,15 @@ export default function SellersPage() {
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <label className={fieldLabel}>About / Description (use blank lines between paragraphs)</label>
-                          <textarea rows={7} value={form.about} onChange={e => sf("about", e.target.value)} placeholder="Enter about company details..." className={ta} />
-                          <p className="text-[10px] text-indigo-600 font-semibold mt-1">💡 Tip: Press Enter twice between text to create separate paragraphs on the page.</p>
+                          <label className={fieldLabel}>About / Description</label>
+                          <div className="bg-white">
+                            <ReactQuill 
+                              theme="snow" 
+                              value={form.about} 
+                              onChange={(val) => sf("about", val)} 
+                              placeholder="Enter about company details..."
+                            />
+                          </div>
                         </div>
                         <div>
                           <label className={fieldLabel}>About Text Color</label>
@@ -1510,14 +1717,98 @@ export default function SellersPage() {
                           <div><label className={fieldLabel}>No. of Employees</label><input type="text" value={form.employees} onChange={e => sf("employees", e.target.value)} placeholder="Enter number of employees" className={inp} /></div>
                           <div><label className={fieldLabel}>GST Number</label><input type="text" value={form.gstNumber} onChange={e => sf("gstNumber", e.target.value)} placeholder="Enter GST number" className={inp} /></div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div><label className={fieldLabel}>FSSAI License</label><input type="text" value={form.fssaiLicense} onChange={e => sf("fssaiLicense", e.target.value)} placeholder="Enter FSSAI number" className={inp} /></div>
+                        <div className="grid grid-cols-1 gap-3">
                           <div><label className={fieldLabel}>Full Address</label><input type="text" value={form.address} onChange={e => sf("address", e.target.value)} placeholder="Enter full address" className={inp} /></div>
                         </div>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div><label className={fieldLabel}>City</label><input type="text" value={form.city} onChange={e => sf("city", e.target.value)} placeholder="Enter city" className={inp} /></div>
                           <div><label className={fieldLabel}>State</label><input type="text" value={form.state} onChange={e => sf("state", e.target.value)} placeholder="Enter state" className={inp} /></div>
                           <div><label className={fieldLabel}>PIN Code</label><input type="text" value={form.pincode} onChange={e => sf("pincode", e.target.value)} placeholder="Enter PIN code" className={inp} /></div>
+                        </div>
+
+                        {/* ── Dynamic Licenses & Certifications (Non-mandatory) ── */}
+                        <div className="pt-4 border-t border-gray-100">
+                          <div className="flex items-center justify-between mb-3">
+                            <div>
+                              <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wide flex items-center gap-1.5">
+                                Business Licenses &amp; Certifications <span className="text-gray-400 font-normal lowercase">(optional)</span>
+                              </h4>
+                              <p className="text-[11px] text-gray-400 mt-0.5">Add any applicable licenses (e.g. FSSAI, ISO, MSME/Udyam, IEC, Trade License, Drug License, etc.)</p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => addArr("licenses", { id: uid(), name: "", value: "" })}
+                              className={addBtn}
+                            >
+                              <Plus size={14} /> Add License
+                            </button>
+                          </div>
+
+                          <div className="space-y-2.5">
+                            {(form.licenses || []).map((lic, li) => (
+                              <div key={lic.id || li} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 p-3 bg-gray-50/90 rounded-xl border border-gray-200/80">
+                                <div className="sm:w-5/12">
+                                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">License Name / Type</label>
+                                  <input
+                                    type="text"
+                                    list={`lic-suggestions-${li}`}
+                                    value={lic.name || ""}
+                                    onChange={e => setArr("licenses", li, "name", e.target.value)}
+                                    placeholder="e.g. FSSAI, ISO 9001, MSME"
+                                    className={inp_sm}
+                                  />
+                                  <datalist id={`lic-suggestions-${li}`}>
+                                    <option value="FSSAI License" />
+                                    <option value="ISO 9001:2015" />
+                                    <option value="MSME / Udyam Registration" />
+                                    <option value="IEC (Import Export Code)" />
+                                    <option value="Trade License" />
+                                    <option value="Drug License" />
+                                    <option value="Factory License" />
+                                    <option value="CE Certification" />
+                                    <option value="GMP Certified" />
+                                    <option value="Pollution Board NOC" />
+                                  </datalist>
+                                </div>
+                                <div className="flex-1">
+                                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">License / Registration Number</label>
+                                  <input
+                                    type="text"
+                                    value={lic.value || ""}
+                                    onChange={e => {
+                                      setArr("licenses", li, "value", e.target.value);
+                                      if ((lic.name || "").toLowerCase().includes("fssai")) {
+                                        sf("fssaiLicense", e.target.value);
+                                      }
+                                    }}
+                                    placeholder="Enter license / registration number"
+                                    className={inp_sm}
+                                  />
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => delArr("licenses", li)}
+                                  className="w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-50 hover:text-red-600 transition flex-shrink-0 self-end sm:self-center mt-auto sm:mt-5"
+                                  title="Remove License"
+                                >
+                                  <X size={15} />
+                                </button>
+                              </div>
+                            ))}
+
+                            {(!form.licenses || form.licenses.length === 0) && (
+                              <div className="text-center py-4 px-3 bg-gray-50/60 rounded-xl border border-dashed border-gray-200">
+                                <p className="text-xs text-gray-500 font-medium">No licenses currently added.</p>
+                                <button
+                                  type="button"
+                                  onClick={() => addArr("licenses", { id: uid(), name: "FSSAI License", value: form.fssaiLicense || "" })}
+                                  className="mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1.5"
+                                >
+                                  <Plus size={13} /> Add FSSAI or Custom License
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1529,7 +1820,7 @@ export default function SellersPage() {
                         </div>
                         <button type="button" onClick={() => addArr("infrastructure", { id: uid(), title: "", description: "", imageUrl: "" })} className={addBtn}><Plus size={14} /> Add Facility</button>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 min-[440px]:grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                         {form.infrastructure.map((item, i) => (
                           <div key={item.id || i} className="bg-gray-50 rounded-xl p-3 border border-gray-100 space-y-2 relative">
                             <button type="button" onClick={() => delArr("infrastructure", i)} className="absolute top-2 right-2 w-6 h-6 bg-red-100 hover:bg-red-200 text-red-500 rounded-lg flex items-center justify-center cursor-pointer"><X size={12} /></button>
@@ -1542,7 +1833,7 @@ export default function SellersPage() {
                       </div>
                     </div>
                 </div>
-                {/* ══ PRODUCTS / SERVICES ══ */}
+                {/* Products & Services */}
                 <div className="mb-6 mt-16">
                   <div className="flex items-center gap-3 mb-1">
                     <span className="px-2.5 py-1 bg-blue-100 text-blue-700 font-black text-[10px] rounded-lg uppercase tracking-widest">Step 3</span>
@@ -1575,7 +1866,7 @@ export default function SellersPage() {
                                   ? CATEGORY_SUBCATEGORIES[form.category].map(sc => (
                                       <option key={sc} value={sc}>{sc}</option>
                                     ))
-                                  : /* fallback: saari categories ki saari subcategories */
+                                  : /* Fallback: all subcategories across categories */
                                     CATEGORIES.map(cat => (
                                       <optgroup key={cat} label={cat}>
                                         {(CATEGORY_SUBCATEGORIES[cat] || []).map(sc => (
@@ -1606,8 +1897,8 @@ export default function SellersPage() {
                           return (
                           <div key={prod.id || i} className={`rounded-xl border transition-all duration-200 ${isExpanded ? 'bg-white border-indigo-100 shadow-sm' : 'bg-gray-50 border-gray-100'}`}>
                             {/* ── Collapsed Header ── */}
-                            <div className="flex items-center gap-3 p-3">
-                                                            <div className="w-12 h-12 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center border border-gray-200">
+                            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 p-3">
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center border border-gray-200">
                                 {prod.imageUrl
                                   ? <img src={prod.imageUrl} alt="" className="w-full h-full object-contain" />
                                   : <span className="text-xl">{prod.emoji || "📦"}</span>}
@@ -1619,38 +1910,40 @@ export default function SellersPage() {
                                 onChange={e => setArr("products", i, "name", e.target.value)}
                                 onClick={e => e.stopPropagation()}
                                 placeholder="Product name *"
-                                className={inp + " flex-1 text-sm"}
+                                className={inp + " flex-1 min-w-[120px] text-sm"}
                               />
-                                                            <label className="flex items-center gap-1.5 flex-shrink-0 cursor-pointer bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 hover:bg-amber-100 transition">
-                                <input type="checkbox" checked={!!prod.showOnHome} onChange={e => setArr("products", i, "showOnHome", e.target.checked)} className="w-3.5 h-3.5 accent-amber-500" />
-                                <span className="text-[10px] font-black text-amber-700 whitespace-nowrap">🏠 Home</span>
-                              </label>
-                              {/* Expand / Collapse toggle */}
-                              <button
-                                type="button"
-                                onClick={toggleExpand}
-                                className={`w-8 h-8 flex items-center justify-center rounded-xl border transition-all cursor-pointer flex-shrink-0 ${isExpanded ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-gray-100 border-gray-200 text-gray-500 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600'}`}
-                                title={isExpanded ? 'Minimize' : 'Expand'}
-                              >
-                                <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                                  {isExpanded
-                                    ? <path d="m18 15-6-6-6 6" />
-                                    : <path d="m6 9 6 6 6-6" />}
-                                </svg>
-                              </button>
-                                                            <button type="button" onClick={() => delArr("products", i)} className={delBtn}><X size={14} /></button>
+                              <div className="flex items-center gap-1.5 sm:gap-2 ml-auto sm:ml-0">
+                                <label className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0 cursor-pointer bg-amber-50 border border-amber-200 rounded-xl px-2.5 sm:px-3 py-2 sm:py-2.5 hover:bg-amber-100 transition">
+                                  <input type="checkbox" checked={!!prod.showOnHome} onChange={e => setArr("products", i, "showOnHome", e.target.checked)} className="w-3.5 h-3.5 accent-amber-500" />
+                                  <span className="text-[10px] font-black text-amber-700 whitespace-nowrap">🏠 Home</span>
+                                </label>
+                                {/* Expand / Collapse toggle */}
+                                <button
+                                  type="button"
+                                  onClick={toggleExpand}
+                                  className={`w-8 h-8 flex items-center justify-center rounded-xl border transition-all cursor-pointer flex-shrink-0 ${isExpanded ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-gray-100 border-gray-200 text-gray-500 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600'}`}
+                                  title={isExpanded ? 'Minimize' : 'Expand'}
+                                >
+                                  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                                    {isExpanded
+                                      ? <path d="m18 15-6-6-6 6" />
+                                      : <path d="m6 9 6 6 6-6" />}
+                                  </svg>
+                                </button>
+                                <button type="button" onClick={() => delArr("products", i)} className={delBtn}><X size={14} /></button>
+                              </div>
                             </div>
 
                             {/* ── Expanded Body ── */}
                             {isExpanded && (
                               <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
-                                <div className="flex gap-4">
-                                  <div className="flex-shrink-0 space-y-1">
+                                <div className="flex flex-col sm:flex-row gap-4">
+                                  <div className="flex-shrink-0 space-y-1 mx-auto sm:mx-0">
                                     <UploadBox field={`prod_${i}`} value={prod.imageUrl} onPick={e => handleArrayImagePick(e, "products", i)} small />
                                     {ProgPill({field:`products_${i}`,uploadStatus,uploadProgress})}
                                   </div>
                                   <div className="flex-1 space-y-3">
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-4 gap-2">
                                   <div>
                                     <label className={fieldLabel}>Category</label>
                                     <select 
@@ -1760,7 +2053,7 @@ export default function SellersPage() {
 
                                                                 <div className="pt-2 border-t border-gray-100">
                                   <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Nutritional Info (per 100g)</p>
-                                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                                  <div className="grid grid-cols-2 min-[480px]:grid-cols-3 sm:grid-cols-6 gap-2">
                                     {[["nutritionEnergy","Energy (kcal)"],["nutritionProtein","Protein (g)"],["nutritionCarbs","Carbs (g)"],["nutritionSugar","Sugar (g)"],["nutritionFat","Fat (g)"],["nutritionSodium","Sodium (mg)"]].map(([key, label]) => (
                                       <div key={key}><label className={fieldLabel}>{label}</label><input type="text" value={prod[key] || ""} onChange={e => setArr("products", i, key, e.target.value)} placeholder="0" className={inp_sm} /></div>
                                     ))}
@@ -1798,7 +2091,7 @@ export default function SellersPage() {
                       </div>
                     </div>
                 </div>
-                {/* ══ CONTACT & SOCIAL ══ */}
+                {/* Contact & Social */}
                 <div className="mb-6 mt-16">
                   <div className="flex items-center gap-3 mb-1">
                     <span className="px-2.5 py-1 bg-rose-100 text-rose-700 font-black text-[10px] rounded-lg uppercase tracking-widest">Step 4</span>
@@ -1836,8 +2129,12 @@ export default function SellersPage() {
                           </label>
                         )}
                         <div>
-                          <label className={fieldLabel}>Email Address</label>
-                          <input type="email" value={form.email} onChange={e => sf("email", e.target.value)} placeholder="Enter email address" className={inp} />
+                          <label className={fieldLabel}>Portal Login Email</label>
+                          <input type="email" value={form.email} onChange={e => sf("email", e.target.value)} placeholder="contact@company.com" className={inp} />
+                        </div>
+                        <div>
+                          <label className={fieldLabel}>Portal Login Password</label>
+                          <input type="text" value={form.password || ""} onChange={e => sf("password", e.target.value)} placeholder="Minimum 6 characters" className={inp} />
                         </div>
                       </div>
                     </div>

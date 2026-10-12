@@ -172,9 +172,7 @@ const stats = [
   },
 ];
 
-/* ─────────────────────────────────────────
-   WHY KOOP
-───────────────────────────────────────── */
+// Why Choose Koop Data
 const whyKoop = [
   {
     icon: <Users className="w-6 h-6" />,
@@ -208,9 +206,7 @@ const whyKoop = [
   },
 ];
 
-/* ─────────────────────────────────────────
-   PROCESS STEPS
-───────────────────────────────────────── */
+// Process Steps Data
 const steps = [
   {
     num: "01",
@@ -244,9 +240,7 @@ const steps = [
   },
 ];
 
-/* ─────────────────────────────────────────
-   FAQ ACCORDION ITEM
-───────────────────────────────────────── */
+// FAQ Accordion Item Component
 const FAQItem = ({ q, a, isOpen, onToggle }) => (
   <div className="border border-gray-100 rounded-2xl overflow-hidden mb-3 shadow-sm">
     <button
@@ -272,9 +266,7 @@ const FAQItem = ({ q, a, isOpen, onToggle }) => (
   </div>
 );
 
-/* ─────────────────────────────────────────
-   MAIN PAGE
-───────────────────────────────────────── */
+// ISO Certification Page Component
 const ISOCertificationPage = () => {
   const { isOpen, onOpenModal, onCloseModal } = useModal();
   const [openFAQ, setOpenFAQ] = useState(null);
@@ -283,7 +275,7 @@ const ISOCertificationPage = () => {
 
   return (
     <>
-      {/* ─── SEO META ─── */}
+      {/* SEO Meta */}
       <Head>
         <title>
           ISO Certification in India | ISO 9001, 14001, 22000, 45001 | Koop
@@ -314,7 +306,7 @@ const ISOCertificationPage = () => {
       </Head>
 
       <div className="bg-white text-gray-700 font-[Outfit,sans-serif]">
-        {/* ─── HERO ─── */}
+        {/* Hero Section */}
         <section className="relative py-14 px-5 bg-gradient-to-br from-[#0A1020] via-[#0F172A] to-[#141D32] text-white overflow-hidden">
                     <div
             className="absolute inset-0 opacity-5"
@@ -412,7 +404,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── TRUST BAR ─── */}
+        {/* Trust Indicators Bar */}
         <div className="bg-[#F97316] py-3 px-5">
           <div className="max-w-7xl mx-auto flex flex-wrap justify-center gap-x-8 gap-y-1 text-white text-xs font-medium">
             {[
@@ -427,7 +419,7 @@ const ISOCertificationPage = () => {
           </div>
         </div>
 
-        {/* ─── WHAT IS ISO ─── */}
+        {/* What is ISO Section */}
         <section className="py-16 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -508,7 +500,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── ISO TYPES ─── */}
+        {/* ISO Standards Types */}
         <section className="py-14 px-5 bg-[#0F172A]">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -562,7 +554,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── DOCUMENTS ─── */}
+        {/* Documents Required */}
         <section className="py-14 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -644,7 +636,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── PROCESS ─── */}
+        {/* Step-by-Step Process */}
         <section className="py-14 px-5 bg-[#0F172A]">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -695,7 +687,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── COMPLIANCE & VALIDITY ─── */}
+        {/* Compliance & Validity */}
         <section className="py-14 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-start">
@@ -780,7 +772,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── WHY KOOP ─── */}
+        {/* Why Choose Koop */}
         <section className="pb-14 px-5">
           <div className="max-w-7xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-600 rounded-full px-4 py-1.5 mb-4 text-xs font-semibold uppercase tracking-wide">
@@ -815,7 +807,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── INDUSTRIES ─── */}
+        {/* Industries Served */}
         <section className="py-14 px-5 bg-[#0F172A]">
           <div className="max-w-7xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-4 py-1.5 mb-4 text-xs font-semibold uppercase tracking-wide text-orange-300">
@@ -867,7 +859,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── FAQ ─── */}
+        {/* Frequently Asked Questions */}
         <section className="py-14 px-5">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -923,7 +915,7 @@ const ISOCertificationPage = () => {
           </div>
         </section>
 
-        {/* ─── ENQUIRY MODAL ─── */}
+        {/* Enquiry Modal */}
         <EnquiryModal isOpen={isOpen} onClose={onCloseModal} />
       </div>
     </>

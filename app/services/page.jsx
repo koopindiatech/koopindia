@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { addEnquiry } from "@/lib/enquiryService";
+import { AlertCircle } from "lucide-react";
 
 const categories = [
   {
@@ -491,9 +492,10 @@ function EnquiryForm({
           />
 
           {error && (
-            <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-              ⚠️ {error}
-            </p>
+            <div className="flex items-start gap-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl px-3.5 py-2.5 font-medium">
+              <AlertCircle size={14} className="flex-shrink-0 text-red-500 mt-0.5" />
+              <span>{error}</span>
+            </div>
           )}
 
           <button

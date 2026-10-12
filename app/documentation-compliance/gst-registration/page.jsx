@@ -1,8 +1,6 @@
 import GSTContent from "./GSTContent";
 
-/* ─────────────────────────────────────────────────────────────
-   STRUCTURED DATA – Service + FAQPage + LocalBusiness
-───────────────────────────────────────────────────────────── */
+// Structured Data Schema (Service, FAQPage, LocalBusiness)
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
@@ -155,9 +153,7 @@ const faqSchema = {
   ],
 };
 
-/* ─────────────────────────────────────────────────────────────
-   BREADCRUMB SCHEMA – Google SERP breadcrumbs
-───────────────────────────────────────────────────────────── */
+// Breadcrumb Schema for Search Engines
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -183,9 +179,7 @@ const breadcrumbSchema = {
   ],
 };
 
-/* ─────────────────────────────────────────────────────────────
-   METADATA – 20+ targeted keywords, city-specific H1 intent
-───────────────────────────────────────────────────────────── */
+// SEO Metadata Configuration
 export const metadata = {
   title:
     "GST Registration Consultant in Delhi 2025 | Get GSTIN in 7 Days | Koop India",

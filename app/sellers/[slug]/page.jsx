@@ -14,6 +14,13 @@ const SOCIAL_ICONS = {
 const NAV = ["home", "about", "products", "contact"];
 const NL = { home: "Home", about: "About Us", products: "Products", contact: "Contact Us" };
 
+const formatRichHtml = (html = "") => {
+  if (!html) return "";
+  return String(html)
+    .replace(/&nbsp;/g, " ")
+    .replace(/\u00A0/g, " ");
+};
+
 /* Removed homeGridCls since we are using flex center for all grids */
 
 export default function SellerPublicPage() {
@@ -181,6 +188,12 @@ export default function SellerPublicPage() {
     window.location.href = mailto;
   };
 
+  const licenseRows = (Array.isArray(seller.licenses) && seller.licenses.length > 0)
+    ? seller.licenses
+        .filter(l => l && (l.name || l.value))
+        .map(l => ({ label: l.name || "License / Registration", value: l.value }))
+    : (seller.fssaiLicense ? [{ label: "FSSAI License", value: seller.fssaiLicense }] : []);
+
   const compRows = [
     { label: "Company Name", value: seller.companyName || seller.name },
     { label: "Category / Industry", value: seller.category },
@@ -189,7 +202,7 @@ export default function SellerPublicPage() {
     { label: "Establishment Year", value: seller.establishmentYear },
     { label: "No. of Employees", value: seller.employees },
     { label: "GST Number", value: seller.gstNumber },
-    { label: "FSSAI License", value: seller.fssaiLicense },
+    ...licenseRows,
     { label: "Address", value: [seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).join(", ") },
   ].filter(r => r.value);
 
@@ -395,8 +408,9 @@ export default function SellerPublicPage() {
               </>
             )}
 
-            <div className="relative z-20 max-w-7xl mx-auto px-6 sm:px-10 w-full flex justify-center sm:justify-start">
-              <div className="flex flex-wrap gap-3">
+            {/* Desktop Floating Banner Buttons */}
+            <div className="hidden sm:flex absolute sm:bottom-10 lg:bottom-14 left-0 right-0 z-20 max-w-7xl mx-auto px-6 sm:px-10 justify-start pointer-events-none">
+              <div className="flex flex-row gap-3 pointer-events-auto">
                 <button onClick={() => setTab("products")}
                   className="text-white font-bold px-6 py-3 rounded-xl text-sm shadow-lg hover:opacity-95 transition cursor-pointer"
                   style={{ backgroundColor: pc }}>
@@ -408,6 +422,22 @@ export default function SellerPublicPage() {
                   {btn2}
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* Mobile Action Bar (clean 2-column layout, unblocks hero banner) */}
+          <div className="sm:hidden px-3.5 py-3 bg-white border-b border-gray-100 shadow-xs">
+            <div className="grid grid-cols-2 gap-2.5">
+              <button onClick={() => setTab("products")}
+                className="w-full text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow-sm hover:opacity-95 active:scale-95 transition cursor-pointer text-center truncate"
+                style={{ backgroundColor: pc }}>
+                {btn1}
+              </button>
+              <button onClick={() => setTab("contact")}
+                className="w-full font-bold py-2.5 px-3 rounded-xl text-xs border-2 hover:bg-gray-50 active:scale-95 transition cursor-pointer text-center truncate bg-white shadow-xs"
+                style={{ borderColor: pc, color: pc }}>
+                {btn2}
+              </button>
             </div>
           </div>
 
@@ -438,7 +468,27 @@ export default function SellerPublicPage() {
               <div className="max-w-5xl mx-auto text-center">
                 <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
                 <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-5">{seller.name}</h2>
-                <p className="text-gray-700 leading-relaxed text-base">{seller.homeAbout || seller.about || seller.description}</p>
+                <div 
+                  className="prose max-w-none text-base mx-auto text-gray-700 break-words" 
+                  dangerouslySetInnerHTML={{ __html: formatRichHtml(seller.homeAbout || seller.about || seller.description || "") }} 
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Preferred Distribution States (Home) */}
+          {(seller.preferredStates?.length > 0) && (
+            <div className="py-12 px-5 sm:px-8" style={{ backgroundColor: homeBg }}>
+              <div className="max-w-7xl mx-auto text-center">
+                <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>Where We Supply</p>
+                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-8">Distribution Network</h3>
+                <div className="flex flex-wrap justify-center gap-3 max-w-7xl mx-auto">
+                  {seller.preferredStates.map((state, i) => (
+                    <span key={i} className="px-4 py-2 rounded-xl text-sm font-bold bg-white border border-gray-200 shadow-sm transition hover:-translate-y-0.5" style={{ color: pc }}>
+                      <span className="opacity-70 mr-1.5">📍</span>{state}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -540,11 +590,30 @@ export default function SellerPublicPage() {
                 <div>
                   <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
                   <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-5 leading-tight">About {seller.name}</h2>
-                  {(seller.about || seller.description || "").split(/\n\n+/).filter(p => p.trim()).map((para, pi) => (
-                    <p key={pi} className="leading-relaxed text-base mb-4 last:mb-0" style={{ color: aboutTextColor }}>{para.trim()}</p>
-                  ))}
+                  <div 
+                    className="prose max-w-none text-base leading-relaxed break-words [&>p]:mb-4 [&>p:last-child]:mb-0 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>h1]:text-2xl [&>h2]:text-xl [&>h3]:text-lg [&>h1]:font-black [&>h2]:font-black [&>h3]:font-black" 
+                    style={{ color: aboutTextColor }}
+                    dangerouslySetInnerHTML={{ __html: formatRichHtml(seller.about || seller.description || "") }} 
+                  />
                 </div>
                 {seller.aboutImageUrl && <img src={seller.aboutImageUrl} alt={seller.name} className="w-full h-72 object-cover rounded-2xl shadow-lg" />}
+              </div>
+            </div>
+          )}
+
+          {/* Preferred Distribution States (About) */}
+          {(seller.preferredStates?.length > 0) && (
+            <div className="py-16" style={{ backgroundColor: aboutBg }}>
+              <div className="max-w-7xl mx-auto px-5 sm:px-8">
+                <h2 className="text-3xl font-black text-center mb-2" style={{ color: aboutCompanyText }}>Distribution Network</h2>
+                <div className="w-20 h-1 rounded-full mx-auto mb-10" style={{ backgroundColor: pc }} />
+                <div className="flex flex-wrap justify-center gap-3 max-w-7xl mx-auto">
+                  {seller.preferredStates.map((state, i) => (
+                    <span key={i} className="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 shadow-sm hover:shadow-md transition-shadow" style={{ borderColor: pc + "30", color: aboutCompanyText }}>
+                      <span className="mr-2 text-base" style={{ color: pc }}>📍</span>{state}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -1164,7 +1233,7 @@ export default function SellerPublicPage() {
             <div className="lg:pr-4">
               <h3 className="text-xl font-bold mb-4" style={{ color: sc, fontFamily: 'Georgia, serif' }}>{seller.name.toUpperCase()}</h3>
               <p className="text-sm opacity-90 leading-relaxed font-medium mb-6">
-                {seller.aboutText ? seller.aboutText.slice(0, 150) + "..." : "Authentic products crafted with tradition, quality, and passion."}
+                {seller.aboutText || seller.footerAbout || "Authentic products crafted with tradition, quality, and passion."}
               </p>
               {Object.values(social).some(Boolean) && (
                 <div className="flex gap-3">

@@ -16,9 +16,7 @@ const Skeleton = ({ cls }) => <div className={`animate-pulse bg-gray-200 rounded
 const SELLER_CATS = ["Food & Beverages", "Spices & Masalas", "Healthcare", "Industrial", "Home Care", "Cosmetics"];
 const BUYER_CATS  = ["FMCG", "Textile", "Electronics", "Pharma", "Agro", "Apparel"];
 
-/* ══════════════════════════════════════════════════════
-   1. LATEST SELLERS with its own search bar
-══════════════════════════════════════════════════════ */
+// 1. Latest Sellers section with dedicated search and filtering
 export function HomeLatestSellers() {
   const [latest, setLatest]     = useState([]);
   const [results, setResults]   = useState(null); // null = not searched
@@ -154,9 +152,7 @@ export function HomeLatestSellers() {
   );
 }
 
-/* ══════════════════════════════════════════════════════
-   2. LATEST BUYERS with its own search bar
-══════════════════════════════════════════════════════ */
+// 2. Latest Buyers section with dedicated search and filtering
 export function HomeLatestBuyers() {
   const [latest, setLatest]       = useState([]);
   const [results, setResults]     = useState(null);

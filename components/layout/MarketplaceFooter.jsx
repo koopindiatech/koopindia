@@ -19,10 +19,10 @@ const MarketplaceFooter = () => {
   return (
     <footer className="bg-[#0d1b2e] text-gray-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 justify-between">
 
           {/* Logo + Description + Socials */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-5">
             <Link href="#" onClick={(e) => { e.preventDefault(); window.scrollTo(0,0); }} className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-black text-sm">K</span>
@@ -41,14 +41,16 @@ const MarketplaceFooter = () => {
             </p>
                         <div className="flex items-center gap-3">
               {[
-                { icon: <FaFacebook size={15} />, href: "#" },
-                { icon: <FaInstagram size={15} />, href: "#" },
-                { icon: <FaLinkedin size={15} />, href: "#" },
-                { icon: <FaYoutube size={15} />, href: "#" },
+                { icon: <FaFacebook size={15} />, href: "https://www.facebook.com/KoopIndiaa" },
+                { icon: <FaInstagram size={15} />, href: "https://www.instagram.com/koop_india/?hl=en" },
+                { icon: <FaLinkedin size={15} />, href: "https://www.linkedin.com/company/koop-india/" },
+                { icon: <FaYoutube size={15} />, href: "https://www.youtube.com/@KoopIndia" },
               ].map(({ icon, href }, i) => (
                 <a
                   key={i}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#f97316] flex items-center justify-center transition-colors text-gray-300 hover:text-white"
                 >
                   {icon}
@@ -57,54 +59,43 @@ const MarketplaceFooter = () => {
             </div>
           </div>
 
-                    <div>
-            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+          {/* Quick Links */}
+          <div className="lg:col-span-3">
+            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
               <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
               Quick Links
             </h4>
-            <ul className="space-y-2.5">
-              {[
-                { label: "Home", href: "/marketplace" },
-                { label: "All Brands", href: "/marketplace" },
-                { label: "Categories", href: "/marketplace" },
-              ].map(({ label, href }) => (
-                <li key={label}>
-                  <Link href={href} className="text-[13px] text-gray-400 hover:text-[#f97316] transition-colors">
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-                    <div>
-            <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-              <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
-              Categories
-            </h4>
-            <ul className="space-y-2.5">
-              {[
-                "Food & Beverages",
-                "Health & Wellness",
-                "Industrial & Machinery",
-                "Home Care & Essentials",
-                "Business Tools",
-                "View All Categories",
-              ].map((cat) => {
-                const slug = cat === "View All Categories" ? "" : cat.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-');
-                const href = cat === "View All Categories" ? "/marketplace" : `/marketplace?category=${slug}`;
-                return (
-                <li key={cat}>
-                  <Link href={href} className="text-[13px] text-gray-400 hover:text-[#f97316] transition-colors">
-                    {cat}
-                  </Link>
-                </li>
-              )})}
+            <ul className="text-[13px] text-gray-400 space-y-2.5">
+              <li>
+                <Link href="/marketplace" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
+                  <span className="text-[#f97316]/70 text-xs">›</span> Home Page
+                </Link>
+              </li>
+              <li>
+                <Link href="/sellers" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
+                  <span className="text-[#f97316]/70 text-xs">›</span> Sellers
+                </Link>
+              </li>
+              <li>
+                <Link href="/buyers" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
+                  <span className="text-[#f97316]/70 text-xs">›</span> Buyers
+                </Link>
+              </li>
+              <li>
+                <Link href="/seller-buyer-registration?tab=seller" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
+                  <span className="text-[#f97316]/70 text-xs">›</span> Register as a Seller
+                </Link>
+              </li>
+              <li>
+                <Link href="/seller-buyer-registration?tab=buyer" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
+                  <span className="text-[#f97316]/70 text-xs">›</span> Register as a Buyer
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Contact Info */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-4">
             <h4 className="text-white font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
               <span className="w-4 h-0.5 bg-[#f97316] rounded-full inline-block" />
               Contact Us

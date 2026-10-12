@@ -121,7 +121,7 @@ function LeadDetailsModal({ lead, onClose, onUpdate, sellers, buyers, currentUse
               <div>
                 <h4 className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-4">Lead Information</h4>
                 <div className="flex flex-col">
-                  <InfoRow label="Profile ID" value={lead?.profileId} />
+                  <InfoRow label="Profile ID" value={lead?.profileId || `KI${(lead?.id || "").slice(0, 5).toUpperCase().padStart(5, '0')}`} />
                   <InfoRow label="Source" value={lead?.source} isBadge={true} />
                   <InfoRow label="Name" value={lead?.name} />
                   <InfoRow label="Company" value={lead?.company || lead?.buyerName} />
@@ -350,36 +350,24 @@ export default function LeadsPage() {
       try {
         let snap;
         try {
-          if (isAdmin) {
-            snap = await getDocs(query(collection(db, "leads"), orderBy("createdAt", "desc")));
-          } else if (currentUser?.role === "seller") {
-            snap = await getDocs(query(
-              collection(db, "leads"),
-              where("assignedToSellerSlug", "==", currentUser?.linkedSlug),
-              orderBy("createdAt", "desc")
-            ));
-          } else if (currentUser?.role === "buyer") {
-            snap = await getDocs(query(
-              collection(db, "leads"),
-              where("assignedToBuyerSlug", "==", currentUser?.linkedSlug),
-              orderBy("createdAt", "desc")
-            ));
-          } else {
-            snap = await getDocs(query(
-              collection(db, "leads"),
-              where("assignedTo", "==", currentUser?.id),
-              orderBy("createdAt", "desc")
-            ));
-          }
+          snap = await getDocs(query(collection(db, "leads"), orderBy("createdAt", "desc")));
         } catch {
           snap = await getDocs(collection(db, "leads"));
         }
         let allLeads = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         if (!isAdmin) {
           if (currentUser?.role === "seller") {
-            allLeads = allLeads.filter((l) => l.assignedToSellerSlug === currentUser?.linkedSlug);
+            allLeads = allLeads.filter((l) =>
+              (currentUser?.linkedSlug && (l.assignedToSellerSlug === currentUser.linkedSlug || l.sellerSlug === currentUser.linkedSlug)) ||
+              (currentUser?.linkedId && (l.sellerId === currentUser.linkedId || l.assignedToSellerId === currentUser.linkedId)) ||
+              (currentUser?.id && l.assignedTo === currentUser.id)
+            );
           } else if (currentUser?.role === "buyer") {
-            allLeads = allLeads.filter((l) => l.assignedToBuyerSlug === currentUser?.linkedSlug);
+            allLeads = allLeads.filter((l) =>
+              (currentUser?.linkedSlug && (l.assignedToBuyerSlug === currentUser.linkedSlug || l.buyerSlug === currentUser.linkedSlug)) ||
+              (currentUser?.linkedId && (l.buyerId === currentUser.linkedId || l.assignedToBuyerId === currentUser.linkedId)) ||
+              (currentUser?.id && l.assignedTo === currentUser.id)
+            );
           } else {
             allLeads = allLeads.filter((l) => l.assignedTo === currentUser?.id);
           }
@@ -392,7 +380,7 @@ export default function LeadsPage() {
       }
     };
     load();
-  }, [isAdmin, currentUser?.id]);
+  }, [isAdmin, currentUser?.id, currentUser?.linkedSlug, currentUser?.linkedId]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -469,7 +457,7 @@ export default function LeadsPage() {
       setDelConfirm(null);
     } catch (e) {
       console.error(e);
-      alert("Delete failed.");
+      alert("Failed to delete lead. Please try again.");
     }
   };
 
@@ -493,7 +481,7 @@ export default function LeadsPage() {
       if (selected?.id === id) setSelected(prev => ({ ...prev, ...localUpdatedData }));
     } catch (e) {
       console.error(e);
-      alert("Update failed.");
+      alert("Failed to update lead details. Please try again.");
     } finally {
       setUpdatingLead(false);
     }
@@ -555,7 +543,7 @@ export default function LeadsPage() {
       setShowBulkAssign(false);
     } catch(e) {
       console.error(e);
-      alert("Bulk assignment failed.");
+      alert("Failed to assign leads. Please try again.");
     }
     setBulkAssigning(false);
   };
@@ -598,6 +586,7 @@ export default function LeadsPage() {
     "Not Interested": leads.filter((l) => l.status === "Not Interested").length,
   };
 
+
   return (
     <div className="space-y-5" style={{ fontFamily: "'Inter', sans-serif" }}>
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
@@ -610,7 +599,8 @@ export default function LeadsPage() {
         {loading && <div className="flex items-center gap-2 text-gray-400 text-sm"><Loader2 size={16} className="animate-spin" /> Loading leads...</div>}
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="flex items-center justify-between">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 flex-1">
         {Object.entries(counts).map(([status, count]) => {
           const cfg = statusConfig[status];
           const Icon = cfg.icon;
@@ -625,6 +615,7 @@ export default function LeadsPage() {
             </button>
           );
         })}
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
@@ -687,7 +678,7 @@ export default function LeadsPage() {
                         />
                       </th>
                     )}
-                    {["Profile ID", "Company Name", "Mobile Number", "Mail ID", "City", "Requirement", "Status", isAdmin && "Assigned To", "Time", ""].filter(Boolean).map((h) => (
+                    {["Profile ID", "Company Name", "Mobile Number", "Mail ID", "City", "Requirement", "Status", isAdmin && "Assigned To", "Time", isAdmin && ""].filter(Boolean).map((h) => (
                       <th key={h} className="text-left px-4 py-3 text-gray-400 text-xs font-semibold uppercase tracking-wider whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -716,7 +707,7 @@ export default function LeadsPage() {
                           </td>
                         )}
                         <td className="px-4 py-3">
-                          <span className="text-orange-600 font-bold text-xs bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">{lead.profileId || "—"}</span>
+                          <span className="text-orange-600 font-bold text-xs bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">{lead.profileId || `KI${(lead.id || "").slice(0, 5).toUpperCase().padStart(5, '0')}`}</span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
@@ -727,7 +718,7 @@ export default function LeadsPage() {
                               <p className="text-gray-900 text-xs font-semibold">{lead.company || lead.name || "—"}</p>
                               {isAdmin && (
                                 <p className="text-gray-400 text-[10px]">
-                                  {(lead.source === "buyer_page" || lead.source === "buyer_listing" || lead.buyerId)
+                                   {(lead.source === "buyer_page" || lead.source === "buyer_listing" || lead.buyerId)
                                     ? "Buyer Lead"
                                     : (lead.source === "product_enquiry" || lead.source === "product_page" || lead.source === "contact_page" || lead.sellerName)
                                     ? "Seller Lead"
@@ -789,12 +780,14 @@ export default function LeadsPage() {
                           </td>
                         )}
                         <td className="px-4 py-3 text-gray-400 text-[10px] whitespace-nowrap">{formatTime(lead.assignedToSellerAt || lead.assignedToBuyerAt || lead.createdAt)}</td>
-                        <td className="px-4 py-3">
-                          <button onClick={(e) => { e.stopPropagation(); setDelConfirm(lead.id); }}
-                            className="text-gray-300 hover:text-red-400 transition-colors p-1 rounded-lg hover:bg-red-50">
-                            <Trash2 size={13} />
-                          </button>
-                        </td>
+                        {isAdmin && (
+                          <td className="px-4 py-3">
+                            <button onClick={(e) => { e.stopPropagation(); setDelConfirm(lead.id); }}
+                              className="text-gray-300 hover:text-red-400 transition-colors p-1 rounded-lg hover:bg-red-50">
+                              <Trash2 size={13} />
+                            </button>
+                          </td>
+                        )}
                       </tr>
                     );
                   })}

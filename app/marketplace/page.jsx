@@ -4,6 +4,17 @@ import KoopHomepage from "@/components/ui/KoopHomepage";
 export const metadata = {
   title: "Buyer Directory — Discover Trusted Indian Buyers | Koop India",
   description: "Explore 1000+ verified Indian manufacturers, MSME buyers and startups across Food, Spices, Healthcare, Industrial and more categories on Koop India.",
+  alternates: {
+    canonical: "https://www.koopindia.com/marketplace",
+  },
+  openGraph: {
+    title: "Buyer Directory — Discover Trusted Indian Buyers | Koop India",
+    description: "Explore 1000+ verified Indian manufacturers, MSME buyers and startups across Food, Spices, Healthcare, Industrial and more categories on Koop India.",
+    url: "https://www.koopindia.com/marketplace",
+    siteName: "Koop India",
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function MarketplacePage() {

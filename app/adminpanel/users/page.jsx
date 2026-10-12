@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   UserCog, Plus, Trash2, Edit2, Shield, Eye, EyeOff,
   Users, Check, X, Loader2, RefreshCw, UserPlus, Store, ShoppingBag,
-  ExternalLink, Link as LinkIcon,
+  ExternalLink, Link as LinkIcon, AlertCircle,
 } from "lucide-react";
 import {
   getFirestoreUsers, createFirestoreUser, updateFirestoreUser,
@@ -16,7 +16,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 
 const inp = "w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100 font-medium transition-all";
 
-// ─── Shared Delete Confirm Modal ─────────────────────────────────────
+// Reusable Delete Confirmation Modal
 function DeleteModal({ item, onConfirm, onCancel, saving, type }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
@@ -38,7 +38,7 @@ function DeleteModal({ item, onConfirm, onCancel, saving, type }) {
   );
 }
 
-// ─── Admin Users Tab ─────────────────────────────────────────────────
+// Admin Users Management Tab
 function AdminUsersTab() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -140,8 +140,9 @@ function AdminUsersTab() {
                   <div className="flex-1 min-w-0">
                     <p className="font-black text-gray-900 text-sm truncate">{u.name}</p>
                     <p className="text-gray-400 text-xs truncate">{u.email}</p>
-                    <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 ${u.role === "admin" ? "bg-orange-100 text-orange-700" : "bg-blue-100 text-blue-700"}`}>
-                      {u.role === "admin" ? "⚡ Admin" : "👤 Team Member"}
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full mt-1.5 ${u.role === "admin" ? "bg-orange-50 text-orange-700 border border-orange-200" : "bg-blue-50 text-blue-700 border border-blue-200"}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${u.role === "admin" ? "bg-orange-500" : "bg-blue-500"}`} />
+                      {u.role === "admin" ? "Administrator" : "Team Member"}
                     </span>
                   </div>
                 </div>
@@ -163,13 +164,13 @@ function AdminUsersTab() {
         </div>
       )}
 
-            {showModal && (
+      {showModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h2 className="text-gray-900 font-black text-lg">{editUser ? "Edit Admin User" : "Create Admin User"}</h2>
-                <p className="text-gray-400 text-xs mt-0.5">Access to admin panel</p>
+                <p className="text-gray-400 text-xs mt-0.5">Manage administrator credentials and permissions</p>
               </div>
               <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-700 p-1.5 rounded-xl hover:bg-gray-100 transition"><X size={18} /></button>
             </div>
@@ -177,11 +178,11 @@ function AdminUsersTab() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Full Name *</label>
-                  <input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Enter your name"className={inp} />
+                  <input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Full name (e.g. John Doe)" className={inp} />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Email *</label>
-                  <input type="email" value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} placeholder="Enter your email address" className={inp} />
+                  <input type="email" value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} placeholder="admin@koopindia.com" className={inp} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -190,7 +191,7 @@ function AdminUsersTab() {
                     Password {editUser && <span className="text-gray-400 normal-case font-normal">(optional)</span>}
                   </label>
                   <div className="relative">
-                    <input type={showPass ? "text" : "password"} value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder={editUser ? "Leave blank to keep" : "Create password"} className={inp + " pr-10"} />
+                    <input type={showPass ? "text" : "password"} value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder={editUser ? "Leave blank to keep unchanged" : "Minimum 6 characters"} className={inp + " pr-10"} />
                     <button type="button" onClick={() => setShowPass((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
                       {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
@@ -200,11 +201,16 @@ function AdminUsersTab() {
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Role *</label>
                   <select value={form.role} onChange={(e) => setForm((p) => ({ ...p, role: e.target.value }))} className={inp}>
                     <option value="user">Team Member</option>
-                    <option value="admin">Admin</option>
+                    <option value="admin">Administrator</option>
                   </select>
                 </div>
               </div>
-              {error && <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-4 py-3 rounded-xl">⚠️ {error}</div>}
+              {error && (
+                <div className="flex items-start gap-2.5 bg-red-50/90 border border-red-200 text-red-800 text-xs font-medium px-3.5 py-2.5 rounded-xl">
+                  <AlertCircle size={15} className="text-red-500 flex-shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+              )}
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowModal(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
@@ -220,7 +226,7 @@ function AdminUsersTab() {
   );
 }
 
-// ─── Reusable Portal Users Tab (for both Seller and Buyer) ──────────
+// Reusable Portal Users Tab (for both Seller and Buyer)
 function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove, slugCollection, slugLabelField, portalPath }) {
   const [portalUsers, setPortalUsers] = useState([]);
   const [slugOptions, setSlugOptions] = useState([]);
@@ -245,7 +251,12 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
         getDocs(collection(db, slugCollection)),
       ]);
       setPortalUsers(users);
-      setSlugOptions(slugSnap.docs.map((d) => ({ id: d.id, slug: d.data().slug, label: d.data()[slugLabelField] || d.data().slug })));
+      setSlugOptions(slugSnap.docs.map((d) => ({
+        id: d.id,
+        slug: d.data().slug,
+        label: d.data()[slugLabelField] || d.data().slug,
+        status: d.data().status || "paused",
+      })));
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
   };
@@ -259,14 +270,31 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
     if (!form.name.trim() || !form.email.trim()) { setError("Name and email are required."); return; }
     if (!editUser && !form.password.trim()) { setError("Password is required."); return; }
     setSaving(true); setError("");
+    const selectedOption = slugOptions.find(s => s.slug === form.linkedSlug);
+    const linkedId = selectedOption?.id || editUser?.linkedId || "";
     try {
       if (editUser) {
-        const data = { name: form.name, email: form.email.toLowerCase(), linkedSlug: form.linkedSlug, status: form.status };
+        const data = {
+          name: form.name,
+          email: form.email.toLowerCase().trim(),
+          linkedSlug: form.linkedSlug,
+          linkedId: linkedId,
+          role: isSeller ? "seller" : "buyer",
+          status: form.status,
+        };
         if (form.password.trim()) data.password = form.password;
-        const r = await update(editUser.firestoreId, data);
+        const r = await update(editUser.firestoreId || editUser.id, data);
         if (!r.success) { setError(r.error || "Update failed"); setSaving(false); return; }
       } else {
-        const r = await create({ name: form.name, email: form.email, password: form.password, linkedSlug: form.linkedSlug, status: form.status });
+        const r = await create({
+          name: form.name,
+          email: form.email.toLowerCase().trim(),
+          password: form.password,
+          linkedSlug: form.linkedSlug,
+          linkedId: linkedId,
+          role: isSeller ? "seller" : "buyer",
+          status: form.status,
+        });
         if (!r.success) { setError(r.error || "Create failed"); setSaving(false); return; }
       }
       setShowModal(false); await load();
@@ -276,15 +304,16 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
 
   const handleDelete = async (u) => {
     setSaving(true);
-    try { await remove(u.firestoreId); await load(); }
+    try { await remove(u.firestoreId || u.id); await load(); }
     catch (e) { console.error(e); }
     finally { setSaving(false); setDelConfirm(null); }
   };
 
   const toggleStatus = async (u) => {
-    const newStatus = u.status === "active" ? "suspended" : "active";
-    await update(u.firestoreId, { status: newStatus });
-    setPortalUsers((prev) => prev.map((x) => (x.firestoreId === u.firestoreId ? { ...x, status: newStatus } : x)));
+    const id = u.firestoreId || u.id;
+    const newStatus = u.status === "active" ? "paused" : "active";
+    await update(id, { status: newStatus });
+    setPortalUsers((prev) => prev.map((x) => ((x.firestoreId === id || x.id === id) ? { ...x, status: newStatus } : x)));
   };
 
   const Icon = isSeller ? Store : ShoppingBag;
@@ -321,7 +350,13 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {portalUsers.map((u, index) => (
+          {portalUsers.map((u, index) => {
+            const linkedListing = slugOptions.find(s => s.slug === u.linkedSlug || s.id === u.linkedId);
+            const isListingLive = linkedListing ? linkedListing.status === "live" : true;
+            const isUserActive = u.status === "active";
+            const effectiveCanLogin = isUserActive && isListingLive;
+
+            return (
             <div key={u.firestoreId || u.id || u.uid || index} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-5">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm text-white font-black text-base"
@@ -331,9 +366,30 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                 <div className="flex-1 min-w-0">
                   <p className="font-black text-gray-900 text-sm truncate">{u.name}</p>
                   <p className="text-gray-400 text-xs truncate">{u.email}</p>
-                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full mt-1 ${u.status === "suspended" ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
-                    {u.status === "suspended" ? "⛔ Suspended" : "✅ Active"}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
+                      u.status === "suspended" ? "bg-red-50 text-red-700 border border-red-200" :
+                      !effectiveCanLogin ? "bg-amber-50 text-amber-700 border border-amber-200" :
+                      "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        u.status === "suspended" ? "bg-red-500" :
+                        !effectiveCanLogin ? "bg-amber-500" :
+                        "bg-emerald-500"
+                      }`} />
+                      {u.status === "suspended" ? "Suspended" :
+                       !isListingLive ? "Listing Paused" :
+                       !isUserActive ? "Account Paused" :
+                       "Active & Live"}
+                    </span>
+                    {linkedListing && (
+                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-md border ${
+                        linkedListing.status === "live" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-gray-100 text-gray-600 border border-gray-200"
+                      }`}>
+                        Listing: {linkedListing.status || "paused"}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -352,16 +408,17 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                 <button onClick={() => toggleStatus(u)}
                   className="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-xl border transition"
                   style={u.status === "active"
-                    ? { borderColor: "#fecaca", background: "#fef2f2", color: "#dc2626" }
+                    ? { borderColor: "#fde68a", background: "#fefce8", color: "#b45309" }
                     : { borderColor: "#bbf7d0", background: "#f0fdf4", color: "#16a34a" }}>
-                  {u.status === "active" ? "⛔ Suspend" : "✅ Activate"}
+                  {u.status === "active" ? "Pause Access" : "Activate Access"}
                 </button>
                 <button onClick={() => setDelConfirm(u)} className="w-9 flex items-center justify-center rounded-xl border border-red-100 bg-red-50 hover:bg-red-100 text-red-500 transition">
                   <Trash2 size={13} />
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -379,11 +436,11 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Full Name *</label>
-                  <input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Contact person name" className={inp} />
+                  <input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="Primary contact name" className={inp} />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Email *</label>
-                  <input type="email" value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} placeholder="login@example.com" className={inp} />
+                  <input type="email" value={form.email} onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))} placeholder="business@company.com" className={inp} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -392,17 +449,18 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                     Password {editUser && <span className="text-gray-400 normal-case font-normal">(optional)</span>}
                   </label>
                   <div className="relative">
-                    <input type={showPass ? "text" : "password"} value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder={editUser ? "Leave blank to keep" : "Set password"} className={inp + " pr-10"} />
+                    <input type={showPass ? "text" : "password"} value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder={editUser ? "Leave blank to keep unchanged" : "Minimum 6 characters"} className={inp + " pr-10"} />
                     <button type="button" onClick={() => setShowPass((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
                       {showPass ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Status</label>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Account Status</label>
                   <select value={form.status} onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))} className={inp}>
-                    <option value="active">Active</option>
-                    <option value="suspended">Suspended</option>
+                    <option value="active">Active (Access enabled when listing is Live)</option>
+                    <option value="paused">Paused (Access temporarily disabled)</option>
+                    <option value="suspended">Suspended (Access permanently revoked)</option>
                   </select>
                 </div>
               </div>
@@ -457,7 +515,14 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                               setSearchQuery("");
                             }}
                           >
-                            {s.label} <span className={`text-xs font-normal ${form.linkedSlug === s.slug ? 'text-orange-500' : 'text-gray-400'}`}>({s.slug})</span>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="truncate">
+                                {s.label} <span className={`text-xs font-normal ${form.linkedSlug === s.slug ? 'text-orange-500' : 'text-gray-400'}`}>({s.slug})</span>
+                              </span>
+                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 ${s.status === "live" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                                {s.status === "live" ? "Live" : "Paused"}
+                              </span>
+                            </div>
                           </div>
                         ))}
                         {slugOptions.filter(s => s.label.toLowerCase().includes(searchQuery.toLowerCase()) || s.slug.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
@@ -471,7 +536,12 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                 </div>
                 <p className="text-[11px] text-gray-400 mt-1">This user will only see leads from this listing.</p>
               </div>
-              {error && <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-4 py-3 rounded-xl">⚠️ {error}</div>}
+              {error && (
+                <div className="flex items-start gap-2.5 bg-red-50/90 border border-red-200 text-red-800 text-xs font-medium px-3.5 py-2.5 rounded-xl">
+                  <AlertCircle size={15} className="text-red-500 flex-shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+              )}
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowModal(false)} className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
@@ -489,10 +559,20 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
   );
 }
 
-// ─── Main Page ───────────────────────────────────────────────────────
+// Main Users Management Page Component
 export default function UsersPage() {
   const [tab, setTab] = useState("admin");
   const isAdmin = checkIsAdmin();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const t = params.get("tab");
+      if (t && ["admin", "seller", "buyer"].includes(t)) {
+        setTab(t);
+      }
+    }
+  }, []);
 
   if (!isAdmin) return (
     <div className="flex flex-col items-center justify-center h-64 gap-4 text-center">
@@ -546,7 +626,7 @@ export default function UsersPage() {
           remove={deleteSellerUser}
           slugCollection="sellers"
           slugLabelField="name"
-          portalPath="/seller-portal/login"
+          portalPath="/adminpanel/login"
         />
       )}
       {tab === "buyer" && (
@@ -559,7 +639,7 @@ export default function UsersPage() {
           remove={deleteBuyerUser}
           slugCollection="buyers"
           slugLabelField="buyerName"
-          portalPath="/buyer-portal/login"
+          portalPath="/adminpanel/login"
         />
       )}
     </div>

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { addEnquiry } from "@/lib/enquiryService";
 import { useModal } from "@/context/ModalContext";
+import { CheckCircle, AlertCircle } from "lucide-react";
 
 const Page = () => {
   const { onOpenModal } = useModal();
@@ -32,7 +33,7 @@ const Page = () => {
       setTimeout(() => setSuccessMsg(""), 5000);
     } catch (err) {
       console.error(err);
-      setErrorMsg("Something went wrong. Please try again.");
+      setErrorMsg("Unable to submit inquiry. Please check your connection and try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -206,13 +207,15 @@ const Page = () => {
                 <p className="text-gray-400 text-sm mb-6">Fill in the details and we&apos;ll call you back</p>
 
                 {successMsg && (
-                  <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400 text-sm font-medium text-center">
-                    ✅ {successMsg}
+                  <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm font-medium flex items-center justify-center gap-2">
+                    <CheckCircle size={16} className="text-emerald-400 flex-shrink-0" />
+                    <span>{successMsg}</span>
                   </div>
                 )}
                 {errorMsg && (
-                  <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
-                    {errorMsg}
+                  <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm font-medium flex items-center gap-2">
+                    <AlertCircle size={16} className="text-red-400 flex-shrink-0" />
+                    <span>{errorMsg}</span>
                   </div>
                 )}
 
@@ -221,7 +224,7 @@ const Page = () => {
                     <input
                       type="text"
                       name="name"
-                      placeholder="Full Name"
+                      placeholder="Full Name (e.g. John Doe)"
                       value={form.name}
                       onChange={handleChange}
                       required
@@ -231,7 +234,7 @@ const Page = () => {
                     <input
                       type="tel"
                       name="mobile"
-                      placeholder="Mobile Number"
+                      placeholder="+91 98765 43210"
                       value={form.mobile}
                       onChange={handleChange}
                       required
@@ -242,7 +245,7 @@ const Page = () => {
                   <input
                     type="text"
                     name="company"
-                    placeholder="Company / Business Name"
+                    placeholder="Company / Business Name (e.g. Acme Corp)"
                     value={form.company}
                     onChange={handleChange}
                     required

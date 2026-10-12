@@ -44,7 +44,7 @@ export default function BlogPage() {
     );
   });
 
-  // 🔥 पैजिनेशन का लॉजिक गणना
+  // Pagination calculation
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
   const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
@@ -57,7 +57,7 @@ export default function BlogPage() {
 
   return (
     <div className="bg-slate-50 min-h-screen">
-      {/* Hero Section (UNTOUCHED) */}
+      {/* Hero Section */}
       <section className="bg-gradient-to-r from-[#141d32] via-[#1c2545] to-[#141d32] text-white py-13">
         <div className="max-w-6xl mx-auto px-4 text-center space-y-6">
           <h1 className="text-4xl font-extrabold">
@@ -89,7 +89,7 @@ export default function BlogPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
               {currentBlogs.map((blog) => (
                 <Link
-                  href={`/blog/${blog.slug}`}
+                  href={`/blog/${blog.slug || blog.id}`}
                   key={blog.id}
                   className="flex flex-col bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-slate-200/60 group cursor-pointer"
                 >
@@ -100,7 +100,6 @@ export default function BlogPage() {
                         alt={blog.title || "Blog Image"}
                         fill
                         sizes="(max-w-768px) 100vw, 600px"
-                        priority
                         className="object-contain object-center transform group-hover:scale-[1.03] transition-transform duration-500"
                       />
                     ) : (

@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { useModal } from "@/context/ModalContext";
 
-/* ─── JSON-LD Schema ─── */
+// JSON-LD Structured Data Schema
 const schemaData = {
   "@context": "https://schema.org",
   "@type": "Service",
@@ -77,7 +77,7 @@ const faqSchema = {
   ],
 };
 
-/* ─── Sub-components ─── */
+// Section Badge sub-component
 const SectionBadge = ({ children }) => (
   <span className="inline-block text-orange-500 text-[11px] font-bold tracking-widest uppercase mb-3">
     {children}
@@ -494,7 +494,7 @@ export default function SellerOnboarding() {
           </div>
         </section>
 
-        {/* ══════════ MARKETPLACE LOGOS BAR (FLOATING) ══════════ */}
+        {/* Marketplace Logos Floating Bar */}
         <div className="relative z-10 max-w-[95%] xl:max-w-7xl mx-auto -mt-10 mb-12">
           <div className="bg-white rounded-[1.25rem] shadow-[0_10px_40px_rgba(0,0,0,0.15)] py-4 px-6 md:px-8 flex flex-wrap items-center justify-center md:justify-between gap-6 md:gap-0">
 
@@ -574,7 +574,7 @@ export default function SellerOnboarding() {
           </div>
         </div>
 
-        {/* ══════════ WHY SELL ONLINE ══════════ */}
+        {/* Why Sell Online Section */}
         <section className="py-16 px-5 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -655,7 +655,7 @@ export default function SellerOnboarding() {
           </div>
         </section>
 
-        {/* ══════════ OUR MARKETPLACE ONBOARDING SERVICES ══════════ */}
+        {/* Marketplace Onboarding Services */}
         <section className="py-16 px-5 bg-gray-50 border-y border-gray-100">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -697,7 +697,7 @@ export default function SellerOnboarding() {
           </div>
         </section>
 
-        {/* ══════════ COMPLETE END-TO-END SOLUTIONS ══════════ */}
+        {/* Complete End-to-End Solutions */}
         <section className="py-16 px-5 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -725,7 +725,7 @@ export default function SellerOnboarding() {
           </div>
         </section>
 
-        {/* ══════════ SIMPLE STEPS ══════════ */}
+        {/* Simple Steps Process */}
         <section className="py-16 px-5 bg-gray-50 border-y border-gray-100">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -755,7 +755,7 @@ export default function SellerOnboarding() {
           </div>
         </section>
 
-        {/* ══════════ 3-COLUMN INFO: WHY KOOP / DOCUMENTS / PACKAGES ══════════ */}
+        {/* 3-Column Info: Why Koop / Documents / Packages */}
         <section className="py-16 px-5 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-3 gap-6">
@@ -819,7 +819,7 @@ export default function SellerOnboarding() {
           </div>
         </section>
 
-        {/* ══════════ CTA WITH FORM ══════════ */}
+        {/* Consultation Call to Action */}
         <section
           className="relative overflow-hidden py-16 px-5"
           style={{

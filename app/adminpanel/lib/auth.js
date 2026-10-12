@@ -1,7 +1,7 @@
 // Admin Auth Utility — Firestore-backed users, localStorage session
 import { db } from "../../../lib/firebase";
 import {
-  collection, getDocs, addDoc, updateDoc, deleteDoc, doc,
+  collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc,
   query, where, serverTimestamp, arrayUnion
 } from "firebase/firestore";
 
@@ -17,7 +17,7 @@ export const ALL_PERMISSIONS = [
   { key: "users",      label: "User Management",  icon: "UserCog"         },
 ];
 
-// ── Session helpers ──────────────────────────────────────────────
+// Session management utilities
 export function getCurrentUser() {
   if (typeof window === "undefined") return null;
   try {
@@ -34,10 +34,48 @@ export function setCurrentUser(user) {
   localStorage.setItem("ki_admin_session", JSON.stringify(user));
 }
 
+export async function verifyUserListingStatus(user) {
+  if (!user || (user.role !== "seller" && user.role !== "buyer")) return { isLive: true, status: "live" };
+  try {
+    const colName = user.role === "seller" ? "sellers" : "buyers";
+    let listingData = null;
+
+    if (user.linkedId) {
+      try {
+        const s = await getDoc(doc(db, colName, user.linkedId));
+        if (s.exists()) listingData = s.data();
+      } catch (err) {}
+    }
+    if (!listingData && user.linkedSlug) {
+      try {
+        const s = await getDocs(query(collection(db, colName), where("slug", "==", user.linkedSlug)));
+        if (!s.empty) listingData = s.docs[0].data();
+      } catch (err) {}
+    }
+    if (!listingData && user.email) {
+      try {
+        const s = await getDocs(query(collection(db, colName), where("email", "==", user.email.toLowerCase())));
+        if (!s.empty) listingData = s.docs[0].data();
+      } catch (err) {}
+    }
+
+    if (!listingData) return { isLive: false, status: "not_found", reason: "Listing not found" };
+    return {
+      isLive: listingData.status === "live",
+      status: listingData.status || "paused",
+    };
+  } catch (e) {
+    console.error("verifyUserListingStatus error:", e);
+    return { isLive: true, status: "unknown" };
+  }
+}
+
 export async function login(email, password) {
   try {
+    const emailNorm = email.toLowerCase().trim();
+
     // 1. Check Admin / General Users
-    let q = query(collection(db, "users"), where("email", "==", email.toLowerCase()));
+    let q = query(collection(db, "users"), where("email", "==", emailNorm));
     let snap = await getDocs(q);
     if (!snap.empty) {
       const userData = snap.docs[0].data();
@@ -57,18 +95,91 @@ export async function login(email, password) {
     }
 
     // 2. Check Sellers
-    q = query(collection(db, "seller_users"), where("email", "==", email.toLowerCase()));
+    q = query(collection(db, "seller_users"), where("email", "==", emailNorm));
     snap = await getDocs(q);
     if (!snap.empty) {
       const userData = snap.docs[0].data();
       if (userData.password === password) {
-        if (userData.status === "suspended") return { success: false, error: "Your account has been suspended. Contact admin." };
+        if (userData.status === "suspended") {
+          return { success: false, error: "Your account has been suspended. Please contact admin." };
+        }
+        
+        let linkedId = userData.linkedId;
+        let linkedSlug = userData.linkedSlug;
+        let listingData = null;
+
+        if (linkedId) {
+          try {
+            const listingSnap = await getDoc(doc(db, "sellers", linkedId));
+            if (listingSnap.exists()) {
+              listingData = listingSnap.data();
+              if (!linkedSlug) linkedSlug = listingData.slug;
+            }
+          } catch (e) {
+            console.error("Seller listing lookup error:", e);
+          }
+        }
+
+        if (!listingData && linkedSlug) {
+          try {
+            const lSnap = await getDocs(query(collection(db, "sellers"), where("slug", "==", linkedSlug)));
+            if (!lSnap.empty) {
+              listingData = lSnap.docs[0].data();
+              linkedId = lSnap.docs[0].id;
+            }
+          } catch (e) {
+            console.error("Seller slug lookup error:", e);
+          }
+        }
+
+        // Fallback: search sellers by email
+        if (!listingData) {
+          try {
+            const byEmailSnap = await getDocs(query(collection(db, "sellers"), where("email", "==", emailNorm)));
+            if (!byEmailSnap.empty) {
+              listingData = byEmailSnap.docs[0].data();
+              linkedId = byEmailSnap.docs[0].id;
+              linkedSlug = listingData.slug;
+              try {
+                await updateDoc(doc(db, "seller_users", snap.docs[0].id), { linkedId, linkedSlug });
+              } catch (_) {}
+            }
+          } catch (e) {
+            console.error("Seller email fallback lookup error:", e);
+          }
+        }
+
+        if (!listingData) {
+          return { success: false, error: "No business listing is currently associated with this account. Please contact an administrator." };
+        }
+
+        // Check if seller listing is live
+        if (listingData.status !== "live") {
+          // Sync seller user status to paused
+          if (userData.status !== "paused") {
+            try {
+              await updateDoc(doc(db, "seller_users", snap.docs[0].id), { status: "paused" });
+            } catch (_) {}
+          }
+          return {
+            success: false,
+            error: "Account Inactive: Your seller listing is currently " + (listingData.status === "paused" ? "paused" : "under review") + ". Portal access will be enabled once your listing is verified and set to Live."
+          };
+        }
+
+        // Listing is live! If user account was paused, activate it
+        if (userData.status === "paused") {
+          try {
+            await updateDoc(doc(db, "seller_users", snap.docs[0].id), { status: "active" });
+          } catch (_) {}
+        }
+
         const session = {
           id: snap.docs[0].id,
           name: userData.name,
           email: userData.email,
-          linkedSlug: userData.linkedSlug,
-          linkedId: userData.linkedId,
+          linkedSlug: linkedSlug || "",
+          linkedId: linkedId || "",
           role: "seller",
           loginAt: Date.now(),
         };
@@ -79,18 +190,91 @@ export async function login(email, password) {
     }
 
     // 3. Check Buyers
-    q = query(collection(db, "buyer_users"), where("email", "==", email.toLowerCase()));
+    q = query(collection(db, "buyer_users"), where("email", "==", emailNorm));
     snap = await getDocs(q);
     if (!snap.empty) {
       const userData = snap.docs[0].data();
       if (userData.password === password) {
-        if (userData.status === "suspended") return { success: false, error: "Your account has been suspended. Contact admin." };
+        if (userData.status === "suspended") {
+          return { success: false, error: "Account Suspended: Access to this account has been suspended by an administrator." };
+        }
+        
+        let linkedId = userData.linkedId;
+        let linkedSlug = userData.linkedSlug;
+        let listingData = null;
+
+        if (linkedId) {
+          try {
+            const listingSnap = await getDoc(doc(db, "buyers", linkedId));
+            if (listingSnap.exists()) {
+              listingData = listingSnap.data();
+              if (!linkedSlug) linkedSlug = listingData.slug;
+            }
+          } catch (e) {
+            console.error("Buyer listing lookup error:", e);
+          }
+        }
+
+        if (!listingData && linkedSlug) {
+          try {
+            const lSnap = await getDocs(query(collection(db, "buyers"), where("slug", "==", linkedSlug)));
+            if (!lSnap.empty) {
+              listingData = lSnap.docs[0].data();
+              linkedId = lSnap.docs[0].id;
+            }
+          } catch (e) {
+            console.error("Buyer slug lookup error:", e);
+          }
+        }
+
+        // Fallback: search buyers by email
+        if (!listingData) {
+          try {
+            const byEmailSnap = await getDocs(query(collection(db, "buyers"), where("email", "==", emailNorm)));
+            if (!byEmailSnap.empty) {
+              listingData = byEmailSnap.docs[0].data();
+              linkedId = byEmailSnap.docs[0].id;
+              linkedSlug = listingData.slug;
+              try {
+                await updateDoc(doc(db, "buyer_users", snap.docs[0].id), { linkedId, linkedSlug });
+              } catch (_) {}
+            }
+          } catch (e) {
+            console.error("Buyer email fallback lookup error:", e);
+          }
+        }
+
+        if (!listingData) {
+          return { success: false, error: "No buyer profile is currently associated with this account. Please contact an administrator." };
+        }
+
+        // Check if buyer listing is live
+        if (listingData.status !== "live") {
+          // Sync buyer user status to paused
+          if (userData.status !== "paused") {
+            try {
+              await updateDoc(doc(db, "buyer_users", snap.docs[0].id), { status: "paused" });
+            } catch (_) {}
+          }
+          return {
+            success: false,
+            error: "Account Inactive: Your buyer profile is currently " + (listingData.status === "paused" ? "paused" : "under review") + ". Portal access will be enabled once your profile is verified and set to Live."
+          };
+        }
+
+        // Listing is live! If user account was paused, activate it
+        if (userData.status === "paused") {
+          try {
+            await updateDoc(doc(db, "buyer_users", snap.docs[0].id), { status: "active" });
+          } catch (_) {}
+        }
+
         const session = {
           id: snap.docs[0].id,
           name: userData.name,
           email: userData.email,
-          linkedSlug: userData.linkedSlug,
-          linkedId: userData.linkedId,
+          linkedSlug: linkedSlug || "",
+          linkedId: linkedId || "",
           role: "buyer",
           loginAt: Date.now(),
         };
@@ -129,7 +313,7 @@ export function hasPermission(key) {
   return Array.isArray(user.permissions) && user.permissions.includes(key);
 }
 
-// ── Firestore User Management (admin only) ─────────────────
+// Firestore User Management (admin only)
 export async function getFirestoreUsers() {
   try {
     const snap = await getDocs(collection(db, "users"));
@@ -183,7 +367,7 @@ export async function deleteFirestoreUser(firestoreId) {
   }
 }
 
-// ── Assign lead to admin user ──────────────────────────────────────────
+// Assign lead to admin user
 export async function assignLeadToUser(leadId, userId, userName) {
   try {
     await updateDoc(doc(db, "leads", leadId), {
@@ -203,7 +387,7 @@ export async function assignLeadToUser(leadId, userId, userName) {
   }
 }
 
-// ── Assign lead to a Seller (by slug) ─────────────────────────────────
+// Assign lead to a Seller (by slug)
 export async function assignLeadToSeller(leadId, sellerSlug, sellerName) {
   try {
     await updateDoc(doc(db, "leads", leadId), {
@@ -223,7 +407,7 @@ export async function assignLeadToSeller(leadId, sellerSlug, sellerName) {
   }
 }
 
-// ── Assign lead to a Buyer (by slug) ──────────────────────────────────
+// Assign lead to a Buyer (by slug)
 export async function assignLeadToBuyer(leadId, buyerSlug, buyerName) {
   try {
     await updateDoc(doc(db, "leads", leadId), {
@@ -243,38 +427,38 @@ export async function assignLeadToBuyer(leadId, buyerSlug, buyerName) {
   }
 }
 
-// ── Seller users ──────────────────────────────────────────
+// Seller portal user operations
 export async function getFirestoreSellerUsers() {
   const s = await getDocs(collection(db, "seller_users"));
-  return s.docs.map(d => ({id:d.id, ...d.data()}));
+  return s.docs.map(d => ({ firestoreId: d.id, id: d.id, ...d.data() }));
 }
 export async function createSellerUser(data) {
-  const ref = await addDoc(collection(db, "seller_users"), {...data, createdAt: serverTimestamp()});
-  return {success:true, user:{id:ref.id, ...data}};
+  const ref = await addDoc(collection(db, "seller_users"), { ...data, role: "seller", createdAt: serverTimestamp() });
+  return { success: true, user: { firestoreId: ref.id, id: ref.id, ...data } };
 }
 export async function updateSellerUser(id, data) {
-  await updateDoc(doc(db, "seller_users", id), {...data, updatedAt: serverTimestamp()});
-  return {success:true};
+  await updateDoc(doc(db, "seller_users", id), { ...data, updatedAt: serverTimestamp() });
+  return { success: true };
 }
 export async function deleteSellerUser(id) {
   await deleteDoc(doc(db, "seller_users", id));
-  return {success:true};
+  return { success: true };
 }
 
-// ── Buyer users ──────────────────────────────────────────
+// Buyer portal user operations
 export async function getFirestoreBuyerUsers() {
   const s = await getDocs(collection(db, "buyer_users"));
-  return s.docs.map(d => ({id:d.id, ...d.data()}));
+  return s.docs.map(d => ({ firestoreId: d.id, id: d.id, ...d.data() }));
 }
 export async function createBuyerUser(data) {
-  const ref = await addDoc(collection(db, "buyer_users"), {...data, createdAt: serverTimestamp()});
-  return {success:true, user:{id:ref.id, ...data}};
+  const ref = await addDoc(collection(db, "buyer_users"), { ...data, role: "buyer", createdAt: serverTimestamp() });
+  return { success: true, user: { firestoreId: ref.id, id: ref.id, ...data } };
 }
 export async function updateBuyerUser(id, data) {
-  await updateDoc(doc(db, "buyer_users", id), {...data, updatedAt: serverTimestamp()});
-  return {success:true};
+  await updateDoc(doc(db, "buyer_users", id), { ...data, updatedAt: serverTimestamp() });
+  return { success: true };
 }
 export async function deleteBuyerUser(id) {
   await deleteDoc(doc(db, "buyer_users", id));
-  return {success:true};
+  return { success: true };
 }

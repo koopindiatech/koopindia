@@ -17,7 +17,7 @@ import {
 import EnquiryModal from "@/components/forms/EnquiryForm";
 import { useModal } from "@/context/ModalContext";
 
-/* ─────────────────────────── tiny helpers ─────────────────────────── */
+// UI helper components
 const OrangeDot = () => (
   <span className="inline-block w-1.5 h-1.5 rounded-full bg-orange-500 mr-2 flex-shrink-0 mt-1.5" />
 );
@@ -37,7 +37,7 @@ const SectionHeading = ({ tag, title, accent }) => (
   </div>
 );
 
-/* ─────────────────────────── service cards ─────────────────────────── */
+// Service offerings data
 const serviceCards = [
   {
     icon: <BookOpen className="w-5 h-5 text-orange-500" />,
@@ -118,7 +118,7 @@ const addOns = [
   "Budgeting & Forecasting",
 ];
 
-/* ─────────────────────────── page ─────────────────────────── */
+// Company Accounting Services Page Component
 const CompanyAccountingServicesPage = () => {
   const { isOpen, onOpenModal, onCloseModal } = useModal();
 

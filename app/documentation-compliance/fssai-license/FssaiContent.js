@@ -25,7 +25,7 @@ import {
 import EnquiryModal from "@/components/forms/EnquiryForm";
 import { useModal } from "@/context/ModalContext";
 
-/* ─── Fade-in on scroll hook ─── */
+// Custom hook for fade-in scroll animation
 function useFadeIn() {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -47,7 +47,7 @@ function useFadeIn() {
   return [ref, visible];
 }
 
-/* ─── Animated counter ─── */
+// Animated counter component
 function Counter({ end, suffix = "" }) {
   const [count, setCount] = useState(0);
   const [ref, visible] = useFadeIn();
@@ -72,7 +72,7 @@ function Counter({ end, suffix = "" }) {
   );
 }
 
-/* ─── FAQ accordion ─── */
+// FAQ accordion item component
 function FAQ({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
@@ -105,7 +105,7 @@ function FAQ({ q, a }) {
   );
 }
 
-/* ─── Scroll-triggered fade wrapper ─── */
+// Scroll-triggered fade animation wrapper
 function Fade({ children, delay = 0 }) {
   const [ref, visible] = useFadeIn();
   return (
@@ -122,7 +122,7 @@ function Fade({ children, delay = 0 }) {
   );
 }
 
-/* ─── Section Label ─── */
+// Section Label component
 function SectionLabel({ children }) {
   return (
     <span className="inline-block text-[10px] font-bold uppercase tracking-[0.15em] text-orange-500 bg-orange-50 border border-orange-100 px-3 py-1 rounded-full mb-3">
@@ -131,7 +131,7 @@ function SectionLabel({ children }) {
   );
 }
 
-/* ─── Section Heading ─── */
+// Section Heading component
 function SectionHeading({ children, light = false }) {
   return (
     <h2
@@ -143,9 +143,7 @@ function SectionHeading({ children, light = false }) {
   );
 }
 
-/* ══════════════════════════════════════════
-   MAIN PAGE COMPONENT
-══════════════════════════════════════════ */
+// Main FSSAI License Page Component
 const FSSAILicensePage = () => {
   const { isOpen, onOpenModal, onCloseModal } = useModal();
 

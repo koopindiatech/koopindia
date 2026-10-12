@@ -7,11 +7,11 @@ import {
   ChevronLeft, ChevronRight, Bell, Search, Settings, LogOut,
   Globe, BarChart3, Menu, X, UserCog, ShieldAlert, Store,
 } from "lucide-react";
-import { getCurrentUser, logout, hasPermission } from "./lib/auth";
+import { getCurrentUser, logout, hasPermission, verifyUserListingStatus } from "./lib/auth";
 import { db } from "../../lib/firebase";
 import { collection, getDocs, getCountFromServer, query, where } from "firebase/firestore";
 
-/* ─── SidebarContent is defined at MODULE SCOPE to prevent React remount ─── */
+// SidebarContent component defined at module scope to prevent React remounting
 function SidebarContent({ user, collapsed, allowedNav, isActive, onLinkClick, onLogout, counts }) {
   return (
     <div className="flex flex-col h-full">
@@ -59,7 +59,7 @@ function SidebarContent({ user, collapsed, allowedNav, isActive, onLinkClick, on
             >
               <Icon size={17} className="flex-shrink-0" />
               {!collapsed && <span className="text-sm font-semibold flex-1">{item.label}</span>}
-              {!collapsed && dynamicBadge > 0 && (
+              {!collapsed && user?.role === "admin" && dynamicBadge > 0 && (
                 <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white ${item.badgeColor || "bg-gray-500"}`}>
                   {dynamicBadge}
                 </span>
@@ -101,7 +101,7 @@ function SidebarContent({ user, collapsed, allowedNav, isActive, onLinkClick, on
   );
 }
 
-/* ═══════════════════════════════════════════════════════════ */
+// Main Admin Layout
 export default function AdminLayout({ children }) {
   const pathname  = usePathname();
   const router    = useRouter();
@@ -111,26 +111,51 @@ export default function AdminLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [counts, setCounts]         = useState({ sellers: 0, buyers: 0, leads: 0, newLeads: 0 });
 
-  // ── Auth guard ──────────────────────────────────────────────
+  // Auth guard
   useEffect(() => {
     if (pathname === "/adminpanel/login") { setChecking(false); return; }
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
-      router.replace("/adminpanel/login");
-      return;
-    }
-    setUser(currentUser);
-    // Redirect normal users to leads page since they don't have dashboard access
-    if (currentUser.role !== "admin" && pathname === "/adminpanel") {
-      router.replace("/adminpanel/leads");
-      return;
-    }
-    setChecking(false);
+
+    const checkAuth = async () => {
+      const currentUser = getCurrentUser();
+      if (!currentUser) {
+        router.replace("/adminpanel/login");
+        return;
+      }
+
+      // Check if seller/buyer listing is still live
+      if (currentUser.role === "seller" || currentUser.role === "buyer") {
+        const verifyRes = await verifyUserListingStatus(currentUser);
+        if (!verifyRes.isLive) {
+          await logout();
+          router.replace("/adminpanel/login?error=listing_paused");
+          return;
+        }
+      }
+
+      setUser(currentUser);
+      // Redirect non-admins to their respective section since they don't have dashboard access
+      if (currentUser.role !== "admin" && pathname === "/adminpanel") {
+        if (currentUser.role === "seller") {
+          router.replace("/adminpanel/sellers");
+        } else if (currentUser.role === "buyer") {
+          router.replace("/adminpanel/buyers");
+        } else {
+          router.replace("/adminpanel/leads");
+        }
+        return;
+      }
+      setChecking(false);
+    };
+
+    checkAuth();
   }, [pathname, router]);
 
-  // ── Fetch dynamic badge counts ──────────────────────────────
+  // Dynamic badge counts for admin navigation
   useEffect(() => {
-    if (pathname === "/adminpanel/login") return;
+    if (pathname === "/adminpanel/login" || user?.role !== "admin") {
+      setCounts({ sellers: 0, buyers: 0, leads: 0, newLeads: 0 });
+      return;
+    }
     const fetchCounts = async () => {
       try {
         const [sellersCount, leadsCount, buyersCount] = await Promise.all([
@@ -148,19 +173,19 @@ export default function AdminLayout({ children }) {
       }
     };
     fetchCounts();
-  }, [pathname]);
+  }, [pathname, user?.role]);
 
   const handleLogout = async () => {
     await logout();
     router.replace("/adminpanel/login");
   };
 
-  // ── Login page — render bare (no sidebar) ───────────────────
+  // Login page renders without sidebar wrapper
   if (pathname === "/adminpanel/login") {
     return <>{children}</>;
   }
 
-  // ── While checking auth ──────────────────────────────────────
+  // Authentication check loading state
   if (checking) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -169,7 +194,7 @@ export default function AdminLayout({ children }) {
     );
   }
 
-  // ── Nav items with dynamic badge keys ───────────────────────
+  // Navigation items configuration
   const NAV_ITEMS = [
     { label: "Dashboard",       href: "/adminpanel",           icon: LayoutDashboard, key: "dashboard", exact: true },
     { label: "Seller Listings", href: "/adminpanel/sellers",  icon: Store,           key: "sellers",   badgeColor: "bg-gray-600"    },
@@ -179,7 +204,7 @@ export default function AdminLayout({ children }) {
     { label: "Settings",        href: "/adminpanel/settings",  icon: Settings,        key: "settings"   },
   ];
 
-  // ── Filter nav by permission ─────────────────────────────────
+  // Filter navigation items based on role-based access control
   const allowedNav = NAV_ITEMS.filter((item) => {
     if (user?.role === "admin") return true;
     if (user?.role === "seller") return item.key === "leads" || item.key === "sellers";
@@ -192,7 +217,7 @@ export default function AdminLayout({ children }) {
     return item;
   });
 
-  // ── Permission denied for current route ─────────────────────
+  // Permission validation for active route
   const currentKey = NAV_ITEMS.find((n) =>
     n.exact ? pathname === n.href : pathname.startsWith(n.href)
   )?.key;

@@ -34,7 +34,7 @@ import {
 
 } from "lucide-react";
 
-/* ─── FAQ DATA ─── */
+// FAQ Data
 const faqs = [
   {
     q: "Who is the best GST registration consultant in Delhi?",
@@ -414,7 +414,7 @@ const GSTContent = () => {
 
       <div className="bg-white text-gray-700 font-sans">
 
-        {/* ══════════════════ SEO HERO BANNER ══════════════════ */}
+        {/* SEO Hero Banner */}
         <section className="bg-gradient-to-br from-[#0F172A] to-[#1E3A5F] text-white py-14 px-5">
           <div className="max-w-7xl mx-auto">
             <p className="text-orange-400 font-semibold text-sm uppercase tracking-widest mb-3">
@@ -449,7 +449,7 @@ const GSTContent = () => {
           </div>
         </section>
 
-        {/* ══════════════════ TRUST STATS STRIP ══════════════════ */}
+        {/* Trust Statistics Strip */}
         <section className="bg-white border-b border-slate-100 py-8 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
@@ -471,7 +471,7 @@ const GSTContent = () => {
           </div>
         </section>
 
-        {/* ══════════════════ WHAT IS GST ══════════════════ */}
+        {/* What is GST Section */}
         <section className="py-14 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -829,7 +829,7 @@ const GSTContent = () => {
           </div>
         </section>
 
-        {/* ══════════════════ DOCUMENTS REQUIRED ══════════════════ */}
+        {/* Documents Required */}
         <section id="documents" className="pb-16 px-5 bg-slate-50">
           <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-12">
@@ -937,7 +937,7 @@ const GSTContent = () => {
           </div>
         </section>
 
-        {/* ══════════════════ PROCESS ══════════════════ */}
+        {/* Step-by-Step Registration Procedure */}
         <section id="process" className="pb-16 px-5">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -1052,7 +1052,7 @@ const GSTContent = () => {
           </p>
         </section>
 
-        {/* ══════════════════ WHY KOOP ══════════════════ */}
+        {/* Why Choose Koop India */}
         <section
           className="relative py-20 px-5 overflow-hidden"
           style={{
@@ -1165,7 +1165,7 @@ const GSTContent = () => {
           </div>
         </section>
 
-        {/* ══════════════════ POST-REGISTRATION SUPPORT ══════════════════ */}
+        {/* Post-Registration Compliance Support */}
         <section className="py-16 px-5 bg-[#0F172A] text-white">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -1397,7 +1397,7 @@ const GSTContent = () => {
           </div>
         </section>
 
-        {/* ══════════════════ CITY TARGETING SECTION ══════════════════ */}
+        {/* City Targeting Section */}
         <section className="py-14 px-5 bg-slate-50 border-t border-slate-100">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10">
@@ -1496,7 +1496,7 @@ const GSTContent = () => {
           </div>
         </section>
 
-        {/* ══════════════════ FAQ ══════════════════ */}
+        {/* Frequently Asked Questions */}
         <section className="pb-16 px-5">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-10">
@@ -1519,7 +1519,7 @@ const GSTContent = () => {
             </div>
           </div>
         </section>
-        {/* ══════════════════ SEO KEYWORD PILLS ══════════════════ */}
+        {/* SEO Keyword Badges */}
         <section className="py-10 px-5 bg-slate-50 border-t border-slate-200">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-6">

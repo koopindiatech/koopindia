@@ -17,6 +17,14 @@ export default function UnifiedLoginPage() {
   const [bannerLoading, setBannerLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const err = params.get("error");
+      if (err === "listing_paused") {
+        setError("Account Inactive: Portal access is temporarily paused because your listing is not currently Live. Access will be restored once your listing is verified and activated by an administrator.");
+      }
+    }
+
     const fetchBanner = async () => {
       try {
         const snap = await getDoc(doc(db, "settings", "login_banner"));
@@ -35,7 +43,7 @@ export default function UnifiedLoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
-      setError("Please enter your email and password.");
+      setError("Please enter your registered email address and password.");
       return;
     }
     setError("");
@@ -50,7 +58,7 @@ export default function UnifiedLoginPage() {
       else if (result.role === "buyer") router.replace("/adminpanel/buyers");
       else router.replace("/adminpanel/leads"); // default user
     } else {
-      setError(result.error || "Login failed. Please try again.");
+      setError(result.error || "Authentication failed. Please verify your credentials and try again.");
     }
   };
 
@@ -129,10 +137,12 @@ export default function UnifiedLoginPage() {
             <p className="text-gray-400 text-sm mt-1">Enter your credentials to continue</p>
           </div>
 
-                    {error && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-5">
-              <AlertCircle size={14} className="text-red-500 flex-shrink-0" />
-              <span className="text-red-600 text-xs font-semibold">{error}</span>
+          {error && (
+            <div className="flex items-start gap-3 bg-red-50/95 border border-red-200/90 rounded-2xl p-3.5 mb-5 shadow-sm">
+              <AlertCircle size={16} className="text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-red-800 text-xs font-medium leading-relaxed">{error}</p>
+              </div>
             </div>
           )}
 
@@ -149,13 +159,13 @@ export default function UnifiedLoginPage() {
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  placeholder="name@company.com"
                   className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl pl-10 pr-4 py-3 placeholder:text-gray-400 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100 transition-colors shadow-sm"
                 />
               </div>
             </div>
 
-                        <div>
+            <div>
               <label className="text-gray-500 text-xs font-bold block mb-1.5 uppercase tracking-wider">
                 Password
               </label>
@@ -167,7 +177,7 @@ export default function UnifiedLoginPage() {
                   autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••"
+                  placeholder="Enter your password"
                   className="w-full bg-white border border-gray-200 text-gray-900 text-sm rounded-xl pl-10 pr-10 py-3 placeholder:text-gray-400 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-100 transition-colors shadow-sm"
                 />
                 <button
@@ -180,7 +190,7 @@ export default function UnifiedLoginPage() {
               </div>
             </div>
 
-                        <button
+            <button
               type="submit"
               disabled={loading}
               className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-orange-500/25 mt-2 flex items-center justify-center gap-2"
@@ -199,8 +209,8 @@ export default function UnifiedLoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-gray-400 text-xs mt-6">
-            Credentials are provided by your KoopIndia admin.
+          <p className="text-center text-gray-400 text-xs mt-6 leading-relaxed">
+            Authorized portal access for Koop India administrators, sellers, and buyers.
           </p>
         </div>
       </div>

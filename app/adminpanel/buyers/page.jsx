@@ -4,17 +4,20 @@ import {
   Building2, Plus, Search, Globe, Edit2, Trash2, PauseCircle, PlayCircle, X,
   Phone, ExternalLink, MoreVertical, Check, Palette, FileText, Rocket,
   Image as ImageIcon, Loader2, MapPin, Shield, Camera, Save, ArrowLeft,
-  Star, Users, TrendingUp, CheckCircle, AlertCircle, Mail,
+  Star, Users, TrendingUp, CheckCircle, AlertCircle, Mail, ArrowRightLeft,
 } from "lucide-react";
 import { db, storage } from "../../../lib/firebase";
 import {
-  collection, addDoc, getDocs, updateDoc, deleteDoc, doc,
+  collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc,
   serverTimestamp, query, orderBy, where
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getCurrentUser } from "../lib/auth";
-
-/* ─── helpers ─── */
+import imageCompression from 'browser-image-compression';
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+import 'react-quill-new/dist/quill.snow.css';
+// Helper utilities
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const slugify = (s) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const ini = (n = "") => n.split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
@@ -44,12 +47,12 @@ const statusCfg = {
   draft: { label: "Draft", dot: "bg-gray-300", badge: "bg-gray-100 text-gray-500 border-gray-200" },
 };
 
-/* ─── DEFAULT DATA MODEL ─── */
+// Default buyer data model
 const blank = () => ({
   buyerName: "", tagline: "", category: "", businessType: "Manufacturer",
   estYear: "", city: "", state: "", address: "",
   contactName: "", contactRole: "", contactPhone: "", contactEmail: "", contactPhotoUrl: "",
-  phone: "", email: "", website: "", whatsapp: "",
+  phone: "", email: "", password: "", website: "", whatsapp: "",
   gstNumber: "", panNumber: "",
   rating: "4.5", reviewCount: "0",
   logoUrl: "", coverImageUrl: "",
@@ -61,7 +64,7 @@ const blank = () => ({
   // Why supply / requirements / preferred states
   whyUs: ["Pan India presence", "Timely payments", "Quality products"],
   requirements: ["Standard packaging", "Competitive pricing", "Timely delivery"],
-  preferredStates: ["Delhi NCR", "Maharashtra", "Gujarat"],
+  preferredStates: [],
   stats: [
     { id: uid(), icon: "", value: "", label: "Outlets" },
     { id: uid(), icon: "", value: "", label: "Cities" },
@@ -81,7 +84,7 @@ const inp_sm = "w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-white 
 const ta = `${inp} resize-none`;
 const addBtn = "inline-flex items-center gap-2 text-xs font-bold text-orange-700 bg-orange-50 border border-orange-200 hover:bg-orange-100 px-4 py-2 rounded-xl transition-all duration-150 shadow-sm hover:shadow-md";
 const delBtn = "w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl bg-red-50 hover:bg-red-100 text-red-500 transition-all duration-150 cursor-pointer border border-red-100 hover:border-red-200";
-const sectionCard = "bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5 hover:shadow-md transition-shadow duration-200";
+const sectionCard = "bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6 space-y-5 hover:shadow-md transition-shadow duration-200";
 const fieldLabel = "block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2";
 
 const INDIA_ZONES = [
@@ -196,10 +199,10 @@ const ProgPill = ({ field, uploadStatus, uploadProgress }) =>
     : uploadStatus?.[field] === "done"
       ? <span className="text-[10px] text-emerald-500 font-bold">✓ Uploaded</span>
       : uploadStatus?.[field] === "error"
-        ? <span className="text-[10px] text-red-500 font-bold">⚠️ Upload failed</span>
+        ? <span className="inline-flex items-center gap-1 text-[10px] text-red-600 font-semibold"><AlertCircle size={11} /> Upload failed — verify storage permissions</span>
         : null;
 
-/* ══════════════════════════════════════════════════════════ */
+// Buyer Listings Management Component
 export default function BuyersAdminPage() {
   const [user, setUser] = useState(null);
   const [buyers, setBuyers] = useState([]);
@@ -226,14 +229,33 @@ export default function BuyersAdminPage() {
         const u = getCurrentUser();
         setUser(u);
         if (u?.role === "buyer") {
-          const snap = await getDocs(query(collection(db, "buyers"), where("slug", "==", u.linkedSlug)));
-          if (!snap.empty) {
-            const data = { id: snap.docs[0].id, ...snap.docs[0].data() };
-            setBuyers([data]);
-            openForm(data);
+          let buyerData = null;
+          if (u.linkedId) {
+            try {
+              const byId = await getDoc(doc(db, "buyers", u.linkedId));
+              if (byId.exists()) {
+                buyerData = { id: byId.id, ...byId.data() };
+              }
+            } catch (err) {
+              console.error("Buyer lookup by linkedId error:", err);
+            }
+          }
+          if (!buyerData && u.linkedSlug) {
+            try {
+              const snap = await getDocs(query(collection(db, "buyers"), where("slug", "==", u.linkedSlug)));
+              if (!snap.empty) {
+                buyerData = { id: snap.docs[0].id, ...snap.docs[0].data() };
+              }
+            } catch (err) {
+              console.error("Buyer lookup by linkedSlug error:", err);
+            }
+          }
+          if (buyerData) {
+            setBuyers([buyerData]);
+            openForm(buyerData);
           } else {
             setBuyers([]);
-            openForm({ slug: u.linkedSlug, buyerName: u.name, contactEmail: u.email });
+            openForm({ slug: u.linkedSlug || "", buyerName: u.name || "", contactEmail: u.email || "" });
           }
         } else {
           const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
@@ -245,18 +267,38 @@ export default function BuyersAdminPage() {
     load();
   }, []);
 
-  const uploadToStorage = (file, path, uiKey) => new Promise((resolve, reject) => {
-    const storageRef = ref(storage, path);
-    const task = uploadBytesResumable(storageRef, file);
-    task.on("state_changed",
-      (snap) => {
-        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-        setUploadProgress((p) => ({ ...p, [uiKey]: pct }));
-      },
-      (err) => reject(err),
-      async () => { const url = await getDownloadURL(task.snapshot.ref); resolve(url); }
-    );
-  });
+  const uploadToStorage = async (file, path, uiKey) => {
+    let fileToUpload = file;
+    // Compress image if it's an image file
+    if (file.type.startsWith("image/")) {
+      const options = {
+        maxSizeMB: 0.5, // High compression
+        maxWidthOrHeight: 1200, // Reasonable max dimension
+        useWebWorker: true,
+        fileType: "image/webp" // Convert to WebP for modern optimization
+      };
+      try {
+        fileToUpload = await imageCompression(file, options);
+        // adjust extension in path to webp since we compress to webp
+        path = path.replace(/\.[^/.]+$/, ".webp");
+      } catch (error) {
+        console.error("Image compression error:", error);
+      }
+    }
+
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(storage, path);
+      const task = uploadBytesResumable(storageRef, fileToUpload);
+      task.on("state_changed",
+        (snap) => {
+          const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+          setUploadProgress((p) => ({ ...p, [uiKey]: pct }));
+        },
+        (err) => reject(err),
+        async () => { const url = await getDownloadURL(task.snapshot.ref); resolve(url); }
+      );
+    });
+  };
 
   const setUploading = (key) => setUploadStatus((s) => ({ ...s, [key]: "uploading" }));
   const setDone = (key) => setUploadStatus((s) => ({ ...s, [key]: "done" }));
@@ -315,9 +357,52 @@ export default function BuyersAdminPage() {
       const clean = cleanPayload({ ...form });
       const slug = slugify(clean.buyerName || "buyer");
       const payload = { ...clean, slug, status: asDraft ? "draft" : "live" };
+      const emailToUse = (payload.contactEmail || payload.email || "").toLowerCase().trim();
+
       if (editing) {
         await updateDoc(doc(db, "buyers", editing.id), { ...payload, updatedAt: serverTimestamp() });
         setBuyers((p) => p.map((b) => b.id === editing.id ? { ...b, ...payload } : b));
+
+        // Sync or Create buyer_users credential
+        if (emailToUse) {
+          const userStatus = payload.status === "live" ? "active" : "paused";
+          try {
+            let userDoc = null;
+            const byId = await getDocs(query(collection(db, "buyer_users"), where("linkedId", "==", editing.id)));
+            if (!byId.empty) {
+              userDoc = byId.docs[0];
+            } else {
+              const bySlug = await getDocs(query(collection(db, "buyer_users"), where("linkedSlug", "==", editing.slug || slug)));
+              if (!bySlug.empty) userDoc = bySlug.docs[0];
+            }
+
+            if (userDoc) {
+              const updateData = {
+                name: payload.contactName || payload.buyerName,
+                email: emailToUse,
+                linkedId: editing.id,
+                linkedSlug: slug,
+                status: userStatus,
+                updatedAt: serverTimestamp(),
+              };
+              if (payload.password) updateData.password = payload.password;
+              await updateDoc(doc(db, "buyer_users", userDoc.id), updateData);
+            } else if (payload.password) {
+              await addDoc(collection(db, "buyer_users"), {
+                name: payload.contactName || payload.buyerName,
+                email: emailToUse,
+                password: payload.password,
+                status: userStatus,
+                linkedId: editing.id,
+                linkedSlug: slug,
+                role: "buyer",
+                createdAt: serverTimestamp(),
+              });
+            }
+          } catch (userSyncErr) {
+            console.error("Failed to sync buyer_users:", userSyncErr);
+          }
+        }
       } else {
         const count = buyers.length + 1;
         const profileId = `KIB${String(count).padStart(5, '0')}`;
@@ -340,13 +425,37 @@ export default function BuyersAdminPage() {
           status: "New",
           createdAt: serverTimestamp(),
           buyerId: docRef.id,
+          buyerSlug: slug,
+          buyerName: newPayload.buyerName,
+          assignedToBuyerSlug: slug,
+          assignedToBuyerName: newPayload.buyerName,
           assignedTo: null
         });
+
+        // Create User Credential
+        if (emailToUse && newPayload.password) {
+          const userStatus = payload.status === "live" ? "active" : "paused";
+          await addDoc(collection(db, "buyer_users"), {
+            name: newPayload.contactName || newPayload.buyerName,
+            email: emailToUse,
+            password: newPayload.password,
+            status: userStatus,
+            linkedId: docRef.id,
+            linkedSlug: slugify(newPayload.buyerName || "buyer"),
+            role: "buyer",
+            createdAt: serverTimestamp()
+          });
+        }
       }
-      setFormOpen(false);
+      if (user?.role === "buyer") {
+        alert("Profile updated successfully!");
+        setFormOpen(true);
+      } else {
+        setFormOpen(false);
+      }
     } catch (err) {
       console.error("Save error:", err);
-      alert("Save failed: " + (err?.message || "Unknown error"));
+      alert("Failed to save profile: " + (err?.message || "An unexpected error occurred."));
     } finally { setSaving(false); }
   };
 
@@ -354,6 +463,28 @@ export default function BuyersAdminPage() {
     const next = current === "live" ? "paused" : "live";
     await updateDoc(doc(db, "buyers", id), { status: next });
     setBuyers((p) => p.map((b) => b.id === id ? { ...b, status: next } : b));
+
+    // Sync linked buyer_users status
+    try {
+      const userStatus = next === "live" ? "active" : "paused";
+      const byId = await getDocs(query(collection(db, "buyer_users"), where("linkedId", "==", id)));
+      if (!byId.empty) {
+        for (const d of byId.docs) {
+          await updateDoc(doc(db, "buyer_users", d.id), { status: userStatus });
+        }
+      } else {
+        const buyerItem = buyers.find(b => b.id === id);
+        if (buyerItem?.slug) {
+          const bySlug = await getDocs(query(collection(db, "buyer_users"), where("linkedSlug", "==", buyerItem.slug)));
+          for (const d of bySlug.docs) {
+            await updateDoc(doc(db, "buyer_users", d.id), { status: userStatus, linkedId: id });
+          }
+        }
+      }
+    } catch (userErr) {
+      console.error("Error syncing buyer user status on toggle:", userErr);
+    }
+
     setMenuId(null);
   };
 
@@ -369,6 +500,26 @@ export default function BuyersAdminPage() {
     await deleteDoc(doc(db, "buyers", delId));
     setBuyers((p) => p.filter((b) => b.id !== delId));
     setDelId(null);
+  };
+
+  const handleTransferToSeller = async (buyerId) => {
+    const confirmTransfer = confirm("Are you sure you want to transfer this listing to Sellers?");
+    if (!confirmTransfer) return;
+    const buyerToTransfer = buyers.find(b => b.id === buyerId);
+    if (!buyerToTransfer) return;
+    try {
+      const newSellerData = { ...buyerToTransfer, name: buyerToTransfer.buyerName || buyerToTransfer.companyName || "" };
+      delete newSellerData.id;
+      delete newSellerData.buyerName;
+      await addDoc(collection(db, "sellers"), newSellerData);
+      await deleteDoc(doc(db, "buyers", buyerId));
+      setBuyers((p) => p.filter((b) => b.id !== buyerId));
+      setMenuId(null);
+      alert("Successfully transferred to Sellers section.");
+    } catch (error) {
+      console.error("Transfer error:", error);
+      alert("Failed to transfer profile. Please try again.");
+    }
   };
 
   const setArr = (key, i, k, v) => setForm((p) => { const a = [...(p[key] || [])]; a[i] = { ...a[i], [k]: v }; return { ...p, [key]: a }; });
@@ -429,7 +580,7 @@ export default function BuyersAdminPage() {
     { id: 5, icon: "👤", label: "Contact & Docs", desc: "Person, address, map" },
   ];
 
-  /* ══════════════════════════════════════════════════ RENDER */
+  // Render view
   return (
     <div className="min-h-screen bg-[#f4f6fb]" style={{ fontFamily: "'Inter',sans-serif" }}>
       {!formOpen && (
@@ -441,7 +592,11 @@ export default function BuyersAdminPage() {
               </div>
               <div>
                 <h1 className="font-black text-gray-900 text-base leading-none">Buyer Listings</h1>
-                <p className="text-gray-400 text-[11px] mt-0.5 font-medium">{buyers.length} buyers listed</p>
+                {user?.role === "admin" ? (
+                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">{buyers.length} buyers listed</p>
+                ) : (
+                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">Manage buyer profile</p>
+                )}
               </div>
             </div>
             <button onClick={() => openForm()}
@@ -478,8 +633,8 @@ export default function BuyersAdminPage() {
               const cfg = statusCfg[b.status] || statusCfg.draft;
               const color = b.primaryColor || "#f97316";
               return (
-                <div key={b.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col">
-                  <div className="h-1.5 w-full" style={{ backgroundColor: color }} />
+                <div key={b.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col">
+                  <div className="h-1.5 w-full rounded-t-2xl" style={{ backgroundColor: color }} />
                   <div className="p-5 flex-1 flex flex-col gap-4">
                     <div className="flex items-start gap-3">
                       {b.logoUrl
@@ -503,6 +658,7 @@ export default function BuyersAdminPage() {
                             </button>
                             <button onClick={() => { window.open(`/buyers/${b.slug}`, "_blank"); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><ExternalLink size={13} /> View Page</button>
                             <div className="border-t border-gray-100 my-1" />
+                            <button onClick={() => { handleTransferToSeller(b.id); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 text-left"><ArrowRightLeft size={13} /> Transfer to Seller</button>
                             <button onClick={() => { setDelId(b.id); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 text-left"><Trash2 size={13} /> Delete</button>
                           </div>
                         )}
@@ -581,7 +737,7 @@ export default function BuyersAdminPage() {
         </>
       )}
 
-      {/* ═══════════════ BUYER STUDIO ═══════════════ */}
+      {/* Buyer Management Studio */}
       {formOpen && (
         <div className="w-full flex flex-col" style={{ minHeight: "100vh", background: "#f1f5f9" }}>
                     <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
@@ -598,20 +754,29 @@ export default function BuyersAdminPage() {
                     : <span className="text-white font-black text-sm">{ini(form.buyerName || "BR")}</span>}
                 </div>
                 <div>
-                  <h1 className="font-black text-gray-900 text-base leading-tight">{editing ? (form.buyerName || "Edit Buyer") : "New Buyer Studio"}</h1>
-                  {form.buyerName && <p className="text-orange-600 text-[11px] font-bold mt-0.5">/buyers/{slugify(form.buyerName)}</p>}
+                  <h1 className="font-black text-gray-900 text-sm sm:text-base leading-tight truncate max-w-[130px] min-[400px]:max-w-[200px] sm:max-w-none">{editing ? (form.buyerName || "Edit Buyer") : "New Buyer Studio"}</h1>
+                  {form.buyerName && <p className="text-orange-600 text-[10px] sm:text-[11px] font-bold mt-0.5 truncate max-w-[130px] min-[400px]:max-w-[200px] sm:max-w-none">/buyers/{slugify(form.buyerName)}</p>}
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.buyerName.trim()}
-                className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer">
-                <Save size={14} /> Save Draft
-              </button>
-              <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.buyerName.trim()}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-all shadow-lg shadow-orange-200 disabled:opacity-40 cursor-pointer">
-                <Rocket size={14} /> {saving ? "Publishing..." : isUploading ? "Uploading..." : "Publish Live"}
-              </button>
+              {user?.role === "buyer" ? (
+                <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.buyerName.trim()}
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-all shadow-lg shadow-orange-200 disabled:opacity-40 cursor-pointer">
+                  <Save size={14} /> {saving ? "Saving..." : isUploading ? "Uploading..." : "Save Updates"}
+                </button>
+              ) : (
+                <>
+                  <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.buyerName.trim()}
+                    className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer">
+                    <Save size={14} /> Save Draft
+                  </button>
+                  <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.buyerName.trim()}
+                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-all shadow-lg shadow-orange-200 disabled:opacity-40 cursor-pointer">
+                    <Rocket size={14} /> {saving ? "Publishing..." : isUploading ? "Uploading..." : "Publish Live"}
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -657,7 +822,7 @@ export default function BuyersAdminPage() {
 
               <div className="max-w-4xl mx-auto p-3 sm:p-4 md:p-8 pb-32 space-y-8 relative">
 
-                {/* ══ STEP 0: BUYER IDENTITY ══ */}
+                {/* Step 1: Buyer Identity */}
                 <div className="space-y-6 pt-6" id="section-identity">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
                     <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">01</div>
@@ -731,7 +896,7 @@ export default function BuyersAdminPage() {
                     </div>
                   </div>
 
-                {/* ══ STEP 1: VISUALS ══ */}
+                {/* Step 2: Visuals & Branding */}
                 <div className="space-y-6 pt-10" id="section-visuals">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
                     <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">02</div>
@@ -766,14 +931,14 @@ export default function BuyersAdminPage() {
                     </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Rating</h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div><label className={fieldLabel}>Rating (out of 5)</label><input value={form.rating} onChange={(e) => sf("rating", e.target.value)} placeholder="Enter rating" className={inp} /></div>
                         <div><label className={fieldLabel}>Review Count</label><input value={form.reviewCount} onChange={(e) => sf("reviewCount", e.target.value)} placeholder="Enter review count" className={inp} /></div>
                       </div>
                     </div>
                   </div>
 
-                {/* ══ STEP 2: ABOUT & DETAILS ══ */}
+                {/* Step 3: About & Details */}
                 <div className="space-y-6 pt-10" id="section-about">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
                     <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">03</div>
@@ -784,7 +949,14 @@ export default function BuyersAdminPage() {
                   </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">About Company</h3>
-                      <textarea value={form.about} onChange={(e) => sf("about", e.target.value)} placeholder="Enter about company" className={ta} rows={5} />
+                      <div className="bg-white">
+                        <ReactQuill 
+                          theme="snow" 
+                          value={form.about} 
+                          onChange={(val) => sf("about", val)} 
+                          placeholder="Enter about company details..."
+                        />
+                      </div>
                     </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Business Details</h3>
@@ -795,13 +967,26 @@ export default function BuyersAdminPage() {
                         <div><label className={fieldLabel}>Buying Frequency</label><input value={form.buyingFrequency} onChange={(e) => sf("buyingFrequency", e.target.value)} placeholder="Enter buying frequency" className={inp} /></div>
                         <div><label className={fieldLabel}>Payment Terms</label><input value={form.paymentTerms} onChange={(e) => sf("paymentTerms", e.target.value)} placeholder="Enter payment terms" className={inp} /></div>
                         <div><label className={fieldLabel}>Phone</label><input value={form.phone} onChange={(e) => sf("phone", e.target.value)} placeholder="Enter phone number" className={inp} /></div>
-                        <div><label className={fieldLabel}>Email</label><input value={form.email} onChange={(e) => sf("email", e.target.value)} placeholder="Enter email address" className={inp} /></div>
+                        <div><label className={fieldLabel}>Portal Login Email</label><input value={form.email} onChange={(e) => sf("email", e.target.value)} placeholder="contact@company.com" className={inp} /></div>
+                        <div><label className={fieldLabel}>Portal Login Password</label><input type="text" value={form.password || ""} onChange={(e) => sf("password", e.target.value)} placeholder="Minimum 6 characters" className={inp} /></div>
                         <div><label className={fieldLabel}>WhatsApp</label><input value={form.whatsapp} onChange={(e) => sf("whatsapp", e.target.value)} placeholder="Enter phone number" className={inp} /></div>
+                        {user?.role !== "buyer" && (
+                          <label className="col-span-1 sm:col-span-2 md:col-span-3 flex items-center gap-3 p-4 bg-orange-50/50 border border-orange-100 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors mt-2">
+                            <div className="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" className="sr-only peer" checked={!!(form.hideContact || form.hidePhone)} onChange={e => setForm(p => ({ ...p, hideContact: e.target.checked, hidePhone: e.target.checked }))} />
+                              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-gray-800">Hide Contact Details on Public Page</p>
+                              <p className="text-xs text-gray-500 mt-0.5">Buyer's phone & email will be hidden. Koop India's details will be shown instead.</p>
+                            </div>
+                          </label>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                {/* ══ STEP 3: CATEGORIES & PARTNERS ══ */}
+                {/* Step 4: Categories & Partners */}
                 <div className="space-y-6 pt-10" id="section-categories">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
                     <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">04</div>
@@ -837,7 +1022,7 @@ export default function BuyersAdminPage() {
                       </div>
                       <div className="space-y-3">
                         {(form.buyersWeWorkWith || []).map((bw, i) => (
-                          <div key={bw.id || i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                          <div key={bw.id || i} className="flex items-center gap-2.5 sm:gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                             <div className="flex-shrink-0">
                               <label htmlFor={`bw-logo-${i}`} className="cursor-pointer">
                                 {bw.logoUrl
@@ -848,7 +1033,7 @@ export default function BuyersAdminPage() {
                               <input id={`bw-logo-${i}`} type="file" accept="image/*" className="sr-only" onChange={(e) => handleArrayImagePick(e, "buyersWeWorkWith", i)} />
                               {ProgPill({ field: `buyersWeWorkWith_${i}`, uploadStatus, uploadProgress })}
                             </div>
-                            <input value={bw.name} onChange={(e) => setArr("buyersWeWorkWith", i, "name", e.target.value)} placeholder="Enter brand name" className={`flex-1 ${inp_sm}`} />
+                            <input value={bw.name} onChange={(e) => setArr("buyersWeWorkWith", i, "name", e.target.value)} placeholder="Enter brand name" className={`flex-1 min-w-0 ${inp_sm}`} />
                             <button type="button" onClick={() => delArr("buyersWeWorkWith", i)} className={delBtn}><X size={12} /></button>
                           </div>
                         ))}
@@ -865,7 +1050,7 @@ export default function BuyersAdminPage() {
                     </div>
                   </div>
 
-                {/* ══ STEP 4: WHY US & STATS ══ */}
+                {/* Step 5: Why Us & Key Metrics */}
                 <div className="space-y-6 pt-10" id="section-stats">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
                     <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">05</div>
@@ -910,11 +1095,14 @@ export default function BuyersAdminPage() {
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Key Stats (Bottom Strip)</h3>
                       <div className="space-y-3">
                         {(form.stats || []).map((stat, i) => (
-                          <div key={stat.id || i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                            <input value={stat.icon} onChange={(e) => setArr("stats", i, "icon", e.target.value)} placeholder="🏪" className="w-12 text-center text-lg border border-gray-200 rounded-lg px-2 py-1.5 outline-none" />
-                            <input value={stat.value} onChange={(e) => setArr("stats", i, "value", e.target.value)} placeholder="Enter value" className={`w-24 ${inp_sm}`} />
-                            <input value={stat.label} onChange={(e) => setArr("stats", i, "label", e.target.value)} placeholder="Enter label" className={`flex-1 ${inp_sm}`} />
-                            <button type="button" onClick={() => delArr("stats", i)} className={delBtn}><X size={12} /></button>
+                          <div key={stat.id || i} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-2 sm:space-y-0 sm:flex sm:items-center sm:gap-3">
+                            <div className="flex items-center gap-2">
+                              <input value={stat.icon} onChange={(e) => setArr("stats", i, "icon", e.target.value)} placeholder="🏪" className="w-12 text-center text-lg border border-gray-200 rounded-lg px-2 py-1.5 outline-none bg-white" />
+                              <input value={stat.value} onChange={(e) => setArr("stats", i, "value", e.target.value)} placeholder="Enter value" className={`flex-1 sm:w-24 ${inp_sm}`} />
+                              <button type="button" onClick={() => delArr("stats", i)} className={`sm:hidden ${delBtn}`}><X size={12} /></button>
+                            </div>
+                            <input value={stat.label} onChange={(e) => setArr("stats", i, "label", e.target.value)} placeholder="Enter label" className={`flex-1 min-w-0 ${inp_sm}`} />
+                            <button type="button" onClick={() => delArr("stats", i)} className={`hidden sm:flex ${delBtn}`}><X size={12} /></button>
                           </div>
                         ))}
                         <button type="button" onClick={() => addArr("stats", { id: uid(), icon: "⭐", value: "", label: "" })} className={addBtn}><Plus size={12} /> Add Stat</button>
@@ -922,7 +1110,7 @@ export default function BuyersAdminPage() {
                     </div>
                   </div>
 
-                {/* ══ STEP 5: CONTACT & DOCS ══ */}
+                {/* Step 6: Contact & Settings */}
                 <div className="space-y-6 pt-10" id="section-contact">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 flex items-center gap-4 rounded-2xl shadow-sm">
                     <div className="bg-white/20 w-12 h-12 flex items-center justify-center rounded-xl text-white font-black text-xl tracking-wider shadow-inner">06</div>
@@ -933,7 +1121,7 @@ export default function BuyersAdminPage() {
                   </div>
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Key Contact Person</h3>
-                      <div className="flex items-start gap-4">
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
                         <div className="flex-shrink-0">
                           <UploadBox field="contactPhoto" value={form.contactPhotoUrl} onPick={(e) => handleImagePick(e, "contactPhoto")} small />
                           {ProgPill({ field: "contactPhoto", uploadStatus, uploadProgress })}
@@ -943,6 +1131,7 @@ export default function BuyersAdminPage() {
                           <div><label className={fieldLabel}>Role / Designation</label><input value={form.contactRole} onChange={(e) => sf("contactRole", e.target.value)} placeholder="Enter role / designation" className={inp} /></div>
                           <div><label className={fieldLabel}>Phone</label><input value={form.contactPhone} onChange={(e) => sf("contactPhone", e.target.value)} placeholder="Enter phone number" className={inp} /></div>
                           <div><label className={fieldLabel}>Email</label><input value={form.contactEmail} onChange={(e) => sf("contactEmail", e.target.value)} placeholder="Enter email address" className={inp} /></div>
+                          <div className="sm:col-span-2"><label className={fieldLabel}>Portal Login Password</label><input type="text" value={form.password || ""} onChange={(e) => sf("password", e.target.value)} placeholder="Minimum 6 characters" className={inp} /></div>
                         </div>
                       </div>
                     </div>

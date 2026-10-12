@@ -7,6 +7,7 @@ import Footer from "../../../components/layout/Footer";
 import {
   collection, query, where, getDocs, addDoc, serverTimestamp, increment, updateDoc, doc,
 } from "firebase/firestore";
+import { getCurrentUser } from "../../adminpanel/lib/auth";
 
 const getImg = (url) =>
   url && typeof url === "string" && url.startsWith("http") && url.includes("firebase")
@@ -45,6 +46,15 @@ export default function BuyerClientPage({ initialBuyer }) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    setCurrentUser(getCurrentUser());
+  }, []);
+
+  const shouldHide = (buyer?.hideContact || buyer?.hidePhone) && !currentUser;
+  const displayPhone = shouldHide ? "+91 95998 26131" : buyer?.contactPhone;
+  const displayEmail = shouldHide ? null : buyer?.contactEmail;
 
   useEffect(() => {
     if (buyer && buyer.id) {
@@ -268,9 +278,12 @@ export default function BuyerClientPage({ initialBuyer }) {
                       <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: pc + "20" }}>
                         <span className="text-xs">ℹ️</span>
                       </div>
-                      <h2 className="text-sm font-black text-gray-900">About {buyer.buyerName}</h2>
-                    </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">{buyer.about}</p>
+                    <h2 className="text-sm font-black text-gray-900">About {buyer.buyerName}</h2>
+                  </div>
+                  <div 
+                    className="prose max-w-none text-gray-600 text-sm leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: buyer.about }}
+                  />
                   </div>
                 )}
 
@@ -469,16 +482,16 @@ export default function BuyerClientPage({ initialBuyer }) {
                   <div>
                     <p className="font-black text-gray-900 text-sm">{buyer.contactName}</p>
                     {buyer.contactRole && <p className="text-gray-500 text-xs mt-0.5">{buyer.contactRole}</p>}
-                    {buyer.contactPhone && (
-                      <a href={`tel:${buyer.contactPhone}`} className="flex items-center gap-1 text-xs font-semibold mt-1.5 hover:underline" style={{ color: pc }}>
+                    {displayPhone && (
+                      <a href={`tel:${displayPhone}`} className="flex items-center gap-1 text-xs font-semibold mt-1.5 hover:underline" style={{ color: pc }}>
                         <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-                        {buyer.contactPhone}
+                        {displayPhone}
                       </a>
                     )}
-                    {buyer.contactEmail && (
-                      <a href={`mailto:${buyer.contactEmail}`} className="flex items-center gap-1 text-xs font-semibold mt-1 text-gray-500 hover:underline break-all">
+                    {displayEmail && (
+                      <a href={`mailto:${displayEmail}`} className="flex items-center gap-1 text-xs font-semibold mt-1 text-gray-500 hover:underline break-all">
                         <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
-                        {buyer.contactEmail}
+                        {displayEmail}
                       </a>
                     )}
                   </div>

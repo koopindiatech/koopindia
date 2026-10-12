@@ -1,8 +1,6 @@
 import GSTContent from "../documentation-compliance/gst-registration/GSTContent";
 
-/* ─────────────────────────────────────────────────────────────
-   STRUCTURED DATA – Service + FAQPage + LocalBusiness
-───────────────────────────────────────────────────────────── */
+// Structured Data Schema (Service, FAQPage, LocalBusiness)
 const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
@@ -82,9 +80,7 @@ const faqSchema = {
   ],
 };
 
-/* ─────────────────────────────────────────────────────────────
-   METADATA – 25+ targeted keywords, city-specific, high-intent
-───────────────────────────────────────────────────────────── */
+// SEO Metadata Configuration
 export const metadata = {
   title:
     "GST Registration Consultant in Delhi | Online GSTIN in 7 Days | Koop India",

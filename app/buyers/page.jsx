@@ -6,7 +6,7 @@ import BuyerCard from "@/components/ui/cards/BuyerCard";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 
-/* ─── tiny icon helpers ─── */
+// SVG icon helpers
 const SearchIcon = () => (
   <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -59,9 +59,7 @@ export default function BuyersPage() {
         {/* Header Section with Search */}
         <div className="bg-white border-b border-gray-100 py-10 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-black text-[#1e3a5f] tracking-tight mb-6">
-              All Verified Buyers
-            </h1>
+
 
             <div className="relative max-w-2xl">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">

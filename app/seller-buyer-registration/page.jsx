@@ -1,7 +1,8 @@
 "use client";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, getCountFromServer } from "firebase/firestore";
 import { CheckCircle, Loader2, Building2, Phone, MapPin, Package, TrendingUp, Users, ArrowRight, Store, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -55,18 +56,26 @@ const SectionHead = ({ icon: Icon, label, color = "orange" }) => (
 );
 
 function RegistrationForm() {
-  const [tab, setTab] = useState(null); // null means "not selected yet"
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") || searchParams.get("type");
+  const [tab, setTab] = useState(initialTab === "seller" || initialTab === "buyer" ? initialTab : null);
+
+  useEffect(() => {
+    const t = searchParams.get("tab") || searchParams.get("type");
+    if (t === "seller" || t === "buyer") setTab(t);
+  }, [searchParams]);
+
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
 
   const blankSeller = () => ({
-    companyName: "", contactName: "", mobile: "", email: "",
+    companyName: "", contactName: "", mobile: "", email: "", password: "",
     city: "", state: "Select State", businessType: "", products: "",
     expectedOrder: "",
   });
   const blankBuyer = () => ({
-    companyName: "", contactName: "", mobile: "", email: "",
+    companyName: "", contactName: "", mobile: "", email: "", password: "",
     city: "", state: "Select State", buyerType: "", requirements: "",
     currentBrands: "", purchaseRequirement: "", purchaseLocation: "",
     deliveryLocation: "", retailers: "", buyerTerritory: "", network: "",
@@ -82,7 +91,11 @@ function RegistrationForm() {
     setSubmitting(true);
     try {
       if (tab === "seller") {
+        const countSnap = await getCountFromServer(collection(db, "sellers"));
+        const profileId = `KIS${String(countSnap.data().count + 1).padStart(5, '0')}`;
+
         const docRef = await addDoc(collection(db, "sellers"), {
+          profileId: profileId,
           name: seller.companyName, companyName: seller.companyName,
           contact: seller.contactName, phone: seller.mobile, email: seller.email,
           city: seller.city, state: seller.state, businessType: seller.businessType,
@@ -93,6 +106,7 @@ function RegistrationForm() {
         
         // Auto-generate a Lead from this Seller Registration
         await addDoc(collection(db, "leads"), {
+          profileId: profileId,
           name: seller.contactName || seller.companyName || "Unknown",
           company: seller.companyName || "",
           email: seller.email || "",
@@ -104,11 +118,33 @@ function RegistrationForm() {
           status: "New",
           createdAt: serverTimestamp(),
           sellerId: docRef.id,
+          sellerSlug: slugify(seller.companyName),
+          sellerName: seller.companyName,
+          assignedToSellerSlug: slugify(seller.companyName),
+          assignedToSellerName: seller.companyName,
           assignedTo: null
         });
 
+        // Create User Credential (paused until listing is reviewed & made live)
+        if (seller.email && seller.password) {
+          await addDoc(collection(db, "seller_users"), {
+            name: seller.contactName || seller.companyName,
+            email: seller.email.toLowerCase().trim(),
+            password: seller.password,
+            status: "paused",
+            linkedId: docRef.id,
+            linkedSlug: slugify(seller.companyName),
+            role: "seller",
+            createdAt: serverTimestamp()
+          });
+        }
+
       } else {
+        const countSnap = await getCountFromServer(collection(db, "buyers"));
+        const profileId = `KIB${String(countSnap.data().count + 1).padStart(5, '0')}`;
+
         const docRef = await addDoc(collection(db, "buyers"), {
+          profileId: profileId,
           buyerName: buyer.companyName, contactName: buyer.contactName,
           phone: buyer.mobile, email: buyer.email, city: buyer.city, state: buyer.state,
           buyerType: buyer.buyerType, requirements: buyer.requirements,
@@ -121,6 +157,7 @@ function RegistrationForm() {
 
         // Auto-generate a Lead from this Buyer Registration
         await addDoc(collection(db, "leads"), {
+          profileId: profileId,
           name: buyer.contactName || buyer.companyName || "Unknown",
           company: buyer.companyName || "",
           email: buyer.email || "",
@@ -132,14 +169,32 @@ function RegistrationForm() {
           status: "New",
           createdAt: serverTimestamp(),
           buyerId: docRef.id,
+          buyerSlug: slugify(buyer.companyName),
+          buyerName: buyer.companyName,
+          assignedToBuyerSlug: slugify(buyer.companyName),
+          assignedToBuyerName: buyer.companyName,
           assignedTo: null
         });
+
+        // Create User Credential (paused until listing is reviewed & made live)
+        if (buyer.email && buyer.password) {
+          await addDoc(collection(db, "buyer_users"), {
+            name: buyer.contactName || buyer.companyName,
+            email: buyer.email.toLowerCase().trim(),
+            password: buyer.password,
+            status: "paused",
+            linkedId: docRef.id,
+            linkedSlug: slugify(buyer.companyName),
+            role: "buyer",
+            createdAt: serverTimestamp()
+          });
+        }
       }
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error("Registration error:", err);
-      alert("Something went wrong. Please try again.");
+      alert("Unable to submit registration. Please check your network connection and try again.");
     } finally {
       setSubmitting(false);
     }
@@ -156,33 +211,38 @@ function RegistrationForm() {
         </div>
         
         <h3 className="text-3xl sm:text-4xl font-black text-[#1e3a5f] mb-4 tracking-tight">Application Received</h3>
-        <p className="text-gray-500 text-sm sm:text-base leading-relaxed max-w-sm mx-auto mb-8">
-          Thank you for joining <strong className="text-[#1e3a5f]">Koop India</strong>. Our verification team will review your profile and activate it within 24-48 hours.
+        <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-4">
+          Thank you for joining <strong className="text-[#1e3a5f]">Koop India</strong>. Your application is under review. Once your listing is verified and made <strong className="text-emerald-600">Live</strong> by our team, your portal login will be activated automatically.
         </p>
         
-        <div className="w-full max-w-sm bg-gray-50/80 rounded-2xl p-5 mb-10 border border-gray-100">
-          <div className="flex items-center justify-between text-sm mb-4">
-            <span className="text-gray-500 font-medium">Status</span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-100/50 text-amber-600 font-bold text-xs tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              Under Review
+        <div className="w-full max-w-sm bg-gray-50/80 rounded-2xl p-5 mb-8 border border-gray-100 text-left">
+          <div className="flex items-center justify-between text-sm mb-3">
+            <span className="text-gray-500 font-medium">Listing Status</span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-100/60 text-amber-700 font-bold text-xs tracking-wide">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              Under Review (Paused)
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-500 font-medium">Expected Live Time</span>
-            <span className="text-gray-900 font-bold">24 – 48 Hours</span>
+            <span className="text-gray-500 font-medium">Portal Login</span>
+            <span className="text-amber-700 font-bold text-xs bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg">
+              Active Once Listing is Live
+            </span>
           </div>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md justify-center">
+          <Link href="/adminpanel/login" className="flex-1 px-5 py-3.5 rounded-xl bg-orange-500 text-white text-sm font-black hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2">
+            Go to Login <ArrowRight size={16} />
+          </Link>
           <button
             onClick={() => { setSuccess(false); setSeller(blankSeller()); setBuyer(blankBuyer()); }}
-            className="flex-1 px-6 py-3.5 rounded-xl border-2 border-gray-100 text-sm font-bold text-gray-600 hover:border-gray-200 hover:bg-gray-50 transition-all text-center"
+            className="flex-1 px-5 py-3.5 rounded-xl border-2 border-gray-100 text-sm font-bold text-gray-600 hover:border-gray-200 hover:bg-gray-50 transition-all text-center"
           >
             Submit Another
           </button>
-          <Link href="/" className="flex-1 px-6 py-3.5 rounded-xl bg-[#1e3a5f] text-white text-sm font-black hover:bg-[#162c4a] transition-all shadow-lg shadow-blue-900/10 flex items-center justify-center gap-2">
-            Back Home <ArrowRight size={16} />
+          <Link href="/" className="px-5 py-3.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-bold hover:bg-gray-200 transition-all flex items-center justify-center">
+            Home
           </Link>
         </div>
       </div>
@@ -292,11 +352,11 @@ function RegistrationForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className={F.wrap + " md:col-span-2"}>
                 <label className={F.lbl}>Company / Brand Name <span className="text-red-400">*</span></label>
-                <input required className={F.inp} placeholder="Enter company or brand name" value={seller.companyName} onChange={e => setSF("companyName", e.target.value)} />
+                <input required className={F.inp} placeholder="e.g. Acme Industries Pvt Ltd" value={seller.companyName} onChange={e => setSF("companyName", e.target.value)} />
               </div>
               <div className={F.wrap}>
                 <label className={F.lbl}>Contact Person <span className="text-red-400">*</span></label>
-                <input required className={F.inp} placeholder="Enter your full name" value={seller.contactName} onChange={e => setSF("contactName", e.target.value)} />
+                <input required className={F.inp} placeholder="e.g. John Doe" value={seller.contactName} onChange={e => setSF("contactName", e.target.value)} />
               </div>
               <div className={F.wrap}>
                 <label className={F.lbl}>Business Type</label>
@@ -316,11 +376,15 @@ function RegistrationForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className={F.wrap}>
                 <label className={F.lbl}>Mobile Number <span className="text-red-400">*</span></label>
-                <input required type="tel" className={F.inp} placeholder="Enter 10-digit mobile number" value={seller.mobile} onChange={e => setSF("mobile", e.target.value)} />
+                <input required type="tel" className={F.inp} placeholder="+91 98765 43210" value={seller.mobile} onChange={e => setSF("mobile", e.target.value)} />
               </div>
               <div className={F.wrap}>
-                <label className={F.lbl}>Email Address</label>
-                <input type="email" className={F.inp} placeholder="Enter email address" value={seller.email} onChange={e => setSF("email", e.target.value)} />
+                <label className={F.lbl}>Email Address <span className="text-red-400">*</span></label>
+                <input required type="email" className={F.inp} placeholder="contact@company.com" value={seller.email} onChange={e => setSF("email", e.target.value)} />
+              </div>
+              <div className={F.wrap}>
+                <label className={F.lbl}>Password <span className="text-red-400">*</span></label>
+                <input required type="password" className={F.inp} placeholder="Minimum 6 characters" value={seller.password} onChange={e => setSF("password", e.target.value)} />
               </div>
               <div className={F.wrap}>
                 <label className={F.lbl}>City</label>
@@ -370,11 +434,11 @@ function RegistrationForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className={F.wrap + " md:col-span-2"}>
                 <label className={F.lbl}>Company / Business Name <span className="text-red-400">*</span></label>
-                <input required className={F.inp} placeholder="Enter company or business name" value={buyer.companyName} onChange={e => setBF("companyName", e.target.value)} />
+                <input required className={F.inp} placeholder="e.g. Global Distributors Ltd" value={buyer.companyName} onChange={e => setBF("companyName", e.target.value)} />
               </div>
               <div className={F.wrap}>
                 <label className={F.lbl}>Contact Person <span className="text-red-400">*</span></label>
-                <input required className={F.inp} placeholder="Enter your full name" value={buyer.contactName} onChange={e => setBF("contactName", e.target.value)} />
+                <input required className={F.inp} placeholder="e.g. John Doe" value={buyer.contactName} onChange={e => setBF("contactName", e.target.value)} />
               </div>
               <div className={F.wrap}>
                 <label className={F.lbl}>Buyer Type</label>
@@ -396,11 +460,15 @@ function RegistrationForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className={F.wrap}>
                 <label className={F.lbl}>Mobile Number <span className="text-red-400">*</span></label>
-                <input required type="tel" className={F.inp} placeholder="Enter 10-digit mobile number" value={buyer.mobile} onChange={e => setBF("mobile", e.target.value)} />
+                <input required type="tel" className={F.inp} placeholder="+91 98765 43210" value={buyer.mobile} onChange={e => setBF("mobile", e.target.value)} />
               </div>
               <div className={F.wrap}>
-                <label className={F.lbl}>Email Address</label>
-                <input type="email" className={F.inp} placeholder="Enter email address" value={buyer.email} onChange={e => setBF("email", e.target.value)} />
+                <label className={F.lbl}>Email Address <span className="text-red-400">*</span></label>
+                <input required type="email" className={F.inp} placeholder="contact@company.com" value={buyer.email} onChange={e => setBF("email", e.target.value)} />
+              </div>
+              <div className={F.wrap}>
+                <label className={F.lbl}>Password <span className="text-red-400">*</span></label>
+                <input required type="password" className={F.inp} placeholder="Minimum 6 characters" value={buyer.password} onChange={e => setBF("password", e.target.value)} />
               </div>
               <div className={F.wrap}>
                 <label className={F.lbl}>City</label>

@@ -2,7 +2,7 @@ import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 import crypto from "crypto";
 
-/* ─── Helper to initialize Firebase Admin safely inside handler ─── */
+// Helper to initialize Firebase Admin safely inside handler
 function getFirebaseAdmin() {
   if (!getApps().length) {
     let rawVal = process.env.GOOGLE_PRIVATE_KEY || "";
