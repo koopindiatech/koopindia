@@ -197,6 +197,17 @@ export default function KoopIndiaHomepage() {
   const [logosLoading, setLogosLoading] = useState(true);
   const [logoIndex, setLogoIndex] = useState(0);
 
+  // Buyer section filters
+  const [buyerCatSel, setBuyerCatSel] = useState("All Categories");
+  const [buyerStateSel, setBuyerStateSel] = useState("All States");
+  const [buyerSearchResults, setBuyerSearchResults] = useState([]);
+  const buyerScrollRef = useRef(null);
+  const scrollBuyerCats = (dir) => {
+    if (buyerScrollRef.current) {
+      buyerScrollRef.current.scrollBy({ left: dir * 280, behavior: "smooth" });
+    }
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setLogoIndex(prev => prev + 1);
@@ -235,8 +246,12 @@ export default function KoopIndiaHomepage() {
           }),
         ]);
         
-        const fetchedSellers = sellSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const fetchedBuyers = buyerSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const fetchedSellers = sellSnap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(s => s.isFeatured === true && s.status !== "paused" && s.status !== "draft");
+        const fetchedBuyers = buyerSnap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(b => b.isFeatured === true && b.status !== "paused" && b.status !== "draft");
         
         fetchedSellers.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
         fetchedBuyers.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
@@ -298,23 +313,50 @@ export default function KoopIndiaHomepage() {
     setSearching(true);
     setSearched(true);
     try {
-      const snap = await getDocs(collection(db, "sellers"));
-      let results = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const [snap, bSnap] = await Promise.all([
+        getDocs(query(collection(db, "sellers"), where("isFeatured", "==", true))),
+        getDocs(query(collection(db, "buyers"), where("isFeatured", "==", true))),
+      ]);
+      let results = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(s => s.isFeatured === true && s.status !== "paused" && s.status !== "draft");
+      let bResults = bSnap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(b => b.isFeatured === true && b.status !== "paused" && b.status !== "draft");
       
       const q = currentSearch.toLowerCase().trim();
-      if (q) results = results.filter(s =>
-        s.name?.toLowerCase().includes(q) ||
-        s.category?.toLowerCase().includes(q) ||
-        s.companyName?.toLowerCase().includes(q)
-      );
+      if (q) {
+        results = results.filter(s =>
+          s.name?.toLowerCase().includes(q) ||
+          s.category?.toLowerCase().includes(q) ||
+          s.companyName?.toLowerCase().includes(q)
+        );
+        bResults = bResults.filter(b =>
+          (b.buyerName || b.companyName || b.name || "").toLowerCase().includes(q) ||
+          (b.category || "").toLowerCase().includes(q) ||
+          (b.state || "").toLowerCase().includes(q) ||
+          (b.city || "").toLowerCase().includes(q) ||
+          (Array.isArray(b.requirements) ? b.requirements.join(" ") : (b.requirements || "")).toLowerCase().includes(q) ||
+          (Array.isArray(b.productCategories) ? b.productCategories.map(c => typeof c === "string" ? c : (c.name || "")).join(" ") : "").toLowerCase().includes(q)
+        );
+      }
       
-      if (currentCat !== "All Categories") results = results.filter(s =>
-        s.category?.toLowerCase().includes(currentCat.toLowerCase()) ||
-        (s.productCategories || []).some(c => {
-          const catName = typeof c === "string" ? c : (c.name || "");
-          return catName.toLowerCase().includes(currentCat.toLowerCase());
-        })
-      );
+      if (currentCat !== "All Categories") {
+        results = results.filter(s =>
+          s.category?.toLowerCase().includes(currentCat.toLowerCase()) ||
+          (s.productCategories || []).some(c => {
+            const catName = typeof c === "string" ? c : (c.name || "");
+            return catName.toLowerCase().includes(currentCat.toLowerCase());
+          })
+        );
+        bResults = bResults.filter(b =>
+          (b.category || "").toLowerCase().includes(currentCat.toLowerCase()) ||
+          (b.productCategories || []).some(c => {
+            const catName = typeof c === "string" ? c : (c.name || "");
+            return catName.toLowerCase().includes(currentCat.toLowerCase());
+          })
+        );
+      }
       
       if (currentSub !== "All") results = results.filter(s =>
         (s.productCategories || []).some(c => {
@@ -323,14 +365,46 @@ export default function KoopIndiaHomepage() {
         })
       );
       
-      if (currentState !== "All States") results = results.filter(s =>
-        s.state?.toLowerCase() === currentState.toLowerCase()
-      );
+      if (currentState !== "All States") {
+        results = results.filter(s =>
+          s.state?.toLowerCase() === currentState.toLowerCase()
+        );
+        bResults = bResults.filter(b =>
+          (b.state || "").toLowerCase() === currentState.toLowerCase() ||
+          (b.preferredStates || []).some(st => (typeof st === "string" ? st : "").toLowerCase() === currentState.toLowerCase())
+        );
+      }
       
-      setSearchResults(results.filter(s => s.status !== "paused" && s.status !== "draft"));
+      setSearchResults(results);
+      setBuyerSearchResults(bResults);
     } catch (e) { console.error(e); }
     finally { setSearching(false); }
   };
+
+  const isBuyerFiltered = buyerCatSel !== "All Categories" || buyerStateSel !== "All States";
+  
+  const buyerPool = (searched && (search || catSel !== "All Categories" || stateSel !== "All States"))
+    ? buyerSearchResults
+    : buyers;
+
+  const displayedBuyers = buyerPool.filter(b => {
+    if (!b.isFeatured || b.status === "paused" || b.status === "draft") return false;
+    let match = true;
+    if (buyerCatSel !== "All Categories") {
+      const qCat = buyerCatSel.toLowerCase();
+      const bCat = (b.category || "").toLowerCase();
+      const bProdCats = (b.productCategories || []).map(c => typeof c === "string" ? c.toLowerCase() : (c.name || "").toLowerCase());
+      const bBiz = (b.businessType || "").toLowerCase();
+      if (!bCat.includes(qCat) && !bProdCats.some(c => c.includes(qCat)) && !bBiz.includes(qCat)) match = false;
+    }
+    if (match && buyerStateSel !== "All States") {
+      const qState = buyerStateSel.toLowerCase();
+      const bState = (b.state || "").toLowerCase();
+      const bPrefStates = (b.preferredStates || []).map(s => (typeof s === "string" ? s : "").toLowerCase());
+      if (!bState.includes(qState) && !bPrefStates.some(s => s.includes(qState))) match = false;
+    }
+    return match;
+  });
 
   const handleSearch = () => performSearch(search, catSel, subCatSel, stateSel);
 
@@ -639,21 +713,127 @@ export default function KoopIndiaHomepage() {
       {/* Featured Buyers */}
       <section className="py-14 px-4 sm:px-6 bg-rose-50/60" id="buyers-section">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+          {/* Header with Title and State dropdown */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <p className="text-[11px] font-extrabold text-[#F97316] uppercase tracking-widest mb-1">Top Buyers</p>
-              <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight">Featured Buyers</h2>
+              <p className="text-[11px] font-extrabold text-[#F97316] uppercase tracking-widest mb-1">
+                {searched || isBuyerFiltered ? "Filtered Matches" : "Top Buyers"}
+              </p>
+              <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight">
+                {searched || isBuyerFiltered ? "Filtered Buyers" : "Featured Buyers"}
+              </h2>
             </div>
-            <Link href="/buyers" className="flex items-center gap-2 text-sm font-bold text-[#1e3a5f] border border-[#1e3a5f]/20 hover:border-[#1e3a5f] px-4 py-2 rounded-xl transition-all hover:shadow-md">
-              View All <ArrowRight />
-            </Link>
+            
+            <div className="flex items-center flex-wrap gap-2.5">
+              {/* State Filter dropdown for buyers */}
+              <div className="relative">
+                <select
+                  value={buyerStateSel}
+                  onChange={e => setBuyerStateSel(e.target.value)}
+                  className="appearance-none bg-white border border-gray-200 text-xs font-bold text-gray-700 pl-3 pr-8 py-2.5 rounded-xl outline-none cursor-pointer hover:border-orange-300 shadow-sm"
+                >
+                  {STATES.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                  <ChevronDown />
+                </div>
+              </div>
+
+              <Link href="/buyers" className="flex items-center gap-2 text-sm font-bold text-[#1e3a5f] bg-white border border-[#1e3a5f]/20 hover:border-[#1e3a5f] px-4 py-2 rounded-xl transition-all hover:shadow-md">
+                View All <ArrowRight />
+              </Link>
+            </div>
           </div>
+
+          {/* Categories Carousel Filter for Buyers */}
+          <div className="mb-6 relative">
+            {/* Left Scroll Button */}
+            <button 
+              onClick={() => scrollBuyerCats(-1)} 
+              aria-label="Scroll Buyer Categories Left"
+              className="flex absolute left-0 top-1/2 -translate-y-1/2 -ml-2 sm:-ml-4 z-20 w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-white border border-gray-200 shadow-md sm:shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 active:scale-95 transition-all hover:scale-105"
+            >
+              <ChevronLeft />
+            </button>
+
+            {/* Right Scroll Button */}
+            <button 
+              onClick={() => scrollBuyerCats(1)} 
+              aria-label="Scroll Buyer Categories Right"
+              className="flex absolute right-0 top-1/2 -translate-y-1/2 -mr-2 sm:-mr-4 z-20 w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-white border border-gray-200 shadow-md sm:shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 active:scale-95 transition-all hover:scale-105"
+            >
+              <ChevronRight2 />
+            </button>
+
+            <div 
+              ref={buyerScrollRef}
+              className="flex gap-2.5 overflow-x-auto pb-3 px-6 sm:px-1 scrollbar-hide scroll-smooth" 
+              style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+            >
+              <button
+                onClick={() => setBuyerCatSel("All Categories")}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border whitespace-nowrap transition-all font-bold text-xs ${buyerCatSel === "All Categories" ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+              >
+                <span>📁</span> All Categories
+              </button>
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat.label}
+                  onClick={() => setBuyerCatSel(cat.label)}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border whitespace-nowrap transition-all font-bold text-xs ${buyerCatSel === cat.label ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+                >
+                  <span>{cat.emoji}</span> {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Active Filter Badges */}
+          {(buyerCatSel !== "All Categories" || buyerStateSel !== "All States") && (
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              <span className="text-xs text-gray-500 font-semibold">Active filters:</span>
+              {buyerCatSel !== "All Categories" && (
+                <span className="text-[11px] font-bold bg-white text-orange-600 border border-orange-200 px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                  {buyerCatSel}
+                  <button onClick={() => setBuyerCatSel("All Categories")} className="ml-1 hover:text-orange-800">×</button>
+                </span>
+              )}
+              {buyerStateSel !== "All States" && (
+                <span className="text-[11px] font-bold bg-white text-orange-600 border border-orange-200 px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
+                  {buyerStateSel}
+                  <button onClick={() => setBuyerStateSel("All States")} className="ml-1 hover:text-orange-800">×</button>
+                </span>
+              )}
+              <button 
+                onClick={() => { setBuyerCatSel("All Categories"); setBuyerStateSel("All States"); }}
+                className="text-xs text-gray-400 hover:text-orange-500 font-bold underline ml-1"
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+
+          {/* Buyers Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {loading
+            {loading || searching
               ? [...Array(10)].map((_, i) => <Skeleton key={i} cls="h-52" />)
-              : buyers.length > 0
-                ? buyers.slice(0, 10).map(b => <BuyerCard key={b.id} b={b} />)
-                : <div className="col-span-5 text-center py-12 text-gray-400"><div className="text-4xl mb-2">🏷️</div><p className="font-bold">No buyers yet</p></div>
+              : displayedBuyers.length > 0
+                ? displayedBuyers.slice(0, 10).map(b => <BuyerCard key={b.id} b={b} />)
+                : (
+                  <div className="col-span-full text-center py-12 text-gray-400">
+                    <div className="text-4xl mb-2">🔍</div>
+                    <p className="font-bold text-gray-600">No buyers found matching current filters.</p>
+                    <p className="text-xs text-gray-400 mt-1">Try changing category or state filter.</p>
+                    {(buyerCatSel !== "All Categories" || buyerStateSel !== "All States") && (
+                      <button
+                        onClick={() => { setBuyerCatSel("All Categories"); setBuyerStateSel("All States"); }}
+                        className="mt-4 text-xs font-bold text-orange-500 hover:underline"
+                      >
+                        Reset Buyer Filters
+                      </button>
+                    )}
+                  </div>
+                )
             }
           </div>
         </div>
