@@ -13,8 +13,8 @@ const proxyImg = (u) =>
 const ini = (n = "") => n.split(" ").slice(0, 2).map(w => w[0] || "").join("").toUpperCase();
 const Skeleton = ({ cls }) => <div className={`animate-pulse bg-gray-200 rounded-xl ${cls}`} />;
 
-const SELLER_CATS = ["Food & Beverages", "Spices & Masalas", "Healthcare", "Industrial", "Home Care", "Cosmetics"];
-const BUYER_CATS  = ["FMCG", "Textile", "Electronics", "Pharma", "Agro", "Apparel"];
+const SELLER_CATS = ["Food & Beverage", "Health & Beauty", "Pharmaceuticals", "Apparel & Fashion", "Chemicals", "Industrial Supplies"];
+const BUYER_CATS  = ["Food & Beverage", "Pharmaceuticals", "Apparel & Fashion", "Agriculture", "Automobile", "Construction & Real Estate"];
 
 // 1. Latest Sellers section with dedicated search and filtering
 export function HomeLatestSellers() {

@@ -22,7 +22,13 @@ export async function generateMetadata({ params }) {
     if (!snap.empty) {
       const data = snap.docs[0].data();
       const displayName = data.buyerName || data.companyName || "Buyer";
-      const description = data.about || data.aboutCompany || `View ${displayName}'s buyer profile on Koop India. See their distribution network, sourcing requirements, and partner with them.`;
+      const rawDesc = data.about || data.aboutCompany || `View ${displayName}'s buyer profile on Koop India. See their distribution network, sourcing requirements, and partner with them.`;
+      const description = rawDesc
+        .replace(/<[^>]*>/g, "")
+        .replace(/&nbsp;|\u00A0/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 160);
       return {
         title: `${displayName} | Koop India Buyer`,
         description: description,
@@ -57,9 +63,12 @@ export default async function BuyerPage({ params }) {
           ? `/api/img?url=${encodeURIComponent(u)}`
           : u;
 
+      const cleanAbout = data.about ? data.about.replace(/&nbsp;|\u00A0/g, " ") : "";
+
       const raw = {
         id: d.id,
         ...data,
+        about: cleanAbout,
         logoUrl: proxy(data.logoUrl),
         // Support both old 'coverUrl' field and new 'coverImageUrl' field
         coverImageUrl: proxy(data.coverImageUrl || data.coverUrl),

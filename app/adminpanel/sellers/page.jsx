@@ -120,13 +120,44 @@ const SECTIONS = [
 ];
 
 const CATEGORIES = [
-  "Spices & Masala", "FMCG & Grocery", "Agriculture & Farming", "Food & Beverages",
-  "Dairy & Dairy Products", "Packaged Foods", "Snacks & Namkeen", "Edible Oils",
-  "Health & Wellness", "Ayurvedic & Herbal", "Pharmaceuticals", "Chemicals & Fertilizers",
-  "Textile & Garments", "Electronics & Hardware", "Construction Materials",
-  "Machinery & Equipment", "Furniture & Interiors", "Automotive Parts",
-  "Handicrafts & Gifts", "Stationery & Paper", "Plastics & Rubber",
-  "Export & Import", "Other",
+  "Food & Beverage",
+  "Health & Beauty",
+  "Pharmaceuticals",
+  "Apparel & Fashion",
+  "Chemicals",
+  "Home Supplies",
+  "Construction & Real Estate",
+  "Electronics & Electrical Supplies",
+  "Agriculture",
+  "Automobile",
+  "Packaging & Paper",
+  "Hospital & Medical Supplies",
+  "Gifts & Crafts",
+  "Consumer Electronics",
+  "Pipes, Tubes & Fittings",
+  "Industrial Supplies",
+  "Computer Hardware & Software",
+  "Energy & Power",
+  "Furniture",
+  "Home Textiles & Furnishings",
+  "Hotel Supplies & Equipment",
+  "Jewelry & Gemstones",
+  "Leather & Leather Products",
+  "Machinery",
+  "Mineral & Metals",
+  "Plastics & Products",
+  "Printing & Publishing",
+  "Security & Protection",
+  "Sports & Entertainment",
+  "Telecommunications",
+  "Textiles & Fabrics",
+  "Toys",
+  "Transportation",
+  "Brass Hardware & Components",
+  "Environment & Pollution",
+  "Office & School Supplies",
+  "Scientific & Laboratory Instruments",
+  "Business Services",
 ];
 
 const CATEGORY_SUBCATEGORIES = {
@@ -577,6 +608,8 @@ export default function SellersPage() {
       const payload = {
         ...clean,
         slug,
+        hideContact: !!(form.hideContact || form.hidePhone),
+        hidePhone: !!(form.hideContact || form.hidePhone),
         heroBannerUrl: clean.heroBannerUrl || clean.bannerUrl || "",
         bannerUrl: clean.heroBannerUrl || clean.bannerUrl || "",
       };
@@ -795,6 +828,8 @@ export default function SellersPage() {
       if (!Array.isArray(nextForm.preferredStates)) {
         nextForm.preferredStates = [];
       }
+      nextForm.hideContact = !!(s.hideContact || s.hidePhone);
+      nextForm.hidePhone = !!(s.hideContact || s.hidePhone);
     }
     
     setForm(nextForm);
@@ -910,7 +945,7 @@ export default function SellersPage() {
 
                     <div className="bg-gray-50 rounded-xl px-3 py-2 flex items-center gap-2">
                       <Globe size={11} className="text-gray-400 flex-shrink-0" />
-                      <span className="text-[10px] text-violet-600 font-semibold truncate">/{s.slug}</span>
+                      <span className="text-[10px] text-violet-600 font-semibold truncate">koopindia.com/{s.slug}</span>
                     </div>
 
                     <div className="flex gap-2 pt-1 mt-auto">
@@ -969,39 +1004,49 @@ export default function SellersPage() {
       {/* Seller Form Studio */}
       {formOpen && (
         <div className="w-full flex flex-col" style={{ minHeight: '100vh', background: '#f1f5f9' }}>
-                    <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
-            <div className="flex items-center gap-4">
+                    <div className="px-3 sm:px-6 py-3 sm:py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
               {user?.role !== "seller" && (
-                <button type="button" onClick={() => setFormOpen(false)} className="w-9 h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer">
+                <button type="button" onClick={() => setFormOpen(false)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer flex-shrink-0">
                   <ArrowLeft size={16} />
                 </button>
               )}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md" style={{ backgroundColor: pc }}>
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md flex-shrink-0 overflow-hidden" style={{ backgroundColor: pc }}>
                   {form.logoUrl
-                    ? <img src={getImg(form.logoUrl)} alt="" className="w-10 h-10 rounded-2xl object-contain" />
-                    : <span className="text-white font-black text-sm">{ini(form.name || "BR")}</span>}
+                    ? <img src={getImg(form.logoUrl)} alt="" className="w-full h-full object-contain" />
+                    : <span className="text-white font-black text-xs sm:text-sm">{ini(form.name || "BR")}</span>}
                 </div>
-                <div>
-                  <h1 className="font-black text-gray-900 text-sm sm:text-base leading-tight truncate max-w-[130px] min-[400px]:max-w-[200px] sm:max-w-none">{editing ? (form.name || "Edit Seller") : "New Seller Studio"}</h1>
-                  {form.name && <p className="text-indigo-600 text-[10px] sm:text-[11px] font-bold mt-0.5 truncate max-w-[130px] min-[400px]:max-w-[200px] sm:max-w-none">/{slugify(form.name)}</p>}
+                <div className="min-w-0 flex-1">
+                  <h1 className="font-black text-gray-900 text-xs sm:text-base leading-tight truncate">{editing ? (form.name || "Edit Seller") : "New Seller Studio"}</h1>
+                  {form.name && (
+                    <a
+                      href={`/${form.slug || slugify(form.name)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      title={`koopindia.com/${form.slug || slugify(form.name)}`}
+                      className="text-indigo-600 hover:text-indigo-800 hover:underline text-[10px] sm:text-[11px] font-bold mt-0.5 block truncate"
+                    >
+                      koopindia.com/{form.slug || slugify(form.name)}
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
               {user?.role === "seller" ? (
                 <button type="button" onClick={() => handleSave(null)} disabled={saving || isUploading || !form.name.trim()}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs transition-all shadow-lg shadow-violet-200 disabled:opacity-40 cursor-pointer">
+                  className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs transition-all shadow-md sm:shadow-lg shadow-violet-200 disabled:opacity-40 cursor-pointer whitespace-nowrap">
                   <Save size={14} /> {saving ? "Saving..." : isUploading ? "Uploading..." : "Save Updates"}
                 </button>
               ) : (
                 <>
                   <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.name.trim()}
-                    className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer">
+                    className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer whitespace-nowrap">
                     <Save size={14} /> Save Draft
                   </button>
                   <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.name.trim()}
-                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-lg shadow-emerald-200 disabled:opacity-40 cursor-pointer">
+                    className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-md sm:shadow-lg shadow-emerald-200 disabled:opacity-40 cursor-pointer whitespace-nowrap">
                     <Rocket size={14} /> {saving ? "Publishing..." : isUploading ? "Uploading..." : "Publish Live"}
                   </button>
                 </>
@@ -1063,6 +1108,11 @@ export default function SellersPage() {
                             <label className={fieldLabel}>Company Name *</label>
                             <input type="text" value={form.name} disabled={user?.role === "seller"} onChange={e => sf("name", e.target.value)} placeholder="Enter company name" className={`${inp} ${user?.role === "seller" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
                             {user?.role === "seller" && <p className="text-[10px] text-gray-400 mt-1">Contact admin to change Business Name.</p>}
+                            {form.name?.trim() && (
+                              <p className="text-[11px] text-violet-600 font-semibold mt-1.5 flex items-center gap-1.5 bg-violet-50 px-2.5 py-1 rounded-lg w-max">
+                                <span>🌐</span> Public URL: <span className="font-bold underline">koopindia.com/{form.slug || slugify(form.name)}</span>
+                              </p>
+                            )}
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
@@ -2116,18 +2166,16 @@ export default function SellersPage() {
                             <input type="tel" value={form.phone} onChange={e => sf("phone", e.target.value)} placeholder="+91 98765 43210" className={inp} />
                           </div>
                         </div>
-                        {user?.role !== "seller" && (
-                          <label className="flex items-center gap-3 p-4 bg-orange-50/50 border border-orange-100 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors">
-                            <div className="relative inline-flex items-center cursor-pointer">
-                              <input type="checkbox" className="sr-only peer" checked={!!(form.hideContact || form.hidePhone)} onChange={e => setForm(p => ({ ...p, hideContact: e.target.checked, hidePhone: e.target.checked }))} />
-                              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-gray-800">Hide Contact Details on Public Page</p>
-                              <p className="text-xs text-gray-500 mt-0.5">Seller's phone &amp; email will be hidden. Koop India's details will be shown instead.</p>
-                            </div>
-                          </label>
-                        )}
+                        <label className="flex items-center gap-3 p-4 bg-orange-50/50 border border-orange-100 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors">
+                          <div className="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" className="sr-only peer" checked={!!(form.hideContact || form.hidePhone)} onChange={e => setForm(p => ({ ...p, hideContact: e.target.checked, hidePhone: e.target.checked }))} />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-gray-800">Hide Contact Details on Public Page</p>
+                            <p className="text-xs text-gray-500 mt-0.5">Seller's phone &amp; email will be hidden. Koop India's phone (+91 95998 26131) will be shown instead.</p>
+                          </div>
+                        </label>
                         <div>
                           <label className={fieldLabel}>Portal Login Email</label>
                           <input type="email" value={form.email} onChange={e => sf("email", e.target.value)} placeholder="contact@company.com" className={inp} />

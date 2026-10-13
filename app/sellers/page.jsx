@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import MarketplaceHeader from "@/components/layout/MarketplaceHeader";
 import MarketplaceFooter from "@/components/layout/MarketplaceFooter";
 import SellerCard from "@/components/ui/cards/SellerCard";
@@ -16,31 +16,48 @@ const SearchIcon = () => (
 );
 
 const ChevronDown = () => <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>;
+const ChevronLeft = () => <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>;
+const ChevronRight2 = () => <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>;
 
 const CATEGORIES = [
-  { label: "Spices & Masala", emoji: "🌶️" },
-  { label: "FMCG & Grocery", emoji: "🛒" },
-  { label: "Agriculture & Farming", emoji: "🌾" },
-  { label: "Food & Beverages", emoji: "🍱" },
-  { label: "Dairy & Dairy Products", emoji: "🥛" },
-  { label: "Packaged Foods", emoji: "🥫" },
-  { label: "Snacks & Namkeen", emoji: "🥨" },
-  { label: "Edible Oils", emoji: "🛢️" },
-  { label: "Health & Wellness", emoji: "⚕️" },
-  { label: "Ayurvedic & Herbal", emoji: "🌿" },
+  { label: "Food & Beverage", emoji: "🍱" },
+  { label: "Health & Beauty", emoji: "💄" },
   { label: "Pharmaceuticals", emoji: "💊" },
-  { label: "Chemicals & Fertilizers", emoji: "🧪" },
-  { label: "Textile & Garments", emoji: "👕" },
-  { label: "Electronics & Hardware", emoji: "🔌" },
-  { label: "Construction Materials", emoji: "🏗️" },
-  { label: "Machinery & Equipment", emoji: "⚙️" },
-  { label: "Furniture & Interiors", emoji: "🪑" },
-  { label: "Automotive Parts", emoji: "🚗" },
-  { label: "Handicrafts & Gifts", emoji: "🎁" },
-  { label: "Stationery & Paper", emoji: "📝" },
-  { label: "Plastics & Rubber", emoji: "🛞" },
-  { label: "Export & Import", emoji: "🚢" },
-  { label: "Other", emoji: "📦" }
+  { label: "Apparel & Fashion", emoji: "👗" },
+  { label: "Chemicals", emoji: "🧪" },
+  { label: "Home Supplies", emoji: "🧹" },
+  { label: "Construction & Real Estate", emoji: "🏗️" },
+  { label: "Electronics & Electrical Supplies", emoji: "⚡" },
+  { label: "Agriculture", emoji: "🌾" },
+  { label: "Automobile", emoji: "🚗" },
+  { label: "Packaging & Paper", emoji: "📦" },
+  { label: "Hospital & Medical Supplies", emoji: "🏥" },
+  { label: "Gifts & Crafts", emoji: "🎁" },
+  { label: "Consumer Electronics", emoji: "📱" },
+  { label: "Pipes, Tubes & Fittings", emoji: "🔧" },
+  { label: "Industrial Supplies", emoji: "🏭" },
+  { label: "Computer Hardware & Software", emoji: "💻" },
+  { label: "Energy & Power", emoji: "🔋" },
+  { label: "Furniture", emoji: "🪑" },
+  { label: "Home Textiles & Furnishings", emoji: "🛋️" },
+  { label: "Hotel Supplies & Equipment", emoji: "🏨" },
+  { label: "Jewelry & Gemstones", emoji: "💎" },
+  { label: "Leather & Leather Products", emoji: "👞" },
+  { label: "Machinery", emoji: "⚙️" },
+  { label: "Mineral & Metals", emoji: "⛏️" },
+  { label: "Plastics & Products", emoji: "🛞" },
+  { label: "Printing & Publishing", emoji: "🖨️" },
+  { label: "Security & Protection", emoji: "🛡️" },
+  { label: "Sports & Entertainment", emoji: "⚽" },
+  { label: "Telecommunications", emoji: "📡" },
+  { label: "Textiles & Fabrics", emoji: "🧵" },
+  { label: "Toys", emoji: "🧸" },
+  { label: "Transportation", emoji: "🚚" },
+  { label: "Brass Hardware & Components", emoji: "🔩" },
+  { label: "Environment & Pollution", emoji: "🌱" },
+  { label: "Office & School Supplies", emoji: "✏️" },
+  { label: "Scientific & Laboratory Instruments", emoji: "🔬" },
+  { label: "Business Services", emoji: "💼" },
 ];
 
 const STATES = [
@@ -59,6 +76,12 @@ export default function SellersPage() {
   const [catSel, setCatSel] = useState("All Categories");
   const [stateSel, setStateSel] = useState("All States");
   const [catDropOpen, setCatDropOpen] = useState(false);
+  const catScrollRef = useRef(null);
+  const scrollCats = (dir) => {
+    if (catScrollRef.current) {
+      catScrollRef.current.scrollBy({ left: dir * 280, behavior: "smooth" });
+    }
+  };
 
   useEffect(() => {
     const fetchSellers = async () => {
@@ -164,22 +187,46 @@ export default function SellersPage() {
               <h2 className="text-2xl font-black text-[#1e3a5f] mt-1 tracking-tight">Explore All Categories</h2>
             </div>
             
-            <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide" style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-              <button
-                onClick={() => setCatSel("All Categories")}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === "All Categories" ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+            <div className="relative">
+              {/* Left Scroll Button */}
+              <button 
+                onClick={() => scrollCats(-1)} 
+                aria-label="Scroll Categories Left"
+                className="flex absolute left-0 top-1/2 -translate-y-[calc(50%+8px)] -ml-2 sm:-ml-4 z-20 w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-white border border-gray-200 shadow-md sm:shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 active:scale-95 transition-all hover:scale-105"
               >
-                <span>📁</span> All Categories
+                <ChevronLeft />
               </button>
-              {CATEGORIES.map(cat => (
+
+              {/* Right Scroll Button */}
+              <button 
+                onClick={() => scrollCats(1)} 
+                aria-label="Scroll Categories Right"
+                className="flex absolute right-0 top-1/2 -translate-y-[calc(50%+8px)] -mr-2 sm:-mr-4 z-20 w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-white border border-gray-200 shadow-md sm:shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 active:scale-95 transition-all hover:scale-105"
+              >
+                <ChevronRight2 />
+              </button>
+
+              <div 
+                ref={catScrollRef}
+                className="flex gap-3 overflow-x-auto pb-4 px-6 sm:px-1 scrollbar-hide scroll-smooth" 
+                style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+              >
                 <button
-                  key={cat.label}
-                  onClick={() => setCatSel(cat.label)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === cat.label ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+                  onClick={() => setCatSel("All Categories")}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === "All Categories" ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
                 >
-                  <span>{cat.emoji}</span> {cat.label}
+                  <span>📁</span> All Categories
                 </button>
-              ))}
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat.label}
+                    onClick={() => setCatSel(cat.label)}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border whitespace-nowrap transition-all font-bold text-sm ${catSel === cat.label ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm shadow-orange-500/20" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
+                  >
+                    <span>{cat.emoji}</span> {cat.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>

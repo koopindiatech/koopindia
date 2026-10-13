@@ -397,7 +397,7 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                 style={{ background: `${accent}08`, borderColor: `${accent}20` }}>
                 <LinkIcon size={11} style={{ color: accent }} className="flex-shrink-0" />
                 <span className="text-xs font-bold truncate" style={{ color: accent }}>
-                  {u.linkedSlug ? `/${isSeller ? "" : "buyers/"}${u.linkedSlug}` : "No listing linked"}
+                  {u.linkedSlug ? `koopindia.com/${isSeller ? "" : "buyers/"}${u.linkedSlug}` : "No listing linked"}
                 </span>
               </div>
 

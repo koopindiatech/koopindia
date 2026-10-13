@@ -52,9 +52,10 @@ export default function BuyerClientPage({ initialBuyer }) {
     setCurrentUser(getCurrentUser());
   }, []);
 
-  const shouldHide = (buyer?.hideContact || buyer?.hidePhone) && !currentUser;
-  const displayPhone = shouldHide ? "+91 95998 26131" : buyer?.contactPhone;
-  const displayEmail = shouldHide ? null : buyer?.contactEmail;
+  const shouldHide = !!(buyer?.hideContact || buyer?.hidePhone);
+  const koopPhone = "+91 95998 26131";
+  const displayPhone = shouldHide ? koopPhone : (buyer?.contactPhone || buyer?.phone || "");
+  const displayEmail = shouldHide ? "" : (buyer?.contactEmail || buyer?.email || "");
 
   useEffect(() => {
     if (buyer && buyer.id) {
@@ -126,6 +127,7 @@ export default function BuyerClientPage({ initialBuyer }) {
   const productCategories = buyer.productCategories || [];
   const buyersWeWorkWith = (buyer.buyersWeWorkWith || []).filter((b) => b.name || b.logoUrl);
   const initials = (buyer.buyerName || "").split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
+  const cleanAbout = buyer.about ? buyer.about.replace(/&nbsp;|\u00A0/g, " ").trim() : "";
 
   return (
     <>
@@ -146,7 +148,7 @@ export default function BuyerClientPage({ initialBuyer }) {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
 
           {/* ── LEFT MAIN COLUMN ── */}
-          <div className="space-y-5">
+          <div className="space-y-5 min-w-0">
 
             {/* ── HERO HEADER CARD ── */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
@@ -171,16 +173,16 @@ export default function BuyerClientPage({ initialBuyer }) {
                       ? <img src={buyer.logoUrl} alt={buyer.buyerName} className="w-full h-full object-contain p-1" />
                       : <span className="text-white font-black text-xl">{initials}</span>}
                   </div>
-                  <div className="flex-1 pt-8">
+                  <div className="flex-1 pt-8 min-w-0">
                     <div className="flex items-start justify-between flex-wrap gap-2">
-                      <div>
+                      <div className="min-w-0">
                         {(buyer.gstVerified || buyer.panVerified || buyer.companyVerified) && (
                           <div className="flex items-center gap-1.5 mb-2">
                             <span className="text-[10px] font-black px-3 py-1 rounded-full text-white tracking-wide" style={{ backgroundColor: "#16a34a" }}>✓ VERIFIED {buyer.businessType?.toUpperCase() || "BUYER"}</span>
                           </div>
                         )}
-                        <h1 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight">{buyer.buyerName}</h1>
-                        {buyer.tagline && <p className="text-gray-500 text-sm mt-0.5">{buyer.tagline}</p>}
+                        <h1 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight break-words">{buyer.buyerName}</h1>
+                        {buyer.tagline && <p className="text-gray-500 text-sm mt-0.5 break-words">{buyer.tagline}</p>}
                         <div className="flex items-center gap-2 mt-1.5">
                           <StarRating rating={rating} />
                           <span className="text-sm font-bold text-gray-700">{rating.toFixed(1)}</span>
@@ -231,9 +233,9 @@ export default function BuyerClientPage({ initialBuyer }) {
             </div>
 
             {/* ── TWO COLUMN: SIDEBAR INFO + MAIN CONTENT ── */}
-            <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-5">
-                            <div className="space-y-3">
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-5 min-w-0">
+              <div className="space-y-3 min-w-0">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 overflow-hidden">
                   <div className="space-y-3">
                     {[
                       { label: "Business Type", value: buyer.businessType },
@@ -246,14 +248,14 @@ export default function BuyerClientPage({ initialBuyer }) {
                     ].filter((r) => r.value).map((row, i) => (
                       <div key={i} className="border-b border-gray-50 pb-2.5 last:border-0 last:pb-0">
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-0.5">{row.label}</p>
-                        <p className="text-sm font-bold text-gray-800">{row.value}</p>
+                        <p className="text-sm font-bold text-gray-800 break-words">{row.value}</p>
                       </div>
                     ))}
                     {buyer.gstNumber && (
                       <div className="border-b border-gray-50 pb-2.5">
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-0.5">GST No.</p>
-                        <div className="flex items-center gap-1.5">
-                          <p className="text-xs font-bold text-gray-800">{buyer.gstNumber}</p>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="text-xs font-bold text-gray-800 break-all">{buyer.gstNumber}</p>
                           {buyer.gstVerified && <span className="text-[9px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full">Verified</span>}
                         </div>
                       </div>
@@ -261,8 +263,8 @@ export default function BuyerClientPage({ initialBuyer }) {
                     {buyer.panNumber && (
                       <div>
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-0.5">PAN No.</p>
-                        <div className="flex items-center gap-1.5">
-                          <p className="text-xs font-bold text-gray-800">{buyer.panNumber}</p>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <p className="text-xs font-bold text-gray-800 break-all">{buyer.panNumber}</p>
                           {buyer.panVerified && <span className="text-[9px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full">Verified</span>}
                         </div>
                       </div>
@@ -271,31 +273,37 @@ export default function BuyerClientPage({ initialBuyer }) {
                 </div>
               </div>
 
-                            <div className="space-y-5">
-                                {buyer.about && (
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="space-y-5 min-w-0">
+                {cleanAbout && (
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden">
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: pc + "20" }}>
+                      <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: pc + "20" }}>
                         <span className="text-xs">ℹ️</span>
                       </div>
-                    <h2 className="text-sm font-black text-gray-900">About {buyer.buyerName}</h2>
-                  </div>
-                  <div 
-                    className="prose max-w-none text-gray-600 text-sm leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: buyer.about }}
-                  />
+                      <h2 className="text-sm font-black text-gray-900">About {buyer.buyerName}</h2>
+                    </div>
+                    {cleanAbout.includes("<") ? (
+                      <div 
+                        className="prose max-w-none text-gray-600 text-sm leading-relaxed break-words overflow-hidden"
+                        dangerouslySetInnerHTML={{ __html: cleanAbout }}
+                      />
+                    ) : (
+                      <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line break-words">
+                        {cleanAbout}
+                      </p>
+                    )}
                   </div>
                 )}
 
-                                {productCategories.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                {productCategories.length > 0 && (
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden">
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: pc + "20" }}>
+                      <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: pc + "20" }}>
                         <span className="text-xs">📦</span>
                       </div>
                       <h2 className="text-sm font-black text-gray-900">Product Categories We Deal In</h2>
                     </div>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                       {productCategories.map((cat, i) => {
                         const iconMap = {
                           "Fruits & Vegetables": "🥦", "Dairy Products": "🥛", "Packaged Foods": "📦",
@@ -307,7 +315,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                         return (
                           <div key={i} className="flex flex-col items-center gap-1.5 p-3 bg-gray-50 rounded-xl hover:bg-orange-50 transition-colors border border-gray-100">
                             <span className="text-2xl">{iconMap[cat] || "📦"}</span>
-                            <span className="text-[10px] font-bold text-gray-600 text-center leading-tight">{cat}</span>
+                            <span className="text-[10px] font-bold text-gray-600 text-center leading-tight break-words">{cat}</span>
                           </div>
                         );
                       })}
@@ -315,10 +323,10 @@ export default function BuyerClientPage({ initialBuyer }) {
                   </div>
                 )}
 
-                                {buyersWeWorkWith.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                {buyersWeWorkWith.length > 0 && (
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden">
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: pc + "20" }}>
+                      <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: pc + "20" }}>
                         <span className="text-xs">🤝</span>
                       </div>
                       <h2 className="text-sm font-black text-gray-900">Buyers We Work With</h2>
@@ -342,9 +350,9 @@ export default function BuyerClientPage({ initialBuyer }) {
 
                 {/* Why Us + Requirements — side by side */}
                 {(whyUs.length > 0 || requirements.length > 0) && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 min-w-0">
                     {whyUs.length > 0 && (
-                      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">✅</span>
                           <h2 className="text-sm font-black text-gray-900">Why Supply to Us?</h2>
@@ -352,14 +360,15 @@ export default function BuyerClientPage({ initialBuyer }) {
                         <ul className="space-y-2">
                           {whyUs.map((item, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-gray-600 font-medium">
-                              <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span> {item}
+                              <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span>
+                              <span className="break-words">{item}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
                     )}
                     {requirements.length > 0 && (
-                      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">📋</span>
                           <h2 className="text-sm font-black text-gray-900">Our Requirements</h2>
@@ -367,7 +376,8 @@ export default function BuyerClientPage({ initialBuyer }) {
                         <ul className="space-y-2">
                           {requirements.map((item, i) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-gray-600 font-medium">
-                              <span className="font-black flex-shrink-0 mt-0.5" style={{ color: pc }}>→</span> {item}
+                              <span className="font-black flex-shrink-0 mt-0.5" style={{ color: pc }}>→</span>
+                              <span className="break-words">{item}</span>
                             </li>
                           ))}
                         </ul>
@@ -376,8 +386,8 @@ export default function BuyerClientPage({ initialBuyer }) {
                   </div>
                 )}
 
-                                {preferredStates.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                {preferredStates.length > 0 && (
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden">
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-base">🗺️</span>
                       <h2 className="text-sm font-black text-gray-900">We Prefer Suppliers From</h2>
@@ -386,7 +396,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                       {preferredStates.map((state, i) => (
                         <div key={i} className="flex items-center gap-2 text-xs font-semibold text-gray-600">
                           <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: pc }} />
-                          {state}
+                          <span className="break-words">{state}</span>
                         </div>
                       ))}
                     </div>
@@ -397,7 +407,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
             {/* ── BOTTOM STATS STRIP ── */}
             {stats.length > 0 && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5">
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 overflow-hidden">
                 <div className={`flex flex-wrap gap-6 ${stats.length >= 4 ? "justify-between" : "justify-center"}`}>
                   {stats.map((s, i) => (
                     <div key={i} className="flex flex-col items-center text-center min-w-[80px]">
@@ -412,7 +422,7 @@ export default function BuyerClientPage({ initialBuyer }) {
           </div>
 
           {/* ── RIGHT SIDEBAR ── */}
-          <div className="space-y-5">
+          <div className="space-y-5 min-w-0">
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
               <h3 className="font-black text-gray-900 text-base mb-1">
                 Connect with this {buyer.businessType || "Buyer"}
@@ -455,18 +465,19 @@ export default function BuyerClientPage({ initialBuyer }) {
                     style={{ backgroundColor: pc }}>
                     {submitting ? "Sending..." : " Send Business Proposal"}
                   </button>
-                  {buyer.whatsapp && (
+                  {!shouldHide && buyer.whatsapp && (
                     <a href={`https://wa.me/${buyer.whatsapp.replace(/\D/g, "")}?text=Hi, I am interested in doing business with ${buyer.buyerName}`}
                       target="_blank" rel="noreferrer"
                       className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border border-gray-200 hover:bg-gray-50 transition text-gray-700">
-                      <span className="text-base"></span> Chat on WhatsApp
+                      <span className="text-base">💬</span> Chat on WhatsApp
                     </a>
                   )}
                 </form>
               )}
             </div>
 
-                        {buyer.contactName && (
+            {/* Key Contact Person */}
+            {buyer.contactName && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
@@ -496,6 +507,19 @@ export default function BuyerClientPage({ initialBuyer }) {
                     )}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Direct Contact Phone if no contact person specified */}
+            {!buyer.contactName && displayPhone && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                  <h3 className="text-xs font-black text-gray-700 uppercase tracking-wider">Contact Phone</h3>
+                </div>
+                <a href={`tel:${displayPhone}`} className="flex items-center gap-1.5 text-xs font-bold mt-1.5 hover:underline" style={{ color: pc }}>
+                  {displayPhone}
+                </a>
               </div>
             )}
 

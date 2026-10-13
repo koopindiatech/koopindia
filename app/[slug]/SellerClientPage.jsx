@@ -85,6 +85,12 @@ export default function SellerClientPage({ initialSeller }) {
   }, [tab]);
 
   useEffect(() => {
+    if (selProd) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [selProd]);
+
+  useEffect(() => {
     if (tab !== "home" || banners.length <= 1) return;
     const int = setInterval(() => setCurrentSlide(s => (s + 1) % banners.length), 5000);
     return () => clearInterval(int);
@@ -142,9 +148,10 @@ export default function SellerClientPage({ initialSeller }) {
   const filtProd = selCat === "all" ? products : products.filter(p => p.categoryId === selCat);
   const btn1 = seller.heroBtn1Text || "View Our Products";
   const btn2 = seller.heroBtn2Text || "Distributors / Buyers Inquiry";
-  const shouldHide = (seller.hidePhone || seller.hideContact) && !currentUser;
-  const displayPhone = shouldHide ? "+91 95998 26131" : seller.phone;
-  const displayEmail = shouldHide ? null : seller.email;
+  const shouldHide = !!(seller.hidePhone || seller.hideContact);
+  const koopPhone = "+91 95998 26131";
+  const displayPhone = shouldHide ? koopPhone : (seller.phone || "");
+  const displayEmail = shouldHide ? "" : (seller.email || "");
   const navHomeLabel = seller.navHomeLabel || "Home";
   const navAboutLabel = seller.navAboutLabel || "About Us";
   const navProductsLabel = seller.navProductsLabel || "Products";
@@ -282,11 +289,11 @@ export default function SellerClientPage({ initialSeller }) {
 
   /* ── Product Card — shows only name + size/weight ── */
   const ProdCard = ({ p }) => (
-    <div onClick={() => { setSelProd(p); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
+    <div onClick={() => { setSelProd(p); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); window.scrollTo({ top: 0, behavior: "instant" }); }}
       className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-xl transition-all hover:-translate-y-1.5 cursor-pointer group overflow-hidden flex flex-col w-full sm:w-[280px]">
       <div className="bg-slate-50 flex items-center justify-center p-6 relative" style={{ height: '200px' }}>
         {p.imageUrl
-          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" loading="lazy" decoding="async" />
           : <span className="text-6xl">{p.emoji || "📦"}</span>}
         {p.badge && <span className="absolute top-3 left-3 text-[11px] font-black px-3 py-1.5 rounded-full text-gray-900 shadow-md border border-gray-200" style={{ backgroundColor: sc || '#ffffff' }}>{p.badge}</span>}
       </div>
@@ -352,7 +359,7 @@ export default function SellerClientPage({ initialSeller }) {
                     <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden" style={{ width: "260px" }}>
                       <div className="p-2 max-h-[360px] overflow-y-auto">
                         {products.slice(0, 8).map((p, i) => (
-                          <button key={i} onClick={() => { setSelProd(p); setProdDropOpen(false); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); }}
+                          <button key={i} onClick={() => { setSelProd(p); setProdDropOpen(false); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); window.scrollTo({ top: 0, behavior: "instant" }); }}
                             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition text-left cursor-pointer">
                           <div className="w-10 h-10 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
                             {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain" /> : <span className="text-xl">{p.emoji || "📦"}</span>}
@@ -520,42 +527,17 @@ export default function SellerClientPage({ initialSeller }) {
 
           {(seller.homeAbout || seller.about || seller.description) && (
             <div className="py-12 px-5" style={{ backgroundColor: homeBg }}>
-              <div className="max-w-5xl mx-auto text-center">
+              <div className="max-w-7xl mx-auto text-center">
                 <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
                 <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-5">{seller.name}</h2>
                 {/<[a-z][\s\S]*>/i.test(seller.homeAbout || seller.about || seller.description || "") ? (
                   <div
-                    className="prose max-w-4xl mx-auto text-base leading-relaxed text-gray-700 break-words [&>p]:mb-3 [&>p:last-child]:mb-0"
+                    className="prose max-w-7xl mx-auto text-base leading-relaxed text-gray-700 break-words [&>p]:mb-3 [&>p:last-child]:mb-0"
                     dangerouslySetInnerHTML={{ __html: formatRichHtml(seller.homeAbout || seller.about || seller.description) }}
                   />
                 ) : (
-                  <p className="text-gray-700 leading-relaxed text-base max-w-4xl mx-auto break-words">{formatRichHtml(seller.homeAbout || seller.about || seller.description)}</p>
+                  <p className="text-gray-700 leading-relaxed text-base max-w-7xl mx-auto break-words">{formatRichHtml(seller.homeAbout || seller.about || seller.description)}</p>
                 )}
-              </div>
-            </div>
-          )}
-
-          {/* Preferred Distribution States (Home) */}
-          {preferredStates.length > 0 && (
-            <div className="py-12 px-5 sm:px-8" style={{ backgroundColor: homeBg }}>
-              <div className="max-w-7xl mx-auto text-center">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-3 shadow-xs" style={{ backgroundColor: pc + "15", color: pc }}>
-                  <span>📍</span> Where We Supply
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2">Distribution Network</h3>
-                <p className="text-sm text-gray-500 max-w-2xl mx-auto mb-8 font-medium">Currently distributing & actively seeking partners across these states</p>
-                <div className="flex flex-wrap justify-center gap-2.5 max-w-7xl mx-auto">
-                  {preferredStates.map((state, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-white border border-gray-200 shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
-                      style={{ color: "#1f2937" }}
-                    >
-                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: pc }} />
-                      {state}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           )}
@@ -681,33 +663,69 @@ export default function SellerClientPage({ initialSeller }) {
             </div>
           )}
 
-          {/* Preferred Distribution States (About) */}
-          {preferredStates.length > 0 && (
-            <div className="py-16" style={{ backgroundColor: aboutBg }}>
-              <div className="max-w-7xl mx-auto px-5 sm:px-8">
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase mb-3 shadow-xs" style={{ backgroundColor: pc + "15", color: pc }}>
-                    <span>📍</span> Where We Supply
+          {/* Expansion Locations (About tab only) */}
+          {preferredStates.length > 0 && (() => {
+            const rawStates = preferredStates;
+
+            const ZONES = [
+              {
+                id: "east",
+                name: "East",
+                states: ["Bihar", "Sikkim", "Arunachal Pradesh", "Nagaland", "Manipur", "Mizoram", "Tripura", "Meghalaya", "Assam", "West Bengal", "Jharkhand", "Odisha", "Chhattisgarh"]
+              },
+              {
+                id: "west",
+                name: "WEST",
+                states: ["Rajasthan", "Madhya Pradesh", "Gujarat", "Daman & Diu", "Dadra & Nagar Haveli", "Maharashtra", "Goa"]
+              },
+              {
+                id: "south",
+                name: "SOUTH",
+                states: ["Andhra Pradesh", "Karnataka", "Lakshadweep", "Kerala", "Tamil Nadu", "Telangana", "Puducherry", "Andaman & Nicobar"]
+              },
+              {
+                id: "north",
+                name: "NORTH",
+                states: ["Jammu & Kashmir", "Himachal Pradesh", "Punjab", "Chandigarh", "Uttarakhand", "Haryana", "Delhi", "Uttar Pradesh"]
+              }
+            ];
+
+            const isPanIndia = rawStates.some(s => s.toLowerCase().includes("all") || s.toLowerCase().includes("pan india"));
+
+            const activeZones = ZONES.map(z => {
+              if (isPanIndia) return { ...z, matchedStates: z.states };
+              const matched = z.states.filter(zs => rawStates.some(rs => rs.toLowerCase().trim() === zs.toLowerCase().trim()));
+              return { ...z, matchedStates: matched };
+            }).filter(z => z.matchedStates.length > 0);
+
+            const displayZones = activeZones.length > 0 ? activeZones : ZONES.map(z => ({ ...z, matchedStates: rawStates }));
+
+            return (
+              <div className="py-14" style={{ backgroundColor: aboutBg }}>
+                <div className="max-w-7xl mx-auto px-5 sm:px-8">
+                  <div className="border-b border-gray-200 pb-3 mb-6">
+                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-wider uppercase">
+                      EXPANSION LOCATIONS
+                    </h2>
                   </div>
-                  <h2 className="text-3xl font-black mb-2" style={{ color: aboutCompanyText }}>Distribution Network</h2>
-                  <div className="w-20 h-1 rounded-full mx-auto mb-3" style={{ backgroundColor: pc }} />
-                  <p className="text-sm text-gray-500 max-w-2xl mx-auto font-medium">Preferred distribution states and targeted expansion zones</p>
-                </div>
-                <div className="flex flex-wrap justify-center gap-2.5 max-w-7xl mx-auto">
-                  {preferredStates.map((state, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 shadow-xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
-                      style={{ borderColor: pc + "30", color: aboutCompanyText }}
-                    >
-                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: pc }} />
-                      {state}
-                    </span>
-                  ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                    {displayZones.map((zone) => (
+                      <div key={zone.id} className="bg-white rounded-lg border-2 border-slate-700/80 p-5 sm:p-6 shadow-xs hover:shadow-sm transition-shadow">
+                        <div className="inline-block border-b-2 border-slate-900 pb-1 mb-3">
+                          <h3 className="text-base sm:text-lg font-black text-gray-900 tracking-wide uppercase">
+                            {zone.name}
+                          </h3>
+                        </div>
+                        <p className="text-sm text-gray-600 font-medium leading-relaxed">
+                          {zone.matchedStates.join(", ")}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Company Details Table — darker border, wider max-width */}
           {compRows.length > 0 && (

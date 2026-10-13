@@ -31,14 +31,44 @@ const BUYER_COLORS = [
 ];
 
 const PRODUCT_CATEGORY_ICONS = [
-  { label: "Fruits & Vegetables", icon: "🥦" }, { label: "Dairy Products", icon: "🥛" },
-  { label: "Packaged Foods", icon: "📦" }, { label: "Beverages", icon: "🥤" },
-  { label: "Snacks & Namkeen", icon: "🍿" }, { label: "Bakery", icon: "🍞" },
-  { label: "Household Essentials", icon: "🧹" }, { label: "Personal Care", icon: "🧴" },
-  { label: "Health & Wellness", icon: "💊" }, { label: "Frozen Foods", icon: "❄️" },
-  { label: "Pulses & Grains", icon: "🌾" }, { label: "Dry Fruits & Nuts", icon: "🥜" },
-  { label: "Spices & Masalas", icon: "🌶️" }, { label: "Tea & Coffee", icon: "☕" },
-  { label: "Organic Products", icon: "🌿" }, { label: "Edible Oils", icon: "🫙" },
+  { label: "Food & Beverage", icon: "🍱" },
+  { label: "Health & Beauty", icon: "💄" },
+  { label: "Pharmaceuticals", icon: "💊" },
+  { label: "Apparel & Fashion", icon: "👗" },
+  { label: "Chemicals", icon: "🧪" },
+  { label: "Home Supplies", icon: "🧹" },
+  { label: "Construction & Real Estate", icon: "🏗️" },
+  { label: "Electronics & Electrical Supplies", icon: "⚡" },
+  { label: "Agriculture", icon: "🌾" },
+  { label: "Automobile", icon: "🚗" },
+  { label: "Packaging & Paper", icon: "📦" },
+  { label: "Hospital & Medical Supplies", icon: "🏥" },
+  { label: "Gifts & Crafts", icon: "🎁" },
+  { label: "Consumer Electronics", icon: "📱" },
+  { label: "Pipes, Tubes & Fittings", icon: "🔧" },
+  { label: "Industrial Supplies", icon: "🏭" },
+  { label: "Computer Hardware & Software", icon: "💻" },
+  { label: "Energy & Power", icon: "🔋" },
+  { label: "Furniture", icon: "🪑" },
+  { label: "Home Textiles & Furnishings", icon: "🛋️" },
+  { label: "Hotel Supplies & Equipment", icon: "🏨" },
+  { label: "Jewelry & Gemstones", icon: "💎" },
+  { label: "Leather & Leather Products", icon: "👞" },
+  { label: "Machinery", icon: "⚙️" },
+  { label: "Mineral & Metals", icon: "⛏️" },
+  { label: "Plastics & Products", icon: "🛞" },
+  { label: "Printing & Publishing", icon: "🖨️" },
+  { label: "Security & Protection", icon: "🛡️" },
+  { label: "Sports & Entertainment", icon: "⚽" },
+  { label: "Telecommunications", icon: "📡" },
+  { label: "Textiles & Fabrics", icon: "🧵" },
+  { label: "Toys", icon: "🧸" },
+  { label: "Transportation", icon: "🚚" },
+  { label: "Brass Hardware & Components", icon: "🔩" },
+  { label: "Environment & Pollution", icon: "🌱" },
+  { label: "Office & School Supplies", icon: "✏️" },
+  { label: "Scientific & Laboratory Instruments", icon: "🔬" },
+  { label: "Business Services", icon: "💼" },
 ];
 
 const statusCfg = {
@@ -53,6 +83,7 @@ const blank = () => ({
   estYear: "", city: "", state: "", address: "",
   contactName: "", contactRole: "", contactPhone: "", contactEmail: "", contactPhotoUrl: "",
   phone: "", email: "", password: "", website: "", whatsapp: "",
+  hideContact: false, hidePhone: false,
   gstNumber: "", panNumber: "",
   rating: "4.5", reviewCount: "0",
   logoUrl: "", coverImageUrl: "",
@@ -336,7 +367,7 @@ export default function BuyersAdminPage() {
     if (typeof val === "string") {
       const s = val.trim();
       if (s.startsWith("data:") || s.startsWith("blob:") || val.length > 50000) return "";
-      return val;
+      return val.replace(/&nbsp;|\u00A0/g, " ");
     }
     if (Array.isArray(val)) return val.map(cleanPayload);
     if (val && typeof val === "object") {
@@ -355,8 +386,13 @@ export default function BuyersAdminPage() {
     setSaving(true);
     try {
       const clean = cleanPayload({ ...form });
-      const slug = slugify(clean.buyerName || "buyer");
-      const payload = { ...clean, slug, status: asDraft ? "draft" : "live" };
+      const payload = {
+        ...clean,
+        slug,
+        hideContact: !!(form.hideContact || form.hidePhone),
+        hidePhone: !!(form.hideContact || form.hidePhone),
+        status: asDraft ? "draft" : "live"
+      };
       const emailToUse = (payload.contactEmail || payload.email || "").toLowerCase().trim();
 
       if (editing) {
@@ -561,6 +597,8 @@ export default function BuyersAdminPage() {
       if (!Array.isArray(nextForm.stats)) {
         nextForm.stats = blank().stats;
       }
+      nextForm.hideContact = !!(b.hideContact || b.hidePhone);
+      nextForm.hidePhone = !!(b.hideContact || b.hidePhone);
     }
     
     setForm(nextForm);
@@ -681,7 +719,7 @@ export default function BuyersAdminPage() {
 
                     <div className="bg-gray-50 rounded-xl px-3 py-2 flex items-center gap-2">
                       <Globe size={11} className="text-gray-400 flex-shrink-0" />
-                      <span className="text-[10px] text-orange-600 font-semibold truncate">/buyers/{b.slug}</span>
+                      <span className="text-[10px] text-orange-600 font-semibold truncate">koopindia.com/buyers/{b.slug}</span>
                     </div>
 
                     <div className="flex gap-2 pt-1 mt-auto">
@@ -740,39 +778,49 @@ export default function BuyersAdminPage() {
       {/* Buyer Management Studio */}
       {formOpen && (
         <div className="w-full flex flex-col" style={{ minHeight: "100vh", background: "#f1f5f9" }}>
-                    <div className="px-4 sm:px-6 py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
-            <div className="flex items-center gap-4">
+                    <div className="px-3 sm:px-6 py-3 sm:py-4 bg-white border-b border-gray-100 shadow-sm flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
               {user?.role !== "buyer" && (
-                <button type="button" onClick={() => setFormOpen(false)} className="w-9 h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer">
+                <button type="button" onClick={() => setFormOpen(false)} className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all cursor-pointer flex-shrink-0">
                   <ArrowLeft size={16} />
                 </button>
               )}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md" style={{ backgroundColor: pc }}>
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md flex-shrink-0 overflow-hidden" style={{ backgroundColor: pc }}>
                   {form.logoUrl
-                    ? <img src={getImg(form.logoUrl)} alt="" className="w-10 h-10 rounded-2xl object-contain" />
-                    : <span className="text-white font-black text-sm">{ini(form.buyerName || "BR")}</span>}
+                    ? <img src={getImg(form.logoUrl)} alt="" className="w-full h-full object-contain" />
+                    : <span className="text-white font-black text-xs sm:text-sm">{ini(form.buyerName || "BR")}</span>}
                 </div>
-                <div>
-                  <h1 className="font-black text-gray-900 text-sm sm:text-base leading-tight truncate max-w-[130px] min-[400px]:max-w-[200px] sm:max-w-none">{editing ? (form.buyerName || "Edit Buyer") : "New Buyer Studio"}</h1>
-                  {form.buyerName && <p className="text-orange-600 text-[10px] sm:text-[11px] font-bold mt-0.5 truncate max-w-[130px] min-[400px]:max-w-[200px] sm:max-w-none">/buyers/{slugify(form.buyerName)}</p>}
+                <div className="min-w-0 flex-1">
+                  <h1 className="font-black text-gray-900 text-xs sm:text-base leading-tight truncate">{editing ? (form.buyerName || "Edit Buyer") : "New Buyer Studio"}</h1>
+                  {form.buyerName && (
+                    <a
+                      href={`/buyers/${form.slug || slugify(form.buyerName)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      title={`koopindia.com/buyers/${form.slug || slugify(form.buyerName)}`}
+                      className="text-orange-600 hover:text-orange-800 hover:underline text-[10px] sm:text-[11px] font-bold mt-0.5 block truncate"
+                    >
+                      koopindia.com/buyers/{form.slug || slugify(form.buyerName)}
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
               {user?.role === "buyer" ? (
                 <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.buyerName.trim()}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-all shadow-lg shadow-orange-200 disabled:opacity-40 cursor-pointer">
+                  className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-all shadow-md sm:shadow-lg shadow-orange-200 disabled:opacity-40 cursor-pointer whitespace-nowrap">
                   <Save size={14} /> {saving ? "Saving..." : isUploading ? "Uploading..." : "Save Updates"}
                 </button>
               ) : (
                 <>
                   <button type="button" onClick={() => handleSave(true)} disabled={saving || isUploading || !form.buyerName.trim()}
-                    className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer">
+                    className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-all disabled:opacity-40 cursor-pointer whitespace-nowrap">
                     <Save size={14} /> Save Draft
                   </button>
                   <button type="button" onClick={() => handleSave(false)} disabled={saving || isUploading || !form.buyerName.trim()}
-                    className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-all shadow-lg shadow-orange-200 disabled:opacity-40 cursor-pointer">
+                    className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-all shadow-md sm:shadow-lg shadow-orange-200 disabled:opacity-40 cursor-pointer whitespace-nowrap">
                     <Rocket size={14} /> {saving ? "Publishing..." : isUploading ? "Uploading..." : "Publish Live"}
                   </button>
                 </>
@@ -839,6 +887,11 @@ export default function BuyersAdminPage() {
                             <label className={fieldLabel}>Company Name *</label>
                             <input type="text" value={form.buyerName} disabled={user?.role === "buyer"} onChange={e => sf("buyerName", e.target.value)} placeholder="Enter company name" className={`${inp} ${user?.role === "buyer" ? "bg-gray-50 cursor-not-allowed" : ""}`} />
                             {user?.role === "buyer" && <p className="text-[10px] text-gray-400 mt-1">Contact admin to change Company Name.</p>}
+                            {form.buyerName?.trim() && (
+                              <p className="text-[11px] text-orange-600 font-semibold mt-1.5 flex items-center gap-1.5 bg-orange-50 px-2.5 py-1 rounded-lg w-max">
+                                <span>🌐</span> Public URL: <span className="font-bold underline">koopindia.com/buyers/{form.slug || slugify(form.buyerName)}</span>
+                              </p>
+                            )}
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
@@ -970,7 +1023,6 @@ export default function BuyersAdminPage() {
                         <div><label className={fieldLabel}>Portal Login Email</label><input value={form.email} onChange={(e) => sf("email", e.target.value)} placeholder="contact@company.com" className={inp} /></div>
                         <div><label className={fieldLabel}>Portal Login Password</label><input type="text" value={form.password || ""} onChange={(e) => sf("password", e.target.value)} placeholder="Minimum 6 characters" className={inp} /></div>
                         <div><label className={fieldLabel}>WhatsApp</label><input value={form.whatsapp} onChange={(e) => sf("whatsapp", e.target.value)} placeholder="Enter phone number" className={inp} /></div>
-                        {user?.role !== "buyer" && (
                           <label className="col-span-1 sm:col-span-2 md:col-span-3 flex items-center gap-3 p-4 bg-orange-50/50 border border-orange-100 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors mt-2">
                             <div className="relative inline-flex items-center cursor-pointer">
                               <input type="checkbox" className="sr-only peer" checked={!!(form.hideContact || form.hidePhone)} onChange={e => setForm(p => ({ ...p, hideContact: e.target.checked, hidePhone: e.target.checked }))} />
@@ -978,10 +1030,9 @@ export default function BuyersAdminPage() {
                             </div>
                             <div>
                               <p className="text-sm font-bold text-gray-800">Hide Contact Details on Public Page</p>
-                              <p className="text-xs text-gray-500 mt-0.5">Buyer's phone & email will be hidden. Koop India's details will be shown instead.</p>
+                              <p className="text-xs text-gray-500 mt-0.5">Buyer's phone &amp; email will be hidden. Koop India's phone (+91 95998 26131) will be shown instead.</p>
                             </div>
                           </label>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -1132,6 +1183,16 @@ export default function BuyersAdminPage() {
                           <div><label className={fieldLabel}>Phone</label><input value={form.contactPhone} onChange={(e) => sf("contactPhone", e.target.value)} placeholder="Enter phone number" className={inp} /></div>
                           <div><label className={fieldLabel}>Email</label><input value={form.contactEmail} onChange={(e) => sf("contactEmail", e.target.value)} placeholder="Enter email address" className={inp} /></div>
                           <div className="sm:col-span-2"><label className={fieldLabel}>Portal Login Password</label><input type="text" value={form.password || ""} onChange={(e) => sf("password", e.target.value)} placeholder="Minimum 6 characters" className={inp} /></div>
+                          <label className="sm:col-span-2 flex items-center gap-3 p-3.5 bg-orange-50/50 border border-orange-100 rounded-xl cursor-pointer hover:bg-orange-50 transition-colors mt-1">
+                            <div className="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" className="sr-only peer" checked={!!(form.hideContact || form.hidePhone)} onChange={e => setForm(p => ({ ...p, hideContact: e.target.checked, hidePhone: e.target.checked }))} />
+                              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-gray-800">Hide Contact Details on Public Page</p>
+                              <p className="text-xs text-gray-500 mt-0.5">Buyer's phone &amp; email will be hidden. Koop India's phone (+91 95998 26131) will be shown instead.</p>
+                            </div>
+                          </label>
                         </div>
                       </div>
                     </div>
@@ -1161,14 +1222,9 @@ export default function BuyersAdminPage() {
                 <option value="Importer / Exporter" />
               </datalist>
               <datalist id="category-list">
-                <option value="Spices & Masala" />
-                <option value="FMCG & Grocery" />
-                <option value="Agriculture & Farming" />
-                <option value="Food & Beverages" />
-                <option value="Dairy & Dairy Products" />
-                <option value="Packaged Foods" />
-                <option value="Health & Wellness" />
-                <option value="Ayurvedic & Herbal" />
+                {PRODUCT_CATEGORY_ICONS.map((c) => (
+                  <option key={c.label} value={c.label} />
+                ))}
               </datalist>
               <datalist id="city-list">
                 <option value="Delhi" />

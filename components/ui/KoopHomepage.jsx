@@ -36,29 +36,44 @@ const proxyImg = (u) =>
 const ini = (n = "") => n.split(" ").slice(0, 2).map(w => w[0] || "").join("").toUpperCase();
 
 const CATEGORY_MAP = {
-  "Spices & Masala": { emoji: "🌶️", subs: ["Whole Spices", "Ground Spices", "Blended Masala", "Curry Powder", "Chilli Products", "Turmeric Products", "Coriander Products", "Cumin Products", "Pepper Products", "Cardamom & Clove", "Garam Masala", "Kitchen King Masala", "Biryani Masala", "Chat Masala", "Pickle Masala", "Meat Masala", "Sambar Masala", "Other Masala"] },
-  "FMCG & Grocery": { emoji: "🛒", subs: ["Staples & Grains", "Pulses & Lentils", "Rice & Wheat", "Flour & Atta", "Sugar & Salt", "Tea & Coffee", "Personal Care", "Home Care", "Baby Care", "Oral Care", "Skin Care", "Hair Care", "Detergent & Soap", "Other FMCG"] },
-  "Agriculture & Farming": { emoji: "🌾", subs: ["Seeds & Seedlings", "Fertilizers", "Pesticides & Herbicides", "Farm Equipment", "Irrigation Products", "Crop Protection", "Organic Farming", "Horticulture", "Agri Commodities", "Livestock Feed", "Poultry Products", "Fishery Products", "Other Agri"] },
-  "Food & Beverages": { emoji: "🍱", subs: ["Soft Drinks & Juices", "Alcoholic Beverages", "Energy Drinks", "Mineral Water", "Bakery & Confectionery", "Frozen Foods", "Ready to Eat", "Sauces & Condiments", "Jam & Spreads", "Noodles & Pasta", "Breakfast Cereals", "Dry Fruits & Nuts", "Honey & Sweeteners", "Other Food & Beverages"] },
-  "Dairy & Dairy Products": { emoji: "🥛", subs: ["Milk & Cream", "Butter & Ghee", "Cheese", "Yogurt & Curd", "Paneer", "Ice Cream", "Dairy Whitener", "Flavoured Milk", "Khoa & Mawa", "Condensed Milk", "Dairy Blends", "Other Dairy"] },
-  "Packaged Foods": { emoji: "🥫", subs: ["Canned Foods", "Pickles & Chutneys", "Papad & Fryums", "Mukhwas", "Instant Mixes", "Health Foods", "Protein Supplements", "Ethnic Foods", "Vegan & Organic", "Gluten Free", "Other Packaged Foods"] },
-  "Snacks & Namkeen": { emoji: "🥨", subs: ["Chips & Wafers", "Namkeen & Bhujia", "Popcorn", "Extruded Snacks", "Roasted Snacks", "Biscuits & Cookies", "Crackers", "Puff Snacks", "Nuts & Seeds Snacks", "Chivda & Mixture", "Other Snacks"] },
-  "Edible Oils": { emoji: "🛢️", subs: ["Mustard Oil", "Sunflower Oil", "Soybean Oil", "Palm Oil", "Groundnut Oil", "Rice Bran Oil", "Coconut Oil", "Sesame Oil", "Olive Oil", "Blended Oil", "Vanaspati & Shortening", "Other Edible Oils"] },
-  "Health & Wellness": { emoji: "⚕️", subs: ["Vitamins & Minerals", "Protein Supplements", "Herbal Supplements", "Immunity Boosters", "Weight Management", "Sports Nutrition", "Probiotics", "Omega & Fish Oil", "Diabetic Care", "Women Health", "Kids Nutrition", "Other Health Products"] },
-  "Ayurvedic & Herbal": { emoji: "🌿", subs: ["Ayurvedic Medicines", "Herbal Extracts", "Churna & Powder", "Kadha & Syrup", "Herbal Tea", "Essential Oils", "Herbal Cosmetics", "Herbal Food Products", "Ashwagandha Products", "Tulsi Products", "Amla Products", "Other Herbal"] },
-  "Pharmaceuticals": { emoji: "💊", subs: ["Tablets & Capsules", "Syrup & Liquid", "Injections", "Topical Creams", "Surgical Disposables", "Diagnostic Products", "OTC Medicines", "Generic Medicines", "Veterinary Medicines", "Hospital Supplies", "Other Pharma"] },
-  "Chemicals & Fertilizers": { emoji: "🧪", subs: ["Industrial Chemicals", "Agricultural Chemicals", "Dyes & Pigments", "Adhesives & Sealants", "Cleaning Chemicals", "Urea & DAP", "Micronutrients", "Bio Fertilizers", "Water Treatment", "Coating & Paints", "Other Chemicals"] },
-  "Textile & Garments": { emoji: "👕", subs: ["Cotton Fabric", "Synthetic Fabric", "Knitted Fabric", "Woven Fabric", "Ready Made Garments", "Sarees & Ethnic Wear", "Kids Wear", "Sportswear", "Uniforms & Workwear", "Home Textiles", "Yarn & Thread", "Other Textile"] },
-  "Electronics & Hardware": { emoji: "🔌", subs: ["Consumer Electronics", "Mobile Accessories", "LED & Lighting", "Cables & Wires", "Switches & Sockets", "CCTV & Security", "Solar Products", "Computer Hardware", "PCB & Components", "Industrial Electronics", "Other Electronics"] },
-  "Construction Materials": { emoji: "🏗️", subs: ["Cement & Concrete", "Steel & Iron", "Bricks & Tiles", "Paints & Varnish", "Plumbing Materials", "Electrical Fittings", "Glass & Aluminum", "Waterproofing", "Stone & Marble", "Plywood & Laminates", "Other Construction"] },
-  "Machinery & Equipment": { emoji: "⚙️", subs: ["Food Processing Machines", "Packaging Machines", "Agricultural Machines", "Industrial Pumps", "Compressors", "CNC & Lathe", "Welding Equipment", "Material Handling", "Generators", "HVAC Equipment", "Other Machinery"] },
-  "Furniture & Interiors": { emoji: "🪑", subs: ["Wooden Furniture", "Metal Furniture", "Office Furniture", "Modular Kitchen", "Sofa & Seating", "Beds & Mattresses", "Wardrobes & Cabinets", "Decor & Artifacts", "Curtains & Blinds", "Flooring", "Other Furniture"] },
-  "Automotive Parts": { emoji: "🚗", subs: ["Engine Parts", "Body Parts", "Electrical Parts", "Brake System", "Transmission Parts", "Filters & Lubricants", "Tyres & Wheels", "Car Accessories", "Two Wheeler Parts", "Heavy Vehicle Parts", "Other Auto Parts"] },
-  "Handicrafts & Gifts": { emoji: "🎁", subs: ["Wooden Handicrafts", "Metal Handicrafts", "Textile Handicrafts", "Pottery & Ceramics", "Jewellery & Accessories", "Decorative Items", "Gift Items", "Festive Products", "Religious Items", "Wall Art", "Other Handicrafts"] },
-  "Stationery & Paper": { emoji: "📝", subs: ["Office Stationery", "School Stationery", "Paper Products", "Notebooks & Diaries", "Pens & Writing Instruments", "Art & Craft Supplies", "Packaging Paper", "Labels & Tags", "Printing Solutions", "Other Stationery"] },
-  "Plastics & Rubber": { emoji: "🛞", subs: ["PET Products", "HDPE Products", "PP Products", "PVC Products", "Rubber Products", "Silicone Products", "Plastic Packaging", "Plastic Components", "Rubber Seals & Gaskets", "Other Plastics & Rubber"] },
-  "Export & Import": { emoji: "🚢", subs: ["Agricultural Exports", "Food & Spice Exports", "Textile Exports", "Handicraft Exports", "Chemical Exports", "Pharma Exports", "Import Trading", "Freight & Logistics", "Customs Clearance", "Other Export & Import"] },
-  "Other": { emoji: "📦", subs: ["Other Products", "Other Services", "Other Businesses"] }
+  "Food & Beverage": { emoji: "🍱", subs: ["Spices & Seasonings", "Bakery & Confectionery", "Beverages & Juices", "Dairy Products", "Grains & Cereals", "Edible Oils", "Snacks & Namkeen", "Packaged Foods", "Tea & Coffee", "Frozen Foods", "Organic Food", "Other Food & Beverage"] },
+  "Health & Beauty": { emoji: "💄", subs: ["Skin Care", "Hair Care", "Personal Hygiene", "Oral Care", "Cosmetics & Makeup", "Fragrances & Deodorants", "Herbal & Ayurvedic Beauty", "Salon & Spa Supplies", "Other Health & Beauty"] },
+  "Pharmaceuticals": { emoji: "💊", subs: ["Tablets & Capsules", "Syrups & Liquids", "Injections", "Ointments & Creams", "Generic Drugs", "OTC Medicines", "Ayurvedic & Herbal Medicines", "Nutraceuticals", "Veterinary Drugs", "Other Pharmaceuticals"] },
+  "Apparel & Fashion": { emoji: "👗", subs: ["Men's Wear", "Women's Wear", "Kids & Baby Wear", "Ethnic Wear", "Western Wear", "Footwear", "Fashion Accessories", "Uniforms & Workwear", "Sportswear", "Other Apparel"] },
+  "Chemicals": { emoji: "🧪", subs: ["Industrial Chemicals", "Agrochemicals", "Specialty Chemicals", "Dyes & Pigments", "Solvents", "Water Treatment Chemicals", "Cleaning Chemicals", "Polymers & Resins", "Other Chemicals"] },
+  "Home Supplies": { emoji: "🧹", subs: ["Cleaning Supplies", "Kitchenware", "Bathroom Accessories", "Storage & Organization", "Disposable Items", "Laundry Care", "Pest Control", "Other Home Supplies"] },
+  "Construction & Real Estate": { emoji: "🏗️", subs: ["Cement & Concrete", "Building Materials", "Tiles & Flooring", "Paints & Wall Finishes", "Roofing Materials", "Sanitaryware & Fittings", "Structural Steel", "Doors & Windows", "Other Construction"] },
+  "Electronics & Electrical Supplies": { emoji: "⚡", subs: ["Cables & Wires", "Switches & Sockets", "LED & Lighting", "Transformers & Switchgear", "Circuit Breakers", "Solar Panels & Systems", "Industrial Electricals", "Power Distribution", "Other Electricals"] },
+  "Agriculture": { emoji: "🌾", subs: ["Seeds & Saplings", "Fertilizers & Nutrients", "Pesticides & Bio-Pesticides", "Farming Equipment", "Irrigation Systems", "Animal Feed", "Horticulture", "Fresh Produce", "Other Agriculture"] },
+  "Automobile": { emoji: "🚗", subs: ["Spare Parts", "Auto Accessories", "Batteries", "Tires & Tubes", "Lubricants & Oils", "Two Wheeler Parts", "Commercial Vehicle Parts", "Electric Vehicle Components", "Other Automobile"] },
+  "Packaging & Paper": { emoji: "📦", subs: ["Corrugated Boxes", "Flexible Packaging", "Paper Bags & Pouches", "Bottles & Containers", "Labels & Tapes", "Packaging Films", "Cartons & Tubes", "Kraft Paper & Board", "Other Packaging"] },
+  "Hospital & Medical Supplies": { emoji: "🏥", subs: ["Medical Equipment", "Surgical Instruments", "Hospital Furniture", "Disposable Medical Supplies", "Diagnostic Equipment", "PPE & Masks", "Bandages & Dressings", "Laboratory Disposables", "Other Medical Supplies"] },
+  "Gifts & Crafts": { emoji: "🎁", subs: ["Handicrafts", "Corporate Gifts", "Decorative Items", "Festive Gifts", "Wooden Crafts", "Metal Crafts", "Candles & Scents", "Ceramic & Clay Crafts", "Other Gifts & Crafts"] },
+  "Consumer Electronics": { emoji: "📱", subs: ["Mobile Phones & Accessories", "Audio & Headphones", "Televisions & Home Theater", "Smart Home Devices", "Wearables & Smartwatches", "Cameras & Optics", "Power Banks & Chargers", "Other Consumer Electronics"] },
+  "Pipes, Tubes & Fittings": { emoji: "🔧", subs: ["PVC & CPVC Pipes", "GI & Steel Pipes", "Pipe Fittings & Flanges", "Valves & Cocks", "Hose Pipes", "Ductile Iron Pipes", "Industrial Tubing", "Other Pipes & Fittings"] },
+  "Industrial Supplies": { emoji: "🏭", subs: ["Fasteners & Bolts", "Bearings & Belts", "Welding Supplies", "Abrasives & Cutting Tools", "Safety Gear & PPE", "Material Handling", "Lubrication Equipment", "Pumps & Compressors", "Other Industrial Supplies"] },
+  "Computer Hardware & Software": { emoji: "💻", subs: ["Laptops & Desktops", "Monitors & Displays", "Networking Equipment", "Printers & Scanners", "Storage Devices", "Computer Peripherals", "Enterprise Software", "POS & Barcode Systems", "Other IT Products"] },
+  "Energy & Power": { emoji: "🔋", subs: ["Solar Energy Systems", "Generators & Inverters", "Batteries & UPS", "Wind & Renewable Energy", "Transformers", "Biofuel & Biomass", "Power Cables", "Other Energy Products"] },
+  "Furniture": { emoji: "🪑", subs: ["Office Furniture", "Home Furniture", "School & Institutional Furniture", "Outdoor Furniture", "Modular Furniture", "Beds & Mattresses", "Sofas & Chairs", "Tables & Desks", "Other Furniture"] },
+  "Home Textiles & Furnishings": { emoji: "🛋️", subs: ["Bed Linen & Sheets", "Curtains & Blinds", "Cushions & Covers", "Carpets & Rugs", "Towels & Bath Linen", "Table Linen", "Blankets & Quilts", "Upholstery Fabrics", "Other Home Textiles"] },
+  "Hotel Supplies & Equipment": { emoji: "🏨", subs: ["Commercial Kitchen Equipment", "Hotel Linen & Towels", "Guest Amenities", "Tableware & Crockery", "Buffet Equipment", "Housekeeping Equipment", "Hotel Uniforms", "Other Hotel Supplies"] },
+  "Jewelry & Gemstones": { emoji: "💎", subs: ["Fashion Jewelry", "Silver Jewelry", "Gold & Diamond Jewelry", "Precious & Semi-Precious Stones", "Beads & Findings", "Jewelry Packaging & Displays", "Traditional Indian Jewelry", "Other Jewelry"] },
+  "Leather & Leather Products": { emoji: "👞", subs: ["Leather Footwear", "Leather Bags & Wallets", "Leather Belts & Accessories", "Leather Garments", "Finished Leather Sheets", "Safety Leather Goods", "Other Leather Products"] },
+  "Machinery": { emoji: "⚙️", subs: ["Food Processing Machinery", "Packaging Machinery", "Agricultural Machinery", "Textile Machinery", "Woodworking Machinery", "CNC & Lathe Machines", "Printing Machinery", "Plastic Processing Machines", "Other Machinery"] },
+  "Mineral & Metals": { emoji: "⛏️", subs: ["Iron & Steel", "Aluminum Products", "Copper & Brass", "Industrial Minerals", "Ores & Concentrates", "Metal Sheets & Coils", "Scrap Metal", "Alloy Products", "Other Minerals & Metals"] },
+  "Plastics & Products": { emoji: "🛞", subs: ["Plastic Containers & Bottles", "Plastic Molded Components", "Plastic Sheets & Films", "Engineering Plastics", "Plastic Household Goods", "Recycled Plastic Granules", "Other Plastics"] },
+  "Printing & Publishing": { emoji: "🖨️", subs: ["Commercial Printing", "Offset Printing Services", "Digital Printing", "Screen Printing", "Books & Magazines", "Brochures & Flyers", "Printing Inks & Plates", "Binding & Finishing", "Other Printing"] },
+  "Security & Protection": { emoji: "🛡️", subs: ["CCTV Cameras & Systems", "Access Control & Biometrics", "Fire Safety & Extinguishers", "Security Alarms", "Safety Barriers & Locks", "Surveillance Systems", "Personal Protective Equipment", "Other Security"] },
+  "Sports & Entertainment": { emoji: "⚽", subs: ["Fitness & Gym Equipment", "Outdoor Sports Goods", "Indoor Games", "Playground Equipment", "Sports Apparel & Shoes", "Trophies & Medals", "Musical Instruments", "Other Sports & Entertainment"] },
+  "Telecommunications": { emoji: "📡", subs: ["Telecom Cables & Optical Fiber", "Towers & Antennas", "Wireless Equipment", "Networking Switches & Routers", "Telecom Power Systems", "Intercom & PBX", "RF Components", "Other Telecom"] },
+  "Textiles & Fabrics": { emoji: "🧵", subs: ["Cotton Fabrics", "Synthetic & Polyester Fabrics", "Silk & Wool Fabrics", "Yarn & Thread", "Knitted Fabrics", "Denim Fabrics", "Embroidered Fabrics", "Technical Textiles", "Other Fabrics"] },
+  "Toys": { emoji: "🧸", subs: ["Educational Toys", "Plastic & Action Toys", "Soft & Plush Toys", "Wooden Toys", "Board Games & Puzzles", "Baby & Toddler Toys", "Ride-on & Outdoor Toys", "Electronic Toys", "Other Toys"] },
+  "Transportation": { emoji: "🚚", subs: ["Logistics & Cargo Services", "Commercial Vehicles", "Trailers & Tankers", "E-Rickshaws & 3-Wheelers", "Material Handling Carts", "Fleet Management Devices", "Warehousing Equipment", "Other Transportation"] },
+  "Brass Hardware & Components": { emoji: "🔩", subs: ["Brass Screws & Fasteners", "Brass Precision Turned Parts", "Brass Electrical Components", "Brass Sanitary Fittings", "Brass Hinges & Door Hardware", "Brass Inserts & Anchors", "Brass Valves & Fittings", "Other Brass Hardware"] },
+  "Environment & Pollution": { emoji: "🌱", subs: ["Water & Wastewater Treatment", "Air Pollution Control Equipment", "Waste Management & Recycling", "Solar & Green Energy", "Biogas Systems", "Environmental Testing Equipment", "Eco-Friendly Products", "Other Environmental"] },
+  "Office & School Supplies": { emoji: "✏️", subs: ["Notebooks & Diaries", "Pens & Writing Instruments", "Files & Folders", "Office Paper Products", "Desk Organizers & Accessories", "Whiteboards & Presentation Tools", "School Bags & Pouches", "Other Stationery"] },
+  "Scientific & Laboratory Instruments": { emoji: "🔬", subs: ["Laboratory Glassware", "Microscopes & Optical Devices", "Testing & Measurement Equipment", "Analytical Instruments", "Chemical Lab Consumables", "Educational Lab Kits", "Cleanroom Equipment", "Other Scientific Instruments"] },
+  "Business Services": { emoji: "💼", subs: ["Company Registration & Legal", "Taxation & Accounting Services", "ISO & Compliance Certifications", "Digital Marketing & Branding", "Web & Software Development", "Franchise Consulting", "Export & Import Advisory", "Logistics & Supply Chain", "Other Business Services"] }
 };
 
 const CATEGORIES = Object.keys(CATEGORY_MAP).map(k => ({ label: k, emoji: CATEGORY_MAP[k].emoji, subs: CATEGORY_MAP[k].subs }));
@@ -485,7 +500,7 @@ export default function KoopIndiaHomepage() {
 
 
       {/* Search Bar */}
-      <section className="bg-[#1e3a5f] py-5 px-4 sm:px-6 sticky top-[64px] z-40 shadow-xl">
+      <section className="bg-[#1e3a5f] py-4 sm:py-5 px-3 sm:px-6 relative sm:sticky sm:top-[64px] z-40 shadow-xl">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row items-stretch gap-2 bg-white rounded-2xl p-2 shadow-2xl shadow-blue-900/30">
             <div className="flex items-center flex-1 gap-2 px-3">
@@ -500,8 +515,6 @@ export default function KoopIndiaHomepage() {
               />
             </div>
 
-              
-
             <div className="relative w-full sm:w-auto">
               <select value={stateSel} onChange={e => { setStateSel(e.target.value); performSearch(search, catSel, subCatSel, e.target.value); }}
                 className="w-full appearance-none bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 pl-3 pr-7 py-2.5 rounded-xl outline-none cursor-pointer hover:border-gray-300 min-w-[130px]">
@@ -509,10 +522,8 @@ export default function KoopIndiaHomepage() {
               </select>
             </div>
 
-
-
             <button onClick={handleSearch} disabled={searching}
-              className="bg-[#F97316] hover:bg-orange-600 text-white font-black px-7 py-2.5 rounded-xl transition-all hover:scale-105 shadow-lg shadow-orange-400/30 text-sm flex-shrink-0 disabled:opacity-70 flex items-center gap-2">
+              className="bg-[#F97316] hover:bg-orange-600 text-white font-black px-7 py-2.5 rounded-xl transition-all hover:scale-105 shadow-lg shadow-orange-400/30 text-sm flex-shrink-0 disabled:opacity-70 flex items-center justify-center gap-2">
               {searching ? <span className="animate-spin">⏳</span> : null} Search
             </button>
           </div>
@@ -550,7 +561,8 @@ export default function KoopIndiaHomepage() {
             {/* Left Scroll Button */}
             <button 
               onClick={() => scrollCats(-1)} 
-              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-[calc(50%+8px)] -ml-4 z-10 w-10 h-10 items-center justify-center bg-white border border-gray-200 shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 transition-all hover:scale-105"
+              aria-label="Scroll Categories Left"
+              className="flex absolute left-0 top-1/2 -translate-y-[calc(50%+8px)] -ml-2 sm:-ml-4 z-20 w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-white border border-gray-200 shadow-md sm:shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 active:scale-95 transition-all hover:scale-105"
             >
               <ChevronLeft />
             </button>
@@ -558,14 +570,15 @@ export default function KoopIndiaHomepage() {
             {/* Right Scroll Button */}
             <button 
               onClick={() => scrollCats(1)} 
-              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-[calc(50%+8px)] -mr-4 z-10 w-10 h-10 items-center justify-center bg-white border border-gray-200 shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 transition-all hover:scale-105"
+              aria-label="Scroll Categories Right"
+              className="flex absolute right-0 top-1/2 -translate-y-[calc(50%+8px)] -mr-2 sm:-mr-4 z-20 w-8 h-8 sm:w-10 sm:h-10 items-center justify-center bg-white border border-gray-200 shadow-md sm:shadow-lg rounded-full text-gray-600 hover:text-orange-500 hover:border-orange-300 active:scale-95 transition-all hover:scale-105"
             >
               <ChevronRight2 />
             </button>
 
             <div 
               ref={catScrollRef}
-              className="flex gap-3 overflow-x-auto pb-4 px-1 scrollbar-hide" 
+              className="flex gap-3 overflow-x-auto pb-4 px-6 sm:px-1 scrollbar-hide scroll-smooth" 
               style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
             >
               <button
@@ -589,7 +602,7 @@ export default function KoopIndiaHomepage() {
       </section>
 
       {/* Featured Sellers / Search Results */}
-      <section className="py-14 px-4 sm:px-6 bg-orange-100" id="sellers-section">
+      <section className="py-14 px-4 sm:px-6 bg-orange-50/60" id="sellers-section">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -624,7 +637,7 @@ export default function KoopIndiaHomepage() {
       <BannerSection banners={topBanners} />
 
       {/* Featured Buyers */}
-      <section className="py-14 px-4 sm:px-6 bg-rose-100" id="buyers-section">
+      <section className="py-14 px-4 sm:px-6 bg-rose-50/60" id="buyers-section">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -667,7 +680,7 @@ export default function KoopIndiaHomepage() {
       </section>
 
       {/* Latest Highlights (Sellers, Buyers, Blogs) */}
-      <section className="py-14 px-4 sm:px-6 bg-orange-100">
+      <section className="py-14 px-4 sm:px-6 bg-orange-50/60">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     <div>
@@ -770,7 +783,7 @@ export default function KoopIndiaHomepage() {
       </section>
 
       {/* Testimonials & Success Stories */}
-      <section className="py-14 px-4 sm:px-6 bg-pink-100" id="testimonials">
+      <section className="py-14 px-4 sm:px-6 bg-pink-50/60" id="testimonials">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-black text-[#1e3a5f] tracking-tight">BUYER SUCCESS STORIES</h2>

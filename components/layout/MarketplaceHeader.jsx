@@ -7,10 +7,10 @@ import { Menu, X, ChevronDown, User } from "lucide-react";
 import Image from "next/image";
 
 const CATEGORIES = [
-  "Food & Beverages", "Spices & Masalas", "Tea & Coffee",
-  "Cosmetics & Personal Care", "Healthcare & Wellness",
-  "Industrial & Machinery", "Home Care & Essentials",
-  "Packaging & Raw Materials",
+  "Food & Beverage", "Health & Beauty", "Pharmaceuticals",
+  "Apparel & Fashion", "Chemicals", "Home Supplies",
+  "Construction & Real Estate", "Electronics & Electrical Supplies",
+  "Agriculture", "Automobile", "Packaging & Paper", "Industrial Supplies"
 ];
 
 const RESOURCES = [

@@ -95,6 +95,12 @@ export default function SellerPublicPage() {
   }, [tab]);
 
   useEffect(() => {
+    if (selProd) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [selProd]);
+
+  useEffect(() => {
     if (tab !== "home" || banners.length <= 1) return;
     const int = setInterval(() => setCurrentSlide(s => (s + 1) % banners.length), 5000);
     return () => clearInterval(int);
@@ -158,10 +164,9 @@ export default function SellerPublicPage() {
   const btn2 = seller.heroBtn2Text || "Distributors / Buyers Inquiry";
 
   const contactHidden = seller.hideContact || seller.hidePhone;
-  const koopPhone = "+91 9599826131";
-  const koopEmail = "koopindiadl@gmail.com";
-  const shownPhone = contactHidden ? koopPhone : (seller.phone || koopPhone);
-  const shownEmail = contactHidden ? koopEmail : (seller.email || koopEmail);
+  const koopPhone = "+91 95998 26131";
+  const shownPhone = contactHidden ? koopPhone : (seller.phone || "");
+  const shownEmail = contactHidden ? "" : (seller.email || "");
   const navHomeLabel = seller.navHomeLabel || "Home";
   const navAboutLabel = seller.navAboutLabel || "About Us";
   const navProductsLabel = seller.navProductsLabel || "Products";
@@ -212,11 +217,11 @@ export default function SellerPublicPage() {
 
   /* ── Reusable Product Card ── */
   const ProdCard = ({ p }) => (
-    <div onClick={() => setSelProd(p)}
+    <div onClick={() => { setSelProd(p); window.scrollTo({ top: 0, behavior: "instant" }); }}
       className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group overflow-hidden flex flex-col flex-shrink-0 w-full sm:w-[290px] lg:w-[300px]">
       <div className="bg-slate-50 h-64 flex items-center justify-center p-5 relative">
         {p.imageUrl
-          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+          ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" loading="lazy" decoding="async" />
           : <span className="text-6xl">{p.emoji || "📦"}</span>}
         {p.badge && <span className="absolute top-2 left-2 text-[10px] font-black px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: sc }}>{p.badge}</span>}
       </div>
@@ -287,7 +292,7 @@ export default function SellerPublicPage() {
                   onMouseLeave={() => setProdDropOpen(false)}>
                   <div className="p-2 max-h-[360px] overflow-y-auto">
                     {products.slice(0, 8).map((p, i) => (
-                      <button key={i} onClick={() => { setSelProd(p); setProdDropOpen(false); }}
+                      <button key={i} onClick={() => { setSelProd(p); setProdDropOpen(false); window.scrollTo({ top: 0, behavior: "instant" }); }}
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition text-left cursor-pointer">
                         <div className="w-10 h-10 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
                           {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain" /> : <span className="text-xl">{p.emoji || "📦"}</span>}
@@ -465,30 +470,13 @@ export default function SellerPublicPage() {
           {/* Home About — centred */}
           {(seller.homeAbout || seller.about || seller.description) && (
             <div className="py-12 px-5" style={{ backgroundColor: homeBg }}>
-              <div className="max-w-5xl mx-auto text-center">
+              <div className="max-w-7xl mx-auto text-center">
                 <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>About Us</p>
                 <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-5">{seller.name}</h2>
                 <div 
-                  className="prose max-w-none text-base mx-auto text-gray-700 break-words" 
+                  className="prose max-w-7xl text-base mx-auto text-gray-700 break-words" 
                   dangerouslySetInnerHTML={{ __html: formatRichHtml(seller.homeAbout || seller.about || seller.description || "") }} 
                 />
-              </div>
-            </div>
-          )}
-
-          {/* Preferred Distribution States (Home) */}
-          {(seller.preferredStates?.length > 0) && (
-            <div className="py-12 px-5 sm:px-8" style={{ backgroundColor: homeBg }}>
-              <div className="max-w-7xl mx-auto text-center">
-                <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: pc }}>Where We Supply</p>
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-8">Distribution Network</h3>
-                <div className="flex flex-wrap justify-center gap-3 max-w-7xl mx-auto">
-                  {seller.preferredStates.map((state, i) => (
-                    <span key={i} className="px-4 py-2 rounded-xl text-sm font-bold bg-white border border-gray-200 shadow-sm transition hover:-translate-y-0.5" style={{ color: pc }}>
-                      <span className="opacity-70 mr-1.5">📍</span>{state}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           )}
@@ -601,22 +589,73 @@ export default function SellerPublicPage() {
             </div>
           )}
 
-          {/* Preferred Distribution States (About) */}
-          {(seller.preferredStates?.length > 0) && (
-            <div className="py-16" style={{ backgroundColor: aboutBg }}>
-              <div className="max-w-7xl mx-auto px-5 sm:px-8">
-                <h2 className="text-3xl font-black text-center mb-2" style={{ color: aboutCompanyText }}>Distribution Network</h2>
-                <div className="w-20 h-1 rounded-full mx-auto mb-10" style={{ backgroundColor: pc }} />
-                <div className="flex flex-wrap justify-center gap-3 max-w-7xl mx-auto">
-                  {seller.preferredStates.map((state, i) => (
-                    <span key={i} className="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 shadow-sm hover:shadow-md transition-shadow" style={{ borderColor: pc + "30", color: aboutCompanyText }}>
-                      <span className="mr-2 text-base" style={{ color: pc }}>📍</span>{state}
-                    </span>
-                  ))}
+          {/* Expansion Locations (About tab only) */}
+          {(seller.preferredStates?.length > 0) && (() => {
+            const rawStates = Array.isArray(seller.preferredStates)
+              ? seller.preferredStates.filter(Boolean)
+              : typeof seller.preferredStates === "string"
+              ? seller.preferredStates.split(",").map(s => s.trim()).filter(Boolean)
+              : [];
+
+            const ZONES = [
+              {
+                id: "east",
+                name: "East",
+                states: ["Bihar", "Sikkim", "Arunachal Pradesh", "Nagaland", "Manipur", "Mizoram", "Tripura", "Meghalaya", "Assam", "West Bengal", "Jharkhand", "Odisha", "Chhattisgarh"]
+              },
+              {
+                id: "west",
+                name: "WEST",
+                states: ["Rajasthan", "Madhya Pradesh", "Gujarat", "Daman & Diu", "Dadra & Nagar Haveli", "Maharashtra", "Goa"]
+              },
+              {
+                id: "south",
+                name: "SOUTH",
+                states: ["Andhra Pradesh", "Karnataka", "Lakshadweep", "Kerala", "Tamil Nadu", "Telangana", "Puducherry", "Andaman & Nicobar"]
+              },
+              {
+                id: "north",
+                name: "NORTH",
+                states: ["Jammu & Kashmir", "Himachal Pradesh", "Punjab", "Chandigarh", "Uttarakhand", "Haryana", "Delhi", "Uttar Pradesh"]
+              }
+            ];
+
+            const isPanIndia = rawStates.some(s => s.toLowerCase().includes("all") || s.toLowerCase().includes("pan india"));
+
+            const activeZones = ZONES.map(z => {
+              if (isPanIndia) return { ...z, matchedStates: z.states };
+              const matched = z.states.filter(zs => rawStates.some(rs => rs.toLowerCase().trim() === zs.toLowerCase().trim()));
+              return { ...z, matchedStates: matched };
+            }).filter(z => z.matchedStates.length > 0);
+
+            const displayZones = activeZones.length > 0 ? activeZones : ZONES.map(z => ({ ...z, matchedStates: rawStates }));
+
+            return (
+              <div className="py-14" style={{ backgroundColor: aboutBg }}>
+                <div className="max-w-7xl mx-auto px-5 sm:px-8">
+                  <div className="border-b border-gray-200 pb-3 mb-6">
+                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-wider uppercase">
+                      EXPANSION LOCATIONS
+                    </h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                    {displayZones.map((zone) => (
+                      <div key={zone.id} className="bg-white rounded-lg border-2 border-slate-700/80 p-5 sm:p-6 shadow-xs hover:shadow-sm transition-shadow">
+                        <div className="inline-block border-b-2 border-slate-900 pb-1 mb-3">
+                          <h3 className="text-base sm:text-lg font-black text-gray-900 tracking-wide uppercase">
+                            {zone.name}
+                          </h3>
+                        </div>
+                        <p className="text-sm text-gray-600 font-medium leading-relaxed">
+                          {zone.matchedStates.join(", ")}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Company Details Table — darker border, wider max-width */}
           {compRows.length > 0 && (
@@ -752,7 +791,7 @@ export default function SellerPublicPage() {
                         <a href={`tel:${shownPhone}`} className="flex items-center gap-4 group cursor-pointer">
                           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-white/25 transition">📞</div>
                           <div>
-                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">{contactHidden ? "Koop India" : "Call Us"}</p>
+                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Call Us</p>
                             <p className="text-white font-bold text-sm group-hover:underline">{shownPhone}</p>
                           </div>
                         </a>
@@ -761,7 +800,7 @@ export default function SellerPublicPage() {
                         <a href={`mailto:${shownEmail}`} className="flex items-center gap-4 group cursor-pointer">
                           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-white/25 transition">✉️</div>
                           <div>
-                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">{contactHidden ? "Koop India Email" : "Email Us"}</p>
+                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Email Us</p>
                             <p className="text-white font-bold text-sm group-hover:underline break-all">{shownEmail}</p>
                           </div>
                         </a>

@@ -46,6 +46,8 @@ export default function SellerCard({ s }) {
               fill
               className="object-contain p-1.5"
               sizes="(max-width: 768px) 100vw, 200px"
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <span className="font-black text-xl" style={{ color }}>
