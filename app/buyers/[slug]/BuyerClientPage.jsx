@@ -123,7 +123,11 @@ export default function BuyerClientPage({ initialBuyer }) {
   const rating = parseFloat(buyer.rating) || 4.5;
   const whyUs = buyer.whyUs || [];
   const requirements = buyer.requirements || [];
-  const preferredStates = buyer.preferredStates || [];
+  const preferredStates = Array.isArray(buyer.preferredStates)
+    ? buyer.preferredStates
+    : typeof buyer.preferredStates === "string" && buyer.preferredStates.trim()
+      ? buyer.preferredStates.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean)
+      : [];
   const productCategories = buyer.productCategories || [];
   const buyersWeWorkWith = (buyer.buyersWeWorkWith || []).filter((b) => b.name || b.logoUrl);
   const initials = (buyer.buyerName || "").split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();

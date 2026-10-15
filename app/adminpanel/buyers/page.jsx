@@ -1,20 +1,22 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Building2, Plus, Search, Globe, Edit2, Trash2, PauseCircle, PlayCircle, X,
   Phone, ExternalLink, MoreVertical, Check, Palette, FileText, Rocket,
   Image as ImageIcon, Loader2, MapPin, Shield, Camera, Save, ArrowLeft,
   Star, Users, TrendingUp, CheckCircle, AlertCircle, Mail, ArrowRightLeft,
+  Upload, Download, TableProperties, ChevronRight, RefreshCw,
 } from "lucide-react";
 import { db, storage } from "../../../lib/firebase";
 import {
   collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc,
-  serverTimestamp, query, orderBy, where
+  serverTimestamp, query, orderBy, where, getCountFromServer
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getCurrentUser } from "../lib/auth";
 import imageCompression from 'browser-image-compression';
 import dynamic from 'next/dynamic';
+import * as XLSX from 'xlsx';
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
 // Helper utilities
@@ -121,7 +123,7 @@ const fieldLabel = "block text-xs font-bold text-gray-500 uppercase tracking-wid
 const INDIA_ZONES = [
   {
     zone: "North Zone", color: "blue",
-    states: ["Jammu & Kashmir", "Himachal Pradesh", "Punjab", "Chandigarh", "Uttarakhand", "Haryana", "Delhi", "Uttar Pradesh"],
+    states: ["Delhi NCR", "Jammu & Kashmir", "Himachal Pradesh", "Punjab", "Chandigarh", "Uttarakhand", "Haryana", "Delhi", "Uttar Pradesh"],
   },
   {
     zone: "West Zone", color: "orange",
@@ -233,6 +235,527 @@ const ProgPill = ({ field, uploadStatus, uploadProgress }) =>
         ? <span className="inline-flex items-center gap-1 text-[10px] text-red-600 font-semibold"><AlertCircle size={11} /> Upload failed — verify storage permissions</span>
         : null;
 
+// ─── Excel Import Column Map ────────────────────────────────────────────────
+// Maps Excel column headers → Firestore buyer fields
+// Matches the user's existing Excel sheet structure exactly
+const EXCEL_COLUMN_MAP = {
+  // Identity
+  "Name / Company Name":          "buyerName",
+  "Company Name":                  "buyerName",
+  "Buyer Name":                    "buyerName",
+  "Business Type":                 "businessType",
+  "Year of Establishment":         "estYear",
+  "Industry Category":             "category",
+  "Primary District / Territory":  "district",
+  "State":                         "state",
+  "District":                      "district",
+
+  // Scale & Operations
+  "Website Date / Territory":      "operatingTerritory",
+  "Members / Territory":           "membersCount",
+  "Annual Capacity / Volume (MT)": "annualCapacityMT",
+  "Total Capacity / Volume (MT)":  "totalCapacityMT",
+  "Investment":                    "investment",
+  "Currency Sector":               "currencySector",
+
+  // Compliance / Legal
+  "G&T No. (Registration No.)":    "gstNumber",
+  "GST No. (Registration No.)":    "gstNumber",
+  "CIN No. (Verification)":        "cinNumber",
+  "GSTIN No. (Verification)":      "gstinNumber",
+  "PAN No.":                       "panNumber",
+  "PAN Number":                    "panNumber",
+  "IEC Code (Registration No.)":   "iecCode",
+
+  // Business Info
+  "Business Partners / Associated Brand": "businessPartners",
+  "Product Categories":            "productCategoryText",
+  "Business Requirements":         "businessRequirements",
+  "Raw Material Facility":         "rawMaterialFacility",
+  "Size of Company Logo URL":      "companyLogoNote",
+  "Prefer Supplier From":          "preferSupplierFromRaw",
+  "Prefer Suppliers From":         "preferSupplierFromRaw",
+  "We Prefer Suppliers From":      "preferSupplierFromRaw",
+  "Preferred Suppliers From":      "preferSupplierFromRaw",
+  "Preferred Supplier From":       "preferSupplierFromRaw",
+  "Preferred States":              "preferSupplierFromRaw",
+  "Preferred State":               "preferSupplierFromRaw",
+  "Suppliers Preferred From":      "preferSupplierFromRaw",
+  "Website":                       "website",
+
+  // Contact
+  "Contact Person / Person Designation": "contactName",
+  "Contact Name":                  "contactName",
+  "Contact Role":                  "contactRole",
+  "Contact Phone":                 "contactPhone",
+  "Contact Email":                 "contactEmail",
+  "Phone":                         "phone",
+  "Email":                         "email",
+  "Password":                      "password",
+  "WhatsApp":                      "whatsapp",
+
+  // Location
+  "Address":                       "address",
+  "City":                          "city",
+
+  // Status & Verification
+  "Profile Status":                "profileStatusNote",
+  "Verified Distributor":          "verifiedDistributor",
+  "Feedback Rating":               "rating",
+
+  // Legacy / alternate keys
+  "Tagline":                       "tagline",
+  "Annual Turnover":               "annualTurnover",
+  "Number of Outlets":             "numberOfOutlets",
+  "Presence":                      "presence",
+  "Buying Frequency":              "buyingFrequency",
+  "Payment Terms":                 "paymentTerms",
+  "Delivery Area":                 "deliveryArea",
+  "About":                         "about",
+};
+
+// Template column order — matches user's Excel sheet exactly
+const EXCEL_TEMPLATE_HEADERS = [
+  "Name / Company Name",
+  "Business Type",
+  "Year of Establishment",
+  "Industry Category",
+  "Primary District / Territory",
+  "State",
+  "District",
+  "Website",
+  "Members / Territory",
+  "Annual Capacity / Volume (MT)",
+  "Total Capacity / Volume (MT)",
+  "Investment",
+  "Currency Sector",
+  "G&T No. (Registration No.)",
+  "CIN No. (Verification)",
+  "GSTIN No. (Verification)",
+  "PAN No.",
+  "IEC Code (Registration No.)",
+  "Business Partners / Associated Brand",
+  "Product Categories",
+  "Business Requirements",
+  "Raw Material Facility",
+  "Size of Company Logo URL",
+  "Prefer Supplier From",
+  "Contact Person / Person Designation",
+  "Address",
+  "Profile Status",
+  "Verified Distributor",
+  "Feedback Rating",
+  // Extra fields for portal login
+  "Email",
+  "Phone",
+  "WhatsApp",
+  "Password",
+];
+
+// De-duplicate headers
+const UNIQUE_TEMPLATE_HEADERS = [...new Set(EXCEL_TEMPLATE_HEADERS)];
+
+function downloadBuyerTemplate() {
+  const ws = XLSX.utils.aoa_to_sheet([
+    UNIQUE_TEMPLATE_HEADERS,
+    // Sample row
+    [
+      "Fresh Mart Distributors",   // Name / Company Name
+      "Distributor",               // Business Type
+      "2015",                      // Year of Establishment
+      "Food & Beverage",           // Industry Category
+      "Andheri East",              // Primary District / Territory
+      "Maharashtra",               // State
+      "Mumbai",                    // District
+      "https://freshmart.com",     // Website
+      "Pan India",                 // Members / Territory
+      "100000",                    // Annual Capacity / Volume (MT)
+      "100000",                    // Total Capacity / Volume (MT)
+      "5 Cr+",                     // Investment
+      "INR",                       // Currency Sector
+      "GT7023/13887",              // G&T No.
+      "A227877",                   // CIN No.
+      "22333000",                  // GSTIN No.
+      "PAN027371",                 // PAN No.
+      "IEC0012345",                // IEC Code
+      "Nestle, HUL, ITC",          // Business Partners / Associated Brand
+      "Packaged Food, Beverages",  // Product Categories
+      "Cold storage, Refrigerated transport", // Business Requirements
+      "Raw",                       // Raw Material Facility
+      "",                          // Size of Company Logo URL (leave blank)
+      "Delhi NCR, Maharashtra, Gujarat, Uttar Pradesh, Punjab, Haryana", // Prefer Supplier From
+      "Rajesh Kumar, Managing Director",      // Contact Person / Designation
+      "123 Trade Zone, Andheri East, Mumbai", // Address
+      "Active",                    // Profile Status
+      "Yes",                       // Verified Distributor
+      "4.5",                       // Feedback Rating
+      "rajesh@freshmart.com",      // Email
+      "9876543210",                // Phone
+      "9876543210",                // WhatsApp
+      "Pass@1234",                 // Password
+    ],
+  ]);
+  const colWidths = UNIQUE_TEMPLATE_HEADERS.map((h) => ({ wch: Math.max(h.length + 4, 22) }));
+  ws["!cols"] = colWidths;
+  // Style header row bold (xlsx supports limited styling)
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Buyer Import");
+  XLSX.writeFile(wb, "koop_buyer_import_template.xlsx");
+}
+
+// ─── Excel Import Modal ──────────────────────────────────────────────────────
+function ExcelImportModal({ onClose, onSuccess }) {
+  const fileRef = useRef();
+  const [rows, setRows] = useState([]);
+  const [parsed, setParsed] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [results, setResults] = useState(null); // { success, skipped, errors }
+  const [progress, setProgress] = useState(0);
+
+  const handleFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = new Uint8Array(ev.target.result);
+        const wb = XLSX.read(data, { type: "array" });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const raw = XLSX.utils.sheet_to_json(ws, { defval: "" });
+        // Map column headers to buyer fields
+        const mapped = raw.map((row) => {
+          const buyer = {};
+          for (const [colHeader, fieldKey] of Object.entries(EXCEL_COLUMN_MAP)) {
+            if (row[colHeader] !== undefined && row[colHeader] !== "") {
+              buyer[fieldKey] = String(row[colHeader]).trim();
+            }
+          }
+          return buyer;
+        }).filter(b => b.buyerName); // must have a name
+        setRows(mapped);
+        setParsed(true);
+      } catch (err) {
+        alert("Could not parse Excel file. Please use the template provided.");
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleImport = async () => {
+    if (!rows.length) return;
+    setImporting(true);
+    const success = [];
+    const errors = [];
+    const skipped = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      setProgress(Math.round(((i + 1) / rows.length) * 100));
+      try {
+        // Check if buyer with same email already exists
+        const emailToUse = (r.contactEmail || r.email || "").toLowerCase().trim();
+        if (emailToUse) {
+          const existing = await getDocs(query(collection(db, "buyer_users"), where("email", "==", emailToUse)));
+          if (!existing.empty) {
+            skipped.push({ name: r.buyerName, reason: `Email already registered: ${emailToUse}` });
+            continue;
+          }
+        }
+
+        const countSnap = await getCountFromServer(collection(db, "buyers"));
+        const profileId = `KIB${String(countSnap.data().count + 1).padStart(5, "0")}`;
+        const slug = slugify(r.buyerName || "buyer");
+
+        // Parse comma-separated preferred supplier locations / states
+        const parsedPreferredStates = typeof r.preferSupplierFromRaw === "string" && r.preferSupplierFromRaw.trim()
+          ? r.preferSupplierFromRaw
+              .split(/[,;\n]+/)
+              .map(s => s.trim())
+              .filter(Boolean)
+          : [];
+
+        const newBuyerPayload = {
+          ...r,
+          slug,
+          profileId,
+          status: "paused",  // Always paused until admin approves
+          source: "excel_import",
+          views: 0,
+          // Default arrays for full compatibility with buyer form
+          stats: [
+            { id: uid(), icon: "", value: "", label: "Outlets" },
+            { id: uid(), icon: "", value: "", label: "Cities" },
+            { id: uid(), icon: "", value: "", label: "Products Listed" },
+            { id: uid(), icon: "", value: "", label: "Happy Customers" },
+            { id: uid(), icon: "", value: "", label: "Annual Turnover" },
+            { id: uid(), icon: "", value: "", label: "Years in Business" },
+          ],
+          productCategories: [],
+          buyersWeWorkWith: [],
+          whyUs: [],
+          requirements: [],
+          preferredStates: parsedPreferredStates,
+          primaryColor: "#f97316",
+          rating: "4.5",
+          reviewCount: "0",
+          hideContact: false,
+          hidePhone: false,
+          createdAt: serverTimestamp(),
+        };
+
+        // Remove password from buyer doc (only store in buyer_users) and clean raw helper
+        const { password, preferSupplierFromRaw, ...buyerData } = newBuyerPayload;
+
+        const docRef = await addDoc(collection(db, "buyers"), buyerData);
+
+        // Create buyer_users credential — status paused until admin approves
+        if (emailToUse && password) {
+          await addDoc(collection(db, "buyer_users"), {
+            name: r.contactName || r.buyerName,
+            email: emailToUse,
+            password: password,
+            status: "paused",
+            linkedId: docRef.id,
+            linkedSlug: slug,
+            role: "buyer",
+            createdAt: serverTimestamp(),
+          });
+        }
+
+        // Auto-generate lead
+        await addDoc(collection(db, "leads"), {
+          profileId,
+          name: r.contactName || r.buyerName || "Unknown",
+          company: r.buyerName || "",
+          email: emailToUse,
+          phone: r.contactPhone || r.phone || "",
+          location: `${r.city || ""} ${r.state || ""}`.trim(),
+          service: r.category || "Buyer Listing",
+          requirements: "",
+          source: "excel_import",
+          status: "New",
+          createdAt: serverTimestamp(),
+          buyerId: docRef.id,
+          buyerSlug: slug,
+          buyerName: r.buyerName,
+          assignedToBuyerSlug: slug,
+          assignedToBuyerName: r.buyerName,
+          assignedTo: null,
+        });
+
+        success.push({ name: r.buyerName, id: docRef.id });
+      } catch (err) {
+        console.error("Import row error:", err);
+        errors.push({ name: rows[i].buyerName, reason: err.message });
+      }
+    }
+
+    setImporting(false);
+    setResults({ success, skipped, errors });
+    if (success.length > 0) onSuccess();
+  };
+
+  return (
+    <div className="fixed inset-0 z-[200] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
+        {/* Header */}
+        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-orange-50 to-amber-50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-orange-500 flex items-center justify-center">
+              <TableProperties size={18} className="text-white" />
+            </div>
+            <div>
+              <h3 className="font-black text-gray-900 text-lg">Bulk Import Buyers</h3>
+              <p className="text-gray-500 text-xs mt-0.5">Upload Excel sheet — listings start as Paused until approved</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-900 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">
+            <X size={16} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          {/* Template Download */}
+          {!parsed && (
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
+                <Download size={14} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-blue-900">Download the Import Template first</p>
+                <p className="text-xs text-blue-700 mt-1">Fill in buyer details in the template, then upload the file below. All listings will be set to <strong>Paused</strong> — activate them from the admin panel once reviewed.</p>
+                <button
+                  onClick={downloadBuyerTemplate}
+                  className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition shadow-sm"
+                >
+                  <Download size={12} /> Download Template (.xlsx)
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* File Upload Area */}
+          {!parsed && (
+            <div>
+              <label
+                htmlFor="excel-upload"
+                className="flex flex-col items-center justify-center gap-3 h-36 rounded-2xl border-2 border-dashed border-orange-300 bg-orange-50 cursor-pointer hover:bg-orange-100 hover:border-orange-400 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-white border border-orange-200 flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+                  <Upload size={20} className="text-orange-500" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-bold text-orange-700">Click to upload Excel file</p>
+                  <p className="text-xs text-orange-500 mt-1">.xlsx or .xls — use the template above for correct columns</p>
+                </div>
+              </label>
+              <input
+                id="excel-upload"
+                ref={fileRef}
+                type="file"
+                accept=".xlsx,.xls"
+                className="sr-only"
+                onChange={handleFile}
+              />
+            </div>
+          )}
+
+          {/* Parsed Preview */}
+          {parsed && !results && (
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-sm font-bold text-gray-900">
+                  <span className="text-orange-600">{rows.length}</span> buyers found in file
+                </p>
+                <button
+                  onClick={() => { setParsed(false); setRows([]); if (fileRef.current) fileRef.current.value = ""; }}
+                  className="text-xs font-bold text-gray-500 hover:text-red-500 flex items-center gap-1 transition"
+                >
+                  <X size={12} /> Clear
+                </button>
+              </div>
+              <div className="border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                <div className="overflow-x-auto max-h-64">
+                  <table className="w-full text-xs">
+                    <thead className="bg-gray-50 sticky top-0">
+                      <tr>
+                        {["#", "Buyer Name", "Category", "City", "State", "Email", "Phone", "Password"].map(h => (
+                          <th key={h} className="px-3 py-2.5 text-left font-bold text-gray-500 whitespace-nowrap">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((r, i) => (
+                        <tr key={i} className="border-t border-gray-50 hover:bg-gray-50 transition-colors">
+                          <td className="px-3 py-2.5 text-gray-400 font-mono">{i + 1}</td>
+                          <td className="px-3 py-2.5 font-semibold text-gray-900 whitespace-nowrap max-w-[160px] truncate">{r.buyerName || "—"}</td>
+                          <td className="px-3 py-2.5 text-gray-600 whitespace-nowrap">{r.category || "—"}</td>
+                          <td className="px-3 py-2.5 text-gray-600">{r.city || "—"}</td>
+                          <td className="px-3 py-2.5 text-gray-600">{r.state || "—"}</td>
+                          <td className="px-3 py-2.5 text-gray-600 whitespace-nowrap max-w-[140px] truncate">{r.contactEmail || r.email || "—"}</td>
+                          <td className="px-3 py-2.5 text-gray-600">{r.contactPhone || r.phone || "—"}</td>
+                          <td className="px-3 py-2.5">
+                            {(r.password) ? (
+                              <span className="text-emerald-600 font-bold flex items-center gap-1"><Check size={10} /> Set</span>
+                            ) : (
+                              <span className="text-amber-500 font-bold">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {/* Import Progress */}
+              {importing && (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-bold text-gray-700">Importing... {progress}%</p>
+                    <Loader2 size={14} className="animate-spin text-orange-500" />
+                  </div>
+                  <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Results */}
+          {results && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center">
+                  <p className="text-2xl font-black text-emerald-600">{results.success.length}</p>
+                  <p className="text-xs font-bold text-emerald-700 mt-1">Imported</p>
+                </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center">
+                  <p className="text-2xl font-black text-amber-600">{results.skipped.length}</p>
+                  <p className="text-xs font-bold text-amber-700 mt-1">Skipped</p>
+                </div>
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-center">
+                  <p className="text-2xl font-black text-red-600">{results.errors.length}</p>
+                  <p className="text-xs font-bold text-red-700 mt-1">Errors</p>
+                </div>
+              </div>
+
+              {results.success.length > 0 && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                  <p className="text-xs font-black text-emerald-800 uppercase tracking-wider mb-2">✓ Successfully Imported ({results.success.length})</p>
+                  <p className="text-xs text-emerald-700">All listings are set to <strong>Paused</strong>. Go to Buyer Listings → click <strong>Activate</strong> on each buyer to make them live.</p>
+                </div>
+              )}
+              {results.skipped.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-1">
+                  <p className="text-xs font-black text-amber-800 uppercase tracking-wider mb-2">⚠ Skipped</p>
+                  {results.skipped.map((s, i) => (
+                    <p key={i} className="text-xs text-amber-700"><strong>{s.name}</strong>: {s.reason}</p>
+                  ))}
+                </div>
+              )}
+              {results.errors.length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-1">
+                  <p className="text-xs font-black text-red-800 uppercase tracking-wider mb-2">✗ Errors</p>
+                  {results.errors.map((s, i) => (
+                    <p key={i} className="text-xs text-red-700"><strong>{s.name}</strong>: {s.reason}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between gap-3">
+          {!results ? (
+            <>
+              <button onClick={onClose} className="px-5 py-2.5 text-sm font-bold text-gray-600 hover:text-gray-900 transition">Cancel</button>
+              <button
+                onClick={handleImport}
+                disabled={!parsed || importing || rows.length === 0}
+                className="flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition shadow-md shadow-orange-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {importing ? <><Loader2 size={14} className="animate-spin" /> Importing...</> : <><Upload size={14} /> Import {rows.length > 0 ? `${rows.length} Buyers` : ""}</>}
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={onClose}
+              className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition shadow-md"
+            >
+              Done — View Buyer Listings
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Buyer Listings Management Component
 export default function BuyersAdminPage() {
   const [user, setUser] = useState(null);
@@ -251,6 +774,7 @@ export default function BuyersAdminPage() {
   const [uploadProgress, setUploadProgress] = useState({});
   const [uploadStatus, setUploadStatus] = useState({});
   const [activeSection, setActiveSection] = useState("section-identity");
+  const [showImportModal, setShowImportModal] = useState(false);
   const isUploading = Object.values(uploadStatus).some((s) => s === "uploading");
 
   /* ── Load from Firestore ── */
@@ -290,9 +814,9 @@ export default function BuyersAdminPage() {
           }
         } else {
           const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
-          setBuyers(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+          setBuyers(snap.docs.map((d) => ({ ...d.data(), id: d.id })));
         }
-      } catch (e) { console.error(e); }
+      } catch (e) { console.error("Error loading buyers:", e); }
       finally { setDbLoading(false); }
     };
     load();
@@ -386,6 +910,7 @@ export default function BuyersAdminPage() {
     setSaving(true);
     try {
       const clean = cleanPayload({ ...form });
+      const slug = clean.slug || slugify(clean.buyerName || "buyer");
       const payload = {
         ...clean,
         slug,
@@ -445,7 +970,7 @@ export default function BuyersAdminPage() {
         const newPayload = { ...payload, profileId, views: 0, createdAt: serverTimestamp() };
 
         const docRef = await addDoc(collection(db, "buyers"), newPayload);
-        setBuyers((p) => [{ id: docRef.id, ...newPayload }, ...p]);
+        setBuyers((p) => [{ ...newPayload, id: docRef.id }, ...p]);
 
         // Auto-generate a Lead from this Buyer
         await addDoc(collection(db, "leads"), {
@@ -496,29 +1021,37 @@ export default function BuyersAdminPage() {
   };
 
   const toggleStatus = async (id, current) => {
+    if (!id) return;
     const next = current === "live" ? "paused" : "live";
-    await updateDoc(doc(db, "buyers", id), { status: next });
-    setBuyers((p) => p.map((b) => b.id === id ? { ...b, status: next } : b));
+    try {
+      await updateDoc(doc(db, "buyers", id), { status: next, updatedAt: serverTimestamp() });
+      setBuyers((p) => p.map((b) => b.id === id ? { ...b, status: next } : b));
+    } catch (err) {
+      console.error("Failed to update buyer listing status:", err);
+      alert("Failed to update status: " + (err?.message || "Error occurred"));
+      return;
+    }
 
     // Sync linked buyer_users status
     try {
       const userStatus = next === "live" ? "active" : "paused";
-      const byId = await getDocs(query(collection(db, "buyer_users"), where("linkedId", "==", id)));
+      const cleanId = String(id).trim();
+      const byId = await getDocs(query(collection(db, "buyer_users"), where("linkedId", "==", cleanId)));
       if (!byId.empty) {
         for (const d of byId.docs) {
-          await updateDoc(doc(db, "buyer_users", d.id), { status: userStatus });
+          await updateDoc(doc(db, "buyer_users", d.id), { status: userStatus, updatedAt: serverTimestamp() });
         }
       } else {
-        const buyerItem = buyers.find(b => b.id === id);
+        const buyerItem = buyers.find((b) => b.id === id);
         if (buyerItem?.slug) {
           const bySlug = await getDocs(query(collection(db, "buyer_users"), where("linkedSlug", "==", buyerItem.slug)));
           for (const d of bySlug.docs) {
-            await updateDoc(doc(db, "buyer_users", d.id), { status: userStatus, linkedId: id });
+            await updateDoc(doc(db, "buyer_users", d.id), { status: userStatus, linkedId: cleanId, updatedAt: serverTimestamp() });
           }
         }
       }
     } catch (userErr) {
-      console.error("Error syncing buyer user status on toggle:", userErr);
+      console.warn("Notice syncing buyer portal user status on toggle:", userErr);
     }
 
     setMenuId(null);
@@ -637,10 +1170,20 @@ export default function BuyersAdminPage() {
                 )}
               </div>
             </div>
-            <button onClick={() => openForm()}
-              className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-orange-200 transition-all hover:scale-105">
-              <Plus size={16} /> Add Buyer
-            </button>
+            <div className="flex items-center gap-2">
+              {user?.role === "admin" && (
+                <button
+                  onClick={() => setShowImportModal(true)}
+                  className="flex items-center gap-2 bg-white border border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700 hover:text-orange-600 font-bold text-sm px-4 py-2.5 rounded-xl transition-all"
+                >
+                  <TableProperties size={15} /> Import Excel
+                </button>
+              )}
+              <button onClick={() => openForm()}
+                className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-orange-200 transition-all hover:scale-105">
+                <Plus size={16} /> Add Buyer
+              </button>
+            </div>
           </div>
 
                     <div className="px-6 pt-5 pb-4 flex gap-3">
@@ -1092,8 +1635,58 @@ export default function BuyersAdminPage() {
                     </div>
 
                     <div className={sectionCard}>
-                      <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Preferred Business States</h3>
-                      <p className="text-xs text-gray-400 -mt-2 mb-3">Select states zone-wise where you prefer to do business</p>
+                      <div className="flex items-center justify-between pb-3 border-b border-gray-50">
+                        <div>
+                          <h3 className="text-sm font-black text-gray-900">We Prefer Suppliers From (Preferred Locations)</h3>
+                          <p className="text-xs text-gray-400 mt-0.5">Select zone-wise or type comma-separated states/territories</p>
+                        </div>
+                        <span className="text-xs font-bold px-2.5 py-1 bg-orange-50 text-orange-700 rounded-lg border border-orange-200">
+                          {(form.preferredStates || []).length} Selected
+                        </span>
+                      </div>
+
+                      {/* Quick Comma-separated input for easy admin panel additions */}
+                      <div className="bg-orange-50/50 rounded-xl p-3 border border-orange-100 space-y-2">
+                        <label className="text-[11px] font-bold text-gray-700 uppercase tracking-wider block">
+                          Add / Paste States (comma separated)
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            id="quick-add-states-input"
+                            placeholder="e.g. Delhi NCR, Maharashtra, Gujarat, Punjab"
+                            className={inp_sm}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                const val = e.currentTarget.value.trim();
+                                if (val) {
+                                  const newItems = val.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+                                  const combined = [...new Set([...(form.preferredStates || []), ...newItems])];
+                                  sf("preferredStates", combined);
+                                  e.currentTarget.value = "";
+                                }
+                              }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const el = document.getElementById("quick-add-states-input");
+                              if (el && el.value.trim()) {
+                                const newItems = el.value.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+                                const combined = [...new Set([...(form.preferredStates || []), ...newItems])];
+                                sf("preferredStates", combined);
+                                el.value = "";
+                              }
+                            }}
+                            className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-lg transition whitespace-nowrap shadow-sm cursor-pointer"
+                          >
+                            + Add States
+                          </button>
+                        </div>
+                      </div>
+
                       <ZoneStateSelector
                         selected={form.preferredStates || []}
                         onChange={(states) => sf("preferredStates", states)}
@@ -1268,6 +1861,22 @@ export default function BuyersAdminPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── Excel Import Modal ── */}
+      {showImportModal && (
+        <ExcelImportModal
+          onClose={() => setShowImportModal(false)}
+          onSuccess={async () => {
+            // Reload buyers list after successful import
+            try {
+              const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
+              setBuyers(snap.docs.map((d) => ({ ...d.data(), id: d.id })));
+            } catch (e) {
+              console.error("Reload error after import:", e);
+            }
+          }}
+        />
       )}
     </div>
   );
