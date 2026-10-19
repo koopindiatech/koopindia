@@ -246,7 +246,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                       { label: "Year of Establishment", value: buyer.estYear },
                       { label: "Number of Outlets", value: buyer.numberOfOutlets },
                       { label: "Presence", value: buyer.presence },
-                      { label: "Annual Turnover", value: buyer.annualTurnover },
+                      { label: "Annual Turnover", value: buyer.annualTurnover || buyer.totalInvestmentCapacity || buyer.investment },
                       { label: "Buying Frequency", value: buyer.buyingFrequency },
                       { label: "Payment Terms", value: buyer.paymentTerms },
                     ].filter((r) => r.value).map((row, i) => (

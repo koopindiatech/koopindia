@@ -50,19 +50,19 @@ export default function SellerPublicPage() {
         if (!snap.empty) {
           const d = snap.docs[0];
           const data = d.data();
-          const proxyUrl = (u) => (u && typeof u === "string" && u.startsWith("http") && u.includes("firebase") ? `/api/img?url=${encodeURIComponent(u)}` : u);
+          const proxyUrl = (u, width = 800) => (u && typeof u === "string" && u.startsWith("http") && u.includes("firebase") ? `/api/img?url=${encodeURIComponent(u)}&w=${width}` : u);
           const cleanData = {
             id: d.id,
             ...data,
-            logoUrl: proxyUrl(data.logoUrl),
-            heroBannerUrl: proxyUrl(data.heroBannerUrl),
-            bannerUrl: proxyUrl(data.bannerUrl),
-            aboutImageUrl: proxyUrl(data.aboutImageUrl),
-            contactBannerUrl: proxyUrl(data.contactBannerUrl),
-            heroBanners: (data.heroBanners || []).map((b) => (typeof b === "object" ? { ...b, url: proxyUrl(b.url || b.imageUrl) } : proxyUrl(b))),
-            products: (data.products || []).map((p) => ({ ...p, imageUrl: proxyUrl(p.imageUrl) })),
-            certifications: (data.certifications || []).map((c) => ({ ...c, imageUrl: proxyUrl(c.imageUrl) })),
-            infrastructure: (data.infrastructure || []).map((i) => ({ ...i, imageUrl: proxyUrl(i.imageUrl) })),
+            logoUrl: proxyUrl(data.logoUrl, 280),
+            heroBannerUrl: proxyUrl(data.heroBannerUrl, 1400),
+            bannerUrl: proxyUrl(data.bannerUrl, 1400),
+            aboutImageUrl: proxyUrl(data.aboutImageUrl, 800),
+            contactBannerUrl: proxyUrl(data.contactBannerUrl, 1200),
+            heroBanners: (data.heroBanners || []).map((b) => (typeof b === "object" ? { ...b, url: proxyUrl(b.url || b.imageUrl, 1400) } : proxyUrl(b, 1400))),
+            products: (data.products || []).map((p) => ({ ...p, imageUrl: proxyUrl(p.imageUrl, 450) })),
+            certifications: (data.certifications || []).map((c) => ({ ...c, imageUrl: proxyUrl(c.imageUrl, 240) })),
+            infrastructure: (data.infrastructure || []).map((i) => ({ ...i, imageUrl: proxyUrl(i.imageUrl, 600) })),
           };
           setSeller(cleanData);
           await updateDoc(doc(db, "sellers", d.id), { views: increment(1) });
@@ -254,7 +254,7 @@ export default function SellerPublicPage() {
         <div key={i} className="flex flex-col items-center bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1" style={{ width: "180px" }}>
           <div className="w-full flex items-center justify-center p-4 border-b border-gray-100" style={{ height: "150px" }}>
             {cert.imageUrl
-              ? <img src={cert.imageUrl} alt={cert.name} className="h-full w-full object-contain" />
+              ? <img src={cert.imageUrl} alt={cert.name} className="h-full w-full object-contain" loading="lazy" decoding="async" />
               : <div className="h-full w-full bg-gray-50 rounded-xl flex items-center justify-center text-4xl">🏆</div>}
           </div>
           <div className="p-3 text-center w-full">

@@ -51,25 +51,25 @@ export default async function SellerPage({ params }) {
       const d = snap.docs[0];
       const data = d.data();
 
-      const proxyUrl = (u) =>
+      const proxyUrl = (u, width = 800) =>
         u && typeof u === "string" && u.startsWith("http") && u.includes("firebase")
-          ? `/api/img?url=${encodeURIComponent(u)}`
+          ? `/api/img?url=${encodeURIComponent(u)}&w=${width}`
           : u;
 
       const raw = {
         id: d.id,
         ...data,
-        logoUrl: proxyUrl(data.logoUrl),
-        heroBannerUrl: proxyUrl(data.heroBannerUrl),
-        bannerUrl: proxyUrl(data.bannerUrl),
-        aboutImageUrl: proxyUrl(data.aboutImageUrl),
-        contactBannerUrl: proxyUrl(data.contactBannerUrl),
+        logoUrl: proxyUrl(data.logoUrl, 280),
+        heroBannerUrl: proxyUrl(data.heroBannerUrl, 1400),
+        bannerUrl: proxyUrl(data.bannerUrl, 1400),
+        aboutImageUrl: proxyUrl(data.aboutImageUrl, 800),
+        contactBannerUrl: proxyUrl(data.contactBannerUrl, 1200),
         heroBanners: (Array.isArray(data.heroBanners) ? data.heroBanners : []).map((b) =>
-          typeof b === "object" ? { ...b, url: proxyUrl(b.url || b.imageUrl) } : proxyUrl(b)
+          typeof b === "object" ? { ...b, url: proxyUrl(b.url || b.imageUrl, 1400) } : proxyUrl(b, 1400)
         ),
-        products: (Array.isArray(data.products) ? data.products : []).map((p) => ({ ...p, imageUrl: proxyUrl(p.imageUrl) })),
-        certifications: (Array.isArray(data.certifications) ? data.certifications : []).map((c) => ({ ...c, imageUrl: proxyUrl(c.imageUrl) })),
-        infrastructure: (Array.isArray(data.infrastructure) ? data.infrastructure : []).map((i) => ({ ...i, imageUrl: proxyUrl(i.imageUrl) })),
+        products: (Array.isArray(data.products) ? data.products : []).map((p) => ({ ...p, imageUrl: proxyUrl(p.imageUrl, 450) })),
+        certifications: (Array.isArray(data.certifications) ? data.certifications : []).map((c) => ({ ...c, imageUrl: proxyUrl(c.imageUrl, 240) })),
+        infrastructure: (Array.isArray(data.infrastructure) ? data.infrastructure : []).map((i) => ({ ...i, imageUrl: proxyUrl(i.imageUrl, 600) })),
       };
 
       initialSeller = serialize(raw);

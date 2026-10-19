@@ -55,6 +55,26 @@ const SectionHead = ({ icon: Icon, label, color = "orange" }) => (
   </div>
 );
 
+async function sendRegistrationCredentialsEmail({ to, name, companyName, password, role, profileId }) {
+  if (!to || !password) return;
+  try {
+    await fetch("/api/email/send-credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: to.toLowerCase().trim(),
+        name: name || "Partner",
+        companyName: companyName || "",
+        password,
+        role: role || "buyer",
+        profileId: profileId || "",
+      }),
+    });
+  } catch (err) {
+    console.warn("Failed to dispatch credentials email from registration page:", err);
+  }
+}
+
 function RegistrationForm() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || searchParams.get("type");
@@ -125,17 +145,27 @@ function RegistrationForm() {
           assignedTo: null
         });
 
-        // Create User Credential (paused until listing is reviewed & made live)
+        // Create User Credential
         if (seller.email && seller.password) {
           await addDoc(collection(db, "seller_users"), {
             name: seller.contactName || seller.companyName,
             email: seller.email.toLowerCase().trim(),
             password: seller.password,
-            status: "paused",
+            status: "active",
             linkedId: docRef.id,
             linkedSlug: slugify(seller.companyName),
             role: "seller",
             createdAt: serverTimestamp()
+          });
+
+          // Dispatch seller welcome & credentials email
+          await sendRegistrationCredentialsEmail({
+            to: seller.email,
+            name: seller.contactName || seller.companyName,
+            companyName: seller.companyName,
+            password: seller.password,
+            role: "seller",
+            profileId,
           });
         }
 
@@ -176,17 +206,27 @@ function RegistrationForm() {
           assignedTo: null
         });
 
-        // Create User Credential (paused until listing is reviewed & made live)
+        // Create User Credential
         if (buyer.email && buyer.password) {
           await addDoc(collection(db, "buyer_users"), {
             name: buyer.contactName || buyer.companyName,
             email: buyer.email.toLowerCase().trim(),
             password: buyer.password,
-            status: "paused",
+            status: "active",
             linkedId: docRef.id,
             linkedSlug: slugify(buyer.companyName),
             role: "buyer",
             createdAt: serverTimestamp()
+          });
+
+          // Dispatch buyer welcome & credentials email
+          await sendRegistrationCredentialsEmail({
+            to: buyer.email,
+            name: buyer.contactName || buyer.companyName,
+            companyName: buyer.companyName,
+            password: buyer.password,
+            role: "buyer",
+            profileId,
           });
         }
       }

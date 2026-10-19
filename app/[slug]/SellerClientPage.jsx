@@ -284,7 +284,7 @@ export default function SellerClientPage({ initialSeller }) {
   };
 
   const Logo = () => seller.logoUrl
-    ? <img src={seller.logoUrl} alt={seller.name} className="h-10 w-auto max-w-[140px] object-contain" />
+    ? <img src={seller.logoUrl} alt={seller.name} className="h-10 w-auto max-w-[140px] object-contain" fetchPriority="high" />
     : <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{ backgroundColor: pc }}>{ini(seller.name)}</div>;
 
   /* ── Product Card — shows only name + size/weight ── */
@@ -324,7 +324,7 @@ export default function SellerClientPage({ initialSeller }) {
         <div key={i} className="flex flex-col items-center bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5" style={{ width: '120px' }}>
           <div className="w-full flex items-center justify-center p-3 border-b border-gray-100" style={{ height: '80px' }}>
             {cert.imageUrl
-              ? <img src={cert.imageUrl} alt={cert.name} className="h-full w-full object-contain" />
+              ? <img src={cert.imageUrl} alt={cert.name} className="h-full w-full object-contain" loading="lazy" decoding="async" />
               : <div className="h-full w-full bg-gray-50 rounded-lg flex items-center justify-center text-2xl">🏆</div>}
           </div>
           <div className="p-2 text-center w-full">
@@ -362,7 +362,7 @@ export default function SellerClientPage({ initialSeller }) {
                           <button key={i} onClick={() => { setSelProd(p); setProdDropOpen(false); setEnquirySuccess(false); setEnquiryForm({ name: "", phone: "", email: "", message: "" }); window.scrollTo({ top: 0, behavior: "instant" }); }}
                             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition text-left cursor-pointer">
                           <div className="w-10 h-10 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
-                            {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain" /> : <span className="text-xl">{p.emoji || "📦"}</span>}
+                            {p.imageUrl ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain" loading="lazy" decoding="async" /> : <span className="text-xl">{p.emoji || "📦"}</span>}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-gray-900 truncate">{p.name}</p>
@@ -451,6 +451,9 @@ export default function SellerClientPage({ initialSeller }) {
               {banners.map((url, idx) => (
                 <img key={idx} src={url} alt={`Banner ${idx}`}
                   className={`w-full h-auto object-contain transition-opacity duration-1000 ${currentSlide === idx ? "opacity-100 relative z-10" : "opacity-0 absolute top-0 left-0 z-0"}`}
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  decoding={idx === 0 ? "sync" : "async"}
+                  fetchPriority={idx === 0 ? "high" : "auto"}
                 />
               ))}
               
@@ -638,13 +641,17 @@ export default function SellerClientPage({ initialSeller }) {
                       className="hidden lg:block rounded-2xl overflow-hidden shadow-xl flex-shrink-0">
                       <img src={seller.aboutImageUrl} alt={seller.name}
                         className="w-full object-cover rounded-2xl"
-                        style={{ maxHeight: '420px' }} />
+                        style={{ maxHeight: '420px' }}
+                        loading="lazy"
+                        decoding="async" />
                     </div>
                   )}
                   {seller.aboutImageUrl && (
                     <div className="block lg:hidden mb-6 rounded-2xl overflow-hidden shadow-xl">
                       <img src={seller.aboutImageUrl} alt={seller.name}
-                        className="w-full object-cover rounded-2xl max-h-[300px]" />
+                        className="w-full object-cover rounded-2xl max-h-[300px]"
+                        loading="lazy"
+                        decoding="async" />
                     </div>
                   )}
                   {/<[a-z][\s\S]*>/i.test(seller.about || seller.description || "") ? (
@@ -779,7 +786,7 @@ export default function SellerClientPage({ initialSeller }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {infra.filter(i => i.title).map((item, i) => (
                     <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                      {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover" />}
+                      {item.imageUrl && <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover" loading="lazy" decoding="async" />}
                       <div className="p-4">
                         <h4 className="font-bold text-gray-900 text-sm mb-1">{item.title}</h4>
                         {item.description && <p className="text-gray-500 text-xs">{item.description}</p>}
@@ -856,7 +863,7 @@ export default function SellerClientPage({ initialSeller }) {
           {/* Contact Banner — taller, bold visual */}
           {seller.contactBannerUrl && (
             <div className="w-full overflow-hidden shadow-lg">
-              <img src={seller.contactBannerUrl} alt="Contact Banner" className="w-full object-cover" style={{ maxHeight: "320px", objectPosition: "center" }} />
+              <img src={seller.contactBannerUrl} alt="Contact Banner" className="w-full object-cover" style={{ maxHeight: "320px", objectPosition: "center" }} loading="lazy" decoding="async" />
             </div>
           )}
           <div className="min-h-screen" style={{ backgroundColor: contactBg }}>

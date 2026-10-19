@@ -391,6 +391,29 @@ const ProgPill = ({ field, uploadStatus, uploadProgress }) =>
         ? <span className="inline-flex items-center gap-1 text-[10px] text-red-600 font-semibold"><AlertCircle size={11} /> Upload failed — verify storage permissions</span>
         : null;
 
+// Send Seller Credentials Email Helper
+async function sendSellerCredentialsEmail({ to, name, companyName, password, profileId }) {
+  if (!to || !password) return { success: false, error: "Missing email or password" };
+  try {
+    const res = await fetch("/api/email/send-credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: to.toLowerCase().trim(),
+        name: name || "Partner",
+        companyName: companyName || "",
+        password,
+        role: "seller",
+        profileId: profileId || "",
+      }),
+    });
+    return await res.json();
+  } catch (e) {
+    console.warn("Failed to dispatch seller credentials email:", e);
+    return { success: false, error: e.message };
+  }
+}
+
 // Sellers Management Component
 export default function SellersPage() {
   const [user, setUser] = useState(null);
@@ -691,17 +714,28 @@ export default function SellersPage() {
         });
 
         // Create User Credential
-        if (payload.email && payload.password) {
-          const userStatus = payload.status === "live" ? "active" : "paused";
+        if (payload.email) {
+          const emailLower = payload.email.toLowerCase().trim();
+          const autoPass = payload.password?.trim() || `Koop@${Math.floor(1000 + Math.random() * 9000)}`;
+          const userStatus = payload.status === "live" ? "active" : "active";
           await addDoc(collection(db, "seller_users"), {
             name: payload.contact || payload.name,
-            email: payload.email.toLowerCase().trim(),
-            password: payload.password,
+            email: emailLower,
+            password: autoPass,
             status: userStatus,
             linkedId: docRef.id,
             linkedSlug: slugify(payload.name || "seller"),
             role: "seller",
             createdAt: serverTimestamp()
+          });
+
+          // Dispatch seller welcome & credentials email
+          sendSellerCredentialsEmail({
+            to: emailLower,
+            name: payload.contact || payload.name,
+            companyName: payload.companyName || payload.name,
+            password: autoPass,
+            profileId,
           });
         }
       }

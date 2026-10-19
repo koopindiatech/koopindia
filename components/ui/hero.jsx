@@ -204,7 +204,7 @@ const HeroSection = ({ onOpenModal }) => {
 
   return (
     <div className="bg-[#141d32] text-white">
-      
+
       {/* <section
         className="pt-16 px-6 sm:px-6 md:px-10 lg:px-15 py-8 sm:py-10 grid grid-cols-1 md:grid-cols-2 items-center gap-8 sm:gap-8 md:gap-10 bg-cover bg-center"
         style={{
@@ -304,13 +304,13 @@ const HeroSection = ({ onOpenModal }) => {
               backgroundImage: `url(${slides[activeTab].bg})`,
             }}
           >
-                        <motion.div
+            <motion.div
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="animate-fadeIn z-10 py-10"
             >
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6">
                 <span className="flex h-2 w-2 rounded-full bg-[#F97316] animate-pulse"></span>
                 <span className="text-xs font-medium text-gray-200 tracking-wider uppercase">
                   {activeTab === 0
@@ -333,21 +333,21 @@ const HeroSection = ({ onOpenModal }) => {
               </p>
 
               <div className="flex flex-wrap gap-4 mb-12">
-                                <button
+                <button
                   className="bg-[#F97316] text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:scale-105 transition-all cursor-pointer"
                   onClick={onOpenModal} // Direct call karein
                 >
                   Talk To Experts →
                 </button>
 
-                                <button
+                <button
                   className="border border-white/40 text-white px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-[#0a1128] transition-all cursor-pointer"
                   onClick={onOpenModal} // Direct call karein
                 >
                   Start Now
                 </button>
 
-                                {/* <a
+                {/* <a
                   href="/marketplace"
                   className="flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/30 text-white px-6 py-3 rounded-lg font-bold hover:bg-white hover:text-[#0a1128] transition-all cursor-pointer group"
                 >
@@ -357,7 +357,7 @@ const HeroSection = ({ onOpenModal }) => {
                 </a> */}
               </div>
 
-                            <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3">
                 {slides[activeTab].icons.map((item, i) => (
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}
@@ -375,7 +375,7 @@ const HeroSection = ({ onOpenModal }) => {
               </div>
             </motion.div>
 
-                        <motion.div
+            <motion.div
               initial={{ x: 100, opacity: 0, scale: 0.9 }}
               animate={{ x: 0, opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
@@ -393,24 +393,23 @@ const HeroSection = ({ onOpenModal }) => {
           </motion.section>
         </AnimatePresence>
 
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
           {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => setActiveTab(i)}
-              className={`h-1.5 rounded-full transition-all duration-500 ${
-                activeTab === i
+              className={`h-1.5 rounded-full transition-all duration-500 ${activeTab === i
                   ? "w-12 bg-[#F97316]"
                   : "w-4 bg-white/20 hover:bg-white/40"
-              }`}
+                }`}
             />
           ))}
         </div>
       </div>
-            <section className="py-16 px-6 lg:px-8 bg-white">
+      <section className="py-16 px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-                        <div>
+            <div>
               <h2 className="text-4xl font-bold text-[#141d32] mb-6">
                 Your Complete Business Growth Partner
               </h2>
@@ -426,7 +425,7 @@ const HeroSection = ({ onOpenModal }) => {
                 expert-driven solutions help you move faster and scale smarter.
               </p>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div>
                   <h4 className="font-bold text-[#141d32] mb-3 flex items-center">
                     <span className="text-[#F97316] mr-2">💼</span> What We Do
@@ -453,7 +452,7 @@ const HeroSection = ({ onOpenModal }) => {
               </div>
             </div>
 
-                        <div className="relative">
+            <div className="relative">
               <div className="bg-gradient-to-br from-[#F97316]/10 to-transparent rounded-2xl">
                 <div className="relative">
                   <img
@@ -471,7 +470,7 @@ const HeroSection = ({ onOpenModal }) => {
       {/* ------- Latest Sellers + Search Bar ------- */}
       {/* <HomeLatestSellers /> */}
 
-            <section className="w-full py-22 px-4 md:px-8" style={{ background: "#0F1F3D" }}>
+      <section className="w-full py-22 px-4 md:px-8" style={{ background: "#0F1F3D" }}>
         <div className="max-w-6xl mx-auto">
 
           {/* Wrapper: cards + connector columns */}
@@ -481,7 +480,7 @@ const HeroSection = ({ onOpenModal }) => {
             <div className="bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col" style={{ minHeight: "380px" }}>
               <div className="bg-orange-500 px-5 pt-5 pb-6 flex flex-col gap-3">
                 <div className="bg-white rounded-full flex items-center gap-2 px-3 py-2">
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2"/><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2" /><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round" /></svg>
                   <span className="text-gray-400 text-sm">Search Services</span>
                 </div>
                 <div>
@@ -522,9 +521,9 @@ const HeroSection = ({ onOpenModal }) => {
             {/* ── CONNECTOR LEFT → CENTER ── */}
             <div className="flex items-center justify-center w-full h-full">
               <svg width="48" height="16" viewBox="0 0 48 16" preserveAspectRatio="none" className="w-full">
-                <line x1="6" y1="8" x2="42" y2="8" stroke="#F97316" strokeWidth="2" strokeDasharray="5 4"/>
-                <circle cx="6" cy="8" r="5" fill="#F97316"/>
-                <circle cx="42" cy="8" r="5" fill="#F97316"/>
+                <line x1="6" y1="8" x2="42" y2="8" stroke="#F97316" strokeWidth="2" strokeDasharray="5 4" />
+                <circle cx="6" cy="8" r="5" fill="#F97316" />
+                <circle cx="42" cy="8" r="5" fill="#F97316" />
               </svg>
             </div>
 
@@ -561,9 +560,9 @@ const HeroSection = ({ onOpenModal }) => {
             {/* ── CONNECTOR CENTER → RIGHT ── */}
             <div className="flex items-center justify-center w-full h-full">
               <svg width="48" height="16" viewBox="0 0 48 16" preserveAspectRatio="none" className="w-full">
-                <line x1="6" y1="8" x2="42" y2="8" stroke="#F97316" strokeWidth="2" strokeDasharray="5 4"/>
-                <circle cx="6" cy="8" r="5" fill="#F97316"/>
-                <circle cx="42" cy="8" r="5" fill="#F97316"/>
+                <line x1="6" y1="8" x2="42" y2="8" stroke="#F97316" strokeWidth="2" strokeDasharray="5 4" />
+                <circle cx="6" cy="8" r="5" fill="#F97316" />
+                <circle cx="42" cy="8" r="5" fill="#F97316" />
               </svg>
             </div>
 
@@ -579,7 +578,7 @@ const HeroSection = ({ onOpenModal }) => {
                   <span className="text-white/60 text-sm">🌐</span>
                 </div>
                 <div className="bg-white rounded-full flex items-center gap-2 px-3 py-2 w-4/5">
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2"/><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2" /><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round" /></svg>
                   <span className="text-gray-400 text-sm">Search Solutions</span>
                 </div>
                 <div>
@@ -619,11 +618,11 @@ const HeroSection = ({ onOpenModal }) => {
 
           </div>
 
-                    <div className="flex lg:hidden flex-col gap-6">
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
+          <div className="flex lg:hidden flex-col gap-6">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
               <div className="bg-orange-500 px-5 pt-5 pb-6 flex flex-col gap-3">
                 <div className="bg-white rounded-full flex items-center gap-2 px-3 py-2">
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2"/><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2" /><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round" /></svg>
                   <span className="text-gray-400 text-sm">Search Services</span>
                 </div>
                 <h3 className="text-white font-extrabold text-xl">Business Setup</h3>
@@ -647,12 +646,12 @@ const HeroSection = ({ onOpenModal }) => {
                 <div className="h-2 bg-gray-100 rounded-full w-3/5" />
               </div>
             </div>
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-2xl px-6 py-7">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl px-6 py-7">
               <div className="flex items-center gap-2 mb-1">
                 <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
                   <text x="1" y="28" fontSize="27" fontWeight="900" fill="#1E3A5F">k</text>
-                  <path d="M17 19 L27 7" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round"/>
-                  <polygon points="27,7 21,9 26,14" fill="#F97316"/>
+                  <path d="M17 19 L27 7" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" />
+                  <polygon points="27,7 21,9 26,14" fill="#F97316" />
                 </svg>
                 <span style={{ fontWeight: 900, fontSize: "20px", color: "#1E3A5F" }}>
                   koopindia<span style={{ color: "#F97316" }}>.</span>
@@ -674,13 +673,13 @@ const HeroSection = ({ onOpenModal }) => {
                 ))}
               </div>
             </div>
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl">
               <div className="bg-orange-500 px-5 pt-5 pb-4 flex flex-col gap-3 relative overflow-hidden">
                 <div className="absolute right-3 top-3 opacity-70">
                   <span className="text-3xl">🚀</span>
                 </div>
                 <div className="bg-white rounded-full flex items-center gap-2 px-3 py-2 w-4/5">
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2"/><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round"/></svg>
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" strokeWidth="2" /><path d="M21 21l-4.35-4.35" strokeWidth="2" strokeLinecap="round" /></svg>
                   <span className="text-gray-400 text-sm">Search Solutions</span>
                 </div>
                 <h3 className="text-white font-extrabold text-xl">Digital Growth</h3>
@@ -709,12 +708,12 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
       </section>
 
-            {/* <HomeLatestBuyers /> */}
+      {/* <HomeLatestBuyers /> */}
 
-            <section id="solution" className="py-16 px-4 md:px-8 scroll-mt-24" style={{ background: "#F8F9FF" }}>
+      <section id="solution" className="py-16 px-4 md:px-8 scroll-mt-24" style={{ background: "#F8F9FF" }}>
         <div className="max-w-6xl mx-auto">
 
-                    <div className="text-center mb-12">
+          <div className="text-center mb-12">
             <span className="inline-block bg-orange-500/10 text-orange-500 font-bold text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-orange-500/20 mb-4">
               What We Offer
             </span>
@@ -726,7 +725,7 @@ const HeroSection = ({ onOpenModal }) => {
             </p>
           </div>
 
-                    <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
 
             {/* Card 1 — Strategic Business */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
@@ -820,7 +819,7 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
       </section>
 
-      
+
       <section className="bg-white">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <h2 className="text-4xl font-extrabold text-center text-black mb-12">
@@ -853,7 +852,7 @@ const HeroSection = ({ onOpenModal }) => {
                   />
                 </div>
 
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition">
                   <span className="bg-[#F97316] text-white text-sm font-semibold px-4 py-2 rounded-md shadow">
                     View Details
                   </span>
@@ -874,14 +873,14 @@ const HeroSection = ({ onOpenModal }) => {
           </p>
         </div>
 
-                <div className="flex">
+        <div className="flex">
           <div className="animate-scroll flex gap-8">
             {allReviews.map((testimonial, index) => (
               <div
                 key={index}
                 className="w-[350px] bg-white text-gray-800 p-8 rounded-2xl relative pt-16 shadow-2xl flex-shrink-0"
               >
-                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white p-2 rounded-full shadow-lg border border-gray-100">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white p-2 rounded-full shadow-lg border border-gray-100">
                   <img
                     src="google-image.png"
                     alt="Google"
@@ -889,11 +888,11 @@ const HeroSection = ({ onOpenModal }) => {
                   />
                 </div>
 
-                                <p className="text-gray-600 mb-8 text-md italic leading-relaxed min-h-[100px]">
+                <p className="text-gray-600 mb-8 text-md italic leading-relaxed min-h-[100px]">
                   "{testimonial.content}"
                 </p>
 
-                                <div className="border-t border-gray-100 pt-6">
+                <div className="border-t border-gray-100 pt-6">
                   <div className="flex justify-between items-start">
                     <div className="max-w-[180px]">
                       <div className="font-black text-lg uppercase leading-tight">
@@ -907,7 +906,7 @@ const HeroSection = ({ onOpenModal }) => {
                       </div>
                     </div>
 
-                                        <div className="flex space-x-0.5">
+                    <div className="flex space-x-0.5">
                       {[...Array(testimonial.rating)].map((_, i) => (
                         <Star
                           key={i}
@@ -923,8 +922,8 @@ const HeroSection = ({ onOpenModal }) => {
         </div>
       </section>
 
-            <div>
-                <section className="py-16 px-6 lg:px-8 bg-gradient-to-r from-[#F97316] to-[#e5650d] text-white">
+      <div>
+        <section className="py-16 px-6 lg:px-8 bg-gradient-to-r from-[#F97316] to-[#e5650d] text-white">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold mb-6">
               Ready to Transform Your Business?

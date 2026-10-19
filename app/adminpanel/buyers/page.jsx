@@ -237,7 +237,7 @@ const ProgPill = ({ field, uploadStatus, uploadProgress }) =>
 
 // ─── Excel Import Column Map ────────────────────────────────────────────────
 // Maps Excel column headers → Firestore buyer fields
-// Matches the user's existing Excel sheet structure exactly
+// Matches the user's updated Excel sheet structure
 const EXCEL_COLUMN_MAP = {
   // Identity
   "Name / Company Name":          "buyerName",
@@ -246,42 +246,38 @@ const EXCEL_COLUMN_MAP = {
   "Business Type":                 "businessType",
   "Year of Establishment":         "estYear",
   "Industry Category":             "category",
-  "Primary District / Territory":  "district",
   "State":                         "state",
   "District":                      "district",
+  "City":                          "city",
+  "Address":                       "address",
+
+  // About
+  "Company About":                 "about",
+  "About Company":                 "about",
+  "About":                         "about",
 
   // Scale & Operations
-  "Website Date / Territory":      "operatingTerritory",
-  "Members / Territory":           "membersCount",
-  "Annual Capacity / Volume (MT)": "annualCapacityMT",
-  "Total Capacity / Volume (MT)":  "totalCapacityMT",
-  "Investment":                    "investment",
-  "Currency Sector":               "currencySector",
+  "Total Investment Capacity":     "totalInvestmentCapacity",
+  "Total Investment Budget":       "totalInvestmentCapacity",
+  "Investment Capacity":           "totalInvestmentCapacity",
+  "Investment Budget":             "totalInvestmentCapacity",
+  "Investment":                    "totalInvestmentCapacity",
+  "Annual Turnover":               "annualTurnover",
+  "Turnover":                      "annualTurnover",
+  "Annual Capacity / Volume (MT)": "annualTurnover",
+  "Total Capacity / Volume (MT)":  "annualTurnover",
 
   // Compliance / Legal
-  "G&T No. (Registration No.)":    "gstNumber",
   "GST No. (Registration No.)":    "gstNumber",
+  "G&T No. (Registration No.)":    "gstNumber",
   "CIN No. (Verification)":        "cinNumber",
   "GSTIN No. (Verification)":      "gstinNumber",
   "PAN No.":                       "panNumber",
   "PAN Number":                    "panNumber",
-  "IEC Code (Registration No.)":   "iecCode",
 
   // Business Info
   "Business Partners / Associated Brand": "businessPartners",
   "Product Categories":            "productCategoryText",
-  "Business Requirements":         "businessRequirements",
-  "Raw Material Facility":         "rawMaterialFacility",
-  "Size of Company Logo URL":      "companyLogoNote",
-  "Prefer Supplier From":          "preferSupplierFromRaw",
-  "Prefer Suppliers From":         "preferSupplierFromRaw",
-  "We Prefer Suppliers From":      "preferSupplierFromRaw",
-  "Preferred Suppliers From":      "preferSupplierFromRaw",
-  "Preferred Supplier From":       "preferSupplierFromRaw",
-  "Preferred States":              "preferSupplierFromRaw",
-  "Preferred State":               "preferSupplierFromRaw",
-  "Suppliers Preferred From":      "preferSupplierFromRaw",
-  "Website":                       "website",
 
   // Contact
   "Contact Person / Person Designation": "contactName",
@@ -294,10 +290,6 @@ const EXCEL_COLUMN_MAP = {
   "Password":                      "password",
   "WhatsApp":                      "whatsapp",
 
-  // Location
-  "Address":                       "address",
-  "City":                          "city",
-
   // Status & Verification
   "Profile Status":                "profileStatusNote",
   "Verified Distributor":          "verifiedDistributor",
@@ -305,43 +297,32 @@ const EXCEL_COLUMN_MAP = {
 
   // Legacy / alternate keys
   "Tagline":                       "tagline",
-  "Annual Turnover":               "annualTurnover",
   "Number of Outlets":             "numberOfOutlets",
   "Presence":                      "presence",
   "Buying Frequency":              "buyingFrequency",
   "Payment Terms":                 "paymentTerms",
   "Delivery Area":                 "deliveryArea",
-  "About":                         "about",
 };
 
-// Template column order — matches user's Excel sheet exactly
+// Template column order — matches user's exact requirements
 const EXCEL_TEMPLATE_HEADERS = [
   "Name / Company Name",
   "Business Type",
   "Year of Establishment",
   "Industry Category",
-  "Primary District / Territory",
   "State",
   "District",
-  "Website",
-  "Members / Territory",
-  "Annual Capacity / Volume (MT)",
-  "Total Capacity / Volume (MT)",
-  "Investment",
-  "Currency Sector",
-  "G&T No. (Registration No.)",
+  "Address",
+  "Company About",
+  "Total Investment Capacity",
+  "Annual Turnover",
+  "GST No. (Registration No.)",
   "CIN No. (Verification)",
   "GSTIN No. (Verification)",
   "PAN No.",
-  "IEC Code (Registration No.)",
   "Business Partners / Associated Brand",
   "Product Categories",
-  "Business Requirements",
-  "Raw Material Facility",
-  "Size of Company Logo URL",
-  "Prefer Supplier From",
   "Contact Person / Person Designation",
-  "Address",
   "Profile Status",
   "Verified Distributor",
   "Feedback Rating",
@@ -364,28 +345,19 @@ function downloadBuyerTemplate() {
       "Distributor",               // Business Type
       "2015",                      // Year of Establishment
       "Food & Beverage",           // Industry Category
-      "Andheri East",              // Primary District / Territory
       "Maharashtra",               // State
       "Mumbai",                    // District
-      "https://freshmart.com",     // Website
-      "Pan India",                 // Members / Territory
-      "100000",                    // Annual Capacity / Volume (MT)
-      "100000",                    // Total Capacity / Volume (MT)
-      "5 Cr+",                     // Investment
-      "INR",                       // Currency Sector
-      "GT7023/13887",              // G&T No.
+      "123 Trade Zone, Andheri East, Mumbai", // Address
+      "Fresh Mart Distributors is one of Maharashtra's leading wholesale distributors specializing in premium FMCG and food products.", // Company About
+      "5 Cr+",                     // Total Investment Capacity
+      "10 Cr+",                    // Annual Turnover
+      "GT7023/13887",              // GST No. (Registration No.)
       "A227877",                   // CIN No.
       "22333000",                  // GSTIN No.
       "PAN027371",                 // PAN No.
-      "IEC0012345",                // IEC Code
       "Nestle, HUL, ITC",          // Business Partners / Associated Brand
       "Packaged Food, Beverages",  // Product Categories
-      "Cold storage, Refrigerated transport", // Business Requirements
-      "Raw",                       // Raw Material Facility
-      "",                          // Size of Company Logo URL (leave blank)
-      "Delhi NCR, Maharashtra, Gujarat, Uttar Pradesh, Punjab, Haryana", // Prefer Supplier From
-      "Rajesh Kumar, Managing Director",      // Contact Person / Designation
-      "123 Trade Zone, Andheri East, Mumbai", // Address
+      "Rajesh Kumar, Managing Director", // Contact Person / Designation
       "Active",                    // Profile Status
       "Yes",                       // Verified Distributor
       "4.5",                       // Feedback Rating
@@ -401,6 +373,32 @@ function downloadBuyerTemplate() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Buyer Import");
   XLSX.writeFile(wb, "koop_buyer_import_template.xlsx");
+}
+
+// ─── Send Buyer Credentials Email Helper ────────────────────────────────────
+async function sendBuyerCredentialsEmail({ to, name, companyName, password, profileId }) {
+  if (!to || !password) return { success: false, error: "Missing email or password" };
+  try {
+    const loginUrl = typeof window !== "undefined" ? `${window.location.origin}/adminpanel/login` : "https://koopindia.com/adminpanel/login";
+    const res = await fetch("/api/email/send-credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: to.toLowerCase().trim(),
+        name: name || "Partner",
+        companyName: companyName || "",
+        password,
+        role: "buyer",
+        profileId: profileId || "",
+        loginUrl,
+      }),
+    });
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.warn("Failed to dispatch credentials email:", e);
+    return { success: false, error: e.message };
+  }
 }
 
 // ─── Excel Import Modal ──────────────────────────────────────────────────────
@@ -466,59 +464,111 @@ function ExcelImportModal({ onClose, onSuccess }) {
         const profileId = `KIB${String(countSnap.data().count + 1).padStart(5, "0")}`;
         const slug = slugify(r.buyerName || "buyer");
 
-        // Parse comma-separated preferred supplier locations / states
-        const parsedPreferredStates = typeof r.preferSupplierFromRaw === "string" && r.preferSupplierFromRaw.trim()
-          ? r.preferSupplierFromRaw
-              .split(/[,;\n]+/)
-              .map(s => s.trim())
-              .filter(Boolean)
+        const cityToUse = r.city || r.district || "";
+        const phoneToUse = r.contactPhone || r.phone || "";
+        const gstToUse = r.gstNumber || r.gstinNumber || "";
+        const investmentVal = r.totalInvestmentCapacity || r.investment || "";
+
+        // Parse Categories into Array for toggle buttons in Step 4
+        const parsedCategories = typeof r.productCategoryText === "string" && r.productCategoryText.trim()
+          ? r.productCategoryText.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean)
           : [];
+
+        // Parse Associated Brands into Array of objects for Step 4
+        const parsedBrands = typeof r.businessPartners === "string" && r.businessPartners.trim()
+          ? r.businessPartners.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).map(name => ({
+              id: uid(),
+              name,
+              logoUrl: "",
+            }))
+          : [{ id: uid(), name: "", logoUrl: "" }];
+
+        // Parse Contact Person Name & Role
+        let contactPersonName = r.contactName || r.buyerName || "";
+        let contactRole = r.contactRole || "";
+        if (contactPersonName.includes(",")) {
+          const parts = contactPersonName.split(",");
+          contactPersonName = parts[0].trim();
+          if (!contactRole && parts[1]) contactRole = parts[1].trim();
+        }
 
         const newBuyerPayload = {
           ...r,
+          buyerName: r.buyerName || "",
+          city: cityToUse,
+          district: r.district || cityToUse,
+          state: r.state || "",
+          address: r.address || "",
+          businessType: r.businessType || "Distributor",
+          estYear: r.estYear || "",
+          category: r.category || "",
+          about: r.about || "",
+          investment: investmentVal,
+          totalInvestmentCapacity: investmentVal,
+          annualTurnover: r.annualTurnover || investmentVal,
+          annualCapacityMT: r.annualCapacityMT || "",
+          totalCapacityMT: r.totalCapacityMT || "",
+          currencySector: r.currencySector || "INR",
+          gstNumber: gstToUse,
+          gstinNumber: r.gstinNumber || gstToUse,
+          cinNumber: r.cinNumber || "",
+          panNumber: r.panNumber || "",
+          contactName: contactPersonName,
+          contactRole: contactRole,
+          contactEmail: emailToUse,
+          email: emailToUse,
+          contactPhone: phoneToUse,
+          phone: phoneToUse,
+          whatsapp: r.whatsapp || phoneToUse,
+          password: r.password || "",
+          productCategories: parsedCategories,
+          buyersWeWorkWith: parsedBrands,
           slug,
           profileId,
-          status: "paused",  // Always paused until admin approves
+          status: "live",  // Automatically live on Excel import
           source: "excel_import",
           views: 0,
-          // Default arrays for full compatibility with buyer form
           stats: [
-            { id: uid(), icon: "", value: "", label: "Outlets" },
-            { id: uid(), icon: "", value: "", label: "Cities" },
-            { id: uid(), icon: "", value: "", label: "Products Listed" },
-            { id: uid(), icon: "", value: "", label: "Happy Customers" },
-            { id: uid(), icon: "", value: "", label: "Annual Turnover" },
-            { id: uid(), icon: "", value: "", label: "Years in Business" },
+            { id: uid(), icon: "🏪", value: "", label: "Outlets" },
+            { id: uid(), icon: "📍", value: "", label: "Cities" },
+            { id: uid(), icon: "📦", value: "", label: "Products Listed" },
+            { id: uid(), icon: "🤝", value: "", label: "Happy Customers" },
+            { id: uid(), icon: "💰", value: investmentVal, label: "Annual Turnover" },
+            { id: uid(), icon: "⏳", value: r.estYear ? `${new Date().getFullYear() - (parseInt(r.estYear) || new Date().getFullYear())} Yrs` : "", label: "Years in Business" },
           ],
-          productCategories: [],
-          buyersWeWorkWith: [],
-          whyUs: [],
-          requirements: [],
-          preferredStates: parsedPreferredStates,
+          whyUs: ["Pan India presence", "Timely payments", "Quality products"],
+          requirements: ["Standard packaging", "Competitive pricing", "Timely delivery"],
+          preferredStates: [],
           primaryColor: "#f97316",
-          rating: "4.5",
-          reviewCount: "0",
+          rating: r.rating || "4.5",
+          reviewCount: r.reviewCount || "0",
           hideContact: false,
           hidePhone: false,
           createdAt: serverTimestamp(),
         };
 
-        // Remove password from buyer doc (only store in buyer_users) and clean raw helper
-        const { password, preferSupplierFromRaw, ...buyerData } = newBuyerPayload;
+        const docRef = await addDoc(collection(db, "buyers"), newBuyerPayload);
 
-        const docRef = await addDoc(collection(db, "buyers"), buyerData);
-
-        // Create buyer_users credential — status paused until admin approves
-        if (emailToUse && password) {
+        // Create buyer_users credential — active immediately
+        if (emailToUse && r.password) {
           await addDoc(collection(db, "buyer_users"), {
-            name: r.contactName || r.buyerName,
+            name: contactPersonName,
             email: emailToUse,
-            password: password,
-            status: "paused",
+            password: r.password,
+            status: "active",
             linkedId: docRef.id,
             linkedSlug: slug,
             role: "buyer",
             createdAt: serverTimestamp(),
+          });
+
+          // Automatically send credentials to buyer's email
+          sendBuyerCredentialsEmail({
+            to: emailToUse,
+            name: contactPersonName,
+            companyName: r.buyerName || "",
+            password: r.password,
+            profileId: profileId,
           });
         }
 
@@ -566,7 +616,7 @@ function ExcelImportModal({ onClose, onSuccess }) {
             </div>
             <div>
               <h3 className="font-black text-gray-900 text-lg">Bulk Import Buyers</h3>
-              <p className="text-gray-500 text-xs mt-0.5">Upload Excel sheet — listings start as Paused until approved</p>
+              <p className="text-gray-500 text-xs mt-0.5">Upload Excel sheet — imported listings and credentials will be Live automatically</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-900 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">
@@ -583,7 +633,7 @@ function ExcelImportModal({ onClose, onSuccess }) {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-bold text-blue-900">Download the Import Template first</p>
-                <p className="text-xs text-blue-700 mt-1">Fill in buyer details in the template, then upload the file below. All listings will be set to <strong>Paused</strong> — activate them from the admin panel once reviewed.</p>
+                <p className="text-xs text-blue-700 mt-1">Fill in buyer details in the template, then upload the file below. All imported listings and login credentials will automatically be set to <strong>Live & Active</strong>.</p>
                 <button
                   onClick={downloadBuyerTemplate}
                   className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition shadow-sm"
@@ -706,7 +756,8 @@ function ExcelImportModal({ onClose, onSuccess }) {
               {results.success.length > 0 && (
                 <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
                   <p className="text-xs font-black text-emerald-800 uppercase tracking-wider mb-2">✓ Successfully Imported ({results.success.length})</p>
-                  <p className="text-xs text-emerald-700">All listings are set to <strong>Paused</strong>. Go to Buyer Listings → click <strong>Activate</strong> on each buyer to make them live.</p>
+                  <p className="text-xs text-emerald-700">All listings are now <strong>Live</strong> and buyer portal credentials are active!</p>
+                  <p className="text-xs text-emerald-800 font-semibold mt-1">📧 Login credentials (ID & password) have been automatically dispatched to their registered email addresses.</p>
                 </div>
               )}
               {results.skipped.length > 0 && (
@@ -948,6 +999,15 @@ export default function BuyersAdminPage() {
               };
               if (payload.password) updateData.password = payload.password;
               await updateDoc(doc(db, "buyer_users", userDoc.id), updateData);
+              if (payload.password) {
+                sendBuyerCredentialsEmail({
+                  to: emailToUse,
+                  name: payload.contactName || payload.buyerName,
+                  companyName: payload.buyerName || "",
+                  password: payload.password,
+                  profileId: editing.profileId || "",
+                });
+              }
             } else if (payload.password) {
               await addDoc(collection(db, "buyer_users"), {
                 name: payload.contactName || payload.buyerName,
@@ -958,6 +1018,13 @@ export default function BuyersAdminPage() {
                 linkedSlug: slug,
                 role: "buyer",
                 createdAt: serverTimestamp(),
+              });
+              sendBuyerCredentialsEmail({
+                to: emailToUse,
+                name: payload.contactName || payload.buyerName,
+                companyName: payload.buyerName || "",
+                password: payload.password,
+                profileId: editing.profileId || "",
               });
             }
           } catch (userSyncErr) {
@@ -1002,9 +1069,18 @@ export default function BuyersAdminPage() {
             password: newPayload.password,
             status: userStatus,
             linkedId: docRef.id,
-            linkedSlug: slugify(newPayload.buyerName || "buyer"),
+            linkedSlug: slug,
             role: "buyer",
             createdAt: serverTimestamp()
+          });
+
+          // Automatically send credentials to buyer's email
+          sendBuyerCredentialsEmail({
+            to: emailToUse,
+            name: newPayload.contactName || newPayload.buyerName,
+            companyName: newPayload.buyerName || "",
+            password: newPayload.password,
+            profileId: profileId,
           });
         }
       }
@@ -1071,6 +1147,64 @@ export default function BuyersAdminPage() {
     setDelId(null);
   };
 
+  const handleResendCredentials = async (buyer) => {
+    const emailToUse = (buyer.contactEmail || buyer.email || "").toLowerCase().trim();
+    if (!emailToUse) {
+      alert("This buyer does not have an email address listed.");
+      return;
+    }
+
+    try {
+      // Find credential in buyer_users
+      let userDoc = null;
+      const byId = await getDocs(query(collection(db, "buyer_users"), where("linkedId", "==", buyer.id)));
+      if (!byId.empty) {
+        userDoc = byId.docs[0].data();
+      } else if (buyer.slug) {
+        const bySlug = await getDocs(query(collection(db, "buyer_users"), where("linkedSlug", "==", buyer.slug)));
+        if (!bySlug.empty) userDoc = bySlug.docs[0].data();
+      }
+
+      let passwordToSend = userDoc?.password;
+
+      if (!passwordToSend) {
+        const enteredPass = prompt(`Enter or set login password for ${buyer.buyerName} (${emailToUse}):`, "Pass@1234");
+        if (!enteredPass) return;
+        passwordToSend = enteredPass;
+        // Save to buyer_users
+        await addDoc(collection(db, "buyer_users"), {
+          name: buyer.contactName || buyer.buyerName,
+          email: emailToUse,
+          password: enteredPass,
+          status: buyer.status === "live" ? "active" : "paused",
+          linkedId: buyer.id,
+          linkedSlug: buyer.slug || slugify(buyer.buyerName),
+          role: "buyer",
+          createdAt: serverTimestamp(),
+        });
+      }
+
+      const res = await sendBuyerCredentialsEmail({
+        to: emailToUse,
+        name: buyer.contactName || buyer.buyerName,
+        companyName: buyer.buyerName || "",
+        password: passwordToSend,
+        profileId: buyer.profileId || "",
+      });
+
+      if (res?.success) {
+        alert(`✓ Login credentials successfully sent to ${emailToUse}!`);
+      } else if (res?.notConfigured) {
+        alert(`⚠ Credentials saved, but email could not be delivered:\n${res.message}\n\nPlease add SMTP_USER & SMTP_PASS in your .env file.`);
+      } else {
+        alert(`Failed to send email: ${res?.error || "Unknown error"}. Please check your SMTP settings in .env.`);
+      }
+    } catch (err) {
+      console.error("Error sending credentials:", err);
+      alert("Failed to send credentials: " + err.message);
+    }
+  };
+
   const handleTransferToSeller = async (buyerId) => {
     const confirmTransfer = confirm("Are you sure you want to transfer this listing to Sellers?");
     if (!confirmTransfer) return;
@@ -1119,16 +1253,32 @@ export default function BuyersAdminPage() {
     if (b) {
       nextForm = { ...nextForm, ...b };
       
+      // Auto-populate fallbacks so nothing is blank
+      if (!nextForm.city && b.district) nextForm.city = b.district;
+      if (!nextForm.annualTurnover && (b.totalInvestmentCapacity || b.investment)) {
+        nextForm.annualTurnover = b.totalInvestmentCapacity || b.investment;
+      }
+      if (!nextForm.about && b.about) nextForm.about = b.about;
+      if (!nextForm.contactEmail && b.email) nextForm.contactEmail = b.email;
+      if (!nextForm.email && b.contactEmail) nextForm.email = b.contactEmail;
+      if (!nextForm.contactPhone && b.phone) nextForm.contactPhone = b.phone;
+      if (!nextForm.phone && b.contactPhone) nextForm.phone = b.contactPhone;
+
       // Fix type collisions or missing arrays
-      if (!Array.isArray(nextForm.requirements)) {
-        nextForm.registrationRequirements = nextForm.requirements;
-        nextForm.requirements = blank().requirements;
+      if (!Array.isArray(nextForm.requirements) || nextForm.requirements.length === 0) {
+        nextForm.requirements = Array.isArray(b.requirements) && b.requirements.length > 0 ? b.requirements : blank().requirements;
       }
       if (!Array.isArray(nextForm.preferredStates)) {
         nextForm.preferredStates = blank().preferredStates;
       }
-      if (!Array.isArray(nextForm.stats)) {
+      if (!Array.isArray(nextForm.stats) || nextForm.stats.length === 0) {
         nextForm.stats = blank().stats;
+      }
+      if (!Array.isArray(nextForm.buyersWeWorkWith) || nextForm.buyersWeWorkWith.length === 0) {
+        nextForm.buyersWeWorkWith = blank().buyersWeWorkWith;
+      }
+      if (!Array.isArray(nextForm.productCategories)) {
+        nextForm.productCategories = [];
       }
       nextForm.hideContact = !!(b.hideContact || b.hidePhone);
       nextForm.hidePhone = !!(b.hideContact || b.hidePhone);
@@ -1239,6 +1389,7 @@ export default function BuyersAdminPage() {
                             </button>
                             <button onClick={() => { window.open(`/buyers/${b.slug}`, "_blank"); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><ExternalLink size={13} /> View Page</button>
                             <div className="border-t border-gray-100 my-1" />
+                            <button onClick={() => { setMenuId(null); handleResendCredentials(b); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-emerald-600 hover:bg-emerald-50 text-left"><Mail size={13} /> Send Login Email</button>
                             <button onClick={() => { handleTransferToSeller(b.id); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 text-left"><ArrowRightLeft size={13} /> Transfer to Seller</button>
                             <button onClick={() => { setDelId(b.id); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 text-left"><Trash2 size={13} /> Delete</button>
                           </div>
