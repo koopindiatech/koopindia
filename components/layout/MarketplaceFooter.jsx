@@ -82,13 +82,18 @@ const MarketplaceFooter = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/seller-buyer-registration?tab=seller" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
+                <Link href="/seller-buyer-registration" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
                   <span className="text-[#f97316]/70 text-xs">›</span> Register as a Seller
                 </Link>
               </li>
               <li>
-                <Link href="/seller-buyer-registration?tab=buyer" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
+                <Link href="/seller-buyer-registration" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
                   <span className="text-[#f97316]/70 text-xs">›</span> Register as a Buyer
+                </Link>
+              </li>
+              <li>
+                <Link href="/adminpanel/login" className="hover:text-[#f97316] transition-colors inline-flex items-center gap-2">
+                  <span className="text-[#f97316]/70 text-xs">›</span> Partner Login
                 </Link>
               </li>
             </ul>

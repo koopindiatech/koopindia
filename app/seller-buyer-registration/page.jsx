@@ -90,15 +90,8 @@ async function sendRegistrationCredentialsEmail({ to, name, companyName, passwor
 }
 
 function RegistrationForm() {
-  const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") || searchParams.get("type");
-  const [tab, setTab] = useState(initialTab === "seller" || initialTab === "buyer" ? initialTab : null);
-
-  useEffect(() => {
-    const t = searchParams.get("tab") || searchParams.get("type");
-    if (t === "seller" || t === "buyer") setTab(t);
-  }, [searchParams]);
-
+  // Default to null so user always chooses profile type themselves
+  const [tab, setTab] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -378,12 +371,50 @@ function RegistrationForm() {
         <p className="text-center text-[11px] text-gray-400 pt-2">
           🔒 Free to register · Reviewed within 24-48 hours · No credit card needed
         </p>
+
+        {/* Already Registered Login Card */}
+        <div className="mt-5 p-4 rounded-2xl bg-white border border-gray-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3 text-left">
+            <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-500 flex-shrink-0">
+              <Users size={18} />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-gray-900">Already registered on Koop India?</p>
+              <p className="text-[11px] text-gray-500">Access your Seller or Buyer partner account.</p>
+            </div>
+          </div>
+          <Link
+            href="/adminpanel/login"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#1e3a5f] hover:bg-[#162c4a] text-white font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
+          >
+            <span>Login to Portal</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden">
+      {/* Top back bar & Login link */}
+      <div className="px-5 py-2.5 bg-gray-50/80 border-b border-gray-100 flex items-center justify-between gap-2 text-xs">
+        <button
+          type="button"
+          onClick={() => setTab(null)}
+          className="font-bold text-gray-600 hover:text-orange-600 flex items-center gap-1 transition cursor-pointer"
+        >
+          <span>←</span>
+          <span>Choose profile type</span>
+        </button>
+        <div className="flex items-center gap-1.5 text-gray-500">
+          <span>Already registered?</span>
+          <Link href="/adminpanel/login" className="font-bold text-orange-600 hover:underline">
+            Login here
+          </Link>
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="flex border-b border-gray-100 p-2 bg-gray-50">
         <button

@@ -283,7 +283,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
   const rawContactPerson = buyer.contactName || buyer.contactPerson || buyer.name || "";
   let cleanContactName = rawContactPerson;
-  let cleanContactRole = buyer.contactRole || buyer.designation || "";
+  let cleanContactRole = (buyer.contactRole || buyer.designation || "").trim();
 
   if (cleanContactName && cleanContactName.includes(",")) {
     const parts = cleanContactName.split(",");
@@ -294,11 +294,7 @@ export default function BuyerClientPage({ initialBuyer }) {
   }
 
   if (!cleanContactName) {
-    cleanContactName = buyer.buyerName || "Buyer Representative";
-  }
-
-  if (!cleanContactRole) {
-    cleanContactRole = buyer.businessType ? `${buyer.businessType} Representative` : "Authorized Buyer";
+    cleanContactName = buyer.buyerName || "";
   }
 
   return (
@@ -729,13 +725,13 @@ export default function BuyerClientPage({ initialBuyer }) {
                     <p className="font-black text-gray-900 text-sm leading-tight truncate">
                       {cleanContactName}
                     </p>
-                    {cleanContactRole && (
+                    {cleanContactRole ? (
                       <p className="text-gray-500 text-xs font-medium mt-0.5 truncate">
                         {cleanContactRole}
                       </p>
-                    )}
+                    ) : null}
                     <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-bold mt-1">
-                      <span>✓</span> Verified Representative
+                      <span>✓</span> Verified Partner
                     </span>
                   </div>
                 </div>

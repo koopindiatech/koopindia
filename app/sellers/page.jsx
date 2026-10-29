@@ -5,7 +5,7 @@ import MarketplaceFooter from "@/components/layout/MarketplaceFooter";
 import SellerCard from "@/components/ui/cards/SellerCard";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
-import { matchCategory, matchState, matchCity, FILTER_STATES } from "@/lib/categoryAccess";
+import { matchCategory, matchState, matchCity, extractSellerCategories, FILTER_STATES } from "@/lib/categoryAccess";
 
 // SVG icon helpers
 const SearchIcon = () => (
@@ -81,19 +81,11 @@ const STATES = [
 const Skeleton = ({ cls }) => <div className={`animate-pulse bg-gray-200 rounded-lg ${cls}`} />;
 
 // Helper to match seller against a list of selected category labels
+// Helper to match seller against a list of selected category labels
 const matchSellerCategories = (s, catList) => {
   if (!catList || catList.length === 0) return true;
-
-  return catList.some(cat => {
-    return (
-      matchCategory(s.category, cat) ||
-      matchCategory(s.subcategory, cat) ||
-      matchCategory(s.productCategories, cat) ||
-      matchCategory(s.businessType, cat) ||
-      matchCategory(s.natureOfBusiness, cat) ||
-      matchCategory(s.products, cat)
-    );
-  });
+  const sellerCats = extractSellerCategories(s);
+  return catList.some(cat => matchCategory(sellerCats, cat));
 };
 
 export default function SellersPage() {

@@ -430,6 +430,31 @@ async function sendSellerCredentialsEmail({ to, name, companyName, password, pro
   }
 }
 
+
+const formatListingDate = (item) => {
+  const val = item?.createdAt || item?.updatedAt;
+  if (!val) return { label: "Published", text: "—" };
+  try {
+    let d;
+    if (val?.toDate && typeof val.toDate === "function") d = val.toDate();
+    else if (val?.seconds) d = new Date(val.seconds * 1000);
+    else if (typeof val === "number" || typeof val === "string") d = new Date(val);
+    if (!d || isNaN(d.getTime())) return { label: "Published", text: typeof val === "string" ? val : "—" };
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    let hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    const ampm = hours >= 12 ? "pm" : "am";
+    hours = hours % 12 || 12;
+    const label = item?.updatedAt && item.updatedAt !== item.createdAt ? "Last Modified" : "Published";
+    return { label, text: `${year}/${month}/${day} at ${hours}:${minutes} ${ampm}` };
+  } catch {
+    return { label: "Published", text: "—" };
+  }
+};
+
 // Sellers Management Component
 export default function SellersPage() {
   const [user, setUser] = useState(null);
@@ -440,7 +465,8 @@ export default function SellersPage() {
   const [filterState, setFilterState] = useState("All States");
   const [filterCity, setFilterCity] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const [itemsPerPage, setItemsPerPage] = useState(50);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [dbLoading, setDbLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState(blank());
@@ -893,9 +919,7 @@ export default function SellersPage() {
 
     const matchCat =
       filterCategory === "All" ||
-      matchCategory(s.category, filterCategory) ||
-      matchCategory(s.subcategory, filterCategory) ||
-      matchCategory(s.productCategories, filterCategory);
+      matchCategory(extractSellerCategories(s), filterCategory);
 
     const matchSt =
       filterState === "All States" ||
@@ -910,7 +934,7 @@ export default function SellersPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, filterCategory, filterState, filterCity]);
+  }, [search, filterCategory, filterState, filterCity, itemsPerPage]);
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const paginatedSellers = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -962,46 +986,51 @@ export default function SellersPage() {
       {!formOpen && (
         <>
           {/* ── Top bar ── */}
-          <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
-            <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white ${user?.role === "buyer" ? "bg-emerald-600" : "bg-violet-600"}`}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4 bg-white border-b border-gray-100">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white flex-shrink-0 ${user?.role === "buyer" ? "bg-emerald-600" : "bg-violet-600"}`}>
                 <Store size={18} />
               </div>
-              <div>
-                <h1 className="font-black text-gray-900 text-base leading-none">
+              <div className="min-w-0">
+                <h1 className="font-black text-gray-900 text-sm sm:text-base leading-none truncate">
                   {user?.role === "buyer" ? "Matched Suppliers" : "Seller Portals"}
                 </h1>
                 {user?.role === "buyer" ? (
-                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">
+                  <p className="text-gray-400 text-[10px] sm:text-[11px] mt-1 font-medium truncate">
                     {userListing?.status === "live"
                       ? `${sellers.length} verified suppliers matching your category`
                       : `Profile status: ${userListing?.status || "pending"} — supplier contacts unlock once Live`}
                   </p>
                 ) : user?.role === "admin" ? (
-                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">{sellers.length} sellers listed</p>
+                  <p className="text-gray-400 text-[10px] sm:text-[11px] mt-1 font-medium">{sellers.length} sellers listed</p>
                 ) : (
-                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">Manage seller profile</p>
+                  <p className="text-gray-400 text-[10px] sm:text-[11px] mt-1 font-medium">Manage seller profile</p>
                 )}
               </div>
             </div>
             {user?.role !== "buyer" && (
-              <button onClick={() => openForm()}
-                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-violet-200 transition-all hover:scale-105">
-                <Plus size={16} /> Add Seller
-              </button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={() => openForm()}
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md shadow-violet-200 transition-all hover:scale-[1.02] whitespace-nowrap cursor-pointer"
+                >
+                  <Plus size={16} className="flex-shrink-0" />
+                  <span>Add Seller</span>
+                </button>
+              </div>
             )}
           </div>
 
           {/* ── Filter bar ── */}
-          <div className="px-6 pt-5 pb-4 bg-white border-b border-gray-100 flex flex-wrap gap-3 items-center">
+          <div className="px-4 sm:px-6 pt-4 pb-4 bg-white border-b border-gray-100 flex flex-wrap gap-2.5 sm:gap-3 items-center">
             {/* Search input */}
-            <div className="flex-1 min-w-[220px] relative">
+            <div className="flex-1 min-w-[200px] sm:min-w-[220px] relative">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search name, company, email, phone, city..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 hover:bg-white text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition"
+                className="w-full pl-10 pr-4 py-2 sm:py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 hover:bg-white text-xs sm:text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition"
               />
               {search && (
                 <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -1011,7 +1040,7 @@ export default function SellersPage() {
             </div>
 
             {/* Category Dropdown */}
-            <div className="w-52">
+            <div className="w-full sm:w-52">
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
@@ -1025,7 +1054,7 @@ export default function SellersPage() {
             </div>
 
             {/* State Dropdown */}
-            <div className="w-44">
+            <div className="w-full sm:w-44">
               <select
                 value={filterState}
                 onChange={(e) => setFilterState(e.target.value)}
@@ -1038,7 +1067,7 @@ export default function SellersPage() {
             </div>
 
             {/* City text input */}
-            <div className="w-40 relative">
+            <div className="w-full sm:w-40 relative">
               <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
               <input
                 value={filterCity}
@@ -1070,8 +1099,26 @@ export default function SellersPage() {
               </button>
             )}
 
-            <div className="text-xs text-gray-400 font-semibold ml-auto pl-2">
-              Showing {filtered.length} of {sellers.length} suppliers
+            <div className="flex items-center gap-3 w-full sm:w-auto sm:ml-auto justify-between sm:justify-end pt-1 sm:pt-0">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 font-semibold">
+                <span className="text-gray-400">Show:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="px-2.5 py-1.5 rounded-xl border border-gray-200 bg-white text-xs font-bold text-gray-700 outline-none focus:border-violet-400 cursor-pointer shadow-xs"
+                >
+                  <option value={25}>25 / page</option>
+                  <option value={50}>50 / page</option>
+                  <option value={100}>100 / page</option>
+                  <option value={200}>200 / page</option>
+                </select>
+              </div>
+              <div className="text-xs text-gray-400 font-semibold">
+                Showing {filtered.length} of {sellers.length} suppliers
+              </div>
             </div>
           </div>
 
@@ -1103,11 +1150,11 @@ export default function SellersPage() {
             </div>
           )}
 
-          {/* ── Seller Cards ── */}
-          <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {paginatedSellers.map((s) => {
-              // Buyer view: direct verified supplier contacts
-              if (user?.role === "buyer") {
+          {/* ── Seller Listings (Row Type UI) ── */}
+          {user?.role === "buyer" ? (
+            /* Buyer portal view: direct verified supplier contacts */
+            <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {paginatedSellers.map((s) => {
                 const contactPhone = s.phone || "";
                 const contactEmail = s.email || "";
                 const contactName = s.contact || s.name || "";
@@ -1132,27 +1179,23 @@ export default function SellersPage() {
                         </div>
                       </div>
 
-                      {/* Contact Details box */}
                       <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100 space-y-2 text-xs">
                         <div className="font-bold text-gray-800 flex items-center gap-1">
                           <span className="text-gray-400">Contact:</span>
                           <span className="font-black text-gray-900">{contactName}</span>
                         </div>
-
                         {contactPhone ? (
                           <a href={`tel:${contactPhone}`} className="flex items-center gap-2 font-black text-emerald-800 hover:underline">
                             <Phone size={13} className="text-emerald-600 flex-shrink-0" />
                             <span>{contactPhone}</span>
                           </a>
                         ) : null}
-
                         {contactEmail ? (
                           <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 font-medium text-gray-600 hover:underline truncate">
                             <Mail size={13} className="text-emerald-600 flex-shrink-0" />
                             <span className="truncate">{contactEmail}</span>
                           </a>
                         ) : null}
-
                         {s.gstNumber && (
                           <div className="text-[11px] text-gray-600 pt-1 border-t border-emerald-100 flex items-center justify-between">
                             <span className="text-gray-400">GST:</span>
@@ -1184,112 +1227,242 @@ export default function SellersPage() {
                     </div>
                   </div>
                 );
-              }
-
-              const cfg = statusCfg[s.status] || statusCfg.draft;
-              const color = s.primaryColor || "#7c3aed";
-              return (
-                <div key={s.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col">
-                                    <div className="h-1.5 w-full rounded-t-2xl" style={{ backgroundColor: color }} />
-                  <div className="p-5 flex-1 flex flex-col gap-4">
-                    <div className="flex items-start gap-3">
-                      {s.logoUrl
-                        ? <img src={getImg(s.logoUrl)} alt="" className="h-12 w-auto max-w-[100px] object-contain flex-shrink-0" />
-                        : <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-base flex-shrink-0" style={{ backgroundColor: color }}>{ini(s.name)}</div>
-                      }
-                      <div className="flex-1 min-w-0">
-                        <p className="font-black text-gray-900 text-sm truncate">{s.name}</p>
-                        <p className="text-gray-400 text-[11px] font-medium truncate">{s.category || "—"}</p>
-                      </div>
-                      <div className="relative flex-shrink-0">
-                        <button onClick={() => setMenuId(menuId === s.id ? null : s.id)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition"><MoreVertical size={14} /></button>
-                        {menuId === s.id && (
-                          <div className="absolute right-0 top-8 z-30 w-44 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5 overflow-hidden">
-                            <button onClick={() => { openForm(s); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><Edit2 size={13} /> Edit</button>
-                            <button onClick={() => toggleStatus(s.id, s.status)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
-                              {s.status === "live" ? <><PauseCircle size={13} /> Pause</> : <><PlayCircle size={13} /> Activate</>}
-                            </button>
-                            <button onClick={() => toggleFeatured(s.id, s.isFeatured)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
-                              <Star size={13} className={s.isFeatured ? "text-orange-500 fill-orange-500" : ""} /> {s.isFeatured ? "Unfeature" : "Feature on Marketplace"}
-                            </button>
-                            <button onClick={() => { window.open(`/${s.slug}`, "_blank"); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><ExternalLink size={13} /> View Site</button>
-                            <div className="border-t border-gray-100 my-1" />
-                            <button onClick={() => { handleTransferToBuyer(s.id); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 text-left"><ArrowRightLeft size={13} /> Transfer to Buyer</button>
-                            <button onClick={() => { setDelId(s.id); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 text-left"><Trash2 size={13} /> Delete</button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className={`flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full border ${cfg.badge}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />{cfg.label}
-                      </span>
-                      <span className="text-gray-300 text-[10px]">·</span>
-                      <span className="text-gray-400 text-[10px] font-semibold">{s.type === "product" ? "🛒 Product" : "🏢 Service"}</span>
-                      {s.isFeatured && (
-                        <>
-                          <span className="text-gray-300 text-[10px]">·</span>
-                          <span className="text-orange-500 text-[10px] font-bold flex items-center gap-1"><Star size={10} className="fill-orange-500"/> Featured</span>
-                        </>
-                      )}
-                    </div>
-
-                    <div className="bg-gray-50 rounded-xl px-3 py-2 flex items-center gap-2">
-                      <Globe size={11} className="text-gray-400 flex-shrink-0" />
-                      <span className="text-[10px] text-violet-600 font-semibold truncate">koopindia.com/{s.slug}</span>
-                    </div>
-
-                    <div className="flex gap-2 pt-1 mt-auto">
-                      <button onClick={() => openForm(s)} className="flex-1 text-xs font-bold py-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-600 transition flex items-center justify-center gap-1.5"><Edit2 size={11} /> Edit</button>
-                      <a href={`/${s.slug}`} target="_blank" rel="noreferrer" className="flex-1 text-xs font-bold py-2 rounded-xl text-white flex items-center justify-center gap-1.5 transition" style={{ backgroundColor: color }}>
-                        <ExternalLink size={11} /> View
-                      </a>
-                    </div>
+              })}
+            </div>
+          ) : (
+            /* Admin & Seller view: Row Table layout (WordPress style) */
+            <div className="px-6 pb-10">
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
+                {/* Table Header */}
+                <div className="hidden lg:grid grid-cols-12 gap-4 px-5 py-3.5 bg-gray-50/90 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider items-center">
+                  <div className="col-span-5 flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={paginatedSellers.length > 0 && paginatedSellers.every(s => selectedIds.includes(s.id))}
+                      onChange={() => {
+                        if (paginatedSellers.every(s => selectedIds.includes(s.id))) {
+                          setSelectedIds(prev => prev.filter(id => !paginatedSellers.some(s => s.id === id)));
+                        } else {
+                          setSelectedIds(prev => Array.from(new Set([...prev, ...paginatedSellers.map(s => s.id)])));
+                        }
+                      }}
+                      className="w-4 h-4 rounded text-violet-600 border-gray-300 focus:ring-violet-500 cursor-pointer"
+                    />
+                    <span>Title</span>
+                  </div>
+                  <div className="col-span-3">
+                    <span>Tags / Category</span>
+                  </div>
+                  <div className="col-span-2">
+                    <span>Date</span>
+                  </div>
+                  <div className="col-span-2 text-right">
+                    <span>Status & Actions</span>
                   </div>
                 </div>
-              );
-            })}
-          </div>
 
-          {totalPages > 1 && (
-            <div className="px-6 pb-10 flex items-center justify-between">
-              <span className="text-sm text-gray-500 font-medium">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} sellers
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
-                >
-                  Prev
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
-                  .map((p, i, arr) => (
-                    <span key={p} className="flex items-center">
-                      {i > 0 && p - arr[i - 1] > 1 && <span className="px-2 text-gray-400">...</span>}
-                      <button
-                        onClick={() => setCurrentPage(p)}
-                        className={`w-9 h-9 rounded-xl text-sm font-bold transition flex items-center justify-center ${
-                          currentPage === p ? "bg-violet-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+                {/* Table Body */}
+                <div className="divide-y divide-gray-100">
+                  {paginatedSellers.map((s) => {
+                    const cfg = statusCfg[s.status] || statusCfg.draft;
+                    const color = s.primaryColor || "#7c3aed";
+                    const isDraft = s.status === "draft";
+                    const isSelected = selectedIds.includes(s.id);
+                    const dateInfo = formatListingDate(s);
+
+                    return (
+                      <div
+                        key={s.id}
+                        className={`group px-5 py-3.5 hover:bg-gray-50/80 transition-colors grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-center ${
+                          isSelected ? "bg-violet-50/40" : ""
                         }`}
                       >
-                        {p}
-                      </button>
-                    </span>
-                  ))}
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
-                >
-                  Next
-                </button>
+                        {/* Col 1: Checkbox + Avatar + Title + Quick Actions */}
+                        <div className="col-span-12 lg:col-span-5 flex items-start gap-3 min-w-0">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {
+                              setSelectedIds(prev =>
+                                prev.includes(s.id) ? prev.filter(id => id !== s.id) : [...prev, s.id]
+                              );
+                            }}
+                            className="w-4 h-4 rounded text-violet-600 border-gray-300 focus:ring-violet-500 cursor-pointer mt-1 flex-shrink-0"
+                          />
+                          {s.logoUrl ? (
+                            <img src={getImg(s.logoUrl)} alt="" className="w-10 h-10 rounded-xl object-contain border border-gray-200 bg-white flex-shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-xs" style={{ backgroundColor: color }}>
+                              {ini(s.name)}
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-bold text-[14px] text-gray-900 group-hover:text-violet-600 transition truncate">
+                                {s.name}
+                              </p>
+                              {isDraft && (
+                                <span className="text-gray-400 text-xs italic font-medium">— Draft</span>
+                              )}
+                            </div>
+                            <p className="text-gray-400 text-[11px] font-medium truncate mt-0.5">
+                              {[s.contact || s.name, s.city, s.state].filter(Boolean).join(" · ")}
+                            </p>
+
+                            {/* Sub action links (WordPress style below title) */}
+                            <div className="flex items-center gap-1.5 text-xs font-semibold mt-1.5 text-gray-400 flex-wrap">
+                              <button onClick={() => openForm(s)} className="text-violet-600 hover:text-violet-800 hover:underline">Edit</button>
+                              <span>|</span>
+                              <a href={`/${s.slug}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">View ↗</a>
+                              <span>|</span>
+                              <button onClick={() => toggleStatus(s.id, s.status)} className="text-gray-600 hover:text-gray-900 hover:underline">
+                                {s.status === "live" ? "Pause" : "Activate"}
+                              </button>
+                              <span>|</span>
+                              <button onClick={() => toggleFeatured(s.id, s.isFeatured)} className="text-orange-600 hover:text-orange-800 hover:underline">
+                                {s.isFeatured ? "Unfeature" : "Feature"}
+                              </button>
+                              <span>|</span>
+                              <button onClick={() => handleTransferToBuyer(s.id)} className="text-blue-600 hover:text-blue-800 hover:underline">Transfer</button>
+                              <span>|</span>
+                              <button onClick={() => setDelId(s.id)} className="text-red-500 hover:text-red-700 hover:underline">Delete</button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Col 2: Category & Tags */}
+                        <div className="col-span-12 sm:col-span-4 lg:col-span-3">
+                          <p className="text-xs font-bold text-gray-800 truncate">{s.category || "—"}</p>
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 border border-gray-200">
+                              {s.type === "product" ? "🛒 Product" : "🏢 Service"}
+                            </span>
+                            {s.isFeatured && (
+                              <span className="text-orange-600 bg-orange-50 border border-orange-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
+                                <Star size={10} className="fill-orange-500 text-orange-500" /> Featured
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Col 3: Date */}
+                        <div className="col-span-12 sm:col-span-4 lg:col-span-2 text-xs">
+                          <span className="text-gray-400 text-[11px] block">{dateInfo.label}</span>
+                          <span className="font-semibold text-gray-700 text-xs">{dateInfo.text}</span>
+                        </div>
+
+                        {/* Col 4: Status & Actions on right */}
+                        <div className="col-span-12 sm:col-span-4 lg:col-span-2 flex items-center justify-end gap-2">
+                          <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${cfg.badge}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                            {cfg.label}
+                          </span>
+                          <button
+                            onClick={() => openForm(s)}
+                            className="p-1.5 text-gray-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition"
+                            title="Edit"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <a
+                            href={`/${s.slug}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                            title="View Page"
+                          >
+                            <ExternalLink size={14} />
+                          </a>
+                          <div className="relative">
+                            <button
+                              onClick={() => setMenuId(menuId === s.id ? null : s.id)}
+                              className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                            >
+                              <MoreVertical size={14} />
+                            </button>
+                            {menuId === s.id && (
+                              <div className="absolute right-0 top-8 z-30 w-44 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5 overflow-hidden">
+                                <button onClick={() => { openForm(s); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><Edit2 size={13} /> Edit</button>
+                                <button onClick={() => toggleStatus(s.id, s.status)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
+                                  {s.status === "live" ? <><PauseCircle size={13} /> Pause</> : <><PlayCircle size={13} /> Activate</>}
+                                </button>
+                                <button onClick={() => toggleFeatured(s.id, s.isFeatured)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
+                                  <Star size={13} className={s.isFeatured ? "text-orange-500 fill-orange-500" : ""} /> {s.isFeatured ? "Unfeature" : "Feature on Marketplace"}
+                                </button>
+                                <button onClick={() => { window.open(`/${s.slug}`, "_blank"); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><ExternalLink size={13} /> View Site</button>
+                                <div className="border-t border-gray-100 my-1" />
+                                <button onClick={() => { handleTransferToBuyer(s.id); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 text-left"><ArrowRightLeft size={13} /> Transfer to Buyer</button>
+                                <button onClick={() => { setDelId(s.id); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 text-left"><Trash2 size={13} /> Delete</button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
+
+          {/* Pagination bar with per-page selector */}
+          <div className="px-6 pb-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-gray-500 font-medium">
+              Showing {filtered.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} suppliers
+            </span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 font-semibold">
+                <span>Per page:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="px-2.5 py-1.5 rounded-xl border border-gray-200 bg-white text-xs font-bold text-gray-700 outline-none focus:border-violet-400 cursor-pointer shadow-xs"
+                >
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                  <option value={200}>200</option>
+                </select>
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3.5 py-1.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 disabled:opacity-40 hover:bg-gray-50 transition"
+                  >
+                    Prev
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                    .map((p, i, arr) => (
+                      <span key={p} className="flex items-center">
+                        {i > 0 && p - arr[i - 1] > 1 && <span className="px-1 text-gray-400">...</span>}
+                        <button
+                          onClick={() => setCurrentPage(p)}
+                          className={`w-8 h-8 rounded-xl text-xs font-bold transition flex items-center justify-center ${
+                            currentPage === p ? "bg-violet-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      </span>
+                    ))}
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3.5 py-1.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 disabled:opacity-40 hover:bg-gray-50 transition"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </>
       )}
 
