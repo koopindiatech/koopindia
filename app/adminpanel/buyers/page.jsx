@@ -17,11 +17,28 @@ import { getCurrentUser } from "../lib/auth";
 import imageCompression from 'browser-image-compression';
 import dynamic from 'next/dynamic';
 import * as XLSX from 'xlsx';
+import { extractSellerCategories, extractBuyerCategories, isCategoryMatch, matchCategory, matchState, matchCity, CATEGORIES, FILTER_STATES } from "../../../lib/categoryAccess";
+
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
 // Helper utilities
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-const slugify = (s) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const generateSlug = (...candidates) => {
+  for (const c of candidates) {
+    if (!c || typeof c !== "string") continue;
+    const s = c
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    if (s.length >= 2) return s;
+  }
+  return "";
+};
+const isBadSlug = (s) => !s || s.trim() === "" || /^[a-zA-Z0-9]{20}$/.test(s);
+const slugify = (s) => generateSlug(s);
 const ini = (n = "") => n.split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
 const getImg = (url) => (url && typeof url === "string" && url.startsWith("http") && url.includes("firebase") ? `/api/img?url=${encodeURIComponent(url)}` : url);
 
@@ -103,12 +120,16 @@ const blank = () => ({
     { id: uid(), icon: "", value: "", label: "Cities" },
     { id: uid(), icon: "", value: "", label: "Products Listed" },
     { id: uid(), icon: "", value: "", label: "Happy Customers" },
-    { id: uid(), icon: "", value: "", label: "Annual Turnover" },
+    { id: uid(), icon: "", value: "", label: "Investment" },
     { id: uid(), icon: "", value: "", label: "Years in Business" },
   ],
   annualTurnover: "", numberOfOutlets: "", presence: "",
   buyingFrequency: "", paymentTerms: "", deliveryArea: "",
   mapEmbedUrl: "",
+  assignedSellerIds: [],
+  assignedSellerSlugs: [],
+  assignedSellerEmails: [],
+  assignedSellers: [],
   status: "draft",
 });
 
@@ -241,14 +262,48 @@ const ProgPill = ({ field, uploadStatus, uploadProgress }) =>
 const EXCEL_COLUMN_MAP = {
   // Identity
   "Name / Company Name":          "buyerName",
+  "Company / Name":                "buyerName",
+  "COMPANY / NAME":                "buyerName",
+  "Company/Name":                  "buyerName",
   "Company Name":                  "buyerName",
+  "COMPANY NAME":                  "buyerName",
   "Buyer Name":                    "buyerName",
+  "BUYER NAME":                    "buyerName",
+  "Firm Name":                     "buyerName",
+  "Name":                          "buyerName",
+  "NAME":                          "buyerName",
+
+  // Business Type / Nature of Business
   "Business Type":                 "businessType",
+  "BUSINESS TYPE":                 "businessType",
+  "Nature of Business":            "businessType",
+  "Nature Of Business":            "businessType",
+  "NATURE OF BUSINESS":            "businessType",
   "Year of Establishment":         "estYear",
+
+  // Category
   "Industry Category":             "category",
+  "Category":                      "category",
+  "CATEGORY":                      "category",
+  "Product Category":              "category",
+  "Business Category":             "category",
+  "Sector":                        "category",
+  "Industry":                      "category",
+
+  // Location
   "State":                         "state",
+  "STATE":                         "state",
+  "State / UT":                    "state",
+  "State/UT":                      "state",
   "District":                      "district",
+  "DISTRICT":                      "district",
   "City":                          "city",
+  "CITY":                          "city",
+  "City / Town":                   "city",
+  "City/Town":                     "city",
+  "Town":                          "city",
+  "Location":                      "city",
+  "LOCATION":                      "city",
   "Address":                       "address",
 
   // About
@@ -275,18 +330,47 @@ const EXCEL_COLUMN_MAP = {
   "PAN No.":                       "panNumber",
   "PAN Number":                    "panNumber",
 
-  // Business Info
+  // Business Info & Requirements
   "Business Partners / Associated Brand": "businessPartners",
   "Product Categories":            "productCategoryText",
+  "Product Category Text":         "productCategoryText",
+  "Requirement":                   "requirements",
+  "REQUIREMENT":                   "requirements",
+  "Requirements":                  "requirements",
+  "REQUIREMENTS":                  "requirements",
 
   // Contact
   "Contact Person / Person Designation": "contactName",
   "Contact Name":                  "contactName",
+  "Contact Person":                "contactName",
   "Contact Role":                  "contactRole",
   "Contact Phone":                 "contactPhone",
+  "Contact Mobile":                "contactPhone",
   "Contact Email":                 "contactEmail",
   "Phone":                         "phone",
+  "Phone Number":                  "phone",
+  "PHONE NUMBER":                  "phone",
+  "Mobile":                        "phone",
+  "MOBILE":                        "phone",
+  "Mobile Number":                 "phone",
+  "MOBILE NUMBER":                 "phone",
+  "Mobile No":                     "phone",
+  "Mobile No.":                    "phone",
+  "Contact Number":                "phone",
+  "Contact No":                    "phone",
+  "Contact No.":                   "phone",
   "Email":                         "email",
+  "EMAIL":                         "email",
+  "Mail":                          "email",
+  "MAIL":                          "email",
+  "Mail ID":                       "email",
+  "MAIL ID":                       "email",
+  "Mail Id":                       "email",
+  "Email ID":                      "email",
+  "EMAIL ID":                      "email",
+  "Email Id":                      "email",
+  "E-mail":                        "email",
+  "Email Address":                 "email",
   "Password":                      "password",
   "WhatsApp":                      "whatsapp",
 
@@ -294,14 +378,6 @@ const EXCEL_COLUMN_MAP = {
   "Profile Status":                "profileStatusNote",
   "Verified Distributor":          "verifiedDistributor",
   "Feedback Rating":               "rating",
-
-  // Legacy / alternate keys
-  "Tagline":                       "tagline",
-  "Number of Outlets":             "numberOfOutlets",
-  "Presence":                      "presence",
-  "Buying Frequency":              "buyingFrequency",
-  "Payment Terms":                 "paymentTerms",
-  "Delivery Area":                 "deliveryArea",
 };
 
 // Template column order — matches user's exact requirements
@@ -423,11 +499,47 @@ function ExcelImportModal({ onClose, onSuccess }) {
         // Map column headers to buyer fields
         const mapped = raw.map((row) => {
           const buyer = {};
+          const rowKeys = Object.keys(row);
+
+          // 1. Direct match with EXCEL_COLUMN_MAP
           for (const [colHeader, fieldKey] of Object.entries(EXCEL_COLUMN_MAP)) {
-            if (row[colHeader] !== undefined && row[colHeader] !== "") {
-              buyer[fieldKey] = String(row[colHeader]).trim();
+            if (row[colHeader] !== undefined && String(row[colHeader]).trim() !== "") {
+              if (!buyer[fieldKey]) {
+                buyer[fieldKey] = String(row[colHeader]).trim();
+              }
             }
           }
+
+          // 2. Fuzzy normalized fallback matching
+          const patterns = {
+            buyerName: ["namecompanyname", "companyname", "buyername", "firmname", "company", "name"],
+            category: ["industrycategory", "category", "productcategory", "businesscategory", "sector", "industry"],
+            phone: ["mobilenumber", "mobileno", "contactphone", "contactnumber", "contactno", "phonenumber", "phone", "mobile", "whatsapp"],
+            email: ["contactemail", "emailid", "mailid", "emailaddress", "email", "mail"],
+            state: ["stateut", "state", "region", "province"],
+            city: ["citytown", "city", "town", "district", "location"],
+            businessType: ["natureofbusiness", "businesstype", "btype"],
+            requirements: ["requirement", "requirements", "productcategorytext", "productcategories", "productsneeded"],
+          };
+
+          for (const [fieldKey, pats] of Object.entries(patterns)) {
+            if (!buyer[fieldKey]) {
+              for (const rk of rowKeys) {
+                const norm = rk.toLowerCase().replace(/[^a-z0-9]/g, "");
+                if (pats.some(p => norm === p || norm.includes(p))) {
+                  const val = row[rk];
+                  if (val !== undefined && val !== null && String(val).trim() !== "") {
+                    buyer[fieldKey] = String(val).trim();
+                    break;
+                  }
+                }
+              }
+            }
+          }
+
+          if (!buyer.city && buyer.district) buyer.city = buyer.district;
+          if (!buyer.district && buyer.city) buyer.district = buyer.city;
+
           return buyer;
         }).filter(b => b.buyerName); // must have a name
         setRows(mapped);
@@ -462,7 +574,7 @@ function ExcelImportModal({ onClose, onSuccess }) {
 
         const countSnap = await getCountFromServer(collection(db, "buyers"));
         const profileId = `KIB${String(countSnap.data().count + 1).padStart(5, "0")}`;
-        const slug = slugify(r.buyerName || "buyer");
+        const slug = generateSlug(r.buyerName, r.contactName, emailToUse ? emailToUse.split("@")[0] : "", profileId) || `buyer-${profileId.toLowerCase()}`;
 
         const cityToUse = r.city || r.district || "";
         const phoneToUse = r.contactPhone || r.phone || "";
@@ -505,7 +617,7 @@ function ExcelImportModal({ onClose, onSuccess }) {
           about: r.about || "",
           investment: investmentVal,
           totalInvestmentCapacity: investmentVal,
-          annualTurnover: r.annualTurnover || investmentVal,
+          annualTurnover: r.annualTurnover || "",
           annualCapacityMT: r.annualCapacityMT || "",
           totalCapacityMT: r.totalCapacityMT || "",
           currencySector: r.currencySector || "INR",
@@ -533,7 +645,7 @@ function ExcelImportModal({ onClose, onSuccess }) {
             { id: uid(), icon: "📍", value: "", label: "Cities" },
             { id: uid(), icon: "📦", value: "", label: "Products Listed" },
             { id: uid(), icon: "🤝", value: "", label: "Happy Customers" },
-            { id: uid(), icon: "💰", value: investmentVal, label: "Annual Turnover" },
+
             { id: uid(), icon: "⏳", value: r.estYear ? `${new Date().getFullYear() - (parseInt(r.estYear) || new Date().getFullYear())} Yrs` : "", label: "Years in Business" },
           ],
           whyUs: ["Pan India presence", "Timely payments", "Quality products"],
@@ -575,21 +687,24 @@ function ExcelImportModal({ onClose, onSuccess }) {
         // Auto-generate lead
         await addDoc(collection(db, "leads"), {
           profileId,
-          name: r.contactName || r.buyerName || "Unknown",
+          name: contactPersonName || r.buyerName || "Unknown",
           company: r.buyerName || "",
           email: emailToUse,
-          phone: r.contactPhone || r.phone || "",
-          location: `${r.city || ""} ${r.state || ""}`.trim(),
+          phone: phoneToUse,
+          category: r.category || "",
+          state: r.state || "",
+          city: cityToUse,
+          location: `${cityToUse} ${r.state || ""}`.trim() || r.state || cityToUse || "",
           service: r.category || "Buyer Listing",
-          requirements: "",
+          requirements: r.productCategoryText || r.requirements || "",
           source: "excel_import",
           status: "New",
           createdAt: serverTimestamp(),
           buyerId: docRef.id,
           buyerSlug: slug,
           buyerName: r.buyerName,
-          assignedToBuyerSlug: slug,
-          assignedToBuyerName: r.buyerName,
+          assignedToBuyerSlug: null,
+          assignedToBuyerName: null,
           assignedTo: null,
         });
 
@@ -807,11 +922,219 @@ function ExcelImportModal({ onClose, onSuccess }) {
   );
 }
 
+// ─── Modal for Admin to Assign Verified Sellers to a Buyer ───────────────────
+function AssignSellersModal({ buyer, sellers, onClose, onSave }) {
+  const [selectedIds, setSelectedIds] = useState(
+    Array.isArray(buyer.assignedSellerIds)
+      ? buyer.assignedSellerIds
+      : Array.isArray(buyer.assignedSellers)
+        ? buyer.assignedSellers.map(s => s.id)
+        : []
+  );
+  const [search, setSearch] = useState("");
+  const [filterCategory, setFilterCategory] = useState("All");
+  const [filterState, setFilterState] = useState("All States");
+  const [filterCity, setFilterCity] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const filtered = sellers.filter(s => {
+    const q = search.toLowerCase();
+    return (
+      (s.name || "").toLowerCase().includes(q) ||
+      (s.companyName || "").toLowerCase().includes(q) ||
+      (s.email || "").toLowerCase().includes(q) ||
+      (s.phone || "").toLowerCase().includes(q) ||
+      (s.city || "").toLowerCase().includes(q) ||
+      (s.category || "").toLowerCase().includes(q)
+    );
+  });
+
+  const toggle = (id) => {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const selectedSellers = sellers.filter(s => selectedIds.includes(s.id));
+      const payload = {
+        assignedSellerIds: selectedIds,
+        assignedSellerSlugs: selectedSellers.map(s => s.slug).filter(Boolean),
+        assignedSellerEmails: selectedSellers.map(s => s.email?.toLowerCase()).filter(Boolean),
+        assignedSellers: selectedSellers.map(s => ({
+          id: s.id,
+          name: s.name || s.companyName || "",
+          companyName: s.companyName || s.name || "",
+          slug: s.slug || "",
+          email: s.email || "",
+          phone: s.phone || "",
+        })),
+      };
+
+      if (buyer.id && buyer.id !== "temp") {
+        await updateDoc(doc(db, "buyers", buyer.id), {
+          ...payload,
+          updatedAt: serverTimestamp(),
+        });
+      }
+
+      onSave(buyer.id, payload);
+      onClose();
+    } catch (err) {
+      console.error("Failed to assign sellers:", err);
+      alert("Failed to save seller assignments. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[200] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl flex flex-col overflow-hidden max-h-[88vh]">
+        {/* Header */}
+        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white">
+              <Users size={18} />
+            </div>
+            <div>
+              <h3 className="font-black text-gray-900 text-base">Assign Sellers to Buyer</h3>
+              <p className="text-gray-500 text-xs mt-0.5">
+                Grant authorized sellers direct access to <strong className="text-gray-800">{buyer.buyerName}</strong>'s contact details.
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-900 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm">
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Search & Stats */}
+        <div className="p-4 sm:p-5 border-b border-gray-100 bg-gray-50/60 flex items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search sellers by name, company, category, city..."
+              className="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 bg-white text-xs font-medium outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+          <div className="text-xs font-bold px-3 py-2 bg-blue-100/70 text-blue-800 rounded-xl whitespace-nowrap">
+            {selectedIds.length} Selected
+          </div>
+        </div>
+
+        {/* Sellers List */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-2">
+          {sellers.length === 0 ? (
+            <div className="text-center py-12 text-gray-400">
+              <Users size={32} className="mx-auto mb-2 opacity-50" />
+              <p className="text-sm font-semibold">No registered sellers found</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-12 text-gray-400">
+              <Users size={32} className="mx-auto mb-2 opacity-50" />
+              <p className="text-sm font-semibold">No sellers match your search</p>
+            </div>
+          ) : (
+            filtered.map(s => {
+              const isSelected = selectedIds.includes(s.id);
+              return (
+                <div
+                  key={s.id}
+                  onClick={() => toggle(s.id)}
+                  className={`flex items-center gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-blue-50/70 border-blue-300 shadow-xs"
+                      : "bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => {}}
+                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 pointer-events-none"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs font-black text-gray-900 truncate">{s.companyName || s.name}</p>
+                      {s.category && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                          {s.category}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3 mt-1 text-[11px] text-gray-500 flex-wrap">
+                      {s.phone && <span>📞 {s.phone}</span>}
+                      {s.email && <span className="truncate">✉ {s.email}</span>}
+                      {(s.city || s.state) && <span>📍 {[s.city, s.state].filter(Boolean).join(", ")}</span>}
+                    </div>
+                  </div>
+                  {isSelected && (
+                    <span className="text-[10px] font-black px-2 py-1 rounded-lg bg-blue-600 text-white">
+                      Access Granted
+                    </span>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-white">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedIds(sellers.map(s => s.id))}
+              className="text-xs font-bold text-blue-600 hover:underline"
+            >
+              Select All
+            </button>
+            <span className="text-gray-300">·</span>
+            <button
+              type="button"
+              onClick={() => setSelectedIds([])}
+              className="text-xs font-bold text-gray-500 hover:underline"
+            >
+              Clear All
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition flex items-center gap-1.5 disabled:opacity-60"
+            >
+              {saving ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
+              <span>Save Assignments ({selectedIds.length})</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Buyer Listings Management Component
 export default function BuyersAdminPage() {
   const [user, setUser] = useState(null);
+  const [userListing, setUserListing] = useState(null);
   const [buyers, setBuyers] = useState([]);
   const [search, setSearch] = useState("");
+  const [filterCategory, setFilterCategory] = useState("All");
+  const [filterState, setFilterState] = useState("All States");
+  const [filterCity, setFilterCity] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
   const [dbLoading, setDbLoading] = useState(true);
@@ -826,6 +1149,8 @@ export default function BuyersAdminPage() {
   const [uploadStatus, setUploadStatus] = useState({});
   const [activeSection, setActiveSection] = useState("section-identity");
   const [showImportModal, setShowImportModal] = useState(false);
+  const [sellersList, setSellersList] = useState([]);
+  const [assignModalBuyer, setAssignModalBuyer] = useState(null);
   const isUploading = Object.values(uploadStatus).some((s) => s === "uploading");
 
   /* ── Load from Firestore ── */
@@ -834,6 +1159,29 @@ export default function BuyersAdminPage() {
       try {
         const u = getCurrentUser();
         setUser(u);
+
+        // If Admin, load all sellers for assignment
+        if (u?.role === "admin") {
+          try {
+            const sellerSnap = await getDocs(query(collection(db, "sellers"), orderBy("createdAt", "desc")));
+            const sellersData = sellerSnap.docs.map((d) => ({
+              id: d.id,
+              name: d.data().name || d.data().companyName || "Unnamed Seller",
+              companyName: d.data().companyName || d.data().name || "",
+              slug: d.data().slug || "",
+              email: d.data().email || "",
+              phone: d.data().phone || "",
+              category: d.data().category || "",
+              city: d.data().city || "",
+              state: d.data().state || "",
+              status: d.data().status || "draft",
+            }));
+            setSellersList(sellersData);
+          } catch (err) {
+            console.error("Error loading sellers for admin assignment:", err);
+          }
+        }
+
         if (u?.role === "buyer") {
           let buyerData = null;
           if (u.linkedId) {
@@ -863,6 +1211,51 @@ export default function BuyersAdminPage() {
             setBuyers([]);
             openForm({ slug: u.linkedSlug || "", buyerName: u.name || "", contactEmail: u.email || "" });
           }
+        } else if (u?.role === "seller") {
+          // Seller viewing Assigned Buyers + Category Matched Buyers (when seller is live)
+          let sellerDoc = null;
+          if (u.linkedId) {
+            try {
+              const byId = await getDoc(doc(db, "sellers", u.linkedId));
+              if (byId.exists()) sellerDoc = { id: byId.id, ...byId.data() };
+            } catch (err) { console.error("Seller lookup by linkedId error:", err); }
+          }
+          if (!sellerDoc && u.linkedSlug) {
+            try {
+              const snap = await getDocs(query(collection(db, "sellers"), where("slug", "==", u.linkedSlug)));
+              if (!snap.empty) sellerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (err) { console.error("Seller lookup by linkedSlug error:", err); }
+          }
+          if (!sellerDoc && u.email) {
+            try {
+              const snap = await getDocs(query(collection(db, "sellers"), where("email", "==", u.email.toLowerCase())));
+              if (!snap.empty) sellerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (err) { console.error("Seller lookup by email error:", err); }
+          }
+          setUserListing(sellerDoc);
+
+          const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
+          const allBuyers = snap.docs.map((d) => ({ ...d.data(), id: d.id }));
+
+          const sellerCats = extractSellerCategories(sellerDoc);
+          const isSellerLive = sellerDoc?.status === "live";
+
+          const assignedOrMatched = allBuyers.filter((b) => {
+            const matchId = Array.isArray(b.assignedSellerIds) && b.assignedSellerIds.includes(u.linkedId);
+            const matchSlug = Array.isArray(b.assignedSellerSlugs) && b.assignedSellerSlugs.includes(u.linkedSlug);
+            const matchEmail = Array.isArray(b.assignedSellerEmails) && u.email && b.assignedSellerEmails.includes(u.email.toLowerCase());
+            const matchObj = Array.isArray(b.assignedSellers) && b.assignedSellers.some(s =>
+              s?.id === u.linkedId || s?.slug === u.linkedSlug || (s?.email && u.email && s.email.toLowerCase() === u.email.toLowerCase())
+            );
+            const isAssigned = matchId || matchSlug || matchEmail || matchObj;
+            const isCatMatch = isSellerLive && isCategoryMatch(sellerCats, extractBuyerCategories(b));
+
+            if (isAssigned) b._accessType = "assigned";
+            else if (isCatMatch) b._accessType = "category_match";
+
+            return isAssigned || isCatMatch;
+          });
+          setBuyers(assignedOrMatched);
         } else {
           const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
           setBuyers(snap.docs.map((d) => ({ ...d.data(), id: d.id })));
@@ -961,7 +1354,8 @@ export default function BuyersAdminPage() {
     setSaving(true);
     try {
       const clean = cleanPayload({ ...form });
-      const slug = clean.slug || slugify(clean.buyerName || "buyer");
+      const emailToUse = (clean.contactEmail || clean.email || "").toLowerCase().trim();
+      const slug = (!isBadSlug(clean.slug) ? clean.slug : "") || generateSlug(clean.buyerName, clean.contactName, emailToUse ? emailToUse.split("@")[0] : "", clean.profileId) || `buyer-${Date.now().toString(36)}`;
       const payload = {
         ...clean,
         slug,
@@ -969,7 +1363,6 @@ export default function BuyersAdminPage() {
         hidePhone: !!(form.hideContact || form.hidePhone),
         status: asDraft ? "draft" : "live"
       };
-      const emailToUse = (payload.contactEmail || payload.email || "").toLowerCase().trim();
 
       if (editing) {
         await updateDoc(doc(db, "buyers", editing.id), { ...payload, updatedAt: serverTimestamp() });
@@ -1236,12 +1629,39 @@ export default function BuyersAdminPage() {
 
   const filtered = buyers.filter((b) => {
     const q = search.toLowerCase();
-    return !q || b.buyerName?.toLowerCase().includes(q) || b.category?.toLowerCase().includes(q) || b.slug?.includes(q);
+    const matchSearch =
+      !q ||
+      (b.buyerName || "").toLowerCase().includes(q) ||
+      (b.category || "").toLowerCase().includes(q) ||
+      (b.city || "").toLowerCase().includes(q) ||
+      (b.state || "").toLowerCase().includes(q) ||
+      (b.district || "").toLowerCase().includes(q) ||
+      (b.businessType || "").toLowerCase().includes(q) ||
+      (b.slug || "").includes(q) ||
+      (b.phone || "").includes(q) ||
+      (b.email || "").toLowerCase().includes(q);
+
+    const matchCat =
+      filterCategory === "All" ||
+      matchCategory(b.category, filterCategory) ||
+      matchCategory(b.productCategories, filterCategory);
+
+    const matchSt =
+      filterState === "All States" ||
+      matchState(b.state, filterState) ||
+      matchState(b.preferredStates, filterState);
+
+    const matchCt =
+      !filterCity.trim() ||
+      matchCity(b.city, filterCity) ||
+      matchCity(b.district, filterCity);
+
+    return matchSearch && matchCat && matchSt && matchCt;
   });
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search]);
+  }, [search, filterCategory, filterState, filterCity]);
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const paginatedBuyers = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -1280,6 +1700,10 @@ export default function BuyersAdminPage() {
       if (!Array.isArray(nextForm.productCategories)) {
         nextForm.productCategories = [];
       }
+      nextForm.assignedSellerIds = Array.isArray(b.assignedSellerIds) ? b.assignedSellerIds : [];
+      nextForm.assignedSellerSlugs = Array.isArray(b.assignedSellerSlugs) ? b.assignedSellerSlugs : [];
+      nextForm.assignedSellerEmails = Array.isArray(b.assignedSellerEmails) ? b.assignedSellerEmails : [];
+      nextForm.assignedSellers = Array.isArray(b.assignedSellers) ? b.assignedSellers : [];
       nextForm.hideContact = !!(b.hideContact || b.hidePhone);
       nextForm.hidePhone = !!(b.hideContact || b.hidePhone);
     }
@@ -1289,6 +1713,13 @@ export default function BuyersAdminPage() {
     setFormOpen(true);
     setUploadProgress({});
     setUploadStatus({});
+  };
+
+  const handleAssignSave = (buyerId, payload) => {
+    setBuyers((prev) => prev.map((b) => (b.id === buyerId ? { ...b, ...payload } : b)));
+    if (formOpen) {
+      setForm((p) => ({ ...p, ...payload }));
+    }
   };
 
   const pc = form.primaryColor || "#16a34a";
@@ -1306,41 +1737,125 @@ export default function BuyersAdminPage() {
     <div className="min-h-screen bg-[#f4f6fb]" style={{ fontFamily: "'Inter',sans-serif" }}>
       {!formOpen && (
         <>
-                    <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
+          <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center">
-                <Building2 className="text-white" size={18} />
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white ${user?.role === "seller" ? "bg-emerald-600" : "bg-orange-500"}`}>
+                {user?.role === "seller" ? <Users size={18} /> : <Building2 size={18} />}
               </div>
               <div>
-                <h1 className="font-black text-gray-900 text-base leading-none">Buyer Listings</h1>
-                {user?.role === "admin" ? (
+                <h1 className="font-black text-gray-900 text-base leading-none">
+                  {user?.role === "seller" ? "Matched Buyers" : "Buyer Listings"}
+                </h1>
+                {user?.role === "seller" ? (
+                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">
+                    {userListing?.status === "live"
+                      ? `${buyers.length} verified buyers matching your category & assigned access`
+                      : `Listing status: ${userListing?.status || "pending"} — category buyers unlock once Live`}
+                  </p>
+                ) : user?.role === "admin" ? (
                   <p className="text-gray-400 text-[11px] mt-0.5 font-medium">{buyers.length} buyers listed</p>
                 ) : (
                   <p className="text-gray-400 text-[11px] mt-0.5 font-medium">Manage buyer profile</p>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {user?.role === "admin" && (
-                <button
-                  onClick={() => setShowImportModal(true)}
-                  className="flex items-center gap-2 bg-white border border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700 hover:text-orange-600 font-bold text-sm px-4 py-2.5 rounded-xl transition-all"
-                >
-                  <TableProperties size={15} /> Import Excel
+            {user?.role !== "seller" && (
+              <div className="flex items-center gap-2">
+                {user?.role === "admin" && (
+                  <button
+                    onClick={() => setShowImportModal(true)}
+                    className="flex items-center gap-2 bg-white border border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700 hover:text-orange-600 font-bold text-sm px-4 py-2.5 rounded-xl transition-all"
+                  >
+                    <TableProperties size={15} /> Import Excel
+                  </button>
+                )}
+                <button onClick={() => openForm()}
+                  className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-orange-200 transition-all hover:scale-105">
+                  <Plus size={16} /> Add Buyer
                 </button>
-              )}
-              <button onClick={() => openForm()}
-                className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-orange-200 transition-all hover:scale-105">
-                <Plus size={16} /> Add Buyer
-              </button>
-            </div>
+              </div>
+            )}
           </div>
 
-                    <div className="px-6 pt-5 pb-4 flex gap-3">
-            <div className="flex-1 relative">
+          <div className="px-6 pt-5 pb-4 bg-white border-b border-gray-100 flex flex-wrap gap-3 items-center">
+            {/* Search input */}
+            <div className="flex-1 min-w-[220px] relative">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
-              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search buyers..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search name, phone, email, city..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 hover:bg-white text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition"
+              />
+              {search && (
+                <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Category Dropdown */}
+            <div className="w-52">
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-semibold text-gray-700 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition cursor-pointer"
+              >
+                <option value="All">All Categories</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* State Dropdown */}
+            <div className="w-44">
+              <select
+                value={filterState}
+                onChange={(e) => setFilterState(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-semibold text-gray-700 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition cursor-pointer"
+              >
+                {FILTER_STATES.map((st) => (
+                  <option key={st} value={st}>{st}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* City text input */}
+            <div className="w-40 relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+              <input
+                value={filterCity}
+                onChange={(e) => setFilterCity(e.target.value)}
+                placeholder="Filter by city..."
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-medium text-gray-700 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition"
+              />
+              {filterCity && (
+                <button onClick={() => setFilterCity("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <X size={13} />
+                </button>
+              )}
+            </div>
+
+            {/* Reset button if active */}
+            {(search || filterCategory !== "All" || filterState !== "All States" || filterCity) && (
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setFilterCategory("All");
+                  setFilterState("All States");
+                  setFilterCity("");
+                }}
+                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-xs font-bold text-gray-600 transition"
+                title="Reset all filters"
+              >
+                <RefreshCw size={13} />
+                <span>Reset</span>
+              </button>
+            )}
+
+            <div className="text-xs text-gray-400 font-semibold ml-auto pl-2">
+              Showing {filtered.length} of {buyers.length} buyers
             </div>
           </div>
 
@@ -1352,17 +1867,114 @@ export default function BuyersAdminPage() {
             </div>
           )}
           {!dbLoading && filtered.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 gap-4 text-gray-400">
-              <div className="w-16 h-16 rounded-3xl bg-gray-100 flex items-center justify-center"><Building2 size={28} /></div>
-              <p className="font-bold text-base text-gray-500">{search ? "No buyers match your search" : "No buyers yet"}</p>
-              {!search && <button onClick={() => openForm()} className="bg-orange-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm">Add First Buyer</button>}
+            <div className="flex flex-col items-center justify-center py-24 gap-4 text-gray-400 max-w-md mx-auto text-center px-4">
+              <div className={`w-16 h-16 rounded-3xl flex items-center justify-center ${user?.role === "seller" ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500"}`}>
+                {user?.role === "seller" ? <Users size={28} /> : <Building2 size={28} />}
+              </div>
+              <p className="font-bold text-base text-gray-700">
+                {search ? "No buyers match your search" : user?.role === "seller" ? "No Matched Buyers Found" : "No buyers yet"}
+              </p>
+              {user?.role === "seller" ? (
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  {userListing?.status !== "live"
+                    ? `Your seller listing is currently in "${userListing?.status || "pending"}" status. Once verified and set to Live by Admin, all buyers matching your category (${userListing?.category || "business category"}) will automatically appear here with direct contact details.`
+                    : `No registered buyers found matching your category (${userListing?.category || "business category"}) yet. When buyers in this category register or are assigned by admin, their full contact details and WhatsApp will appear here.`
+                  }
+                </p>
+              ) : !search ? (
+                <button onClick={() => openForm()} className="bg-orange-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm">Add First Buyer</button>
+              ) : null}
             </div>
           )}
 
-                    <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {paginatedBuyers.map((b) => {
-              const cfg = statusCfg[b.status] || statusCfg.draft;
               const color = b.primaryColor || "#f97316";
+              const contactPhone = b.contactPhone || b.phone || "";
+              const contactEmail = b.contactEmail || b.email || "";
+              const contactName = b.contactName || b.buyerName || "";
+
+              // Seller view card with full direct contact info
+              if (user?.role === "seller") {
+                return (
+                  <div key={b.id} className="bg-white rounded-2xl border border-emerald-200/80 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden">
+                    <div className="h-2 w-full bg-gradient-to-r from-emerald-500 to-teal-500" />
+                    <div className="p-5 flex-1 flex flex-col gap-3.5">
+                      <div className="flex items-start gap-3">
+                        {b.logoUrl
+                          ? <img src={getImg(b.logoUrl)} alt="" className="w-12 h-12 rounded-xl object-contain border border-gray-100 flex-shrink-0" />
+                          : <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-base flex-shrink-0 bg-emerald-600">{ini(b.buyerName)}</div>
+                        }
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                              {b._accessType === "assigned" ? "✓ Assigned Access" : "✓ Category Match"}
+                            </span>
+                            <span className="text-gray-400 text-[10px] font-semibold">{b.businessType || "Buyer"}</span>
+                          </div>
+                          <p className="font-black text-gray-900 text-sm truncate mt-1">{b.buyerName}</p>
+                          <p className="text-gray-400 text-[11px] font-medium truncate">{[b.category, b.city, b.state].filter(Boolean).join(" · ")}</p>
+                        </div>
+                      </div>
+
+                      {/* Contact Details box */}
+                      <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100 space-y-2 text-xs">
+                        <div className="font-bold text-gray-800 flex items-center gap-1">
+                          <span className="text-gray-400">Contact:</span>
+                          <span className="font-black text-gray-900">{contactName}</span>
+                          {b.contactRole && <span className="text-gray-500 font-normal">({b.contactRole})</span>}
+                        </div>
+
+                        {contactPhone ? (
+                          <a href={`tel:${contactPhone}`} className="flex items-center gap-2 font-black text-emerald-800 hover:underline">
+                            <Phone size={13} className="text-emerald-600 flex-shrink-0" />
+                            <span>{contactPhone}</span>
+                          </a>
+                        ) : null}
+
+                        {contactEmail ? (
+                          <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 font-medium text-gray-600 hover:underline truncate">
+                            <Mail size={13} className="text-emerald-600 flex-shrink-0" />
+                            <span className="truncate">{contactEmail}</span>
+                          </a>
+                        ) : null}
+
+                        {b.annualTurnover && (
+                          <div className="text-[11px] text-gray-600 pt-1 border-t border-emerald-100 flex items-center justify-between">
+                            <span className="text-gray-400">Investment:</span>
+                            <span className="text-gray-900 font-bold">{b.annualTurnover}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2 pt-1 mt-auto">
+                        {(b.whatsapp || contactPhone) && (
+                          <a
+                            href={`https://wa.me/${(b.whatsapp || contactPhone).replace(/\D/g, "")}?text=Hi ${contactName}, I am reaching out to you from Koop India regarding business opportunities.`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex-1 text-xs font-bold py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm"
+                          >
+                            <span>💬 WhatsApp</span>
+                          </a>
+                        )}
+                        <a
+                          href={`/buyers/${b.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3 text-xs font-bold py-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 transition flex items-center justify-center gap-1"
+                        >
+                          <ExternalLink size={12} /> View Page
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Admin view card
+              const cfg = statusCfg[b.status] || statusCfg.draft;
+              const sellerCount = (b.assignedSellerIds || b.assignedSellers || []).length;
               return (
                 <div key={b.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col">
                   <div className="h-1.5 w-full rounded-t-2xl" style={{ backgroundColor: color }} />
@@ -1379,8 +1991,11 @@ export default function BuyersAdminPage() {
                       <div className="relative flex-shrink-0">
                         <button onClick={() => setMenuId(menuId === b.id ? null : b.id)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 transition"><MoreVertical size={14} /></button>
                         {menuId === b.id && (
-                          <div className="absolute right-0 top-8 z-30 w-44 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5 overflow-hidden">
+                          <div className="absolute right-0 top-8 z-30 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5 overflow-hidden">
                             <button onClick={() => { openForm(b); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left"><Edit2 size={13} /> Edit</button>
+                            <button onClick={() => { setAssignModalBuyer(b); setMenuId(null); }} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 text-left">
+                              <Users size={13} /> Assign Sellers Access
+                            </button>
                             <button onClick={() => toggleStatus(b.id, b.status)} className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 text-left">
                               {b.status === "live" ? <><PauseCircle size={13} /> Pause</> : <><PlayCircle size={13} /> Activate</>}
                             </button>
@@ -1414,6 +2029,20 @@ export default function BuyersAdminPage() {
                     <div className="bg-gray-50 rounded-xl px-3 py-2 flex items-center gap-2">
                       <Globe size={11} className="text-gray-400 flex-shrink-0" />
                       <span className="text-[10px] text-orange-600 font-semibold truncate">koopindia.com/buyers/{b.slug}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-1 border-t border-gray-50">
+                      <button
+                        onClick={() => setAssignModalBuyer(b)}
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition cursor-pointer"
+                        title="Assign verified sellers who can view direct contact details"
+                      >
+                        <Users size={12} />
+                        <span>{sellerCount} Sellers Access</span>
+                      </button>
+                      <span className="text-[10px] text-gray-400 font-medium truncate max-w-[120px]">
+                        {b.contactPhone || b.phone || "No phone"}
+                      </span>
                     </div>
 
                     <div className="flex gap-2 pt-1 mt-auto">
@@ -1708,7 +2337,7 @@ export default function BuyersAdminPage() {
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Business Details</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div><label className={fieldLabel}>Annual Turnover</label><input value={form.annualTurnover} onChange={(e) => sf("annualTurnover", e.target.value)} placeholder="Enter annual turnover" className={inp} /></div>
+                        <div><label className={fieldLabel}>Investment</label><input value={form.annualTurnover} onChange={(e) => sf("annualTurnover", e.target.value)} placeholder="Enter investment capacity" className={inp} /></div>
                         <div><label className={fieldLabel}>Number of Outlets</label><input value={form.numberOfOutlets} onChange={(e) => sf("numberOfOutlets", e.target.value)} placeholder="Enter number of outlets" className={inp} /></div>
                         <div><label className={fieldLabel}>State / City Presence</label><input value={form.presence} onChange={(e) => sf("presence", e.target.value)} placeholder="Enter presence area" className={inp} /></div>
                         <div><label className={fieldLabel}>Buying Frequency</label><input value={form.buyingFrequency} onChange={(e) => sf("buyingFrequency", e.target.value)} placeholder="Enter buying frequency" className={inp} /></div>
@@ -1793,6 +2422,7 @@ export default function BuyersAdminPage() {
                         </div>
                         <span className="text-xs font-bold px-2.5 py-1 bg-orange-50 text-orange-700 rounded-lg border border-orange-200">
                           {(form.preferredStates || []).length} Selected
+                          
                         </span>
                       </div>
 
@@ -1941,6 +2571,55 @@ export default function BuyersAdminPage() {
                       </div>
                     </div>
 
+                    {user?.role === "admin" && (
+                      <div className={sectionCard}>
+                        <div className="flex items-center justify-between pb-3 border-b border-gray-50">
+                          <div>
+                            <h3 className="text-sm font-black text-gray-900">Authorized Sellers Access</h3>
+                            <p className="text-xs text-gray-400 mt-0.5">Sellers assigned here can see direct contact details of this buyer.</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setAssignModalBuyer({ ...form, id: editing?.id || "temp" })}
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition cursor-pointer"
+                          >
+                            <Users size={13} />
+                            <span>Manage Sellers ({(form.assignedSellerIds || []).length})</span>
+                          </button>
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          {(form.assignedSellers || []).length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                              {(form.assignedSellers || []).map((s) => (
+                                <span key={s.id || s.slug} className="px-3 py-1 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 font-bold text-xs flex items-center gap-1.5">
+                                  <span>{s.companyName || s.name}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updatedIds = (form.assignedSellerIds || []).filter(id => id !== s.id);
+                                      const updatedSellers = (form.assignedSellers || []).filter(item => item.id !== s.id);
+                                      setForm(p => ({
+                                        ...p,
+                                        assignedSellerIds: updatedIds,
+                                        assignedSellerSlugs: updatedSellers.map(x => x.slug).filter(Boolean),
+                                        assignedSellerEmails: updatedSellers.map(x => x.email?.toLowerCase()).filter(Boolean),
+                                        assignedSellers: updatedSellers,
+                                      }));
+                                    }}
+                                    className="text-blue-500 hover:text-red-500 ml-1 font-bold"
+                                  >
+                                    ×
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-gray-400 italic">No sellers assigned yet. Click "Manage Sellers" to grant access.</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     <div className={sectionCard}>
                       <h3 className="text-sm font-black text-gray-900 pb-3 border-b border-gray-50">Publish Settings</h3>
                       <div className="flex gap-3">
@@ -2027,6 +2706,16 @@ export default function BuyersAdminPage() {
               console.error("Reload error after import:", e);
             }
           }}
+        />
+      )}
+
+      {/* ── Assign Sellers Modal ── */}
+      {assignModalBuyer && (
+        <AssignSellersModal
+          buyer={assignModalBuyer}
+          sellers={sellersList}
+          onClose={() => setAssignModalBuyer(null)}
+          onSave={handleAssignSave}
         />
       )}
     </div>

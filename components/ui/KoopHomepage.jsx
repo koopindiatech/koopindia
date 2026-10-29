@@ -7,6 +7,7 @@ import MarketplaceFooter from "../layout/MarketplaceFooter";
 import SellerCard from "./cards/SellerCard";
 import BuyerCard from "./cards/BuyerCard";
 import { db } from "@/lib/firebase";
+import { matchCategory, matchState, matchCity } from "@/lib/categoryAccess";
 import { collection, getDocs, query, orderBy, limit, where, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useModal } from "@/context/ModalContext";
 
@@ -189,6 +190,8 @@ export default function KoopIndiaHomepage() {
   // Firestore entity data state
   const [sellers, setSellers] = useState([]);
   const [buyers, setBuyers] = useState([]);
+  const [allBuyers, setAllBuyers] = useState([]);
+  const [allSellers, setAllSellers] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [partnerLogos, setPartnerLogos] = useState([]);
@@ -259,6 +262,14 @@ export default function KoopIndiaHomepage() {
         setSellers(fetchedSellers);
         setBuyers(fetchedBuyers);
         setBlogs(blogSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+
+        // Load full catalogs in background so search and filters find all matches
+        getDocs(collection(db, "sellers")).then(sSnap => {
+          setAllSellers(sSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(s => s.status !== "paused" && s.status !== "draft"));
+        }).catch(() => {});
+        getDocs(collection(db, "buyers")).then(bSnap => {
+          setAllBuyers(bSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.status !== "paused" && b.status !== "draft"));
+        }).catch(() => {});
       } catch (e) { console.error("Marketplace fetch error:", e); }
       finally { setLoading(false); }
 
@@ -313,23 +324,41 @@ export default function KoopIndiaHomepage() {
     setSearching(true);
     setSearched(true);
     try {
-      const [snap, bSnap] = await Promise.all([
-        getDocs(query(collection(db, "sellers"), where("isFeatured", "==", true))),
-        getDocs(query(collection(db, "buyers"), where("isFeatured", "==", true))),
-      ]);
-      let results = snap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(s => s.isFeatured === true && s.status !== "paused" && s.status !== "draft");
-      let bResults = bSnap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(b => b.isFeatured === true && b.status !== "paused" && b.status !== "draft");
-      
-      const q = currentSearch.toLowerCase().trim();
+      const isFiltering = !!((currentSearch && currentSearch.trim()) || (currentCat && currentCat !== "All Categories") || (currentState && currentState !== "All States") || (currentSub && currentSub !== "All"));
+
+      let sellerList = allSellers;
+      let buyerList = allBuyers;
+
+      // If full catalogs aren't ready, fetch from Firestore
+      if (sellerList.length === 0 || buyerList.length === 0) {
+        const [snap, bSnap] = await Promise.all([
+          sellerList.length > 0 ? null : getDocs(isFiltering ? collection(db, "sellers") : query(collection(db, "sellers"), where("isFeatured", "==", true))),
+          buyerList.length > 0 ? null : getDocs(isFiltering ? collection(db, "buyers") : query(collection(db, "buyers"), where("isFeatured", "==", true))),
+        ]);
+        if (snap) {
+          const sItems = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(s => s.status !== "paused" && s.status !== "draft");
+          if (allSellers.length === 0) setAllSellers(sItems);
+          sellerList = sItems;
+        }
+        if (bSnap) {
+          const bItems = bSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.status !== "paused" && b.status !== "draft");
+          if (allBuyers.length === 0) setAllBuyers(bItems);
+          buyerList = bItems;
+        }
+      }
+
+      let results = [...sellerList];
+      let bResults = [...buyerList];
+
+      const q = (currentSearch || "").toLowerCase().trim();
       if (q) {
         results = results.filter(s =>
-          s.name?.toLowerCase().includes(q) ||
-          s.category?.toLowerCase().includes(q) ||
-          s.companyName?.toLowerCase().includes(q)
+          (s.name || "").toLowerCase().includes(q) ||
+          (s.companyName || "").toLowerCase().includes(q) ||
+          (s.category || "").toLowerCase().includes(q) ||
+          (s.city || "").toLowerCase().includes(q) ||
+          (s.state || "").toLowerCase().includes(q) ||
+          (Array.isArray(s.productCategories) ? s.productCategories.map(c => typeof c === "string" ? c : (c.name || "")).join(" ") : "").toLowerCase().includes(q)
         );
         bResults = bResults.filter(b =>
           (b.buyerName || b.companyName || b.name || "").toLowerCase().includes(q) ||
@@ -340,68 +369,79 @@ export default function KoopIndiaHomepage() {
           (Array.isArray(b.productCategories) ? b.productCategories.map(c => typeof c === "string" ? c : (c.name || "")).join(" ") : "").toLowerCase().includes(q)
         );
       }
-      
-      if (currentCat !== "All Categories") {
+
+      if (currentCat && currentCat !== "All Categories") {
         results = results.filter(s =>
-          s.category?.toLowerCase().includes(currentCat.toLowerCase()) ||
-          (s.productCategories || []).some(c => {
-            const catName = typeof c === "string" ? c : (c.name || "");
-            return catName.toLowerCase().includes(currentCat.toLowerCase());
-          })
+          matchCategory(s.category, currentCat) ||
+          matchCategory(s.subcategory, currentCat) ||
+          matchCategory(s.productCategories, currentCat)
         );
         bResults = bResults.filter(b =>
-          (b.category || "").toLowerCase().includes(currentCat.toLowerCase()) ||
-          (b.productCategories || []).some(c => {
-            const catName = typeof c === "string" ? c : (c.name || "");
-            return catName.toLowerCase().includes(currentCat.toLowerCase());
-          })
+          matchCategory(b.category, currentCat) ||
+          matchCategory(b.subcategory, currentCat) ||
+          matchCategory(b.productCategories, currentCat) ||
+          matchCategory(b.requirements, currentCat)
         );
       }
-      
-      if (currentSub !== "All") results = results.filter(s =>
-        (s.productCategories || []).some(c => {
-          const catName = typeof c === "string" ? c : (c.name || "");
-          return catName.toLowerCase().includes(currentSub.toLowerCase());
-        })
-      );
-      
-      if (currentState !== "All States") {
+
+      if (currentSub && currentSub !== "All") {
         results = results.filter(s =>
-          s.state?.toLowerCase() === currentState.toLowerCase()
+          matchCategory(s.subcategory, currentSub) ||
+          matchCategory(s.productCategories, currentSub)
+        );
+      }
+
+      if (currentState && currentState !== "All States") {
+        results = results.filter(s =>
+          matchState(s.state, currentState)
         );
         bResults = bResults.filter(b =>
-          (b.state || "").toLowerCase() === currentState.toLowerCase() ||
-          (b.preferredStates || []).some(st => (typeof st === "string" ? st : "").toLowerCase() === currentState.toLowerCase())
+          matchState(b.state, currentState) ||
+          (Array.isArray(b.preferredStates) && b.preferredStates.some(st => matchState(st, currentState)))
         );
       }
-      
+
       setSearchResults(results);
       setBuyerSearchResults(bResults);
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Homepage search error:", e); }
     finally { setSearching(false); }
   };
 
   const isBuyerFiltered = buyerCatSel !== "All Categories" || buyerStateSel !== "All States";
-  
+
+  // Ensure full buyers catalog loads if user starts filtering buyers
+  useEffect(() => {
+    if (isBuyerFiltered && allBuyers.length === 0) {
+      getDocs(collection(db, "buyers")).then(bSnap => {
+        setAllBuyers(bSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.status !== "paused" && b.status !== "draft"));
+      }).catch(() => {});
+    }
+  }, [isBuyerFiltered, allBuyers.length]);
+
   const buyerPool = (searched && (search || catSel !== "All Categories" || stateSel !== "All States"))
     ? buyerSearchResults
-    : buyers;
+    : (isBuyerFiltered ? (allBuyers.length > 0 ? allBuyers : buyers) : buyers);
 
   const displayedBuyers = buyerPool.filter(b => {
-    if (!b.isFeatured || b.status === "paused" || b.status === "draft") return false;
+    if (b.status === "paused" || b.status === "draft") return false;
+    // On the homepage carousel without any filters, only show featured
+    if (!isBuyerFiltered && !searched && !b.isFeatured) return false;
+
     let match = true;
     if (buyerCatSel !== "All Categories") {
-      const qCat = buyerCatSel.toLowerCase();
-      const bCat = (b.category || "").toLowerCase();
-      const bProdCats = (b.productCategories || []).map(c => typeof c === "string" ? c.toLowerCase() : (c.name || "").toLowerCase());
-      const bBiz = (b.businessType || "").toLowerCase();
-      if (!bCat.includes(qCat) && !bProdCats.some(c => c.includes(qCat)) && !bBiz.includes(qCat)) match = false;
+      const matchCat =
+        matchCategory(b.category, buyerCatSel) ||
+        matchCategory(b.subcategory, buyerCatSel) ||
+        matchCategory(b.productCategories, buyerCatSel) ||
+        matchCategory(b.requirements, buyerCatSel) ||
+        matchCategory(b.businessType, buyerCatSel);
+      if (!matchCat) match = false;
     }
     if (match && buyerStateSel !== "All States") {
-      const qState = buyerStateSel.toLowerCase();
-      const bState = (b.state || "").toLowerCase();
-      const bPrefStates = (b.preferredStates || []).map(s => (typeof s === "string" ? s : "").toLowerCase());
-      if (!bState.includes(qState) && !bPrefStates.some(s => s.includes(qState))) match = false;
+      const matchPref = Array.isArray(b.preferredStates) && b.preferredStates.some(s => matchState(s, buyerStateSel));
+      if (!matchState(b.state, buyerStateSel) && !matchPref) {
+        match = false;
+      }
     }
     return match;
   });

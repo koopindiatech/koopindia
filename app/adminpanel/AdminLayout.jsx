@@ -207,12 +207,14 @@ export default function AdminLayout({ children }) {
   // Filter navigation items based on role-based access control
   const allowedNav = NAV_ITEMS.filter((item) => {
     if (user?.role === "admin") return true;
-    if (user?.role === "seller") return item.key === "leads" || item.key === "sellers";
-    if (user?.role === "buyer") return item.key === "leads" || item.key === "buyers";
+    if (user?.role === "seller") return item.key === "leads" || item.key === "sellers" || item.key === "buyers";
+    if (user?.role === "buyer") return item.key === "leads" || item.key === "buyers" || item.key === "sellers";
     return item.key === "leads"; // non-admins only see leads
   }).map(item => {
     if (user?.role === "seller" && item.key === "sellers") return { ...item, label: "My Listing" };
+    if (user?.role === "seller" && item.key === "buyers") return { ...item, label: "Matched Buyers" };
     if (user?.role === "buyer" && item.key === "buyers") return { ...item, label: "My Profile" };
+    if (user?.role === "buyer" && item.key === "sellers") return { ...item, label: "Matched Suppliers" };
     if ((user?.role === "seller" || user?.role === "buyer") && item.key === "leads") return { ...item, label: "My Leads" };
     return item;
   });

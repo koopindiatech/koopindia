@@ -387,13 +387,17 @@ export async function assignLeadToUser(leadId, userId, userName) {
   }
 }
 
-// Assign lead to a Seller (by slug)
-export async function assignLeadToSeller(leadId, sellerSlug, sellerName) {
+// Assign lead to a Seller (by slug / id)
+export async function assignLeadToSeller(leadId, sellerSlug, sellerName, sellerId = null) {
   try {
     await updateDoc(doc(db, "leads", leadId), {
       assignedToSellerSlug: sellerSlug || null,
       assignedToSellerName: sellerName || null,
+      assignedToSellerId: sellerId || null,
       assignedToSellerAt: sellerSlug ? serverTimestamp() : null,
+      assignedToBuyerSlug: null,
+      assignedToBuyerName: null,
+      assignedToBuyerId: null,
       history: arrayUnion({
         action: sellerSlug ? `Assigned to Seller: ${sellerName}` : "Unassigned from Seller",
         timestamp: new Date().toISOString(),
@@ -407,13 +411,17 @@ export async function assignLeadToSeller(leadId, sellerSlug, sellerName) {
   }
 }
 
-// Assign lead to a Buyer (by slug)
-export async function assignLeadToBuyer(leadId, buyerSlug, buyerName) {
+// Assign lead to a Buyer (by slug / id)
+export async function assignLeadToBuyer(leadId, buyerSlug, buyerName, buyerId = null) {
   try {
     await updateDoc(doc(db, "leads", leadId), {
       assignedToBuyerSlug: buyerSlug || null,
       assignedToBuyerName: buyerName || null,
+      assignedToBuyerId: buyerId || null,
       assignedToBuyerAt: buyerSlug ? serverTimestamp() : null,
+      assignedToSellerSlug: null,
+      assignedToSellerName: null,
+      assignedToSellerId: null,
       history: arrayUnion({
         action: buyerSlug ? `Assigned to Buyer: ${buyerName}` : "Unassigned from Buyer",
         timestamp: new Date().toISOString(),

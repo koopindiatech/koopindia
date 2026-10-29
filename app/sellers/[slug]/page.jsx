@@ -39,8 +39,15 @@ export default function SellerPublicPage() {
   const [wsSubmitting, setWsSubmitting] = useState(false);
   const [wsSuccess, setWsSuccess] = useState(false);
   const [prodTab, setProdTab] = useState("description");
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [prodDropOpen, setProdDropOpen] = useState(false);
   const prodDropRef = useRef(null);
   const featCarouselRef = useRef(null);
+
+  const openInquiry = (product) => {
+    const el = document.getElementById("inquiry-section");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
     (async () => {
@@ -1220,7 +1227,7 @@ export default function SellerPublicPage() {
                     </div>
 
                                         <div className="lg:col-span-2">
-                      <div className="rounded-2xl p-6 sm:p-8" style={{ backgroundColor: productsBg === "#ffffff" ? "#f4ede4" : (productsBg || "#f4ede4") }}>
+                      <div id="inquiry-section" className="rounded-2xl p-6 sm:p-8" style={{ backgroundColor: productsBg === "#ffffff" ? "#f4ede4" : (productsBg || "#f4ede4") }}>
                         <h3 className="text-2xl font-bold text-gray-900 mb-6">Get Wholesale Price</h3>
                         {wsSuccess ? (
                           <div className="flex flex-col items-center justify-center py-8 text-center bg-white rounded-xl shadow-sm border border-gray-100">

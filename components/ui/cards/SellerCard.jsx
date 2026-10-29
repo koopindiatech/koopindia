@@ -13,11 +13,26 @@ export default function SellerCard({ s }) {
   const color = s.primaryColor || "#1e3a5f";
   const badge = s.status === "live" ? "Premium" : "Verified";
   const safeStr = (v) => (typeof v === "string" ? v : v?.name || v?.label || "");
+
+  const getCertification = () => {
+    const validCert = (s.certifications || [])
+      .map(safeStr)
+      .map(c => c.replace(/\bfssai\b/gi, "").replace(/^[/\s,&-]+|[/\s,&-]+$/g, "").trim())
+      .find(c => Boolean(c));
+    if (validCert) return validCert;
+
+    if (s.certification) {
+      const cleanSingle = s.certification.replace(/\bfssai\b/gi, "").replace(/^[/\s,&-]+|[/\s,&-]+$/g, "").trim();
+      if (cleanSingle) return cleanSingle;
+    }
+    return "GST / MSME";
+  };
+
   const rows = [
     { label: "Business Type", val: s.natureOfBusiness || s.businessType || "Manufacturer" },
     { label: "Location", val: (s.city ? s.city + ", " : "") + (s.state || "India") },
     { label: "Category", val: safeStr(s.productCategories?.[0]) || s.category || "General" },
-    { label: "Certification", val: safeStr(s.certifications?.[0]) || s.certification || "FSSAI / GST" },
+    { label: "Certification", val: getCertification() },
   ];
 
   return (

@@ -2,12 +2,13 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { db } from "../../../lib/firebase";
-import Header from "../../../components/layout/Header";
-import Footer from "../../../components/layout/Footer";
+import MarketplaceHeader from "@/components/layout/MarketplaceHeader";
+import MarketplaceFooter from "@/components/layout/MarketplaceFooter";
 import {
-  collection, query, where, getDocs, addDoc, serverTimestamp, increment, updateDoc, doc,
+  collection, query, where, getDocs, getDoc, addDoc, serverTimestamp, increment, updateDoc, doc,
 } from "firebase/firestore";
 import { getCurrentUser } from "../../adminpanel/lib/auth";
+import { checkSellerToBuyerAccess, KOOP_SUPPORT_PHONE } from "../../../lib/categoryAccess";
 
 const getImg = (url) =>
   url && typeof url === "string" && url.startsWith("http") && url.includes("firebase")
@@ -25,6 +26,12 @@ const StarRating = ({ rating }) => {
       ))}
     </div>
   );
+};
+
+const displayStatLabel = (lbl = "") => {
+  if (!lbl) return "Investment";
+  if (typeof lbl === "string" && lbl.toLowerCase().includes("turnover")) return "Investment";
+  return lbl;
 };
 
 const INDIA_STATES = [
@@ -47,15 +54,131 @@ export default function BuyerClientPage({ initialBuyer }) {
   const [success, setSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [userListing, setUserListing] = useState(null);
+  const [requestingAccess, setRequestingAccess] = useState(false);
+  const [accessRequested, setAccessRequested] = useState(false);
 
   useEffect(() => {
-    setCurrentUser(getCurrentUser());
+    const u = getCurrentUser();
+    setCurrentUser(u);
+    if (!u) return;
+
+    if (u.role === "seller") {
+      const fetchSellerListing = async () => {
+        try {
+          let sellerDoc = null;
+          if (u.linkedId) {
+            try {
+              const s = await getDoc(doc(db, "sellers", u.linkedId));
+              if (s.exists()) sellerDoc = { id: s.id, ...s.data() };
+            } catch (_) {}
+          }
+          if (!sellerDoc && u.linkedSlug) {
+            try {
+              const q = query(collection(db, "sellers"), where("slug", "==", u.linkedSlug));
+              const snap = await getDocs(q);
+              if (!snap.empty) sellerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (_) {}
+          }
+          if (!sellerDoc && u.email) {
+            try {
+              const q = query(collection(db, "sellers"), where("email", "==", u.email.toLowerCase()));
+              const snap = await getDocs(q);
+              if (!snap.empty) sellerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (_) {}
+          }
+          setUserListing(sellerDoc);
+        } catch (err) {
+          console.error("Error fetching seller listing for category access:", err);
+        }
+      };
+      fetchSellerListing();
+    }
   }, []);
 
-  const shouldHide = !!(buyer?.hideContact || buyer?.hidePhone);
-  const koopPhone = "+91 95998 26131";
-  const displayPhone = shouldHide ? koopPhone : (buyer?.contactPhone || buyer?.phone || "");
-  const displayEmail = shouldHide ? "" : (buyer?.contactEmail || buyer?.email || "");
+  const accessCheck = checkSellerToBuyerAccess({ currentUser, userListing, buyer });
+  const hasDirectContactAccess = accessCheck.hasAccess;
+  const koopPhone = KOOP_SUPPORT_PHONE;
+
+  // Dynamically fetch and unlock buyer contact details only when verified access is granted
+  useEffect(() => {
+    if (!hasDirectContactAccess || !buyer?.id) return;
+    let isCancelled = false;
+
+    const loadUnlockedContactDetails = async () => {
+      try {
+        const snap = await getDoc(doc(db, "buyers", buyer.id));
+        if (snap.exists() && !isCancelled) {
+          const d = snap.data();
+          const proxy = (u) =>
+            u && typeof u === "string" && u.startsWith("http") && u.includes("firebase")
+              ? `/api/img?url=${encodeURIComponent(u)}`
+              : u;
+
+          setBuyer((prev) => ({
+            ...prev,
+            contactPhone: d.contactPhone || d.phone || "",
+            phone: d.phone || d.contactPhone || "",
+            contactEmail: d.contactEmail || d.email || "",
+            email: d.email || d.contactEmail || "",
+            whatsapp: d.whatsapp || d.contactPhone || d.phone || "",
+            contactName: d.contactName || prev?.contactName || d.buyerName || "",
+            contactRole: d.contactRole || prev?.contactRole || "",
+            contactPhotoUrl: proxy(d.contactPhotoUrl) || prev?.contactPhotoUrl || "",
+          }));
+        }
+      } catch (err) {
+        console.error("Error fetching unlocked buyer contact details:", err);
+      }
+    };
+
+    loadUnlockedContactDetails();
+    return () => {
+      isCancelled = true;
+    };
+  }, [hasDirectContactAccess, buyer?.id]);
+
+  // Public / non-authorized: Koop India helpline phone, NO email
+  // Authorized (Admin, Category-matched Live Seller, Assigned Seller, or Owner): Real buyer phone and email
+  const displayPhone = hasDirectContactAccess
+    ? (buyer?.contactPhone || buyer?.phone || koopPhone)
+    : koopPhone;
+
+  const displayEmail = hasDirectContactAccess
+    ? (buyer?.contactEmail || buyer?.email || "")
+    : "";
+
+  const handleRequestContactAccess = async () => {
+    if (!currentUser) {
+      alert("Please login to your verified Seller Account to request direct contact access.");
+      window.location.href = `/adminpanel/login?redirect=/buyers/${slug}`;
+      return;
+    }
+    setRequestingAccess(true);
+    try {
+      await addDoc(collection(db, "leads"), {
+        name: currentUser.name || "Seller User",
+        email: currentUser.email || "",
+        phone: currentUser.phone || "",
+        sellerSlug: currentUser.linkedSlug || "",
+        sellerId: currentUser.linkedId || "",
+        buyerSlug: slug,
+        buyerName: buyer?.buyerName || "",
+        source: "buyer_page_access_request",
+        type: "Contact Access Request",
+        message: `Seller "${currentUser.name || currentUser.linkedSlug}" has requested direct contact access to Buyer "${buyer?.buyerName}".`,
+        status: "New",
+        createdAt: serverTimestamp(),
+      });
+      setAccessRequested(true);
+      alert("✓ Direct contact access request sent to Koop India Admin! Once approved, full contact details will be unlocked for your account.");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to submit access request. Please try again or contact Koop India.");
+    } finally {
+      setRequestingAccess(false);
+    }
+  };
 
   useEffect(() => {
     if (buyer && buyer.id) {
@@ -92,21 +215,21 @@ export default function BuyerClientPage({ initialBuyer }) {
 
   if (loading) return (
     <>
-      <Header />
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <MarketplaceHeader />
+      <div className="min-h-screen pt-16 flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="w-14 h-14 border-4 border-gray-200 border-t-orange-500 rounded-full animate-spin mx-auto mb-3" />
           <p className="text-gray-500 text-sm font-medium">Loading buyer profile...</p>
         </div>
       </div>
-      <Footer />
+      <MarketplaceFooter />
     </>
   );
 
   if (!buyer || buyer.status === "paused" || buyer.status === "draft") return (
     <>
-      <Header />
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <MarketplaceHeader />
+      <div className="min-h-screen pt-16 flex items-center justify-center bg-gray-50">
         <div className="text-center space-y-3">
           <div className="text-5xl">🏢</div>
           <h1 className="text-xl font-black text-gray-800">Buyer Not Found</h1>
@@ -114,12 +237,37 @@ export default function BuyerClientPage({ initialBuyer }) {
           <a href="/buyers" className="inline-block bg-orange-500 text-white font-bold px-6 py-2.5 rounded-xl text-sm">Browse Buyers</a>
         </div>
       </div>
-      <Footer />
+      <MarketplaceFooter />
     </>
   );
 
   const pc = buyer.primaryColor || "#16a34a";
-  const stats = (buyer.stats || []).filter((s) => s.value);
+  // Filter out investment and turnover from bottom stats strip so they only appear in the left sidebar
+  const stats = (buyer.stats || []).filter(
+    (s) =>
+      s.value &&
+      !s.label?.toLowerCase().includes("turnover") &&
+      !s.label?.toLowerCase().includes("investment") &&
+      s.icon !== "💰"
+  );
+
+  const statInvestment = (buyer.stats || []).find(
+    (s) => s.value && (s.label?.toLowerCase().includes("investment") || s.icon === "💰")
+  )?.value;
+
+  const statTurnover = (buyer.stats || []).find(
+    (s) => s.value && s.label?.toLowerCase().includes("turnover") && s.icon !== "💰"
+  )?.value;
+
+  const rawInvest = buyer.investment || buyer.totalInvestmentCapacity;
+  const rawTurnover = buyer.annualTurnover;
+
+  let investmentDisplay = rawInvest || statInvestment || "";
+  let turnoverDisplay = rawTurnover || statTurnover || "";
+
+  if (rawTurnover && rawInvest && rawTurnover === rawInvest && statInvestment && statInvestment !== rawInvest) {
+    investmentDisplay = statInvestment;
+  }
   const rating = parseFloat(buyer.rating) || 4.5;
   const whyUs = buyer.whyUs || [];
   const requirements = buyer.requirements || [];
@@ -133,10 +281,30 @@ export default function BuyerClientPage({ initialBuyer }) {
   const initials = (buyer.buyerName || "").split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
   const cleanAbout = buyer.about ? buyer.about.replace(/&nbsp;|\u00A0/g, " ").trim() : "";
 
+  const rawContactPerson = buyer.contactName || buyer.contactPerson || buyer.name || "";
+  let cleanContactName = rawContactPerson;
+  let cleanContactRole = buyer.contactRole || buyer.designation || "";
+
+  if (cleanContactName && cleanContactName.includes(",")) {
+    const parts = cleanContactName.split(",");
+    cleanContactName = parts[0].trim();
+    if (!cleanContactRole && parts[1]) {
+      cleanContactRole = parts[1].trim();
+    }
+  }
+
+  if (!cleanContactName) {
+    cleanContactName = buyer.buyerName || "Buyer Representative";
+  }
+
+  if (!cleanContactRole) {
+    cleanContactRole = buyer.businessType ? `${buyer.businessType} Representative` : "Authorized Buyer";
+  }
+
   return (
     <>
-      <Header />
-      <div className="min-h-screen bg-gray-50" style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
+      <MarketplaceHeader />
+      <div className="min-h-screen pt-16 bg-gray-50" style={{ fontFamily: "'Inter','Segoe UI',sans-serif" }}>
       {/* ── Breadcrumb ── */}
       <div className="bg-white border-b border-gray-100 px-4 sm:px-8 py-3">
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-xs text-gray-500 font-medium">
@@ -156,14 +324,14 @@ export default function BuyerClientPage({ initialBuyer }) {
 
             {/* ── HERO HEADER CARD ── */}
             <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-                            <div className={`relative overflow-hidden ${buyer.coverImageUrl ? 'h-56 sm:h-72' : 'h-24 sm:h-32'}`} style={{ backgroundColor: pc + "22" }}>
+              <div className={`relative overflow-hidden ${buyer.coverImageUrl ? 'h-56 sm:h-72' : 'h-24 sm:h-32'}`} style={{ backgroundColor: pc + "22" }}>
                 {buyer.coverImageUrl ? (
                   <img src={buyer.coverImageUrl} alt={buyer.buyerName} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${pc}33, ${pc}11)` }}>
                   </div>
                 )}
-                                <button onClick={handleShare}
+                <button onClick={handleShare}
                   className="absolute top-3 right-3 flex items-center gap-1.5 bg-white/90 backdrop-blur-sm text-gray-700 font-bold text-xs px-3 py-1.5 rounded-full shadow hover:bg-white transition">
                   <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx={18} cy={5} r={3} /><circle cx={6} cy={12} r={3} /><circle cx={18} cy={19} r={3} /><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" /></svg>
                   {copied ? "Copied!" : "Share Profile"}
@@ -172,7 +340,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
               <div className="px-5 pb-5">
                 <div className="flex items-end gap-4 -mt-8 mb-4">
-                                    <div className="w-20 h-20 rounded-2xl border-4 border-white shadow-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0" style={{ backgroundColor: buyer.logoUrl ? "#fff" : pc }}>
+                  <div className="w-20 h-20 rounded-2xl border-4 border-white shadow-lg bg-white flex items-center justify-center overflow-hidden flex-shrink-0" style={{ backgroundColor: buyer.logoUrl ? "#fff" : pc }}>
                     {buyer.logoUrl
                       ? <img src={buyer.logoUrl} alt={buyer.buyerName} className="w-full h-full object-contain p-1" />
                       : <span className="text-white font-black text-xl">{initials}</span>}
@@ -197,7 +365,7 @@ export default function BuyerClientPage({ initialBuyer }) {
                   </div>
                 </div>
 
-                                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 py-3 border-t border-gray-100">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 py-3 border-t border-gray-100">
                   {buyer.businessType && (
                     <div className="flex items-center gap-1.5 text-xs text-gray-600 font-semibold">
                       <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>
@@ -243,10 +411,13 @@ export default function BuyerClientPage({ initialBuyer }) {
                   <div className="space-y-3">
                     {[
                       { label: "Business Type", value: buyer.businessType },
+                      { label: "Contact Person", value: cleanContactName !== buyer.buyerName ? cleanContactName : null },
+                      { label: "Designation", value: cleanContactRole },
                       { label: "Year of Establishment", value: buyer.estYear },
                       { label: "Number of Outlets", value: buyer.numberOfOutlets },
                       { label: "Presence", value: buyer.presence },
-                      { label: "Annual Turnover", value: buyer.annualTurnover || buyer.totalInvestmentCapacity || buyer.investment },
+                      { label: "Investment", value: investmentDisplay },
+                      { label: "Annual Turnover", value: turnoverDisplay },
                       { label: "Buying Frequency", value: buyer.buyingFrequency },
                       { label: "Payment Terms", value: buyer.paymentTerms },
                     ].filter((r) => r.value).map((row, i) => (
@@ -412,12 +583,12 @@ export default function BuyerClientPage({ initialBuyer }) {
             {/* ── BOTTOM STATS STRIP ── */}
             {stats.length > 0 && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 overflow-hidden">
-                <div className={`flex flex-wrap gap-6 ${stats.length >= 4 ? "justify-between" : "justify-center"}`}>
+                <div className="flex flex-wrap gap-8 sm:gap-14 justify-start items-center">
                   {stats.map((s, i) => (
-                    <div key={i} className="flex flex-col items-center text-center min-w-[80px]">
+                    <div key={i} className="flex flex-col items-start text-left min-w-[90px]">
                       <span className="text-2xl mb-1">{s.icon}</span>
                       <p className="text-xl font-black leading-none" style={{ color: pc }}>{s.value}</p>
-                      <p className="text-[11px] text-gray-500 font-semibold mt-0.5">{s.label}</p>
+                      <p className="text-[11px] text-gray-500 font-semibold mt-1">{displayStatLabel(s.label)}</p>
                     </div>
                   ))}
                 </div>
@@ -427,7 +598,7 @@ export default function BuyerClientPage({ initialBuyer }) {
 
           {/* ── RIGHT SIDEBAR ── */}
           <div className="space-y-5 min-w-0">
-                        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-5">
               <h3 className="font-black text-gray-900 text-base mb-1">
                 Connect with this {buyer.businessType || "Buyer"}
               </h3>
@@ -469,65 +640,165 @@ export default function BuyerClientPage({ initialBuyer }) {
                     style={{ backgroundColor: pc }}>
                     {submitting ? "Sending..." : " Send Business Proposal"}
                   </button>
-                  {!shouldHide && buyer.whatsapp && (
-                    <a href={`https://wa.me/${buyer.whatsapp.replace(/\D/g, "")}?text=Hi, I am interested in doing business with ${buyer.buyerName}`}
+                  {hasDirectContactAccess && (buyer.whatsapp || buyer.phone) ? (
+                    <a href={`https://wa.me/${(buyer.whatsapp || buyer.phone).replace(/\D/g, "")}?text=Hi, I am interested in doing business with ${buyer.buyerName}`}
+                      target="_blank" rel="noreferrer"
+                      className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition text-emerald-800">
+                      <span className="text-base">💬</span> Chat on WhatsApp (Direct)
+                    </a>
+                  ) : (
+                    <a href={`https://wa.me/919599826131?text=Hi Koop India, I want to connect with buyer: ${buyer.buyerName} (${slug})`}
                       target="_blank" rel="noreferrer"
                       className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border border-gray-200 hover:bg-gray-50 transition text-gray-700">
-                      <span className="text-base">💬</span> Chat on WhatsApp
+                      <span className="text-base">💬</span> Connect via Koop India Desk
                     </a>
                   )}
                 </form>
               )}
             </div>
 
-            {/* Key Contact Person */}
-            {buyer.contactName && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                  <h3 className="text-xs font-black text-gray-700 uppercase tracking-wider">Key Contact Person</h3>
+            {/* Direct Contact Card (Access Controlled) */}
+            {hasDirectContactAccess ? (
+              <div className="bg-white rounded-2xl border border-emerald-200 bg-emerald-50/20 shadow-sm p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth={2}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                    <h3 className="text-xs font-black text-emerald-800 uppercase tracking-wider">Direct Buyer Contact</h3>
+                  </div>
+                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    {accessCheck.reason === "category_match" ? "✓ Category Match (Unlocked)" : "✓ Verified Access"}
+                  </span>
                 </div>
-                <div className="flex items-start gap-3">
+
+                <div className="flex items-start gap-3 pt-1">
                   {buyer.contactPhotoUrl
-                    ? <img src={buyer.contactPhotoUrl} alt={buyer.contactName} className="w-12 h-12 rounded-full object-cover flex-shrink-0 border-2 border-gray-100" />
-                    : <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-black flex-shrink-0" style={{ backgroundColor: pc }}>
-                        {buyer.contactName.split(" ").map((w) => w[0] || "").join("").slice(0, 2).toUpperCase()}
+                    ? <img src={buyer.contactPhotoUrl} alt={cleanContactName} className="w-12 h-12 rounded-full object-cover flex-shrink-0 border-2 border-emerald-200" />
+                    : <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-black flex-shrink-0 bg-emerald-600">
+                        {cleanContactName.split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase()}
                       </div>
                   }
-                  <div>
-                    <p className="font-black text-gray-900 text-sm">{buyer.contactName}</p>
-                    {buyer.contactRole && <p className="text-gray-500 text-xs mt-0.5">{buyer.contactRole}</p>}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-black text-gray-900 text-sm">{cleanContactName}</p>
+                    {cleanContactRole && <p className="text-gray-500 text-xs mt-0.5">{cleanContactRole}</p>}
+                    
                     {displayPhone && (
-                      <a href={`tel:${displayPhone}`} className="flex items-center gap-1 text-xs font-semibold mt-1.5 hover:underline" style={{ color: pc }}>
-                        <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                      <a href={`tel:${displayPhone}`} className="flex items-center gap-1.5 text-xs font-bold mt-2 text-emerald-700 hover:underline">
+                        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
                         {displayPhone}
                       </a>
                     )}
+                    
                     {displayEmail && (
-                      <a href={`mailto:${displayEmail}`} className="flex items-center gap-1 text-xs font-semibold mt-1 text-gray-500 hover:underline break-all">
-                        <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
+                      <a href={`mailto:${displayEmail}`} className="flex items-center gap-1.5 text-xs font-medium mt-1 text-gray-600 hover:underline break-all">
+                        <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
                         {displayEmail}
                       </a>
                     )}
                   </div>
                 </div>
               </div>
-            )}
-
-            {/* Direct Contact Phone if no contact person specified */}
-            {!buyer.contactName && displayPhone && (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-                  <h3 className="text-xs font-black text-gray-700 uppercase tracking-wider">Contact Phone</h3>
+            ) : (
+              <div className="bg-white rounded-2xl border border-gray-200/80 shadow-sm p-5 space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-black">🔒</span>
+                    <div>
+                      <h3 className="text-xs font-black text-gray-900 uppercase tracking-wider">Buyer Contact Protected</h3>
+                      <p className="text-[10px] text-gray-500 font-medium">Verified partners only</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                    Private
+                  </span>
                 </div>
-                <a href={`tel:${displayPhone}`} className="flex items-center gap-1.5 text-xs font-bold mt-1.5 hover:underline" style={{ color: pc }}>
-                  {displayPhone}
-                </a>
+
+                {/* Buyer Contact Person & Designation (Always Visible) */}
+                <div className="flex items-center gap-3 p-3 bg-gray-50/80 rounded-xl border border-gray-100">
+                  {buyer.contactPhotoUrl ? (
+                    <img
+                      src={buyer.contactPhotoUrl}
+                      alt={cleanContactName}
+                      className="w-11 h-11 rounded-full object-cover flex-shrink-0 border-2 border-orange-200"
+                    />
+                  ) : (
+                    <div className="w-11 h-11 rounded-full flex items-center justify-center text-white font-black text-sm flex-shrink-0 bg-[#1e3a5f] shadow-xs">
+                      {cleanContactName.split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase()}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-black text-gray-900 text-sm leading-tight truncate">
+                      {cleanContactName}
+                    </p>
+                    {cleanContactRole && (
+                      <p className="text-gray-500 text-xs font-medium mt-0.5 truncate">
+                        {cleanContactRole}
+                      </p>
+                    )}
+                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-bold mt-1">
+                      <span>✓</span> Verified Representative
+                    </span>
+                  </div>
+                </div>
+
+                {/* Koop India Desk Helpline (Original buyer contact number & mail are hidden, Koop India desk shown) */}
+                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1">
+                  <div className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Connect via Koop India Desk</div>
+                  <a href={`tel:${koopPhone}`} className="flex items-center gap-2 text-sm font-black text-gray-900 hover:text-orange-600 transition">
+                    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                    {koopPhone}
+                  </a>
+                </div>
+
+                {/* CTA Action */}
+                {!currentUser ? (
+                  <div className="pt-1">
+                    <a
+                      href="/seller-buyer-registration"
+                      className="w-full py-3 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 text-center"
+                    >
+                      <span>Contact Distributor Now</span>
+                      <span>→</span>
+                    </a>
+                  </div>
+                ) : currentUser?.role === "seller" ? (
+                  <div className="pt-1">
+                    {accessCheck.reason === "not_listed" ? (
+                      <a
+                        href="/seller-buyer-registration"
+                        className="w-full py-3 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20 transition-all transform hover:-translate-y-0.5 text-center"
+                      >
+                        <span>Contact Distributor Now</span>
+                        <span>→</span>
+                      </a>
+                    ) : accessCheck.reason === "listing_not_live" ? (
+                      <div className="text-center p-2.5 bg-yellow-50 border border-yellow-200 rounded-xl text-xs text-yellow-800 font-semibold">
+                        ⏳ Listing Verification Pending (Status: {userListing?.status || "Pending"})
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleRequestContactAccess}
+                        disabled={requestingAccess || accessRequested}
+                        className="w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow hover:opacity-95 transition disabled:opacity-60"
+                      >
+                        {accessRequested ? "✓ Access Requested (Under Review)" : requestingAccess ? "Submitting Request..." : "Request Direct Contact Access"}
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="pt-1">
+                    <a
+                      href="/seller-buyer-registration"
+                      className="w-full py-3 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow transition text-center"
+                    >
+                      <span>Contact Distributor Now</span>
+                      <span>→</span>
+                    </a>
+                  </div>
+                )}
               </div>
             )}
 
-                        {buyer.address && (
+            {buyer.address && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
@@ -550,7 +821,7 @@ export default function BuyerClientPage({ initialBuyer }) {
               </div>
             )}
 
-                        {(buyer.gstVerified || buyer.panVerified || buyer.companyVerified) && (
+            {(buyer.gstVerified || buyer.panVerified || buyer.companyVerified) && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke={pc} strokeWidth={2}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
@@ -567,7 +838,7 @@ export default function BuyerClientPage({ initialBuyer }) {
         </div>
       </div>
       </div>
-      <Footer />
+      <MarketplaceFooter />
     </>
   );
 }

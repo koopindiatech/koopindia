@@ -164,18 +164,18 @@ export default function SettingsPage() {
     setBannerSaving(false);
   };
 
+  // Normalize links — ensure they have https:// prefix
+  const normalizeLinkItems = (arr) => (arr || []).map(l => ({
+    ...l,
+    link: (l.link || "").trim() ? (l.link.startsWith("http") ? l.link : `https://${l.link}`) : "",
+  }));
+
   const handleSaveMarketplace = async () => {
     setMarketplaceSaving(true);
     try {
-      // Normalize links — ensure they have https:// prefix
-      const normalize = (arr) => arr.map(l => ({
-        ...l,
-        link: (l.link || "").trim() ? (l.link.startsWith("http") ? l.link : `https://${l.link}`) : "",
-      }));
-      
-      const normalizedLogos = normalize(partnerLogos);
-      const normalizedTopBanners = normalize(topBanners);
-      const normalizedBottomBanners = normalize(bottomBanners);
+      const normalizedLogos = normalizeLinkItems(partnerLogos);
+      const normalizedTopBanners = normalizeLinkItems(topBanners);
+      const normalizedBottomBanners = normalizeLinkItems(bottomBanners);
       
       await setDoc(doc(db, "settings", "marketplace_page"), { 
         ...marketplace, 
@@ -196,7 +196,7 @@ export default function SettingsPage() {
   };
 
   const savePartnerLogosDirectly = async (updatedLogos) => {
-    const normalized = normalize(updatedLogos);
+    const normalized = normalizeLinkItems(updatedLogos);
     setPartnerLogos(normalized);
     try {
       await setDoc(doc(db, "settings", "marketplace_page"), {

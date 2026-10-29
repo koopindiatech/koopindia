@@ -4,7 +4,7 @@ import {
   Store, Plus, Search, Globe, Edit2, Trash2, PauseCircle, PlayCircle, X,
   Phone, Package, ExternalLink, MoreVertical, Check, Building2, Palette,
   FileText, Rocket, Star, Image as ImageIcon, Loader2, MapPin, Shield,
-  Camera, Save, ArrowLeft, ArrowRight, AlertCircle, Mail, ArrowRightLeft,
+  Camera, Save, ArrowLeft, ArrowRight, AlertCircle, Mail, ArrowRightLeft, RefreshCw,
 } from "lucide-react";
 import { db, storage } from "../../../lib/firebase";
 import {
@@ -13,12 +13,28 @@ import {
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getCurrentUser } from "../lib/auth";
 import imageCompression from 'browser-image-compression';
+import { extractSellerCategories, extractBuyerCategories, isCategoryMatch, matchCategory, matchState, matchCity, FILTER_STATES } from "../../../lib/categoryAccess";
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
 // Helper utilities
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-const slugify = (s) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const generateSlug = (...candidates) => {
+  for (const c of candidates) {
+    if (!c || typeof c !== "string") continue;
+    const s = c
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    if (s.length >= 2) return s;
+  }
+  return "";
+};
+const isBadSlug = (s) => !s || s.trim() === "" || /^[a-zA-Z0-9]{20}$/.test(s);
+const slugify = (s) => generateSlug(s);
 const ini = (n = "") => n.split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
 
 const BUYER_COLORS = [
@@ -417,8 +433,12 @@ async function sendSellerCredentialsEmail({ to, name, companyName, password, pro
 // Sellers Management Component
 export default function SellersPage() {
   const [user, setUser] = useState(null);
+  const [userListing, setUserListing] = useState(null);
   const [sellers, setSellers] = useState([]);
   const [search, setSearch] = useState("");
+  const [filterCategory, setFilterCategory] = useState("All");
+  const [filterState, setFilterState] = useState("All States");
+  const [filterCity, setFilterCity] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
   const [dbLoading, setDbLoading] = useState(true);
@@ -491,6 +511,41 @@ export default function SellersPage() {
             setSellers([]);
             openForm({ slug: u.linkedSlug || "", name: u.name || "", email: u.email || "" });
           }
+        } else if (u?.role === "buyer") {
+          // Buyer viewing Matched Suppliers in their category
+          let buyerDoc = null;
+          if (u.linkedId) {
+            try {
+              const byId = await getDoc(doc(db, "buyers", u.linkedId));
+              if (byId.exists()) buyerDoc = { id: byId.id, ...byId.data() };
+            } catch (err) { console.error("Buyer lookup by linkedId error:", err); }
+          }
+          if (!buyerDoc && u.linkedSlug) {
+            try {
+              const snap = await getDocs(query(collection(db, "buyers"), where("slug", "==", u.linkedSlug)));
+              if (!snap.empty) buyerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (err) { console.error("Buyer lookup by linkedSlug error:", err); }
+          }
+          if (!buyerDoc && u.email) {
+            try {
+              const snap = await getDocs(query(collection(db, "buyers"), where("email", "==", u.email.toLowerCase())));
+              if (!snap.empty) buyerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (err) { console.error("Buyer lookup by email error:", err); }
+          }
+          setUserListing(buyerDoc);
+
+          const snap = await getDocs(query(collection(db, "sellers"), orderBy("createdAt", "desc")));
+          const allSellers = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+          const buyerCats = extractBuyerCategories(buyerDoc);
+          const isBuyerLive = buyerDoc?.status === "live";
+
+          const matchedSellers = allSellers.filter((s) => {
+            // Only show live suppliers that match buyer's category
+            const isCatMatch = isBuyerLive && isCategoryMatch(buyerCats, extractSellerCategories(s));
+            return isCatMatch;
+          });
+          setSellers(matchedSellers);
         } else {
           const snap = await getDocs(query(collection(db, "sellers"), orderBy("createdAt", "desc")));
           setSellers(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
@@ -616,7 +671,8 @@ export default function SellersPage() {
     setSaving(true);
     try {
       const clean = cleanPayload({ ...form });
-      const slug = slugify(clean.name || "buyer");
+      const emailToUse = (clean.email || "").toLowerCase().trim();
+      const slug = (!isBadSlug(clean.slug) ? clean.slug : "") || generateSlug(clean.companyName, clean.name, clean.contact, emailToUse ? emailToUse.split("@")[0] : "", clean.profileId) || `seller-${Date.now().toString(36)}`;
       // Keep fssaiLicense in sync with licenses array if an FSSAI license was added
       if (Array.isArray(clean.licenses)) {
         const fssaiLic = clean.licenses.find(l => l && (l.name || "").toLowerCase().includes("fssai"));
@@ -708,8 +764,8 @@ export default function SellersPage() {
           sellerId: docRef.id,
           sellerSlug: slug,
           sellerName: payload.name || payload.companyName,
-          assignedToSellerSlug: slug,
-          assignedToSellerName: payload.name || payload.companyName,
+          assignedToSellerSlug: null,
+          assignedToSellerName: null,
           assignedTo: null
         });
 
@@ -824,12 +880,37 @@ export default function SellersPage() {
 
   const filtered = sellers.filter((s) => {
     const q = search.toLowerCase();
-    return !q || s.name?.toLowerCase().includes(q) || s.category?.toLowerCase().includes(q) || s.slug?.includes(q);
+    const matchSearch =
+      !q ||
+      (s.name || "").toLowerCase().includes(q) ||
+      (s.companyName || "").toLowerCase().includes(q) ||
+      (s.category || "").toLowerCase().includes(q) ||
+      (s.city || "").toLowerCase().includes(q) ||
+      (s.state || "").toLowerCase().includes(q) ||
+      (s.slug || "").includes(q) ||
+      (s.phone || "").includes(q) ||
+      (s.email || "").toLowerCase().includes(q);
+
+    const matchCat =
+      filterCategory === "All" ||
+      matchCategory(s.category, filterCategory) ||
+      matchCategory(s.subcategory, filterCategory) ||
+      matchCategory(s.productCategories, filterCategory);
+
+    const matchSt =
+      filterState === "All States" ||
+      matchState(s.state, filterState);
+
+    const matchCt =
+      !filterCity.trim() ||
+      matchCity(s.city, filterCity);
+
+    return matchSearch && matchCat && matchSt && matchCt;
   });
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search]);
+  }, [search, filterCategory, filterState, filterCity]);
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const paginatedSellers = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -883,30 +964,114 @@ export default function SellersPage() {
           {/* ── Top bar ── */}
           <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-violet-600 flex items-center justify-center">
-                <Store className="text-white" size={18} />
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white ${user?.role === "buyer" ? "bg-emerald-600" : "bg-violet-600"}`}>
+                <Store size={18} />
               </div>
               <div>
-                <h1 className="font-black text-gray-900 text-base leading-none">Seller Portals</h1>
-                {user?.role === "admin" ? (
+                <h1 className="font-black text-gray-900 text-base leading-none">
+                  {user?.role === "buyer" ? "Matched Suppliers" : "Seller Portals"}
+                </h1>
+                {user?.role === "buyer" ? (
+                  <p className="text-gray-400 text-[11px] mt-0.5 font-medium">
+                    {userListing?.status === "live"
+                      ? `${sellers.length} verified suppliers matching your category`
+                      : `Profile status: ${userListing?.status || "pending"} — supplier contacts unlock once Live`}
+                  </p>
+                ) : user?.role === "admin" ? (
                   <p className="text-gray-400 text-[11px] mt-0.5 font-medium">{sellers.length} sellers listed</p>
                 ) : (
                   <p className="text-gray-400 text-[11px] mt-0.5 font-medium">Manage seller profile</p>
                 )}
               </div>
             </div>
-            <button onClick={() => openForm()}
-              className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-violet-200 transition-all hover:scale-105">
-              <Plus size={16} /> Add Seller
-            </button>
+            {user?.role !== "buyer" && (
+              <button onClick={() => openForm()}
+                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-violet-200 transition-all hover:scale-105">
+                <Plus size={16} /> Add Seller
+              </button>
+            )}
           </div>
 
           {/* ── Filter bar ── */}
-          <div className="px-6 pt-5 pb-4 flex gap-3">
-            <div className="flex-1 relative">
+          <div className="px-6 pt-5 pb-4 bg-white border-b border-gray-100 flex flex-wrap gap-3 items-center">
+            {/* Search input */}
+            <div className="flex-1 min-w-[220px] relative">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
-              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search sellers..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search name, company, email, phone, city..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50/50 hover:bg-white text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition"
+              />
+              {search && (
+                <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Category Dropdown */}
+            <div className="w-52">
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-semibold text-gray-700 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition cursor-pointer"
+              >
+                <option value="All">All Categories</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* State Dropdown */}
+            <div className="w-44">
+              <select
+                value={filterState}
+                onChange={(e) => setFilterState(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-semibold text-gray-700 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition cursor-pointer"
+              >
+                {FILTER_STATES.map((st) => (
+                  <option key={st} value={st}>{st}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* City text input */}
+            <div className="w-40 relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+              <input
+                value={filterCity}
+                onChange={(e) => setFilterCity(e.target.value)}
+                placeholder="Filter by city..."
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 bg-white text-xs font-medium text-gray-700 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition"
+              />
+              {filterCity && (
+                <button onClick={() => setFilterCity("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <X size={13} />
+                </button>
+              )}
+            </div>
+
+            {/* Reset button if active */}
+            {(search || filterCategory !== "All" || filterState !== "All States" || filterCity) && (
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setFilterCategory("All");
+                  setFilterState("All States");
+                  setFilterCity("");
+                }}
+                className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-xs font-bold text-gray-600 transition"
+                title="Reset all filters"
+              >
+                <RefreshCw size={13} />
+                <span>Reset</span>
+              </button>
+            )}
+
+            <div className="text-xs text-gray-400 font-semibold ml-auto pl-2">
+              Showing {filtered.length} of {sellers.length} suppliers
             </div>
           </div>
 
@@ -914,20 +1079,113 @@ export default function SellersPage() {
           {dbLoading && (
             <div className="flex flex-col items-center justify-center py-24 gap-3 text-gray-400">
               <Loader2 size={32} className="animate-spin text-violet-400" />
-              <p className="text-sm font-semibold">Loading sellers...</p>
+              <p className="text-sm font-semibold">Loading suppliers...</p>
             </div>
           )}
           {!dbLoading && filtered.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 gap-4 text-gray-400">
-              <div className="w-16 h-16 rounded-3xl bg-gray-100 flex items-center justify-center"><Store size={28} /></div>
-              <p className="font-bold text-base text-gray-500">{search ? "No sellers match your search" : "No sellers yet"}</p>
-              {!search && <button onClick={() => openForm()} className="bg-violet-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm">Add First Seller</button>}
+            <div className="flex flex-col items-center justify-center py-24 gap-4 text-gray-400 max-w-md mx-auto text-center px-4">
+              <div className={`w-16 h-16 rounded-3xl flex items-center justify-center ${user?.role === "buyer" ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500"}`}>
+                <Store size={28} />
+              </div>
+              <p className="font-bold text-base text-gray-700">
+                {search ? "No suppliers match your search" : user?.role === "buyer" ? "No Matched Suppliers Found" : "No sellers yet"}
+              </p>
+              {user?.role === "buyer" ? (
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  {userListing?.status !== "live"
+                    ? `Your buyer profile is currently in "${userListing?.status || "pending"}" status. Once verified and set to Live by Admin, all verified suppliers matching your category (${userListing?.category || "business category"}) will automatically appear here with direct contact details.`
+                    : `No verified suppliers found matching your category (${userListing?.category || "business category"}) yet. When new suppliers in your category join and go live, their direct contact details and catalogue will appear here.`
+                  }
+                </p>
+              ) : !search ? (
+                <button onClick={() => openForm()} className="bg-violet-600 text-white font-bold px-5 py-2.5 rounded-xl text-sm">Add First Seller</button>
+              ) : null}
             </div>
           )}
 
           {/* ── Seller Cards ── */}
           <div className="px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {paginatedSellers.map((s) => {
+              // Buyer view: direct verified supplier contacts
+              if (user?.role === "buyer") {
+                const contactPhone = s.phone || "";
+                const contactEmail = s.email || "";
+                const contactName = s.contact || s.name || "";
+                return (
+                  <div key={s.id} className="bg-white rounded-2xl border border-emerald-200/80 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden">
+                    <div className="h-2 w-full bg-gradient-to-r from-emerald-500 to-teal-500" />
+                    <div className="p-5 flex-1 flex flex-col gap-3.5">
+                      <div className="flex items-start gap-3">
+                        {s.logoUrl
+                          ? <img src={getImg(s.logoUrl)} alt="" className="w-12 h-12 rounded-xl object-contain border border-gray-100 flex-shrink-0" />
+                          : <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-base flex-shrink-0 bg-emerald-600">{ini(s.name)}</div>
+                        }
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                              ✓ Category Matched
+                            </span>
+                            <span className="text-gray-400 text-[10px] font-semibold">{s.type === "product" ? "Product Supplier" : "Service Provider"}</span>
+                          </div>
+                          <p className="font-black text-gray-900 text-sm truncate mt-1">{s.companyName || s.name}</p>
+                          <p className="text-gray-400 text-[11px] font-medium truncate">{[s.category, s.city, s.state].filter(Boolean).join(" · ")}</p>
+                        </div>
+                      </div>
+
+                      {/* Contact Details box */}
+                      <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-100 space-y-2 text-xs">
+                        <div className="font-bold text-gray-800 flex items-center gap-1">
+                          <span className="text-gray-400">Contact:</span>
+                          <span className="font-black text-gray-900">{contactName}</span>
+                        </div>
+
+                        {contactPhone ? (
+                          <a href={`tel:${contactPhone}`} className="flex items-center gap-2 font-black text-emerald-800 hover:underline">
+                            <Phone size={13} className="text-emerald-600 flex-shrink-0" />
+                            <span>{contactPhone}</span>
+                          </a>
+                        ) : null}
+
+                        {contactEmail ? (
+                          <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 font-medium text-gray-600 hover:underline truncate">
+                            <Mail size={13} className="text-emerald-600 flex-shrink-0" />
+                            <span className="truncate">{contactEmail}</span>
+                          </a>
+                        ) : null}
+
+                        {s.gstNumber && (
+                          <div className="text-[11px] text-gray-600 pt-1 border-t border-emerald-100 flex items-center justify-between">
+                            <span className="text-gray-400">GST:</span>
+                            <span className="text-gray-900 font-bold">{s.gstNumber}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2 pt-1 mt-auto">
+                        {(s.whatsapp || contactPhone) && (
+                          <a
+                            href={`https://wa.me/${(s.whatsapp || contactPhone).replace(/\D/g, "")}?text=Hi ${contactName}, I am reaching out to you from Koop India regarding business inquiries.`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex-1 text-xs font-bold py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-sm"
+                          >
+                            <span>💬 WhatsApp</span>
+                          </a>
+                        )}
+                        <a
+                          href={`/${s.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3 text-xs font-bold py-2 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 transition flex items-center justify-center gap-1"
+                        >
+                          <ExternalLink size={12} /> View Page
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
               const cfg = statusCfg[s.status] || statusCfg.draft;
               const color = s.primaryColor || "#7c3aed";
               return (

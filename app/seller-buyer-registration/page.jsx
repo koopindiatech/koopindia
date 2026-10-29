@@ -7,8 +7,22 @@ import { CheckCircle, Loader2, Building2, Phone, MapPin, Package, TrendingUp, Us
 import Link from "next/link";
 import Image from "next/image";
 
-const slugify = (s = "") =>
-  s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/, "");
+const generateSlug = (...candidates) => {
+  for (const c of candidates) {
+    if (!c || typeof c !== "string") continue;
+    const s = c
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    if (s.length >= 2) return s;
+  }
+  return "";
+};
+
+const slugify = (s = "") => generateSlug(s);
 
 const STATES = [
   "Select State", "Andhra Pradesh", "Assam", "Bihar", "Delhi", "Goa", "Gujarat",
@@ -113,6 +127,12 @@ function RegistrationForm() {
       if (tab === "seller") {
         const countSnap = await getCountFromServer(collection(db, "sellers"));
         const profileId = `KIS${String(countSnap.data().count + 1).padStart(5, '0')}`;
+        const sellerSlug = generateSlug(
+          seller.companyName,
+          seller.contactName,
+          seller.email ? seller.email.split("@")[0] : "",
+          profileId
+        ) || `seller-${profileId?.toLowerCase() || Date.now().toString(36)}`;
 
         const docRef = await addDoc(collection(db, "sellers"), {
           profileId: profileId,
@@ -121,7 +141,7 @@ function RegistrationForm() {
           city: seller.city, state: seller.state, businessType: seller.businessType,
           products: seller.products, expectedOrder: seller.expectedOrder,
           status: "paused", source: "marketplace_registration_page",
-          slug: slugify(seller.companyName), createdAt: serverTimestamp(),
+          slug: sellerSlug, createdAt: serverTimestamp(),
         });
         
         // Auto-generate a Lead from this Seller Registration
@@ -138,10 +158,10 @@ function RegistrationForm() {
           status: "New",
           createdAt: serverTimestamp(),
           sellerId: docRef.id,
-          sellerSlug: slugify(seller.companyName),
+          sellerSlug: sellerSlug,
           sellerName: seller.companyName,
-          assignedToSellerSlug: slugify(seller.companyName),
-          assignedToSellerName: seller.companyName,
+          assignedToSellerSlug: null,
+          assignedToSellerName: null,
           assignedTo: null
         });
 
@@ -153,7 +173,7 @@ function RegistrationForm() {
             password: seller.password,
             status: "active",
             linkedId: docRef.id,
-            linkedSlug: slugify(seller.companyName),
+            linkedSlug: sellerSlug,
             role: "seller",
             createdAt: serverTimestamp()
           });
@@ -172,6 +192,12 @@ function RegistrationForm() {
       } else {
         const countSnap = await getCountFromServer(collection(db, "buyers"));
         const profileId = `KIB${String(countSnap.data().count + 1).padStart(5, '0')}`;
+        const buyerSlug = generateSlug(
+          buyer.companyName,
+          buyer.contactName,
+          buyer.email ? buyer.email.split("@")[0] : "",
+          profileId
+        ) || `buyer-${profileId?.toLowerCase() || Date.now().toString(36)}`;
 
         const docRef = await addDoc(collection(db, "buyers"), {
           profileId: profileId,
@@ -182,7 +208,7 @@ function RegistrationForm() {
           purchaseLocation: buyer.purchaseLocation, deliveryLocation: buyer.deliveryLocation,
           retailers: buyer.retailers, buyerTerritory: buyer.buyerTerritory, network: buyer.network,
           status: "paused", source: "marketplace_registration_page",
-          slug: slugify(buyer.companyName), createdAt: serverTimestamp(),
+          slug: buyerSlug, createdAt: serverTimestamp(),
         });
 
         // Auto-generate a Lead from this Buyer Registration
@@ -199,10 +225,10 @@ function RegistrationForm() {
           status: "New",
           createdAt: serverTimestamp(),
           buyerId: docRef.id,
-          buyerSlug: slugify(buyer.companyName),
+          buyerSlug: buyerSlug,
           buyerName: buyer.companyName,
-          assignedToBuyerSlug: slugify(buyer.companyName),
-          assignedToBuyerName: buyer.companyName,
+          assignedToBuyerSlug: null,
+          assignedToBuyerName: null,
           assignedTo: null
         });
 
@@ -214,7 +240,7 @@ function RegistrationForm() {
             password: buyer.password,
             status: "active",
             linkedId: docRef.id,
-            linkedSlug: slugify(buyer.companyName),
+            linkedSlug: buyerSlug,
             role: "buyer",
             createdAt: serverTimestamp()
           });

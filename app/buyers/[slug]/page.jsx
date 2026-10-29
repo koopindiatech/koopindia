@@ -65,9 +65,16 @@ export default async function BuyerPage({ params }) {
 
       const cleanAbout = data.about ? data.about.replace(/&nbsp;|\u00A0/g, " ") : "";
 
+      // Sanitize sensitive credentials and contact numbers so they are NEVER leaked in initial SSR HTML payload to unlisted visitors/crawlers
       const raw = {
         id: d.id,
         ...data,
+        password: "", // Never expose password in public page data
+        contactPhone: "", // Protected: dynamically unlocked client-side only for verified listed sellers
+        phone: "",
+        contactEmail: "",
+        email: "",
+        whatsapp: "",
         about: cleanAbout,
         logoUrl: proxy(data.logoUrl),
         // Support both old 'coverUrl' field and new 'coverImageUrl' field
@@ -84,3 +91,4 @@ export default async function BuyerPage({ params }) {
 
   return <BuyerClientPage initialBuyer={initialBuyer} />;
 }
+

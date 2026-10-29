@@ -2,8 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { db } from "../../lib/firebase";
-import { collection, query, where, getDocs, updateDoc, doc, increment, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, query, where, getDocs, getDoc, updateDoc, doc, increment, addDoc, serverTimestamp } from "firebase/firestore";
 import { getCurrentUser } from "../adminpanel/lib/auth";
+import { checkBuyerToSellerAccess, KOOP_SUPPORT_PHONE } from "../../lib/categoryAccess";
 
 const ini = (n = "") => n.split(" ").slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
 const SOCIAL_ICONS = {
@@ -32,9 +33,44 @@ export default function SellerClientPage({ initialSeller }) {
   const [selPack, setSelPack] = useState(null);
   const [selCat, setSelCat] = useState("all");
   const [currentUser, setCurrentUser] = useState(null);
+  const [userListing, setUserListing] = useState(null);
 
   useEffect(() => {
-    setCurrentUser(getCurrentUser());
+    const u = getCurrentUser();
+    setCurrentUser(u);
+    if (!u) return;
+
+    if (u.role === "buyer") {
+      const fetchBuyerListing = async () => {
+        try {
+          let buyerDoc = null;
+          if (u.linkedId) {
+            try {
+              const b = await getDoc(doc(db, "buyers", u.linkedId));
+              if (b.exists()) buyerDoc = { id: b.id, ...b.data() };
+            } catch (_) {}
+          }
+          if (!buyerDoc && u.linkedSlug) {
+            try {
+              const q = query(collection(db, "buyers"), where("slug", "==", u.linkedSlug));
+              const snap = await getDocs(q);
+              if (!snap.empty) buyerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (_) {}
+          }
+          if (!buyerDoc && u.email) {
+            try {
+              const q = query(collection(db, "buyers"), where("email", "==", u.email.toLowerCase()));
+              const snap = await getDocs(q);
+              if (!snap.empty) buyerDoc = { id: snap.docs[0].id, ...snap.docs[0].data() };
+            } catch (_) {}
+          }
+          setUserListing(buyerDoc);
+        } catch (err) {
+          console.error("Error fetching buyer listing for category access:", err);
+        }
+      };
+      fetchBuyerListing();
+    }
   }, []);
   const [prodTab, setProdTab] = useState("description");
   const [contactForm, setContactForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
@@ -148,10 +184,11 @@ export default function SellerClientPage({ initialSeller }) {
   const filtProd = selCat === "all" ? products : products.filter(p => p.categoryId === selCat);
   const btn1 = seller.heroBtn1Text || "View Our Products";
   const btn2 = seller.heroBtn2Text || "Distributors / Buyers Inquiry";
-  const shouldHide = !!(seller.hidePhone || seller.hideContact);
-  const koopPhone = "+91 95998 26131";
-  const displayPhone = shouldHide ? koopPhone : (seller.phone || "");
-  const displayEmail = shouldHide ? "" : (seller.email || "");
+  const accessCheck = checkBuyerToSellerAccess({ currentUser, userListing, seller });
+  const hasDirectContactAccess = accessCheck.hasAccess;
+  const koopPhone = KOOP_SUPPORT_PHONE;
+  const displayPhone = hasDirectContactAccess ? (seller.phone || koopPhone) : koopPhone;
+  const displayEmail = hasDirectContactAccess ? (seller.email || "") : "";
   const navHomeLabel = seller.navHomeLabel || "Home";
   const navAboutLabel = seller.navAboutLabel || "About Us";
   const navProductsLabel = seller.navProductsLabel || "Products";
@@ -877,9 +914,38 @@ export default function SellerClientPage({ initialSeller }) {
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 rounded-3xl overflow-hidden shadow-2xl border border-gray-200">
                 <div className="lg:col-span-2 p-6 sm:p-10 flex flex-col justify-between" style={{ backgroundColor: pc }}>
                   <div>
-                    <h3 className="text-white font-black text-2xl mb-2">Contact Information</h3>
-                    <p className="text-white/70 text-sm mb-10">Fill out the form or reach us directly through the options below.</p>
-                    <div className="space-y-8">
+                    <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+                      <h3 className="text-white font-black text-2xl">Contact Information</h3>
+                      {hasDirectContactAccess && (
+                        <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 whitespace-nowrap">
+                          {accessCheck.reason === "category_match" ? "✓ Category Matched (Unlocked)" : "✓ Verified Access"}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-white/70 text-sm mb-6">Reach us directly or connect through Koop India Verified Network.</p>
+
+                    {!hasDirectContactAccess && (
+                      <div className="p-4 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm space-y-2.5 mb-6 text-xs text-white/90">
+                        <div className="flex items-center gap-1.5 font-black text-amber-300">
+                          <span>🔒</span>
+                          <span className="uppercase tracking-wider text-[11px]">Direct Contact Protected</span>
+                        </div>
+                        <p className="leading-relaxed opacity-90 text-[11px]">
+                          {accessCheck.message || "Direct phone and email are unlocked for verified buyers registered in the matching category."}
+                        </p>
+                        {currentUser?.role !== "buyer" && (
+                          <a
+                            href={`/adminpanel/login?redirect=/${slug}`}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-gray-900 font-bold text-xs hover:bg-orange-50 transition shadow"
+                          >
+                            <span>Buyer Login to Unlock Contact</span>
+                            <span>→</span>
+                          </a>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="space-y-6">
                       {[seller.address, seller.city, seller.state, seller.pincode].filter(Boolean).length > 0 && (
                         <div className="flex items-start gap-4">
                           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0">📍</div>
@@ -893,7 +959,9 @@ export default function SellerClientPage({ initialSeller }) {
                         <a href={`tel:${displayPhone}`} className="flex items-center gap-4 group cursor-pointer">
                           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-white/25 transition">📞</div>
                           <div>
-                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Call Us</p>
+                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">
+                              {hasDirectContactAccess ? "Direct Phone" : "Koop India Desk"}
+                            </p>
                             <p className="text-white font-bold text-sm group-hover:underline">{displayPhone}</p>
                           </div>
                         </a>
@@ -902,8 +970,35 @@ export default function SellerClientPage({ initialSeller }) {
                         <a href={`mailto:${displayEmail}`} className="flex items-center gap-4 group cursor-pointer">
                           <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-white/25 transition">✉️</div>
                           <div>
-                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Email Us</p>
+                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Direct Email</p>
                             <p className="text-white font-bold text-sm group-hover:underline break-all">{displayEmail}</p>
+                          </div>
+                        </a>
+                      )}
+                      {hasDirectContactAccess && (seller.whatsapp || seller.phone) ? (
+                        <a
+                          href={`https://wa.me/${(seller.whatsapp || seller.phone).replace(/\D/g, "")}?text=Hi, I am reaching out from Koop India regarding your products on ${seller.name}.`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-4 group cursor-pointer"
+                        >
+                          <div className="w-11 h-11 rounded-2xl bg-emerald-500/30 border border-emerald-400/40 flex items-center justify-center text-xl flex-shrink-0">💬</div>
+                          <div>
+                            <p className="text-emerald-300 text-xs font-bold uppercase tracking-widest mb-0.5">WhatsApp Direct</p>
+                            <p className="text-white font-bold text-sm group-hover:underline">Chat with Supplier</p>
+                          </div>
+                        </a>
+                      ) : (
+                        <a
+                          href={`https://wa.me/919599826131?text=Hi Koop India, I am interested in connecting with supplier: ${seller.name} (${slug})`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-4 group cursor-pointer"
+                        >
+                          <div className="w-11 h-11 rounded-2xl bg-white/15 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-white/25 transition">💬</div>
+                          <div>
+                            <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-0.5">Koop India Desk</p>
+                            <p className="text-white font-bold text-sm group-hover:underline">Connect on WhatsApp</p>
                           </div>
                         </a>
                       )}

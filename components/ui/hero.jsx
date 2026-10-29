@@ -148,11 +148,6 @@ const HeroSection = ({ onOpenModal }) => {
     },
   ];
 
-  const handleNavigation = (href) => {
-    router.push(href);
-    setIsOpen(false);
-  };
-
   const slides = [
     {
       title: "Empowering Businesses to",
