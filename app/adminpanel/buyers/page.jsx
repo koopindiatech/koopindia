@@ -2019,8 +2019,8 @@ export default function BuyersAdminPage() {
             <div className="px-6 pb-10">
               <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
                 {/* Table Header */}
-                <div className="hidden lg:grid grid-cols-12 gap-4 px-5 py-3.5 bg-gray-50/90 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider items-center">
-                  <div className="col-span-5 flex items-center gap-3">
+                <div className="hidden lg:grid grid-cols-12 gap-6 lg:gap-8 px-6 sm:px-8 py-4.5 bg-gray-50/90 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider items-center">
+                  <div className="col-span-5 flex items-center gap-3.5">
                     <input
                       type="checkbox"
                       checked={paginatedBuyers.length > 0 && paginatedBuyers.every(b => selectedIds.includes(b.id))}
@@ -2054,16 +2054,17 @@ export default function BuyersAdminPage() {
                     const isDraft = b.status === "draft";
                     const isSelected = selectedIds.includes(b.id);
                     const dateInfo = formatListingDate(b);
+                    const assignedCount = (b.assignedSellerIds || b.assignedSellers || []).length;
 
                     return (
                       <div
                         key={b.id}
-                        className={`group px-5 py-3.5 hover:bg-gray-50/80 transition-colors grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-center ${
+                        className={`group px-6 sm:px-8 py-6 sm:py-6.5 hover:bg-slate-50/80 transition-colors grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center ${
                           isSelected ? "bg-orange-50/30" : ""
                         }`}
                       >
                         {/* Col 1: Checkbox + Avatar + Title + Quick Actions */}
-                        <div className="col-span-12 lg:col-span-5 flex items-start gap-3 min-w-0">
+                        <div className="col-span-12 lg:col-span-5 flex items-start gap-4 sm:gap-4.5 min-w-0">
                           <input
                             type="checkbox"
                             checked={isSelected}
@@ -2072,98 +2073,108 @@ export default function BuyersAdminPage() {
                                 prev.includes(b.id) ? prev.filter(id => id !== b.id) : [...prev, b.id]
                               );
                             }}
-                            className="w-4 h-4 rounded text-orange-600 border-gray-300 focus:ring-orange-500 cursor-pointer mt-1 flex-shrink-0"
+                            className="w-4 h-4 rounded text-orange-600 border-gray-300 focus:ring-orange-500 cursor-pointer mt-2 flex-shrink-0"
                           />
                           {b.logoUrl ? (
-                            <img src={getImg(b.logoUrl)} alt="" className="w-10 h-10 rounded-xl object-contain border border-gray-200 bg-white flex-shrink-0" />
+                            <img src={getImg(b.logoUrl)} alt="" className="w-12 h-12 rounded-xl object-contain border border-gray-200 bg-white flex-shrink-0 shadow-2xs p-1" />
                           ) : (
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-xs" style={{ backgroundColor: color }}>
+                            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-xs" style={{ backgroundColor: color }}>
                               {ini(b.buyerName)}
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <p className="font-bold text-[14px] text-gray-900 group-hover:text-orange-600 transition truncate">
+                              <p className="font-bold text-[15px] sm:text-base text-gray-900 group-hover:text-orange-600 transition truncate leading-snug">
                                 {b.buyerName}
                               </p>
                               {isDraft && (
                                 <span className="text-gray-400 text-xs italic font-medium">— Draft</span>
                               )}
                             </div>
-                            <p className="text-gray-400 text-[11px] font-medium truncate mt-0.5">
+                            <p className="text-gray-500 text-xs sm:text-[13px] font-medium truncate mt-1.5">
                               {[b.contactName, b.city, b.state].filter(Boolean).join(" · ")}
                             </p>
 
                             {/* Sub action links (WordPress style below title) */}
-                            <div className="flex items-center gap-1.5 text-xs font-semibold mt-1.5 text-gray-400 flex-wrap">
-                              <button onClick={() => openForm(b)} className="text-orange-600 hover:text-orange-800 hover:underline">Edit</button>
-                              <span>|</span>
+                            <div className="flex items-center gap-2.5 sm:gap-3 text-xs font-semibold mt-3.5 text-gray-400 flex-wrap">
+                              <button onClick={() => openForm(b)} className="text-orange-600 hover:text-orange-800 hover:underline cursor-pointer">Edit</button>
+                              <span className="text-gray-300">|</span>
                               <a href={`/buyers/${b.slug}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:text-blue-800 hover:underline">View ↗</a>
-                              <span>|</span>
-                              <button onClick={() => toggleStatus(b.id, b.status)} className="text-gray-600 hover:text-gray-900 hover:underline">
+                              <span className="text-gray-300">|</span>
+                              <button onClick={() => setAssignModalBuyer(b)} className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">Assign Sellers</button>
+                              <span className="text-gray-300">|</span>
+                              <button onClick={() => toggleStatus(b.id, b.status)} className="text-gray-600 hover:text-gray-900 hover:underline cursor-pointer">
                                 {b.status === "live" ? "Pause" : "Activate"}
                               </button>
-                              <span>|</span>
-                              <button onClick={() => toggleFeatured(b.id, b.isFeatured)} className="text-orange-600 hover:text-orange-800 hover:underline">
+                              <span className="text-gray-300">|</span>
+                              <button onClick={() => toggleFeatured(b.id, b.isFeatured)} className="text-orange-600 hover:text-orange-800 hover:underline cursor-pointer">
                                 {b.isFeatured ? "Unfeature" : "Feature"}
                               </button>
-                              <span>|</span>
-                              <button onClick={() => handleTransferToSeller(b.id)} className="text-blue-600 hover:text-blue-800 hover:underline">Transfer</button>
-                              <span>|</span>
-                              <button onClick={() => setDelId(b.id)} className="text-red-500 hover:text-red-700 hover:underline">Delete</button>
+                              <span className="text-gray-300">|</span>
+                              <button onClick={() => handleTransferToSeller(b.id)} className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">Transfer</button>
+                              <span className="text-gray-300">|</span>
+                              <button onClick={() => setDelId(b.id)} className="text-red-500 hover:text-red-700 hover:underline cursor-pointer">Delete</button>
                             </div>
                           </div>
                         </div>
 
                         {/* Col 2: Category & Tags */}
-                        <div className="col-span-12 sm:col-span-4 lg:col-span-3">
-                          <p className="text-xs font-bold text-gray-800 truncate">{b.category || "—"}</p>
-                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 border border-gray-200">
+                        <div className="col-span-12 sm:col-span-4 lg:col-span-3 space-y-2">
+                          <p className="text-sm sm:text-[14.5px] font-bold text-gray-800 truncate">{b.category || "—"}</p>
+                          <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-gray-100 text-gray-600 border border-gray-200">
                               {b.businessType || "Buyer"}
                             </span>
+                            <button
+                              onClick={() => setAssignModalBuyer(b)}
+                              className="text-[11px] font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1 hover:bg-blue-100 cursor-pointer transition"
+                              title="Manage Assigned Sellers"
+                            >
+                              <Users size={12} className="text-blue-500" />
+                              <span>{assignedCount} Sellers Access</span>
+                            </button>
                             {b.isFeatured && (
-                              <span className="text-orange-600 bg-orange-50 border border-orange-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
-                                <Star size={10} className="fill-orange-500 text-orange-500" /> Featured
+                              <span className="text-orange-600 bg-orange-50 border border-orange-200 text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1">
+                                <Star size={11} className="fill-orange-500 text-orange-500" /> Featured
                               </span>
                             )}
                           </div>
                         </div>
 
                         {/* Col 3: Date */}
-                        <div className="col-span-12 sm:col-span-4 lg:col-span-2 text-xs">
-                          <span className="text-gray-400 text-[11px] block">{dateInfo.label}</span>
-                          <span className="font-semibold text-gray-700 text-xs">{dateInfo.text}</span>
+                        <div className="col-span-12 sm:col-span-4 lg:col-span-2 space-y-1.5 text-xs">
+                          <span className="text-gray-400 text-[11px] font-medium block">{dateInfo.label}</span>
+                          <span className="font-semibold text-gray-700 text-xs sm:text-[13px]">{dateInfo.text}</span>
                         </div>
 
                         {/* Col 4: Status & Actions on right */}
-                        <div className="col-span-12 sm:col-span-4 lg:col-span-2 flex items-center justify-end gap-2">
-                          <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${cfg.badge}`}>
+                        <div className="col-span-12 sm:col-span-4 lg:col-span-2 flex items-center justify-end gap-3">
+                          <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full border ${cfg.badge}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
                             {cfg.label}
                           </span>
                           <button
                             onClick={() => openForm(b)}
-                            className="p-1.5 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition"
+                            className="p-2 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition cursor-pointer"
                             title="Edit"
                           >
-                            <Edit2 size={14} />
+                            <Edit2 size={16} />
                           </button>
                           <a
                             href={`/buyers/${b.slug}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition"
                             title="View Page"
                           >
-                            <ExternalLink size={14} />
+                            <ExternalLink size={16} />
                           </a>
                           <div className="relative">
                             <button
                               onClick={() => setMenuId(menuId === b.id ? null : b.id)}
-                              className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                              className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition cursor-pointer"
                             >
-                              <MoreVertical size={14} />
+                              <MoreVertical size={16} />
                             </button>
                             {menuId === b.id && (
                               <div className="absolute right-0 top-8 z-30 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-1.5 overflow-hidden">

@@ -274,8 +274,8 @@ function AdminUsersTab() {
         ) : (
           <div>
             {/* Table Header (Desktop) */}
-            <div className="hidden lg:grid grid-cols-12 gap-4 px-5 py-3 bg-gray-50/90 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider items-center">
-              <div className="col-span-5 flex items-center gap-3">
+            <div className="hidden lg:grid grid-cols-12 gap-6 lg:gap-8 px-6 sm:px-8 py-4.5 bg-gray-50/90 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider items-center">
+              <div className="col-span-5 flex items-center gap-3.5">
                 <input
                   type="checkbox"
                   checked={paginatedUsers.length > 0 && paginatedUsers.every(u => selectedIds.includes(u.firestoreId || u.id))}
@@ -313,12 +313,12 @@ function AdminUsersTab() {
                 return (
                   <div
                     key={uid}
-                    className={`group px-5 py-3.5 hover:bg-gray-50/80 transition-colors grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-center ${
+                    className={`group px-6 sm:px-8 py-6 hover:bg-slate-50/80 transition-colors grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center ${
                       isSelected ? "bg-orange-50/30" : ""
                     }`}
                   >
                     {/* Col 1: Checkbox + Avatar + Name + Sub action links */}
-                    <div className="col-span-12 lg:col-span-5 flex items-start gap-3 min-w-0">
+                    <div className="col-span-12 lg:col-span-5 flex items-start gap-4 min-w-0">
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -327,25 +327,25 @@ function AdminUsersTab() {
                             prev.includes(uid) ? prev.filter(id => id !== uid) : [...prev, uid]
                           );
                         }}
-                        className="w-4 h-4 rounded text-orange-600 border-gray-300 focus:ring-orange-500 cursor-pointer mt-1 flex-shrink-0"
+                        className="w-4 h-4 rounded text-orange-600 border-gray-300 focus:ring-orange-500 cursor-pointer mt-2 flex-shrink-0"
                       />
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-xs bg-gradient-to-br from-orange-500 to-amber-500">
+                      <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-xs bg-gradient-to-br from-orange-500 to-amber-500">
                         {u.name?.[0]?.toUpperCase() || "A"}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-[14px] text-gray-900 group-hover:text-orange-600 transition truncate">
+                        <p className="font-bold text-[15px] sm:text-base text-gray-900 group-hover:text-orange-600 transition truncate leading-snug">
                           {u.name}
                         </p>
-                        <p className="text-gray-400 text-[11px] font-medium truncate mt-0.5">
+                        <p className="text-gray-500 text-xs sm:text-[13px] font-medium truncate mt-1.5">
                           {u.email}
                         </p>
 
                         {/* WordPress-style sub actions */}
-                        <div className="flex items-center gap-1.5 text-xs font-semibold mt-1.5 text-gray-400 flex-wrap">
+                        <div className="flex items-center gap-2.5 sm:gap-3 text-xs font-semibold mt-3.5 text-gray-400 flex-wrap">
                           <button onClick={() => openEdit(u)} className="text-orange-600 hover:text-orange-800 hover:underline cursor-pointer">
                             Edit
                           </button>
-                          <span>|</span>
+                          <span className="text-gray-300">|</span>
                           <button onClick={() => setDelConfirm(u)} className="text-red-500 hover:text-red-700 hover:underline cursor-pointer">
                             Delete
                           </button>
@@ -355,7 +355,7 @@ function AdminUsersTab() {
 
                     {/* Col 2: Role / Access Badge */}
                     <div className="col-span-12 sm:col-span-4 lg:col-span-3">
-                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg border ${
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg border ${
                         u.role === "admin" ? "bg-orange-50 text-orange-700 border-orange-200" : "bg-blue-50 text-blue-700 border-blue-200"
                       }`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${u.role === "admin" ? "bg-orange-500" : "bg-blue-500"}`} />
@@ -365,31 +365,31 @@ function AdminUsersTab() {
 
                     {/* Col 3: Assigned Leads */}
                     <div className="col-span-12 sm:col-span-4 lg:col-span-2 text-xs">
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-orange-50 border border-orange-100 text-orange-700 font-bold text-xs">
-                        <Users size={12} className="text-orange-500" />
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-50 border border-orange-100 text-orange-700 font-bold text-xs">
+                        <Users size={13} className="text-orange-500" />
                         <span>{assignedCount} lead{assignedCount !== 1 ? "s" : ""}</span>
                       </div>
                     </div>
 
                     {/* Col 4: Status & Actions */}
-                    <div className="col-span-12 sm:col-span-4 lg:col-span-2 flex items-center justify-end gap-2">
-                      <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+                    <div className="col-span-12 sm:col-span-4 lg:col-span-2 flex items-center justify-end gap-3">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                         Active
                       </span>
                       <button
                         onClick={() => openEdit(u)}
-                        className="p-1.5 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition cursor-pointer"
+                        className="p-2 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition cursor-pointer"
                         title="Edit User"
                       >
-                        <Edit2 size={14} />
+                        <Edit2 size={16} />
                       </button>
                       <button
                         onClick={() => setDelConfirm(u)}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition cursor-pointer"
                         title="Delete User"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
@@ -804,8 +804,8 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
         ) : (
           <div>
             {/* Table Header (Desktop) */}
-            <div className="hidden lg:grid grid-cols-12 gap-4 px-5 py-3 bg-gray-50/90 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider items-center">
-              <div className="col-span-5 flex items-center gap-3">
+            <div className="hidden lg:grid grid-cols-12 gap-6 lg:gap-8 px-6 sm:px-8 py-4.5 bg-gray-50/90 border-b border-gray-200 text-[11px] font-bold text-gray-500 uppercase tracking-wider items-center">
+              <div className="col-span-5 flex items-center gap-3.5">
                 <input
                   type="checkbox"
                   checked={paginatedUsers.length > 0 && paginatedUsers.every(u => selectedIds.includes(u.firestoreId || u.id))}
@@ -844,12 +844,12 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                 return (
                   <div
                     key={uid}
-                    className={`group px-5 py-3.5 hover:bg-gray-50/80 transition-colors grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-center ${
+                    className={`group px-6 sm:px-8 py-6 hover:bg-slate-50/80 transition-colors grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center ${
                       isSelected ? "bg-orange-50/30" : ""
                     }`}
                   >
                     {/* Col 1: Checkbox + Avatar + Name + Sub action links */}
-                    <div className="col-span-12 lg:col-span-5 flex items-start gap-3 min-w-0">
+                    <div className="col-span-12 lg:col-span-5 flex items-start gap-4 min-w-0">
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -858,30 +858,30 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                             prev.includes(uid) ? prev.filter(id => id !== uid) : [...prev, uid]
                           );
                         }}
-                        className="w-4 h-4 rounded text-orange-600 border-gray-300 focus:ring-orange-500 cursor-pointer mt-1 flex-shrink-0"
+                        className="w-4 h-4 rounded text-orange-600 border-gray-300 focus:ring-orange-500 cursor-pointer mt-2 flex-shrink-0"
                       />
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-xs"
+                        className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-sm flex-shrink-0 shadow-xs"
                         style={{ background: `linear-gradient(135deg, ${accent}, ${accent}cc)` }}
                       >
                         {u.name?.[0]?.toUpperCase() || "U"}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-[14px] text-gray-900 group-hover:underline transition truncate" style={{ color: "#111827" }}>
+                        <p className="font-bold text-[15px] sm:text-base text-gray-900 group-hover:underline transition truncate leading-snug" style={{ color: "#111827" }}>
                           {u.name}
                         </p>
-                        <p className="text-gray-400 text-[11px] font-medium truncate mt-0.5">
+                        <p className="text-gray-500 text-xs sm:text-[13px] font-medium truncate mt-1.5">
                           {u.email}
                         </p>
 
                         {/* WordPress-style sub actions */}
-                        <div className="flex items-center gap-1.5 text-xs font-semibold mt-1.5 text-gray-400 flex-wrap">
+                        <div className="flex items-center gap-2.5 sm:gap-3 text-xs font-semibold mt-3.5 text-gray-400 flex-wrap">
                           <button onClick={() => openEdit(u)} className="hover:underline cursor-pointer" style={{ color: accent }}>
                             Edit
                           </button>
                           {u.linkedSlug && (
                             <>
-                              <span>|</span>
+                              <span className="text-gray-300">|</span>
                               <a
                                 href={`/${isSeller ? "" : "buyers/"}${u.linkedSlug}`}
                                 target="_blank"
@@ -892,11 +892,11 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                               </a>
                             </>
                           )}
-                          <span>|</span>
+                          <span className="text-gray-300">|</span>
                           <button onClick={() => toggleStatus(u)} className="text-gray-600 hover:text-gray-900 hover:underline cursor-pointer">
                             {u.status === "active" ? "Pause Access" : "Activate Access"}
                           </button>
-                          <span>|</span>
+                          <span className="text-gray-300">|</span>
                           <button onClick={() => setDelConfirm(u)} className="text-red-500 hover:text-red-700 hover:underline cursor-pointer">
                             Delete
                           </button>
@@ -905,26 +905,26 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                     </div>
 
                     {/* Col 2: Linked Listing */}
-                    <div className="col-span-12 sm:col-span-4 lg:col-span-3">
+                    <div className="col-span-12 sm:col-span-4 lg:col-span-3 space-y-2">
                       {u.linkedSlug ? (
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <a
                             href={`/${isSeller ? "" : "buyers/"}${u.linkedSlug}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-xs font-bold hover:underline flex items-center gap-1 truncate max-w-[260px]"
+                            className="text-xs sm:text-[13px] font-bold hover:underline flex items-center gap-1.5 truncate max-w-[260px]"
                             style={{ color: accent }}
                             title={`koopindia.com/${isSeller ? "" : "buyers/"}${u.linkedSlug}`}
                           >
-                            <LinkIcon size={12} className="flex-shrink-0" />
+                            <LinkIcon size={13} className="flex-shrink-0" />
                             <span className="truncate">{linkedListing?.label || u.linkedSlug}</span>
                           </a>
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-[10px] text-gray-400 font-mono truncate">
+                          <div className="flex items-center gap-2 flex-wrap pt-0.5">
+                            <span className="text-[11px] text-gray-400 font-mono truncate">
                               /{isSeller ? "" : "buyers/"}{u.linkedSlug}
                             </span>
                             {linkedListing && (
-                              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border ${
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
                                 linkedListing.status === "live" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-gray-100 text-gray-600 border border-gray-200"
                               }`}>
                                 Listing: {linkedListing.status || "paused"}
@@ -938,42 +938,42 @@ function PortalUsersTab({ type, accentColor, fetchUsers, create, update, remove,
                     </div>
 
                     {/* Col 3: Portal & Date */}
-                    <div className="col-span-12 sm:col-span-4 lg:col-span-2 text-xs">
-                      <span className="text-gray-400 text-[11px] block">{dateInfo.label}</span>
-                      <span className="font-semibold text-gray-700 text-xs">{dateInfo.text}</span>
+                    <div className="col-span-12 sm:col-span-4 lg:col-span-2 space-y-1.5 text-xs">
+                      <span className="text-gray-400 text-[11px] font-medium block">{dateInfo.label}</span>
+                      <span className="font-semibold text-gray-700 text-xs sm:text-[13px]">{dateInfo.text}</span>
                     </div>
 
                     {/* Col 4: Status & Actions */}
-                    <div className="col-span-12 sm:col-span-4 lg:col-span-2 flex items-center justify-end gap-2">
-                      <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${stBadge.badge}`}>
+                    <div className="col-span-12 sm:col-span-4 lg:col-span-2 flex items-center justify-end gap-3">
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full border ${stBadge.badge}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${stBadge.dot}`} />
                         {stBadge.label}
                       </span>
                       <button
                         onClick={() => openEdit(u)}
-                        className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg transition cursor-pointer"
+                        className="p-2 text-gray-500 hover:bg-gray-100 rounded-xl transition cursor-pointer"
                         style={{ color: accent }}
                         title="Edit User"
                       >
-                        <Edit2 size={14} />
+                        <Edit2 size={16} />
                       </button>
                       {u.linkedSlug && (
                         <a
                           href={`/${isSeller ? "" : "buyers/"}${u.linkedSlug}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition"
                           title="View Listing Page"
                         >
-                          <ExternalLink size={14} />
+                          <ExternalLink size={16} />
                         </a>
                       )}
                       <button
                         onClick={() => setDelConfirm(u)}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition cursor-pointer"
                         title="Delete User"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>

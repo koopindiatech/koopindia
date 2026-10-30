@@ -118,18 +118,6 @@ export default function BuyersPage() {
     fetchBuyers();
   }, []);
 
-  // Compute live counts for each category
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    CATEGORIES.forEach(cat => {
-      counts[cat.label] = buyers.filter(b => {
-        if (b.status === "paused" || b.status === "draft") return false;
-        return matchBuyerCategories(b, [cat.label]);
-      }).length;
-    });
-    return counts;
-  }, [buyers]);
-
   // Categories filtered by the sidebar's search input
   const visibleCategories = useMemo(() => {
     if (!categorySearch.trim()) return CATEGORIES;
@@ -418,7 +406,6 @@ export default function BuyersPage() {
                 <div className="mt-1 max-h-[calc(100vh-19rem)] overflow-y-auto pr-1 space-y-0.5 text-xs">
                   {visibleCategories.map(cat => {
                     const isChecked = selectedCategories.includes(cat.label);
-                    const count = categoryCounts[cat.label] || 0;
                     return (
                       <label
                         key={cat.label}
@@ -440,17 +427,6 @@ export default function BuyersPage() {
                             {cat.label}
                           </span>
                         </div>
-                        <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1 flex-shrink-0 ${
-                            isChecked
-                              ? "bg-orange-200 text-orange-900"
-                              : count > 0
-                              ? "bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700"
-                              : "text-gray-300"
-                          }`}
-                        >
-                          {count}
-                        </span>
                       </label>
                     );
                   })}
@@ -508,7 +484,7 @@ export default function BuyersPage() {
               </div>
 
               {/* Buyers Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                 {loading ? (
                   [...Array(8)].map((_, i) => <Skeleton key={i} cls="h-56" />)
                 ) : filteredBuyers.length > 0 ? (

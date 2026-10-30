@@ -118,18 +118,6 @@ export default function SellersPage() {
     fetchSellers();
   }, []);
 
-  // Compute live counts for each category
-  const categoryCounts = useMemo(() => {
-    const counts = {};
-    CATEGORIES.forEach(cat => {
-      counts[cat.label] = sellers.filter(s => {
-        if (s.status === "paused" || s.status === "draft") return false;
-        return matchSellerCategories(s, [cat.label]);
-      }).length;
-    });
-    return counts;
-  }, [sellers]);
-
   // Categories filtered by the sidebar's search input
   const visibleCategories = useMemo(() => {
     if (!categorySearch.trim()) return CATEGORIES;
@@ -417,7 +405,6 @@ export default function SellersPage() {
                 <div className="mt-1 max-h-[calc(100vh-19rem)] overflow-y-auto pr-1 space-y-0.5 text-xs">
                   {visibleCategories.map(cat => {
                     const isChecked = selectedCategories.includes(cat.label);
-                    const count = categoryCounts[cat.label] || 0;
                     return (
                       <label
                         key={cat.label}
@@ -439,17 +426,6 @@ export default function SellersPage() {
                             {cat.label}
                           </span>
                         </div>
-                        <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1 flex-shrink-0 ${
-                            isChecked
-                              ? "bg-orange-200 text-orange-900"
-                              : count > 0
-                              ? "bg-gray-100 text-gray-600 group-hover:bg-orange-100 group-hover:text-orange-700"
-                              : "text-gray-300"
-                          }`}
-                        >
-                          {count}
-                        </span>
                       </label>
                     );
                   })}
