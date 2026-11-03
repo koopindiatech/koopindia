@@ -11,7 +11,7 @@ const STATIC_ROUTES = [
   "/documentation-compliance", "/gst-registration", "/marketplace",
   "/privacy", "/seller-onboarding", "/services", "/solutions",
   "/startup-consulting", "/tech-solutions", "/term-services",
-  "/terms-and-conditions", "/termsevices",
+  "/terms-and-conditions", "/termsevices", "/website-development",
 ];
 
 function isSellerSlugRoute(pathname) {
@@ -32,7 +32,8 @@ export default function ClientLayout({ children }) {
   const isAdmin = pathname.startsWith("/adminpanel");
   const isSeller = pathname.startsWith("/sellers") || isSellerSlugRoute(pathname);
   const isMarketplace = pathname.startsWith("/marketplace");
-  const hideGlobalLayout = isAdmin || isSeller || isMarketplace;
+  const isWebsiteDev = pathname.startsWith("/website-development");
+  const hideGlobalLayout = isAdmin || isSeller || isMarketplace || isWebsiteDev;
 
   useEffect(() => {
     if (hideGlobalLayout) {

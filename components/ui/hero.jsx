@@ -316,14 +316,14 @@ const HeroSection = ({ onOpenModal }) => {
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-extrabold leading-[1.1] mb-6 tracking-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-[42px] font-extrabold leading-[1.15] mb-4 tracking-tight">
                 {slides[activeTab].title} <br />
                 <span className="text-[#F97316]">
                   {slides[activeTab].highlight}
                 </span>
               </h1>
 
-              <p className="text-lg text-gray-200 mb-8 max-w-2xl leading-relaxed opacity-90">
+              <p className="text-sm md:text-base text-gray-200 mb-6 max-w-2xl leading-relaxed opacity-90">
                 {slides[activeTab].desc}
               </p>
 
@@ -405,14 +405,14 @@ const HeroSection = ({ onOpenModal }) => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-[#141d32] mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-[#141d32] mb-4">
                 Your Complete Business Growth Partner
               </h2>
-              <p className="text-xl text-gray-600 mb-6 font-medium">
+              <p className="text-base md:text-lg text-gray-600 mb-4 font-medium">
                 Koop India is your one-stop solution to start, manage, and grow
                 your business with ease.
               </p>
-              <p className="text-gray-700 mb-8 leading-relaxed">
+              <p className="text-sm md:text-base text-gray-700 mb-6 leading-relaxed">
                 We don’t just offer services—we build businesses. From company
                 registration and legal compliance to website development and
                 digital growth, we provide everything you need under one roof.
@@ -712,7 +712,7 @@ const HeroSection = ({ onOpenModal }) => {
             <span className="inline-block bg-orange-500/10 text-orange-500 font-bold text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-orange-500/20 mb-4">
               What We Offer
             </span>
-            <h2 className="text-4xl font-extrabold text-[#141d32] tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#141d32] tracking-tight">
               Our Core <span className="text-orange-500">Solutions</span>
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto text-sm">
@@ -816,8 +816,8 @@ const HeroSection = ({ onOpenModal }) => {
 
 
       <section className="bg-white">
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          <h2 className="text-4xl font-extrabold text-center text-black mb-12">
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-center text-black mb-8">
             OUR SERVICES
           </h2>
 
@@ -859,8 +859,8 @@ const HeroSection = ({ onOpenModal }) => {
       </section>
 
       <section className="py-16 bg-[#0a1128] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 mb-16 text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
+        <div className="max-w-7xl mx-auto px-6 mb-12 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
             What Our Clients Say
           </h2>
           <p className="text-orange-400">
@@ -920,10 +920,10 @@ const HeroSection = ({ onOpenModal }) => {
       <div>
         <section className="py-16 px-6 lg:px-8 bg-gradient-to-r from-[#F97316] to-[#e5650d] text-white">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold mb-3">
               Ready to Transform Your Business?
             </h2>
-            <p className="text-xl text-white/90 mb-8">
+            <p className="text-base md:text-lg text-white/90 mb-6">
               Join 100+ successful entrepreneurs who chose Koop India as their
               growth partner. Get started with a free consultation today.
             </p>

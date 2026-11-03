@@ -7,7 +7,7 @@ const STATIC_ROUTES = [
   "/documentation-compliance", "/gst-registration", "/marketplace",
   "/privacy", "/seller-onboarding", "/services", "/solutions",
   "/startup-consulting", "/tech-solutions", "/term-services",
-  "/terms-and-conditions", "/termsevices",
+  "/terms-and-conditions", "/termsevices", "/website-development",
 ];
 
 function isSellerSlugRoute(pathname) {
@@ -22,9 +22,15 @@ function isSellerSlugRoute(pathname) {
 export default function ExtrasWrapper() {
   const pathname = usePathname();
   const noLayoutRoutes = ["/services"];
-  const hideExtras = noLayoutRoutes.includes(pathname) || pathname.startsWith("/marketplace") || pathname.startsWith("/adminpanel") || pathname.startsWith("/sellers") || isSellerSlugRoute(pathname);
+  const hideExtras =
+    noLayoutRoutes.includes(pathname) ||
+    pathname.startsWith("/marketplace") ||
+    pathname.startsWith("/adminpanel") ||
+    pathname.startsWith("/sellers") ||
+    pathname.startsWith("/website-development") ||
+    isSellerSlugRoute(pathname);
 
   if (hideExtras) return null;
 
   return <FloatingContact />;
-}
+}
