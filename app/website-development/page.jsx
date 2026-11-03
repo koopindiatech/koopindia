@@ -31,6 +31,10 @@ import {
   Server,
   Palette,
   Users,
+  Briefcase,
+  Building2,
+  Factory,
+  RefreshCw,
   X,
   Menu,
 } from "lucide-react";
@@ -78,7 +82,7 @@ export default function WebsiteDevelopmentLanding() {
     company: "",
     phone: "",
     email: "",
-    serviceType: "Corporate Business Website",
+    serviceType: "Business Websites",
     projectScope: "New Website from Scratch",
     details: "",
   });
@@ -87,7 +91,7 @@ export default function WebsiteDevelopmentLanding() {
   const [submitError, setSubmitError] = useState("");
 
   // Live Scope & Timeline Estimator State (Zero Pricing)
-  const [calcType, setCalcType] = useState("business"); // landing, business, ecommerce, webapp
+  const [calcType, setCalcType] = useState("business"); // business, ecommerce, corporate, manufacturing, landing, redesign
   const [calcPages, setCalcPages] = useState("5-8");
   const [calcSpeed, setCalcSpeed] = useState(true);
   const [calcSeo, setCalcSeo] = useState(true);
@@ -158,37 +162,53 @@ export default function WebsiteDevelopmentLanding() {
       "Lead Capture & WhatsApp Routing",
     ];
 
-    if (calcType === "landing") {
-      days = "3-5 Business Days";
-      stack = "Next.js / HTML5 + Tailwind + High-Converting PPC Copy";
+    if (calcType === "business") {
+      days = "5-7 Business Days";
+      stack = "Next.js 14 + Tailwind CSS + CMS Integration";
       highlights = [
-        "Laser-focused conversion layout",
-        "A/B test ready structure",
-        "Google Ads Quality Score 9+/10",
-      ];
-    } else if (calcType === "business") {
-      days = "5-8 Business Days";
-      stack = "Next.js + Tailwind CSS + Headless CMS Integration";
-      highlights = [
-        "Comprehensive multi-page architecture",
-        "Dynamic content management",
-        "Full SEO Schema & Meta Tags",
+        "Polished online presence for startups",
+        "Direct lead inquiry routing to CRM",
+        "100% Mobile & Tablet Responsive",
       ];
     } else if (calcType === "ecommerce") {
       days = "10-14 Business Days";
-      stack = "Shopify / Next.js Commerce + Razorpay / Stripe";
+      stack = "Shopify / Next.js Commerce + Razorpay / UPI";
       highlights = [
-        "Full product catalog & cart system",
-        "Automated payment & invoice gateway",
-        "Order management & stock alerts",
+        "Product catalogues & custom category filters",
+        "Shopping cart & payment-ready checkout",
+        "Automated WhatsApp order notifications",
       ];
-    } else if (calcType === "webapp") {
-      days = "15-22 Business Days";
-      stack = "React / Next.js + Node.js + PostgreSQL / Firebase";
+    } else if (calcType === "corporate") {
+      days = "7-10 Business Days";
+      stack = "Next.js + Tailwind CSS + Headless CMS";
       highlights = [
-        "Custom database & user authentication",
-        "Role-based client / admin dashboard",
-        "Custom API integrations & automated workflows",
+        "Corporate company profile & leadership hierarchy",
+        "Compliance & investor documentation pages",
+        "Domain, SSL & corporate email setup",
+      ];
+    } else if (calcType === "manufacturing") {
+      days = "8-12 Business Days";
+      stack = "Next.js + Tailwind CSS + B2B Product Catalog";
+      highlights = [
+        "Showcase products, specs & certifications",
+        "Direct RFQ & buyer/distributor inquiry routing",
+        "Downloadable product catalog & technical spec sheets",
+      ];
+    } else if (calcType === "landing") {
+      days = "3-5 Business Days";
+      stack = "Next.js / HTML5 + Tailwind + High-Converting Copy";
+      highlights = [
+        "Focused, campaign-ready page for Google Ads",
+        "Sub-second load times & Core Web Vitals optimized",
+        "1-click WhatsApp & instant CRM lead sync",
+      ];
+    } else if (calcType === "redesign") {
+      days = "4-7 Business Days";
+      stack = "Modern Next.js 14 Overhaul + Edge CDN";
+      highlights = [
+        "Modern visual elegance & layout restructuring",
+        "Speed overhaul replacing slow bloated code",
+        "Preserve existing Google SEO with 301 redirects",
       ];
     }
 
@@ -214,85 +234,156 @@ export default function WebsiteDevelopmentLanding() {
 
   const est = getEstimation();
 
-  // Core 6 Services (Strictly Commercial Web Development, NO Government Services)
+  // 6 Types of Websites We Build (Matching Exact Reference Specification)
   const services = [
     {
-      id: "corporate",
-      title: "Corporate & Business Websites",
-      category: "BRAND VISIBILITY",
-      desc: "Modern, responsive multi-page websites engineered to establish authority, present your company's offerings cleanly, and generate qualified commercial leads.",
+      num: "01",
+      id: "business",
+      title: "Business Websites",
+      category: "GROWTH & STARTUPS",
+      desc: "A polished online presence for startups, consultants and growing businesses.",
       features: [
-        "Custom responsive UI/UX designed in Figma",
-        "Interactive enquiry forms with instant lead routing",
-        "Dynamic CMS for easy team content updates",
-        "Domain, SSL & corporate email setup",
+        "Custom responsive UI designed in Figma",
+        "Clear service offerings & authority positioning",
+        "Direct WhatsApp & instant lead inquiry forms",
+        "Fast mobile loading & standard SSL setup",
       ],
-      icon: Layout,
+      icon: Briefcase,
     },
     {
-      id: "landing-pages",
-      title: "Google Ads & PPC Landing Pages",
-      category: "HIGH CONVERSION",
-      desc: "Single-minded, hyper-focused landing pages built to convert paid traffic into paying customers. Maximum speed, zero distractions, proven conversion psychology.",
-      features: [
-        "Sub-second load times for 9+/10 Quality Score",
-        "Direct WhatsApp click-to-chat & phone CTAs",
-        "Clean form validation with instant lead alerts",
-        "UTM parameter tracking & Google Ads Tag setup",
-      ],
-      icon: Zap,
-    },
-    {
+      num: "02",
       id: "ecommerce",
-      title: "E-Commerce Stores & Catalogs",
+      title: "E-commerce Websites",
       category: "ONLINE SALES",
-      desc: "High-speed online storefronts built on Shopify, WooCommerce, or custom Next.js Commerce. Engineered for smooth checkouts and zero cart abandonment.",
+      desc: "Product catalogues, shopping carts and payment-ready storefront experiences.",
       features: [
-        "Automated Razorpay, Cashfree & UPI gateway setup",
-        "Fast mobile-first checkout & product filtering",
+        "Razorpay, Cashfree & UPI instant checkout",
+        "Product catalog with custom filters & categories",
+        "Mobile-first friction-free shopping cart",
         "Automated WhatsApp order confirmation alerts",
-        "Inventory tracking & shipping integration",
       ],
       icon: ShoppingBag,
     },
     {
-      id: "web-apps",
-      title: "Custom Web Applications & Portals",
-      category: "SCALABLE TECH",
-      desc: "Bespoke client portals, custom business dashboards, and web applications built with modern React, Next.js, and secure databases.",
+      num: "03",
+      id: "corporate",
+      title: "Corporate Websites",
+      category: "ENTERPRISE & TRUST",
+      desc: "Build credibility with a clear company profile, services and business information.",
       features: [
-        "Secure user authentication & role management",
-        "Interactive analytics dashboards & data visualization",
-        "Third-party REST API & webhook integrations",
-        "Automated background workflows & notifications",
+        "Multi-page corporate architecture & leadership profile",
+        "Investor, governance & compliance documentation sections",
+        "Integrated CMS for effortless internal updates",
+        "Custom domain, SSL & corporate email setup",
       ],
-      icon: Code2,
+      icon: Building2,
     },
     {
-      id: "redesign-speed",
-      title: "Website Redesign & Speed 90+",
-      category: "PERFORMANCE",
-      desc: "Transform outdated, slow-loading websites into fast, modern digital powerhouses. Optimized for high Google PageSpeed scores, fast mobile rendering, and modern visual design.",
+      num: "04",
+      id: "manufacturing",
+      title: "Manufacturing Websites",
+      category: "B2B & INDUSTRIAL",
+      desc: "Showcase products, capabilities and certifications to reach buyers and distributors.",
       features: [
-        "Full code overhaul & legacy cleanup",
-        "Modern glassmorphism / dark / luxury UI refresh",
-        "Image optimization (WebP/AVIF) & edge CDN caching",
-        "Preserve existing SEO rankings with 301 redirects",
+        "Machinery specs, factory capacity & ISO/ISI badge display",
+        "Bulk quote (RFQ) & distributor enquiry routing",
+        "Downloadable product spec sheets & PDF catalogs",
+        "Geographic distributor & buyer network mapping",
       ],
+      icon: Factory,
+    },
+    {
+      num: "05",
+      id: "landing-pages",
+      title: "Landing Pages",
+      category: "GOOGLE ADS & PPC",
+      desc: "Focused, campaign-ready pages designed to turn visitors into enquiries.",
+      features: [
+        "Single-minded conversion layout matching ad keywords",
+        "Sub-second load times for higher Google Ad Quality Score",
+        "1-click WhatsApp & call action drawers",
+        "UTM parameter tracking & Google Ads conversion tags",
+      ],
+      icon: Zap,
+    },
+    {
+      num: "06",
+      id: "website-redesign",
+      title: "Website Redesign",
+      category: "PERFORMANCE & UX",
+      desc: "Give an outdated website a modern look, better structure and improved usability.",
+      features: [
+        "Full UI/UX refresh with modern design standards",
+        "Code overhaul replacing slow, bloated legacy plugins",
+        "Preserve existing Google SEO rankings with 301 redirects",
+        "Core Web Vitals & mobile responsiveness upgrade",
+      ],
+      icon: RefreshCw,
+      highlight: true,
+    },
+  ];
+
+  // Live Client Sample Projects
+  const sampleProjects = [
+    {
+      id: "jayfinsolimf",
+      title: "Jay Finsol IMF",
+      category: "CORPORATE & FINANCE",
+      url: "https://jayfinsolimf.com/",
+      domain: "jayfinsolimf.com",
+      badge: "Financial & Insurance Portal",
+      line1: "Corporate insurance & financial advisory portal for comparing Life, Health, and Mutual Fund plans.",
+      line2: "Features streamlined POSP agent onboarding, advisor consultations, and direct inquiry capture.",
+      tags: ["Corporate Portal", "Lead Routing", "POSP Onboarding", "Responsive UI"],
+      icon: Building2,
+    },
+    {
+      id: "trayojack",
+      title: "Trayojack Connections",
+      category: "MANUFACTURING & B2B",
+      url: "https://trayojack.com/",
+      domain: "trayojack.com",
+      badge: "CCTV & Network Hardware",
+      line1: "Specialized B2B industrial manufacturing platform for CCTV cables, fiber optics, and server racks.",
+      line2: "Engineered with technical product specs, downloadable catalogs, and nationwide distributor RFQ routing.",
+      tags: ["B2B Catalog", "Distributor RFQ", "Product Specs", "Fast Edge Delivery"],
+      icon: Factory,
+    },
+    {
+      id: "rishikeshherbs",
+      title: "Rishikesh Herbs Natural",
+      category: "E-COMMERCE & WELLNESS",
+      url: "https://rishikeshherbsnatural.com/",
+      domain: "rishikeshherbsnatural.com",
+      badge: "D2C Ayurvedic Storefront",
+      line1: "Direct-to-consumer (D2C) Ayurvedic wellness and joint pain relief e-commerce storefront.",
+      line2: "Built with mobile-friendly product catalogs, GMP certification trust markers, and fast checkout flow.",
+      tags: ["E-Commerce Store", "Payment Gateway", "WhatsApp Sync", "Mobile Optimized"],
+      icon: ShoppingBag,
+    },
+    {
+      id: "ezdoors",
+      title: "EZDOORS",
+      category: "ARCHITECTURAL & WOOD",
+      url: "https://ezdoors.in/",
+      domain: "ezdoors.in",
+      badge: "Teak Wood Door Manufacturer",
+      line1: "Premium architectural manufacturing website showcasing handcrafted Teak Wood and designer doors.",
+      line2: "High-resolution design galleries, custom sizing inquiries, and digital catalogs for builders & homeowners.",
+      tags: ["Architectural Showcase", "Custom Sizing RFQ", "High-Res Gallery", "Fast CDN"],
+      icon: Layout,
+    },
+    {
+      id: "katakirrmasale",
+      title: "Katakirr Masale",
+      category: "FMCG & FOOD BRAND",
+      url: "https://katakirrmasale.com/",
+      domain: "katakirrmasale.com",
+      badge: "Authentic Spices & Blends",
+      line1: "Authentic FMCG food brand platform presenting traditional Kolhapuri spices and blended powders.",
+      line2: "Engineered to build customer brand trust while driving bulk distributor, dealer, and wholesale inquiries.",
+      tags: ["Brand Identity", "Wholesale Inquiries", "Product Range", "WhatsApp Sync"],
       icon: Flame,
-    },
-    {
-      id: "cloud-hosting",
-      title: "Cloud Deployment & Maintenance",
-      category: "RELIABILITY",
-      desc: "Reliable cloud hosting on Vercel, AWS, or Cloudflare with secure SSL encryption, regular backups, and dedicated technical maintenance.",
-      features: [
-        "Automated Git deployment & regular system updates",
-        "Global edge network with multi-region CDN",
-        "Daily automated database & file backups",
-        "Dedicated monthly engineer support hours",
-      ],
-      icon: ShieldCheck,
     },
   ];
 
@@ -472,6 +563,13 @@ export default function WebsiteDevelopmentLanding() {
             </button>
             <button
               type="button"
+              onClick={(e) => scrollToSection(e, "projects")}
+              className="hover:text-orange-400 transition-colors cursor-pointer"
+            >
+              Live Work
+            </button>
+            <button
+              type="button"
               onClick={(e) => scrollToSection(e, "architecture")}
               className="hover:text-orange-400 transition-colors cursor-pointer"
             >
@@ -548,6 +646,16 @@ export default function WebsiteDevelopmentLanding() {
                 className="py-1 text-left hover:text-orange-400 cursor-pointer"
               >
                 Services
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  scrollToSection(e, "projects");
+                }}
+                className="py-1 text-left hover:text-orange-400 cursor-pointer"
+              >
+                Live Work
               </button>
               <button
                 type="button"
@@ -836,7 +944,7 @@ export default function WebsiteDevelopmentLanding() {
                 <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   6
                 </p>
-                <p className="text-xs font-semibold text-gray-400">Core Web Services</p>
+                <p className="text-xs font-semibold text-gray-400">Website Specializations</p>
               </div>
             </div>
 
@@ -870,51 +978,62 @@ export default function WebsiteDevelopmentLanding() {
       </section>
 
       {/* ============================================================== */}
-      {/* 4. SIX CORE SERVICES (Strictly Commercial Web Development)      */}
+      {/* 4. SIX TYPES OF WEBSITES WE BUILD (Commercial Specification)    */}
       {/* ============================================================== */}
       <section id="services" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5">
         <div className="max-w-7xl mx-auto space-y-12">
           {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wider uppercase">
-              End-to-End Capabilities
+              Website Specializations
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
-              Commercial Web Solutions Built for Real Results
+              Types of Websites We Build
             </h2>
             <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-              Every website we build is crafted to convert visitors into inquiries, scale effortlessly with your traffic, and reinforce your brand's market leadership.
+              From high-conversion landing pages to industrial manufacturing portals, we build tailored web experiences engineered to turn traffic into qualified inquiries.
             </p>
           </div>
 
-          {/* 6 Services Grid */}
+          {/* 6 Types of Websites Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((srv) => {
               const Icon = srv.icon;
               return (
                 <div
                   key={srv.id}
-                  className="group bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-orange-500/40 rounded-2xl p-6 sm:p-7 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 shadow-lg shadow-black/20"
+                  className={`group relative rounded-2xl p-6 sm:p-7 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 shadow-lg shadow-black/20 ${
+                    srv.highlight
+                      ? "bg-gradient-to-b from-orange-500/[0.08] via-white/[0.03] to-white/[0.02] border border-orange-500/40 hover:border-orange-500/70"
+                      : "bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-orange-500/30"
+                  }`}
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/25 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
-                        <Icon size={24} />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-gray-400">
-                        {srv.category}
+                      <span className="text-sm font-mono font-extrabold text-gray-500 group-hover:text-orange-400 transition-colors">
+                        {srv.num}
                       </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-gray-400">
+                          {srv.category}
+                        </span>
+                        <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/25 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
+                          <Icon size={20} />
+                        </div>
+                      </div>
                     </div>
 
-                    <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors">
-                      {srv.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
-                      {srv.desc}
-                    </p>
+                    <div>
+                      <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors">
+                        {srv.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-gray-300 leading-relaxed mt-2 font-normal">
+                        {srv.desc}
+                      </p>
+                    </div>
 
                     {/* Features checklist */}
-                    <div className="pt-2 space-y-2 border-t border-white/5">
+                    <div className="pt-3 space-y-2 border-t border-white/5">
                       {srv.features.map((feat, i) => (
                         <div key={i} className="flex items-start gap-2 text-xs text-gray-300">
                           <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0 mt-0.5" />
@@ -930,10 +1049,10 @@ export default function WebsiteDevelopmentLanding() {
                         setFormData((p) => ({ ...p, serviceType: srv.title }));
                         setModalOpen(true);
                       }}
-                      className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1.5 transition-colors cursor-pointer"
+                      className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1.5 transition-colors cursor-pointer group/btn"
                     >
-                      <span>Request Custom Scope</span>
-                      <ArrowRight size={13} />
+                      <span>Discuss this service</span>
+                      <ArrowRight size={13} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                     </button>
                     <span className="text-[11px] font-mono text-gray-500">
                       In-House
@@ -942,6 +1061,171 @@ export default function WebsiteDevelopmentLanding() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================== */}
+      {/* 4B. FEATURED CLIENT DELIVERIES / LIVE PROJECT SAMPLES         */}
+      {/* ============================================================== */}
+      <section id="projects" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#090A0E]">
+        <div className="max-w-7xl mx-auto space-y-12">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wider uppercase">
+              Recent Client Deliveries
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+              Real Websites Engineered for Real Growth
+            </h2>
+            <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+              Explore live projects delivered across financial advisory, industrial B2B manufacturing, D2C Ayurvedic wellness, architectural woodcraft, and authentic FMCG food brands.
+            </p>
+          </div>
+
+          {/* 6 Cards Grid (5 Live Projects + 1 Next Project CTA) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sampleProjects.map((proj) => {
+              const Icon = proj.icon;
+              return (
+                <div
+                  key={proj.id}
+                  className="group relative rounded-2xl p-6 sm:p-7 bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-orange-500/40 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 shadow-lg shadow-black/20"
+                >
+                  <div className="space-y-4">
+                    {/* Top bar with Live indicator & domain */}
+                    <div className="flex items-center justify-between pb-3 border-b border-white/5">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">
+                          Live Website
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-mono text-gray-400 group-hover:text-gray-200 transition-colors">
+                        {proj.domain}
+                      </span>
+                    </div>
+
+                    {/* Icon & Category */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-orange-400">
+                        {proj.category}
+                      </span>
+                      <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/25 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
+                        <Icon size={20} />
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <div>
+                      <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors">
+                        {proj.title}
+                      </h3>
+                      <p className="text-[11px] font-mono text-gray-400 mt-0.5">
+                        {proj.badge}
+                      </p>
+                    </div>
+
+                    {/* 2-Line Overview */}
+                    <div className="space-y-2 pt-2 border-t border-white/5 text-xs text-gray-300 leading-relaxed">
+                      <div className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0 mt-1.5" />
+                        <span>{proj.line1}</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0 mt-1.5" />
+                        <span>{proj.line2}</span>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1.5 pt-2">
+                      {proj.tags.map((tag, i) => (
+                        <span
+                          key={i}
+                          className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-white/[0.03] border border-white/5 text-gray-400"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions: Visit Live Site & Get Similar Build */}
+                  <div className="pt-5 mt-5 border-t border-white/5 flex items-center justify-between gap-3">
+                    <a
+                      href={proj.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500 text-orange-400 hover:text-white border border-orange-500/25 text-xs font-bold transition-all group/btn"
+                    >
+                      <span>Visit Live Site</span>
+                      <ExternalLink size={12} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                    </a>
+
+                    <button
+                      onClick={() => {
+                        setFormData((p) => ({
+                          ...p,
+                          details: `Interested in website architecture similar to ${proj.title} (${proj.domain})`,
+                        }));
+                        setModalOpen(true);
+                      }}
+                      className="text-xs font-semibold text-gray-400 hover:text-white transition cursor-pointer"
+                    >
+                      Get Similar Build ↗
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Card 6: Launch Your Project Next CTA */}
+            <div className="relative rounded-2xl p-6 sm:p-7 bg-gradient-to-br from-orange-500/15 via-[#12141C] to-[#0A0B10] border-2 border-orange-500/40 hover:border-orange-500 flex flex-col justify-between space-y-6 shadow-xl shadow-orange-500/10 transition-all duration-300 hover:-translate-y-1">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-orange-500/20 border border-orange-500/30 text-orange-400">
+                    YOUR PROJECT NEXT
+                  </span>
+                  <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center text-white font-black text-xs">
+                    ✦
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-bold text-white">
+                    Ready to Build Your Website?
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-300 leading-relaxed mt-2">
+                    Join ambitious Indian businesses that scale with Koop India's fast, mobile-first web engineering. Get a custom scope and transparent turnaround roadmap.
+                  </p>
+                </div>
+
+                <div className="pt-2 space-y-2 border-t border-white/10 text-xs text-gray-300">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
+                    <span>Sub-second loading & Core Web Vitals optimized</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
+                    <span>Direct WhatsApp & CRM lead synchronization</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
+                    <span>100% full source code & intellectual property ownership</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-white/10">
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="w-full py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Request Custom Proposal ↗</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -971,12 +1255,14 @@ export default function WebsiteDevelopmentLanding() {
                 <label className="block text-xs font-bold text-gray-300 mb-2.5 uppercase tracking-wider">
                   1. Select Website Type
                 </label>
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {[
-                    { id: "landing", label: "Ads Landing Page", sub: "PPC Conversion" },
-                    { id: "business", label: "Business Website", sub: "Multi-page Corporate" },
-                    { id: "ecommerce", label: "E-Commerce Store", sub: "Online Storefront" },
-                    { id: "webapp", label: "Custom Web App", sub: "Portal & Dashboard" },
+                    { id: "business", label: "Business Websites", sub: "Startups & Services" },
+                    { id: "ecommerce", label: "E-commerce Websites", sub: "Store & Catalog" },
+                    { id: "corporate", label: "Corporate Websites", sub: "Company Profile" },
+                    { id: "manufacturing", label: "Manufacturing Websites", sub: "B2B & Distribution" },
+                    { id: "landing", label: "Landing Pages", sub: "Google Ads & PPC" },
+                    { id: "redesign", label: "Website Redesign", sub: "Modern UI & Usability" },
                   ].map((t) => (
                     <button
                       key={t.id}
@@ -1110,13 +1396,17 @@ export default function WebsiteDevelopmentLanding() {
                     setFormData((prev) => ({
                       ...prev,
                       serviceType:
-                        calcType === "landing"
-                          ? "PPC Landing Page"
-                          : calcType === "business"
-                          ? "Corporate Business Website"
+                        calcType === "business"
+                          ? "Business Websites"
                           : calcType === "ecommerce"
-                          ? "E-Commerce Storefront"
-                          : "Custom Web Application",
+                          ? "E-commerce Websites"
+                          : calcType === "corporate"
+                          ? "Corporate Websites"
+                          : calcType === "manufacturing"
+                          ? "Manufacturing Websites"
+                          : calcType === "landing"
+                          ? "Landing Pages"
+                          : "Website Redesign",
                       projectScope: `${calcPages} pages, ${est.days} estimated timeline`,
                     }));
                     setModalOpen(true);
@@ -1816,11 +2106,12 @@ export default function WebsiteDevelopmentLanding() {
                       onChange={handleChange}
                       className="w-full px-4 py-3 rounded-xl bg-[#141722] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm outline-none transition"
                     >
-                      <option value="Corporate Business Website">Corporate Business Website</option>
-                      <option value="Google Ads / PPC Landing Page">Google Ads / PPC Landing Page</option>
-                      <option value="E-Commerce Store">E-Commerce Store</option>
-                      <option value="Custom Web Application">Custom Web Application / Portal</option>
-                      <option value="Website Redesign & Speed Optimization">Website Redesign & Speed 90+</option>
+                      <option value="Business Websites">Business Websites</option>
+                      <option value="E-commerce Websites">E-commerce Websites</option>
+                      <option value="Corporate Websites">Corporate Websites</option>
+                      <option value="Manufacturing Websites">Manufacturing Websites</option>
+                      <option value="Landing Pages">Landing Pages</option>
+                      <option value="Website Redesign">Website Redesign</option>
                     </select>
                   </div>
 
@@ -1988,6 +2279,13 @@ export default function WebsiteDevelopmentLanding() {
               className="hover:text-white transition cursor-pointer"
             >
               Services
+            </button>
+            <button
+              type="button"
+              onClick={(e) => scrollToSection(e, "projects")}
+              className="hover:text-white transition cursor-pointer"
+            >
+              Live Work
             </button>
             <button
               type="button"
@@ -2164,10 +2462,11 @@ export default function WebsiteDevelopmentLanding() {
                       onChange={handleChange}
                       className="w-full px-3 py-2.5 rounded-xl bg-[#141722] border border-white/15 focus:border-orange-500 text-white text-xs outline-none"
                     >
-                      <option value="Corporate Business Website">Corporate Business Website</option>
-                      <option value="Google Ads / PPC Landing Page">PPC Landing Page</option>
-                      <option value="E-Commerce Store">E-Commerce Store</option>
-                      <option value="Custom Web App">Custom Web App</option>
+                      <option value="Business Websites">Business Websites</option>
+                      <option value="E-commerce Websites">E-commerce Websites</option>
+                      <option value="Corporate Websites">Corporate Websites</option>
+                      <option value="Manufacturing Websites">Manufacturing Websites</option>
+                      <option value="Landing Pages">Landing Pages</option>
                       <option value="Website Redesign">Website Redesign</option>
                     </select>
                   </div>
