@@ -35,6 +35,7 @@ import {
   Building2,
   Factory,
   RefreshCw,
+  Store,
   X,
   Menu,
 } from "lucide-react";
@@ -210,6 +211,22 @@ export default function WebsiteDevelopmentLanding() {
         "Speed overhaul replacing slow bloated code",
         "Preserve existing Google SEO with 301 redirects",
       ];
+    } else if (calcType === "shopify") {
+      days = "5-8 Business Days";
+      stack = "Shopify OS 2.0 + Liquid + Razorpay / UPI";
+      highlights = [
+        "Custom Shopify theme & conversion layout",
+        "Payment gateway & automated shipping setup",
+        "Inventory tracking & WhatsApp order sync",
+      ];
+    } else if (calcType === "wordpress") {
+      days = "4-7 Business Days";
+      stack = "WordPress + Custom Theme + LiteSpeed Cache";
+      highlights = [
+        "Easy drag-and-drop CMS management",
+        "Lightweight speed optimization & security",
+        "Full on-page SEO & contact enquiry forms",
+      ];
     }
 
     if (calcPages === "10+") {
@@ -320,6 +337,34 @@ export default function WebsiteDevelopmentLanding() {
       ],
       icon: RefreshCw,
       highlight: true,
+    },
+    {
+      num: "07",
+      id: "shopify-websites",
+      title: "Shopify Websites",
+      category: "D2C & STOREFRONTS",
+      desc: "Custom high-converting Shopify stores with theme development, app integrations, and fast checkouts.",
+      features: [
+        "Bespoke Shopify theme design & conversion UX",
+        "Razorpay, Cashfree & UPI instant payment gateway",
+        "Product variants, inventory & shipping rate setup",
+        "Abandoned cart recovery & WhatsApp order sync",
+      ],
+      icon: Store,
+    },
+    {
+      num: "08",
+      id: "wordpress-websites",
+      title: "WordPress Websites",
+      category: "DYNAMIC CMS",
+      desc: "Fast, flexible WordPress and WooCommerce websites with custom themes, zero bloat, and easy team editing.",
+      features: [
+        "Intuitive drag-and-drop CMS for effortless updates",
+        "Custom lightweight theme with high-speed caching",
+        "WooCommerce catalog & secure enquiry forms",
+        "Full on-page SEO & security firewall setup",
+      ],
+      icon: Globe,
     },
   ];
 
@@ -942,7 +987,7 @@ export default function WebsiteDevelopmentLanding() {
               </div>
               <div>
                 <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  6
+                  8
                 </p>
                 <p className="text-xs font-semibold text-gray-400">Website Specializations</p>
               </div>
@@ -978,7 +1023,7 @@ export default function WebsiteDevelopmentLanding() {
       </section>
 
       {/* ============================================================== */}
-      {/* 4. SIX TYPES OF WEBSITES WE BUILD (Commercial Specification)    */}
+      {/* 4. EIGHT TYPES OF WEBSITES WE BUILD (Commercial Specification)  */}
       {/* ============================================================== */}
       <section id="services" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5">
         <div className="max-w-7xl mx-auto space-y-12">
@@ -991,12 +1036,12 @@ export default function WebsiteDevelopmentLanding() {
               Types of Websites We Build
             </h2>
             <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-              From high-conversion landing pages to industrial manufacturing portals, we build tailored web experiences engineered to turn traffic into qualified inquiries.
+              From Shopify D2C stores and dynamic WordPress websites to manufacturing catalogs, corporate portals, and PPC landing pages—we engineer digital experiences tailored for real growth.
             </p>
           </div>
 
-          {/* 6 Types of Websites Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* 8 Types of Websites Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {services.map((srv) => {
               const Icon = srv.icon;
               return (
@@ -1255,7 +1300,7 @@ export default function WebsiteDevelopmentLanding() {
                 <label className="block text-xs font-bold text-gray-300 mb-2.5 uppercase tracking-wider">
                   1. Select Website Type
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {[
                     { id: "business", label: "Business Websites", sub: "Startups & Services" },
                     { id: "ecommerce", label: "E-commerce Websites", sub: "Store & Catalog" },
@@ -1263,6 +1308,8 @@ export default function WebsiteDevelopmentLanding() {
                     { id: "manufacturing", label: "Manufacturing Websites", sub: "B2B & Distribution" },
                     { id: "landing", label: "Landing Pages", sub: "Google Ads & PPC" },
                     { id: "redesign", label: "Website Redesign", sub: "Modern UI & Usability" },
+                    { id: "shopify", label: "Shopify Websites", sub: "D2C Brand Store" },
+                    { id: "wordpress", label: "WordPress Websites", sub: "Dynamic Custom CMS" },
                   ].map((t) => (
                     <button
                       key={t.id}
@@ -1406,7 +1453,11 @@ export default function WebsiteDevelopmentLanding() {
                           ? "Manufacturing Websites"
                           : calcType === "landing"
                           ? "Landing Pages"
-                          : "Website Redesign",
+                          : calcType === "redesign"
+                          ? "Website Redesign"
+                          : calcType === "shopify"
+                          ? "Shopify Websites"
+                          : "WordPress Websites",
                       projectScope: `${calcPages} pages, ${est.days} estimated timeline`,
                     }));
                     setModalOpen(true);
@@ -2112,6 +2163,8 @@ export default function WebsiteDevelopmentLanding() {
                       <option value="Manufacturing Websites">Manufacturing Websites</option>
                       <option value="Landing Pages">Landing Pages</option>
                       <option value="Website Redesign">Website Redesign</option>
+                      <option value="Shopify Websites">Shopify Websites / Stores</option>
+                      <option value="WordPress Websites">WordPress Websites / CMS</option>
                     </select>
                   </div>
 
@@ -2468,6 +2521,8 @@ export default function WebsiteDevelopmentLanding() {
                       <option value="Manufacturing Websites">Manufacturing Websites</option>
                       <option value="Landing Pages">Landing Pages</option>
                       <option value="Website Redesign">Website Redesign</option>
+                      <option value="Shopify Websites">Shopify Websites / Stores</option>
+                      <option value="WordPress Websites">WordPress Websites / CMS</option>
                     </select>
                   </div>
                   <div>
