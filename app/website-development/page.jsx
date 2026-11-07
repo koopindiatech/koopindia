@@ -38,6 +38,7 @@ import {
   Store,
   X,
   Menu,
+  AlertCircle,
 } from "lucide-react";
 
 const PHONE_NUMBER = "+91 95998 26131";
@@ -87,6 +88,11 @@ export default function WebsiteDevelopmentLanding() {
     projectScope: "New Website from Scratch",
     details: "",
   });
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    phone: "",
+    email: "",
+  });
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -98,19 +104,109 @@ export default function WebsiteDevelopmentLanding() {
   const [calcSeo, setCalcSeo] = useState(true);
   const [calcWhatsApp, setCalcWhatsApp] = useState(true);
 
+  // Helper to extract clean 10-digit Indian phone number
+  const getCleanPhone = (phoneStr) => {
+    if (!phoneStr) return "";
+    let cleaned = phoneStr.replace(/\D/g, "");
+    if (cleaned.startsWith("91") && cleaned.length > 10) {
+      cleaned = cleaned.slice(2);
+    }
+    if (cleaned.startsWith("0")) {
+      cleaned = cleaned.replace(/^0+/, "");
+    }
+    return cleaned;
+  };
+
+  const isValidPhone = (phoneStr) => {
+    const cleaned = getCleanPhone(phoneStr);
+    return /^[6-9]\d{9}$/.test(cleaned);
+  };
+
+  const isValidEmail = (emailStr) => {
+    if (!emailStr || !emailStr.trim()) return false;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(emailStr.trim());
+  };
+
   // Form input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+    if (submitError) {
+      setSubmitError("");
+    }
+  };
+
+  // Dedicated phone input change handler allowing numbers, +, space, hyphen
+  const handlePhoneChange = (e) => {
+    const val = e.target.value.replace(/[^\d+\s()-]/g, "");
+    setFormData((prev) => ({ ...prev, phone: val }));
+    if (formErrors.phone) {
+      setFormErrors((prev) => ({ ...prev, phone: "" }));
+    }
+    if (submitError) {
+      setSubmitError("");
+    }
+  };
+
+  const handlePhoneBlur = () => {
+    if (!formData.phone.trim()) return;
+    if (!isValidPhone(formData.phone)) {
+      setFormErrors((prev) => ({
+        ...prev,
+        phone: "Please enter a valid 10-digit mobile number.",
+      }));
+    } else {
+      setFormErrors((prev) => ({ ...prev, phone: "" }));
+    }
+  };
+
+  const handleEmailBlur = () => {
+    if (!formData.email.trim()) return;
+    if (!isValidEmail(formData.email)) {
+      setFormErrors((prev) => ({
+        ...prev,
+        email: "Please enter a valid email address (e.g. rahul@company.com).",
+      }));
+    } else {
+      setFormErrors((prev) => ({ ...prev, email: "" }));
+    }
   };
 
   // Submit Lead to Firestore CRM (uses shared addEnquiry)
   const handleSubmitLead = async (e, sourceName = "google_ads_website_development") => {
     if (e) e.preventDefault();
-    if (!formData.name.trim() || !formData.phone.trim()) {
-      setSubmitError("Please enter your name and phone number.");
+
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Full name is required.";
+    }
+
+    const cleanedPhone = getCleanPhone(formData.phone);
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required.";
+    } else if (!/^[6-9]\d{9}$/.test(cleanedPhone)) {
+      newErrors.phone = "Enter a valid 10-digit mobile number.";
+    }
+
+    const emailTrimmed = formData.email.trim();
+    if (!emailTrimmed) {
+      newErrors.email = "Email address is required.";
+    } else if (!isValidEmail(emailTrimmed)) {
+      newErrors.email = "Enter a valid email address (e.g. rahul@company.com).";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
+      setSubmitError("Please fill in a valid 10-digit mobile number and email address to proceed.");
       return;
     }
+
+    setFormErrors({ name: "", phone: "", email: "" });
     setSubmitting(true);
     setSubmitError("");
 
@@ -120,11 +216,11 @@ export default function WebsiteDevelopmentLanding() {
         displayName: formData.name.trim(),
         company: formData.company.trim() || formData.name.trim(),
         displayCompany: formData.company.trim() || formData.name.trim(),
-        phone: formData.phone.trim(),
-        mobile: formData.phone.trim(),
-        displayPhone: formData.phone.trim(),
-        email: formData.email.trim() || "",
-        displayEmail: formData.email.trim() || "",
+        phone: cleanedPhone,
+        mobile: cleanedPhone,
+        displayPhone: cleanedPhone,
+        email: emailTrimmed,
+        displayEmail: emailTrimmed,
         service: "Website Development",
         category: "Website Development",
         displayCategory: "Website Development",
@@ -146,6 +242,15 @@ export default function WebsiteDevelopmentLanding() {
 
       setSubmitSuccess(true);
       setSubmitting(false);
+      setFormData({
+        name: "",
+        company: "",
+        phone: "",
+        email: "",
+        serviceType: "Business Websites",
+        projectScope: "New Website from Scratch",
+        details: "",
+      });
     } catch (err) {
       console.error("Failed to submit lead:", err);
       setSubmitError("Something went wrong. Please call or WhatsApp us directly.");
@@ -2075,7 +2180,20 @@ export default function WebsiteDevelopmentLanding() {
                     <span>Chat on WhatsApp Directly</span>
                   </a>
                   <button
-                    onClick={() => setSubmitSuccess(false)}
+                    onClick={() => {
+                      setSubmitSuccess(false);
+                      setFormData({
+                        name: "",
+                        company: "",
+                        phone: "",
+                        email: "",
+                        serviceType: "Business Websites",
+                        projectScope: "New Website from Scratch",
+                        details: "",
+                      });
+                      setFormErrors({ name: "", phone: "", email: "" });
+                      setSubmitError("");
+                    }}
                     className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/15 text-white font-bold text-xs"
                   >
                     Submit Another Inquiry
@@ -2095,9 +2213,14 @@ export default function WebsiteDevelopmentLanding() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="Enter your full name"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition"
+                      placeholder="e.g. Rahul Sharma"
+                      className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border ${
+                        formErrors.name ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
+                      } text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition`}
                     />
+                    {formErrors.name && (
+                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.name}</p>
+                    )}
                   </div>
 
                   <div>
@@ -2109,10 +2232,17 @@ export default function WebsiteDevelopmentLanding() {
                       name="phone"
                       required
                       value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="Enter 10-digit mobile number"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition"
+                      onChange={handlePhoneChange}
+                      onBlur={handlePhoneBlur}
+                      maxLength={14}
+                      placeholder="e.g. +91 98765 43210"
+                      className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border ${
+                        formErrors.phone ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
+                      } text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition`}
                     />
+                    {formErrors.phone && (
+                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.phone}</p>
+                    )}
                   </div>
                 </div>
 
@@ -2133,16 +2263,23 @@ export default function WebsiteDevelopmentLanding() {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider">
-                      Email Address
+                      Email Address *
                     </label>
                     <input
                       type="email"
                       name="email"
+                      required
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="Enter your email address"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition"
+                      onBlur={handleEmailBlur}
+                      placeholder="rahul@company.com"
+                      className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border ${
+                        formErrors.email ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
+                      } text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition`}
                     />
+                    {formErrors.email && (
+                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.email}</p>
+                    )}
                   </div>
                 </div>
 
@@ -2196,13 +2333,16 @@ export default function WebsiteDevelopmentLanding() {
                     rows={3}
                     value={formData.details}
                     onChange={handleChange}
-                    placeholder="Describe your requirements, preferred timeline, or paste reference links..."
+                    placeholder="Briefly describe what you want to achieve..."
                     className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition resize-none"
                   />
                 </div>
 
                 {submitError && (
-                  <p className="text-red-400 text-xs font-bold">{submitError}</p>
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center gap-2">
+                    <AlertCircle size={16} className="flex-shrink-0" />
+                    <span>{submitError}</span>
+                  </div>
                 )}
 
                 <button
@@ -2417,8 +2557,10 @@ export default function WebsiteDevelopmentLanding() {
               onClick={() => {
                 setModalOpen(false);
                 setSubmitSuccess(false);
+                setSubmitError("");
+                setFormErrors({ name: "", phone: "", email: "" });
               }}
-              className="absolute top-5 right-5 p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition"
+              className="absolute top-5 right-5 p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition cursor-pointer"
               aria-label="Close modal"
             >
               <X size={18} />
@@ -2450,8 +2592,10 @@ export default function WebsiteDevelopmentLanding() {
                     onClick={() => {
                       setSubmitSuccess(false);
                       setModalOpen(false);
+                      setSubmitError("");
+                      setFormErrors({ name: "", phone: "", email: "" });
                     }}
-                    className="px-6 py-2.5 rounded-full bg-orange-500 text-white font-bold text-xs"
+                    className="px-6 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition cursor-pointer"
                   >
                     Close
                   </button>
@@ -2469,12 +2613,17 @@ export default function WebsiteDevelopmentLanding() {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Enter your full name"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs placeholder:text-gray-400 outline-none"
+                    placeholder="e.g. Rahul Sharma"
+                    className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border ${
+                      formErrors.name ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
+                    } text-white text-xs placeholder:text-gray-400 outline-none`}
                   />
+                  {formErrors.name && (
+                    <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.name}</p>
+                  )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-gray-300 mb-1 uppercase tracking-wider">
                       Phone Number *
@@ -2484,23 +2633,37 @@ export default function WebsiteDevelopmentLanding() {
                       name="phone"
                       required
                       value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="Enter 10-digit mobile number"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs placeholder:text-gray-400 outline-none"
+                      onChange={handlePhoneChange}
+                      onBlur={handlePhoneBlur}
+                      maxLength={14}
+                      placeholder="e.g. +91 98765 43210"
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border ${
+                        formErrors.phone ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
+                      } text-white text-xs placeholder:text-gray-400 outline-none`}
                     />
+                    {formErrors.phone && (
+                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.phone}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-[11px] font-bold text-gray-300 mb-1 uppercase tracking-wider">
-                      Email Address
+                      Email Address *
                     </label>
                     <input
                       type="email"
                       name="email"
+                      required
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="Enter your email address"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs placeholder:text-gray-400 outline-none"
+                      onBlur={handleEmailBlur}
+                      placeholder="rahul@company.com"
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border ${
+                        formErrors.email ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
+                      } text-white text-xs placeholder:text-gray-400 outline-none`}
                     />
+                    {formErrors.email && (
+                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.email}</p>
+                    )}
                   </div>
                 </div>
 
@@ -2552,13 +2715,16 @@ export default function WebsiteDevelopmentLanding() {
                     rows={2}
                     value={formData.details}
                     onChange={handleChange}
-                    placeholder="Describe your requirements, preferred timeline, or reference links..."
+                    placeholder="Briefly describe what you want to achieve..."
                     className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs placeholder:text-gray-400 outline-none resize-none"
                   />
                 </div>
 
                 {submitError && (
-                  <p className="text-red-400 text-xs font-semibold">{submitError}</p>
+                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center gap-2">
+                    <AlertCircle size={15} className="flex-shrink-0" />
+                    <span>{submitError}</span>
+                  </div>
                 )}
 
                 <button
