@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     q: "How much does GST registration cost in Delhi?",
-    a: "GST registration through the government portal (gst.gov.in) is free. Professional consultant fees in Delhi like Koop India start from ₹2,999 and include expert consultation, document verification, error-free filing, query handling, and GSTIN delivery.",
+    a: "GST registration through the government portal (gst.gov.in) is free. Professional consultant assistance by Koop India is highly affordable and transparent, covering expert CA consultation, document verification, error-free filing, query handling, and guaranteed GSTIN delivery. Contact us for a free quote.",
   },
   {
     q: "Can I get GST registration online from Delhi without visiting any office?",
@@ -164,7 +164,7 @@ const services = [
   },
   {
     name: "Trademark Registration",
-    href: "/documentation-compliance/trademark-registration",
+    href: "/trademark-registration",
     icon: BadgeCheck,
     color: "from-violet-500 to-purple-400",
     lightBg: "#f5f3ff",
@@ -209,6 +209,14 @@ const services = [
     color: "from-orange-500 to-amber-400",
     lightBg: "#fff7ed",
     tag: null,
+  },
+  {
+    name: "Website Development",
+    href: "/website-development",
+    icon: Globe,
+    color: "from-orange-500 to-amber-500",
+    lightBg: "#fff7ed",
+    tag: "High Speed",
   },
 ];
 

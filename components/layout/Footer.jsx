@@ -74,8 +74,8 @@ const Footer = ({ onOpenModal }) => {
               </button>
             </li>
             <li>
-              <Link href="/website-development" className="hover:text-[#F97316]">
-                Website Development
+              <Link href="/custom-website-development" className="hover:text-[#F97316]">
+                Custom Web Development
               </Link>
             </li>
           </ul>
@@ -143,7 +143,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/tech-solutions/website-development"
+                  href="/website-development"
                   className="hover:text-[#F97316]"
                 >
                   Website Development
@@ -223,7 +223,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/documentation-compliance/trademark-registration"
+                  href="/trademark-registration"
                   className="hover:text-[#F97316]"
                 >
                   Trademark Registration

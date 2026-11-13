@@ -4,7 +4,7 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/_next/"],
+        disallow: ["/api/", "/_next/", "/adminpanel/"],
       },
     ],
     sitemap: "https://www.koopindia.com/sitemap.xml",

@@ -31,8 +31,18 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/documentation-compliance/trademark-registration",
+        destination: "/trademark-registration",
+        permanent: true,
+      },
+      {
         source: "/digital-marketing/social-media",
         destination: "/digital-marketing/social-media-marketing",
+        permanent: true,
+      },
+      {
+        source: "/tech-solutions/website-development",
+        destination: "/website-development",
         permanent: true,
       },
     ];

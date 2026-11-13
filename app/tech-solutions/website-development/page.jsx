@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Head from "next/head";
 import {
   CheckCircle,
   ArrowRight,
@@ -81,84 +80,7 @@ const WebsiteDevelopmentPage = () => {
   };
 
   return (
-    <>
-      {/* ================= SEO META ================= */}
-      <Head>
-        <title>
-          Website Development Services India | Business & E-commerce Websites |
-          Koop India
-        </title>
-        <meta
-          name="description"
-          content="Koop India builds high-performance, SEO-optimized websites for startups & MSMEs. Business sites, e-commerce, landing pages & CRM integration. Get a free consultation today!"
-        />
-        <meta name="keywords" content={seoKeywords} />
-        <meta name="robots" content="index, follow" />
-        <link
-          rel="canonical"
-          href="https://www.koopindia.com/tech-solutions/website-development"
-        />
-
-                <meta
-          property="og:title"
-          content="Professional Website Development Services | Koop India"
-        />
-        <meta
-          property="og:description"
-          content="High-converting, SEO-optimized websites built for growth. Business sites, e-commerce & custom solutions."
-        />
-        <meta property="og:type" content="website" />
-        <meta
-          property="og:url"
-          content="https://www.koopindia.com/website-development"
-        />
-        <meta
-          property="og:image"
-          content="https://www.koopindia.com/images/web-dev-og.jpg"
-        />
-
-                <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="Website Development Services | Koop India"
-        />
-        <meta
-          name="twitter:description"
-          content="Build a powerful digital presence with conversion-focused websites. Free consultation available."
-        />
-
-                <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Service",
-              serviceType: "Website Development",
-              provider: {
-                "@type": "Organization",
-                name: "Koop India",
-                url: "https://www.koopindia.com",
-              },
-              areaServed: "India",
-              offers: {
-                "@type": "Offer",
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "9999",
-                },
-                availability: "https://schema.org/InStock",
-              },
-            }),
-          }}
-        />
-      </Head>
-
-      <div className="bg-white text-gray-700 font-sans antialiased">
+    <div className="bg-white text-gray-700 font-sans antialiased">
         {/* ================= HERO SECTION ================= */}
         <section className="relative py-14 px-5 bg-gradient-to-br from-[#0F172A] via-[#141D32] to-[#1a2340] text-white overflow-hidden">
                     <div className="absolute inset-0 opacity-10">
@@ -792,8 +714,7 @@ const WebsiteDevelopmentPage = () => {
         {/* ================= ENQUIRY MODAL ================= */}
         <EnquiryModal isOpen={isOpen} onClose={onCloseModal} />
       </div>
-    </>
-  );
-};
+    );
+  };
 
 export default WebsiteDevelopmentPage;

@@ -12,7 +12,6 @@ const serviceSchema = {
     logo: "https://www.koopindia.com/koopindia-logo.png",
     telephone: "+91-9891233311",
     email: "info@koopindia.com",
-    priceRange: "₹₹",
     openingHours: ["Mo-Sa 09:00-19:00"],
     address: {
       "@type": "PostalAddress",
@@ -63,13 +62,10 @@ const serviceSchema = {
     "GST Return Filing Delhi",
   ],
   description:
-    "Expert GST Registration Consultant in Delhi. 100% online GST registration in Delhi, Noida, Gurugram & pan-India. Get your GSTIN in 7–10 days. Error-free documentation, CA-supervised filing, post-registration compliance support. Starting ₹2,999.",
+    "Expert GST Registration Consultant in Delhi. 100% online GST registration in Delhi, Noida, Gurugram & pan-India. Get your GSTIN in 7–10 days. Error-free documentation, CA-supervised filing, post-registration compliance support.",
   offers: {
     "@type": "Offer",
-    price: "2999",
-    priceCurrency: "INR",
     availability: "https://schema.org/InStock",
-    validFrom: "2025-01-01",
     url: "https://www.koopindia.com/documentation-compliance/gst-registration",
   },
 };
@@ -91,7 +87,7 @@ const faqSchema = {
       name: "How much does GST registration cost in Delhi?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "GST registration through the government portal (gst.gov.in) is free. Professional consultant fees in Delhi like Koop India start from ₹2,999 and include expert consultation, document verification, error-free filing, query handling, and GSTIN delivery.",
+        text: "GST registration through the government portal (gst.gov.in) is free. Professional consultant assistance by Koop India is highly affordable and transparent, covering expert CA consultation, document verification, error-free filing, query handling, and guaranteed GSTIN delivery. Contact us for a free quote.",
       },
     },
     {
@@ -184,7 +180,7 @@ export const metadata = {
   title:
     "GST Registration Consultant in Delhi 2025 | Get GSTIN in 7 Days | Koop India",
   description:
-    "#1 GST registration consultant in Delhi 2025 — get your GSTIN in 7–10 working days. Koop India provides 100% online GST registration in Delhi, Noida, Gurugram & pan-India. CA-supervised, error-free filing. Starting ₹2,999. Free consultation. Also serving Connaught Place, Karol Bagh, Saket, Dwarka, Rohini.",
+    "#1 GST registration consultant in Delhi 2025 — get your GSTIN in 7–10 working days. Koop India provides 100% online GST registration in Delhi, Noida, Gurugram & pan-India. CA-supervised, error-free filing. Free consultation. Also serving Connaught Place, Karol Bagh, Saket, Dwarka, Rohini.",
   keywords:
     "gst registration consultant in delhi, gst registration in delhi 2025, online gst registration delhi, gst number registration delhi, best gst consultant in delhi, gst registration near me delhi, gst registration noida, gst registration gurugram, gst registration gurgaon, gst registration faridabad, gst registration ghaziabad, gst registration consultant near me, gst registration fees in delhi, gstin registration delhi, how to get gst number in delhi, gst registration for small business delhi, gst registration for ecommerce sellers, gst registration for startups delhi, gst registration online india 2025, new gst registration india, gst registration documents required, gst registration procedure india, gst registration for proprietorship, gst registration for private limited company, gst registration for llp, composition scheme gst registration, voluntary gst registration india, gst consultant near me, gst registration connaught place, gst registration karol bagh, gst registration saket, gst registration dwarka, gst registration rohini",
   alternates: {
@@ -194,7 +190,7 @@ export const metadata = {
     title:
       "GST Registration Consultant in Delhi 2025 | Get GSTIN in 7 Days | Koop India",
     description:
-      "Trusted GST registration consultant in Delhi, Noida & Gurugram. 100% online GST registration, CA-supervised, error-free documentation, GSTIN in 7 days. Free consultation. Starting ₹2,999.",
+      "Trusted GST registration consultant in Delhi, Noida & Gurugram. 100% online GST registration, CA-supervised, error-free documentation, GSTIN in 7 days. Free consultation.",
     url: "https://www.koopindia.com/documentation-compliance/gst-registration",
     type: "website",
     locale: "en_IN",
@@ -212,7 +208,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "GST Registration Consultant in Delhi 2025 | Koop India",
     description:
-      "Get GSTIN in 7–10 working days. Expert GST registration consultant in Delhi, Noida, Gurugram & pan-India. Starting ₹2,999. 100% online. Call Koop India.",
+      "Get GSTIN in 7–10 working days. Expert GST registration consultant in Delhi, Noida, Gurugram & pan-India. 100% online. Call Koop India.",
     images: ["https://www.koopindia.com/koopindia-logo.png"],
     creator: "@KoopIndia",
   },

@@ -1,2408 +1,761 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import { addEnquiry } from "@/lib/enquiryService";
+import React, { useState } from "react";
+import Link from "next/link";
 import {
-  ArrowRight,
+  CheckCircle,
   CheckCircle2,
-  Star,
-  Sparkles,
-  Code2,
-  Layout,
-  Smartphone,
-  Zap,
+  ArrowRight,
   ShieldCheck,
   Clock,
+  Code,
+  Layout,
+  Smartphone,
+  Rocket,
+  Search,
+  Zap,
+  Globe,
+  Users,
+  Star,
   ChevronDown,
   Phone,
   Mail,
-  ExternalLink,
-  Send,
-  Layers,
-  Globe,
-  Laptop,
-  ShoppingBag,
-  Check,
-  HelpCircle,
   BarChart3,
-  Flame,
-  Monitor,
-  Database,
-  Server,
   Palette,
-  Users,
-  Briefcase,
+  Server,
+  Layers,
+  Database,
+  Lock,
   Building2,
+  Briefcase,
+  ShoppingBag,
+  Sparkles,
+  HelpCircle,
+  ExternalLink,
+  Award,
   Factory,
-  RefreshCw,
-  Store,
+  Flame,
+  Check,
   X,
-  Menu,
-  AlertCircle,
+  MapPin,
+  FileCheck
 } from "lucide-react";
 
-const PHONE_NUMBER = "+91 95998 26131";
-const RAW_PHONE = "919599826131";
-const WHATSAPP_LINK = `https://wa.me/${RAW_PHONE}?text=Hi%20Koop%20India,%20I%20am%20interested%20in%20Website%20Development.%20Please%20share%20details%20and%20project%20scope.`;
+import EnquiryModal from "@/components/forms/EnquiryForm";
+import { useModal } from "@/context/ModalContext";
 
-export default function WebsiteDevelopmentLanding() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activePillar, setActivePillar] = useState(0);
-  const [openFaq, setOpenFaq] = useState(0);
+export default function WebsiteDevelopmentPage() {
+  const { isOpen, onOpenModal, onCloseModal } = useModal();
+  const [openFaq, setOpenFaq] = useState(null);
 
-  // Clear any existing hash from URL on mount
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.location.hash) {
-      window.history.replaceState(null, "", window.location.pathname);
-    }
-  }, []);
-
-  // Smooth scroll to section without modifying or appending hash to URL
-  const scrollToSection = (e, sectionId) => {
-    if (e && e.preventDefault) {
-      e.preventDefault();
-    }
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerOffset = 85;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
-    if (typeof window !== "undefined" && window.location.hash) {
-      window.history.replaceState(null, "", window.location.pathname);
-    }
+  const toggleFaq = (idx) => {
+    setOpenFaq(openFaq === idx ? null : idx);
   };
 
-  // Lead Form State
-  const [formData, setFormData] = useState({
-    name: "",
-    company: "",
-    phone: "",
-    email: "",
-    serviceType: "Business Websites",
-    projectScope: "New Website from Scratch",
-    details: "",
-  });
-  const [formErrors, setFormErrors] = useState({
-    name: "",
-    phone: "",
-    email: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-
-  // Live Scope & Timeline Estimator State (Zero Pricing)
-  const [calcType, setCalcType] = useState("business"); // business, ecommerce, corporate, manufacturing, landing, redesign
-  const [calcPages, setCalcPages] = useState("5-8");
-  const [calcSpeed, setCalcSpeed] = useState(true);
-  const [calcSeo, setCalcSeo] = useState(true);
-  const [calcWhatsApp, setCalcWhatsApp] = useState(true);
-
-  // Helper to extract clean 10-digit Indian phone number
-  const getCleanPhone = (phoneStr) => {
-    if (!phoneStr) return "";
-    let cleaned = phoneStr.replace(/\D/g, "");
-    if (cleaned.startsWith("91") && cleaned.length > 10) {
-      cleaned = cleaned.slice(2);
-    }
-    if (cleaned.startsWith("0")) {
-      cleaned = cleaned.replace(/^0+/, "");
-    }
-    return cleaned;
-  };
-
-  const isValidPhone = (phoneStr) => {
-    const cleaned = getCleanPhone(phoneStr);
-    return /^[6-9]\d{9}$/.test(cleaned);
-  };
-
-  const isValidEmail = (emailStr) => {
-    if (!emailStr || !emailStr.trim()) return false;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(emailStr.trim());
-  };
-
-  // Form input change handler
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (formErrors[name]) {
-      setFormErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-    if (submitError) {
-      setSubmitError("");
-    }
-  };
-
-  // Dedicated phone input change handler allowing numbers, +, space, hyphen
-  const handlePhoneChange = (e) => {
-    const val = e.target.value.replace(/[^\d+\s()-]/g, "");
-    setFormData((prev) => ({ ...prev, phone: val }));
-    if (formErrors.phone) {
-      setFormErrors((prev) => ({ ...prev, phone: "" }));
-    }
-    if (submitError) {
-      setSubmitError("");
-    }
-  };
-
-  const handlePhoneBlur = () => {
-    if (!formData.phone.trim()) return;
-    if (!isValidPhone(formData.phone)) {
-      setFormErrors((prev) => ({
-        ...prev,
-        phone: "Please enter a valid 10-digit mobile number.",
-      }));
-    } else {
-      setFormErrors((prev) => ({ ...prev, phone: "" }));
-    }
-  };
-
-  const handleEmailBlur = () => {
-    if (!formData.email.trim()) return;
-    if (!isValidEmail(formData.email)) {
-      setFormErrors((prev) => ({
-        ...prev,
-        email: "Please enter a valid email address (e.g. rahul@company.com).",
-      }));
-    } else {
-      setFormErrors((prev) => ({ ...prev, email: "" }));
-    }
-  };
-
-  // Submit Lead to Firestore CRM (uses shared addEnquiry)
-  const handleSubmitLead = async (e, sourceName = "google_ads_website_development") => {
-    if (e) e.preventDefault();
-
-    const newErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Full name is required.";
-    }
-
-    const cleanedPhone = getCleanPhone(formData.phone);
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required.";
-    } else if (!/^[6-9]\d{9}$/.test(cleanedPhone)) {
-      newErrors.phone = "Enter a valid 10-digit mobile number.";
-    }
-
-    const emailTrimmed = formData.email.trim();
-    if (!emailTrimmed) {
-      newErrors.email = "Email address is required.";
-    } else if (!isValidEmail(emailTrimmed)) {
-      newErrors.email = "Enter a valid email address (e.g. rahul@company.com).";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setFormErrors(newErrors);
-      setSubmitError("Please fill in a valid 10-digit mobile number and email address to proceed.");
-      return;
-    }
-
-    setFormErrors({ name: "", phone: "", email: "" });
-    setSubmitting(true);
-    setSubmitError("");
-
-    try {
-      await addEnquiry({
-        name: formData.name.trim(),
-        displayName: formData.name.trim(),
-        company: formData.company.trim() || formData.name.trim(),
-        displayCompany: formData.company.trim() || formData.name.trim(),
-        phone: cleanedPhone,
-        mobile: cleanedPhone,
-        displayPhone: cleanedPhone,
-        email: emailTrimmed,
-        displayEmail: emailTrimmed,
-        service: "Website Development",
-        category: "Website Development",
-        displayCategory: "Website Development",
-        serviceType: formData.serviceType,
-        projectScope: formData.projectScope,
-        requirements: `Type: ${formData.serviceType} | Scope: ${formData.projectScope} | Notes: ${formData.details || "Google Ads Lead"}`,
-        message: `Type: ${formData.serviceType} | Scope: ${formData.projectScope} | Notes: ${formData.details || "Google Ads Lead"}`,
-        source: sourceName,
-        status: "New",
-      });
-
-      // Track FB pixel if available
-      if (typeof window !== "undefined" && window.fbq) {
-        window.fbq("track", "Lead", {
-          content_name: "Website Development Google Ads",
-          value: 1,
-        });
-      }
-
-      setSubmitSuccess(true);
-      setSubmitting(false);
-      setFormData({
-        name: "",
-        company: "",
-        phone: "",
-        email: "",
-        serviceType: "Business Websites",
-        projectScope: "New Website from Scratch",
-        details: "",
-      });
-    } catch (err) {
-      console.error("Failed to submit lead:", err);
-      setSubmitError("Something went wrong. Please call or WhatsApp us directly.");
-      setSubmitting(false);
-    }
-  };
-
-  // Calculate estimated turnaround time & architecture deliverables (NO PRICING)
-  const getEstimation = () => {
-    let days = "5-7 Business Days";
-    let stack = "Next.js 14 + Tailwind CSS + Vercel Cloud";
-    let highlights = [
-      "Sub-second load times (< 1.2s)",
-      "100% Mobile & Tablet Responsive",
-      "Lead Capture & WhatsApp Routing",
-    ];
-
-    if (calcType === "business") {
-      days = "5-7 Business Days";
-      stack = "Next.js 14 + Tailwind CSS + CMS Integration";
-      highlights = [
-        "Polished online presence for startups",
-        "Direct lead inquiry routing to CRM",
-        "100% Mobile & Tablet Responsive",
-      ];
-    } else if (calcType === "ecommerce") {
-      days = "10-14 Business Days";
-      stack = "Shopify / Next.js Commerce + Razorpay / UPI";
-      highlights = [
-        "Product catalogues & custom category filters",
-        "Shopping cart & payment-ready checkout",
-        "Automated WhatsApp order notifications",
-      ];
-    } else if (calcType === "corporate") {
-      days = "7-10 Business Days";
-      stack = "Next.js + Tailwind CSS + Headless CMS";
-      highlights = [
-        "Corporate company profile & leadership hierarchy",
-        "Compliance & investor documentation pages",
-        "Domain, SSL & corporate email setup",
-      ];
-    } else if (calcType === "manufacturing") {
-      days = "8-12 Business Days";
-      stack = "Next.js + Tailwind CSS + B2B Product Catalog";
-      highlights = [
-        "Showcase products, specs & certifications",
-        "Direct RFQ & buyer/distributor inquiry routing",
-        "Downloadable product catalog & technical spec sheets",
-      ];
-    } else if (calcType === "landing") {
-      days = "3-5 Business Days";
-      stack = "Next.js / HTML5 + Tailwind + High-Converting Copy";
-      highlights = [
-        "Focused, campaign-ready page for Google Ads",
-        "Sub-second load times & Core Web Vitals optimized",
-        "1-click WhatsApp & instant CRM lead sync",
-      ];
-    } else if (calcType === "redesign") {
-      days = "4-7 Business Days";
-      stack = "Modern Next.js 14 Overhaul + Edge CDN";
-      highlights = [
-        "Modern visual elegance & layout restructuring",
-        "Speed overhaul replacing slow bloated code",
-        "Preserve existing Google SEO with 301 redirects",
-      ];
-    } else if (calcType === "shopify") {
-      days = "5-8 Business Days";
-      stack = "Shopify OS 2.0 + Liquid + Razorpay / UPI";
-      highlights = [
-        "Custom Shopify theme & conversion layout",
-        "Payment gateway & automated shipping setup",
-        "Inventory tracking & WhatsApp order sync",
-      ];
-    } else if (calcType === "wordpress") {
-      days = "4-7 Business Days";
-      stack = "WordPress + Custom Theme + LiteSpeed Cache";
-      highlights = [
-        "Easy drag-and-drop CMS management",
-        "Lightweight speed optimization & security",
-        "Full on-page SEO & contact enquiry forms",
-      ];
-    }
-
-    if (calcPages === "10+") {
-      highlights.push("Expanded multi-tier navigation");
-    }
-    if (calcSpeed) {
-      highlights.push("Speed & Core Web Vitals Optimization");
-    }
-    if (calcSeo) {
-      highlights.push("Complete Technical & On-Page SEO");
-    }
-    if (calcWhatsApp) {
-      highlights.push("Instant WhatsApp & CRM Lead Sync");
-    }
-
-    return {
-      days,
-      stack,
-      highlights,
-    };
-  };
-
-  const est = getEstimation();
-
-  // 6 Types of Websites We Build (Matching Exact Reference Specification)
   const services = [
     {
-      num: "01",
-      id: "business",
-      title: "Business Websites",
-      category: "GROWTH & STARTUPS",
-      desc: "A polished online presence for startups, consultants and growing businesses.",
-      features: [
-        "Custom responsive UI designed in Figma",
-        "Clear service offerings & authority positioning",
-        "Direct WhatsApp & instant lead inquiry forms",
-        "Fast mobile loading & standard SSL setup",
-      ],
-      icon: Briefcase,
-    },
-    {
-      num: "02",
-      id: "ecommerce",
-      title: "E-commerce Websites",
-      category: "ONLINE SALES",
-      desc: "Product catalogues, shopping carts and payment-ready storefront experiences.",
-      features: [
-        "Razorpay, Cashfree & UPI instant checkout",
-        "Product catalog with custom filters & categories",
-        "Mobile-first friction-free shopping cart",
-        "Automated WhatsApp order confirmation alerts",
-      ],
-      icon: ShoppingBag,
-    },
-    {
-      num: "03",
-      id: "corporate",
-      title: "Corporate Websites",
-      category: "ENTERPRISE & TRUST",
-      desc: "Build credibility with a clear company profile, services and business information.",
-      features: [
-        "Multi-page corporate architecture & leadership profile",
-        "Investor, governance & compliance documentation sections",
-        "Integrated CMS for effortless internal updates",
-        "Custom domain, SSL & corporate email setup",
-      ],
-      icon: Building2,
-    },
-    {
-      num: "04",
-      id: "manufacturing",
-      title: "Manufacturing Websites",
-      category: "B2B & INDUSTRIAL",
-      desc: "Showcase products, capabilities and certifications to reach buyers and distributors.",
-      features: [
-        "Machinery specs, factory capacity & ISO/ISI badge display",
-        "Bulk quote (RFQ) & distributor enquiry routing",
-        "Downloadable product spec sheets & PDF catalogs",
-        "Geographic distributor & buyer network mapping",
-      ],
-      icon: Factory,
-    },
-    {
-      num: "05",
-      id: "landing-pages",
-      title: "Landing Pages",
-      category: "GOOGLE ADS & PPC",
-      desc: "Focused, campaign-ready pages designed to turn visitors into enquiries.",
-      features: [
-        "Single-minded conversion layout matching ad keywords",
-        "Sub-second load times for higher Google Ad Quality Score",
-        "1-click WhatsApp & call action drawers",
-        "UTM parameter tracking & Google Ads conversion tags",
-      ],
-      icon: Zap,
-    },
-    {
-      num: "06",
-      id: "website-redesign",
-      title: "Website Redesign",
-      category: "PERFORMANCE & UX",
-      desc: "Give an outdated website a modern look, better structure and improved usability.",
-      features: [
-        "Full UI/UX refresh with modern design standards",
-        "Code overhaul replacing slow, bloated legacy plugins",
-        "Preserve existing Google SEO rankings with 301 redirects",
-        "Core Web Vitals & mobile responsiveness upgrade",
-      ],
-      icon: RefreshCw,
-      highlight: true,
-    },
-    {
-      num: "07",
-      id: "shopify-websites",
-      title: "Shopify Websites",
-      category: "D2C & STOREFRONTS",
-      desc: "Custom high-converting Shopify stores with theme development, app integrations, and fast checkouts.",
-      features: [
-        "Bespoke Shopify theme design & conversion UX",
-        "Razorpay, Cashfree & UPI instant payment gateway",
-        "Product variants, inventory & shipping rate setup",
-        "Abandoned cart recovery & WhatsApp order sync",
-      ],
-      icon: Store,
-    },
-    {
-      num: "08",
-      id: "wordpress-websites",
-      title: "WordPress Websites",
-      category: "DYNAMIC CMS",
-      desc: "Fast, flexible WordPress and WooCommerce websites with custom themes, zero bloat, and easy team editing.",
-      features: [
-        "Intuitive drag-and-drop CMS for effortless updates",
-        "Custom lightweight theme with high-speed caching",
-        "WooCommerce catalog & secure enquiry forms",
-        "Full on-page SEO & security firewall setup",
-      ],
-      icon: Globe,
-    },
-  ];
-
-  // Live Client Sample Projects
-  const sampleProjects = [
-    {
-      id: "jayfinsolimf",
-      title: "Jay Finsol IMF",
-      category: "CORPORATE & FINANCE",
-      url: "https://jayfinsolimf.com/",
-      domain: "jayfinsolimf.com",
-      badge: "Financial & Insurance Portal",
-      line1: "Corporate insurance & financial advisory portal for comparing Life, Health, and Mutual Fund plans.",
-      line2: "Features streamlined POSP agent onboarding, advisor consultations, and direct inquiry capture.",
-      tags: ["Corporate Portal", "Lead Routing", "POSP Onboarding", "Responsive UI"],
-      icon: Building2,
-    },
-    {
-      id: "trayojack",
-      title: "Trayojack Connections",
-      category: "MANUFACTURING & B2B",
-      url: "https://trayojack.com/",
-      domain: "trayojack.com",
-      badge: "CCTV & Network Hardware",
-      line1: "Specialized B2B industrial manufacturing platform for CCTV cables, fiber optics, and server racks.",
-      line2: "Engineered with technical product specs, downloadable catalogs, and nationwide distributor RFQ routing.",
-      tags: ["B2B Catalog", "Distributor RFQ", "Product Specs", "Fast Edge Delivery"],
-      icon: Factory,
-    },
-    {
-      id: "rishikeshherbs",
-      title: "Rishikesh Herbs Natural",
-      category: "E-COMMERCE & WELLNESS",
-      url: "https://rishikeshherbsnatural.com/",
-      domain: "rishikeshherbsnatural.com",
-      badge: "D2C Ayurvedic Storefront",
-      line1: "Direct-to-consumer (D2C) Ayurvedic wellness and joint pain relief e-commerce storefront.",
-      line2: "Built with mobile-friendly product catalogs, GMP certification trust markers, and fast checkout flow.",
-      tags: ["E-Commerce Store", "Payment Gateway", "WhatsApp Sync", "Mobile Optimized"],
-      icon: ShoppingBag,
-    },
-    {
-      id: "ezdoors",
-      title: "EZDOORS",
-      category: "ARCHITECTURAL & WOOD",
-      url: "https://ezdoors.in/",
-      domain: "ezdoors.in",
-      badge: "Teak Wood Door Manufacturer",
-      line1: "Premium architectural manufacturing website showcasing handcrafted Teak Wood and designer doors.",
-      line2: "High-resolution design galleries, custom sizing inquiries, and digital catalogs for builders & homeowners.",
-      tags: ["Architectural Showcase", "Custom Sizing RFQ", "High-Res Gallery", "Fast CDN"],
       icon: Layout,
+      title: "Business & Corporate Websites",
+      desc: "Authority-building websites designed for startups, SMEs, and corporate enterprises. Clean hierarchy, high-speed page delivery, and lead-focused architecture.",
+      badge: "Core Service",
+      features: ["Figma Custom UI/UX", "Executive Team & Service Pages", "Mobile Responsive", "Instant Lead Form"],
     },
     {
-      id: "katakirrmasale",
-      title: "Katakirr Masale",
-      category: "FMCG & FOOD BRAND",
-      url: "https://katakirrmasale.com/",
-      domain: "katakirrmasale.com",
-      badge: "Authentic Spices & Blends",
-      line1: "Authentic FMCG food brand platform presenting traditional Kolhapuri spices and blended powders.",
-      line2: "Engineered to build customer brand trust while driving bulk distributor, dealer, and wholesale inquiries.",
-      tags: ["Brand Identity", "Wholesale Inquiries", "Product Range", "WhatsApp Sync"],
-      icon: Flame,
-    },
-  ];
-
-  // The 6 High-Conversion Web Architecture Pillars
-  const architecturePillars = [
-    {
-      id: "speed",
-      title: "Sub-Second Speed Architecture",
-      badge: "CORE PERFORMANCE",
-      tagline: "Sub-Second Load Speed • Core Web Vitals Optimized",
-      desc: "53% of mobile visitors abandon websites that take more than 3 seconds to load. We engineer pages with modern Next.js architecture, optimized WebP/AVIF images, and edge CDN caching for rapid delivery.",
-      metrics: [
-        { label: "PageSpeed Target", val: "90+" },
-        { label: "Load Time", val: "0.8s" },
-        { label: "Bounce Reduction", val: "-58%" },
-      ],
-      features: [
-        "Server-side rendering (SSR) & static pre-generation for instant page delivery",
-        "Edge caching on global CDN nodes close to your customers across India",
-        "Zero bulky WordPress plugins or blocking render scripts",
-        "Verified Core Web Vitals (LCP, FID, CLS) strictly in the green zone",
-      ],
-      icon: Zap,
+      icon: ShoppingBag,
+      title: "E-Commerce Web Portals",
+      desc: "High-converting online storefronts powered by Next.js or Shopify. Friction-free checkout, payment gateway integrations, and automatic WhatsApp order alerts.",
+      badge: "High ROI",
+      features: ["Razorpay & UPI Checkout", "Product Catalog Filters", "Cart Drawer UI", "Order Management"],
     },
     {
-      id: "lead-engine",
-      title: "High-Intent Lead & WhatsApp Engine",
-      badge: "CONVERSION PSYCHOLOGY",
-      tagline: "Direct WhatsApp Click-to-Chat • Instant CRM Lead Sync",
-      desc: "Websites shouldn't just be digital brochures—they must be active sales machines. We integrate friction-free lead capture forms, 1-click WhatsApp routing, and mobile sticky action drawers to maximize conversion rates.",
-      metrics: [
-        { label: "Lead Inquiries Lift", val: "+240%" },
-        { label: "WhatsApp Routing", val: "Instant" },
-        { label: "Form Drop-off", val: "-45%" },
-      ],
-      features: [
-        "Pre-filled WhatsApp click-to-chat links with specific inquiry details",
-        "Smart form validation with zero clutter and instant feedback",
-        "Sticky mobile quick-action drawer (Call, WhatsApp, Request Quote)",
-        "Automated sync to Koop India Admin CRM with real-time lead alerts",
-      ],
-      icon: Flame,
+      icon: Rocket,
+      title: "High-Conversion Landing Pages",
+      desc: "Engineered specifically for Google Ads, Facebook Ads, and marketing campaigns. Zero fluff, sub-second load times, and psychological conversion triggers.",
+      badge: "PPC Ready",
+      features: ["Sub-second Speed", "Frictionless Forms", "WhatsApp Click-to-Chat", "A/B Testing Structure"],
     },
     {
-      id: "mobile-ux",
-      title: "100% Fluid Mobile-First Experience",
-      badge: "RESPONSIVE MASTERY",
-      tagline: "Engineered for 85%+ Mobile Ad Traffic Across India",
-      desc: "Over 85% of paid Google Ads traffic in India comes from mobile devices. We design specifically for the smartphone thumb-zone, ensuring rapid taps, frictionless scrolling, and zero awkward horizontal scaling.",
-      metrics: [
-        { label: "Mobile Traffic Share", val: "88%" },
-        { label: "Touch Experience", val: "Fluid" },
-        { label: "Mobile Usability", val: "100%" },
-      ],
-      features: [
-        "Custom Figma UI designed mobile-first from the ground up",
-        "Native app-like touch responsiveness and smooth drawer navigation",
-        "Optimized tap targets and zero misplaced input fields",
-        "Seamless cross-device consistency on iOS, Android, and tablets",
-      ],
-      icon: Smartphone,
+      icon: Users,
+      title: "Startup Launchpad Websites",
+      desc: "Budget-friendly, high-velocity websites designed for early-stage founders to pitch investors, recruit talent, and acquire initial customers.",
+      badge: "Startup Friendly",
+      features: ["7-Day Launch", "Investor Deck Sections", "Growth Analytics Setup", "Scalable Tech Stack"],
     },
     {
-      id: "google-ads",
-      title: "Google Ads & PPC Optimization",
-      badge: "LOWER AD SPEND",
-      tagline: "High Quality Score Focus • Higher Ad Rank • Lower Cost Per Click",
-      desc: "Slow or irrelevant landing pages drain your ad budget. We build tightly themed, ultra-fast landing pages with semantic copy matching your Google Ads keywords, directly boosting Quality Scores and lowering cost-per-lead.",
-      metrics: [
-        { label: "Quality Score Focus", val: "High" },
-        { label: "CPC Reduction", val: "-35%" },
-        { label: "Conversion Lift", val: "+65%" },
-      ],
-      features: [
-        "Keyword-focused headlines matching exact user search intent",
-        "UTM parameter tracking passing source and campaign data to CRM",
-        "Google Ads Tag, Meta Pixel, and Google Tag Manager ready",
-        "No distracting external links—100% focused on lead conversion",
-      ],
       icon: BarChart3,
+      title: "CRM & WhatsApp Integrated Portals",
+      desc: "Automate your sales pipeline by connecting every website inquiry directly to Zoho, HubSpot, Salesforce, or your custom Koop India CRM dashboard.",
+      badge: "Automation",
+      features: ["Instant Lead Routing", "WhatsApp Business API", "Automated Email Followups", "No Data Loss"],
     },
     {
-      id: "seo-schema",
-      title: "Technical SEO & Rich Snippet Schema",
-      badge: "ORGANIC VISIBILITY",
-      tagline: "JSON-LD Structured Data • OpenGraph • Google Search Ready",
-      desc: "Built-in technical SEO that helps Google understand and index your business immediately. Every page includes clean semantic HTML5, canonical URLs, automated XML sitemaps, and rich snippet schemas.",
-      metrics: [
-        { label: "SEO Audit Target", val: "Top Tier" },
-        { label: "Search Console", val: "Setup" },
-        { label: "Rich Snippets", val: "Enabled" },
-      ],
-      features: [
-        "Structured JSON-LD schema for Local Business, Organization, and FAQ",
-        "Custom OpenGraph cards for WhatsApp, LinkedIn, and Twitter shares",
-        "Automatic XML sitemap and robots.txt generation",
-        "Clean, human-readable SEO friendly URL structures",
-      ],
-      icon: Globe,
-    },
-    {
-      id: "security-code",
-      title: "Enterprise Security & Full Code Ownership",
-      badge: "ZERO LOCK-IN",
-      tagline: "100% Source Code Delivery • Free SSL • Reliable Cloud Hosting",
-      desc: "You own everything we build. Upon delivery, we transfer full source code, design assets, and cloud deployment access. No recurring proprietary CMS fees, no hostage websites, and zero vendor lock-in.",
-      metrics: [
-        { label: "Code Ownership", val: "100%" },
-        { label: "Cloud Hosting", val: "Vercel/AWS" },
-        { label: "SSL Encryption", val: "256-Bit" },
-      ],
-      features: [
-        "Complete source code repository transfer to your private GitHub",
-        "High-availability cloud hosting on Vercel Edge / AWS infrastructure",
-        "Free SSL certificate setup and secure hosting configuration",
-        "Full documentation and 30-day developer warranty included",
-      ],
-      icon: ShieldCheck,
+      icon: Factory,
+      title: "B2B & Manufacturer Portals",
+      desc: "Specialized platforms for manufacturers, exporters, and wholesale distributors featuring catalog downloads, RFQ quoting systems, and dealer networks.",
+      badge: "Industrial B2B",
+      features: ["Product Specs & Catalogs", "Bulk Quote Request (RFQ)", "Dealer Login Area", "Pan-India Reach"],
     },
   ];
 
-  // FAQs
+  const packages = [
+    {
+      name: "Startup Starter",
+      tagline: "Perfect for local businesses, consultants, and new startups.",
+      pricingType: "Custom Quote",
+      delivery: "5–7 Days",
+      popular: false,
+      features: [
+        "Up to 5 Custom Responsive Pages",
+        "Next.js / Modern React Architecture",
+        "Mobile-First & 100% Responsive Design",
+        "WhatsApp Click-to-Chat Integration",
+        "Instant Lead Capture Forms",
+        "Free SSL Certificate & Setup",
+        "Basic On-Page SEO & Schema",
+        "30 Days Post-Launch Support",
+      ],
+      buttonText: "Request Quote",
+    },
+    {
+      name: "E-Commerce Growth",
+      tagline: "Designed for D2C brands, retailers, and product catalogs.",
+      pricingType: "Custom Quote",
+      delivery: "10–14 Days",
+      popular: true,
+      features: [
+        "Up to 25 Product Listings Included",
+        "Razorpay, Cashfree & UPI Checkout",
+        "Dynamic Product Filters & Search",
+        "Interactive Cart & Sticky Checkout",
+        "Automated WhatsApp Order Alerts",
+        "Admin Dashboard for Products/Orders",
+        "Google Analytics 4 & Meta Pixel Setup",
+        "60 Days Post-Launch Support",
+      ],
+      buttonText: "Request Quote",
+    },
+    {
+      name: "Custom Enterprise Portal",
+      tagline: "Tailored for scaling companies needing custom logic and CRM sync.",
+      pricingType: "Custom Quote",
+      delivery: "15–21 Days",
+      popular: false,
+      features: [
+        "Unlimited Custom Pages & Modular UI",
+        "Full-Stack Next.js 15 & Node/Firebase",
+        "Bi-Directional CRM & WhatsApp Sync",
+        "Role-Based Access & Customer Login",
+        "High-Volume RFQ & B2B Quoting Engine",
+        "Core Web Vitals 90+ Score Guarantee",
+        "100% Source Code & Git IP Ownership",
+        "Dedicated Technical Account Manager",
+      ],
+      buttonText: "Discuss Project",
+    },
+  ];
+
+  const comparisonRows = [
+    {
+      metric: "Mobile PageSpeed Score",
+      koop: "95–100 (Google Green Zone)",
+      wordpress: "35–55 (Slow due to bloated plugins)",
+      wix: "45–60 (Script heavy)",
+    },
+    {
+      metric: "Source Code & IP Ownership",
+      koop: "100% Full Ownership (No Lock-In)",
+      wordpress: "Self-hosted, but complex theme locks",
+      wix: "Zero ownership (Platform locked)",
+    },
+    {
+      metric: "Monthly Recurring Plugin Fees",
+      koop: "Included (Zero recurring plugin costs)",
+      wordpress: "High recurring fees for pro plugins",
+      wix: "Mandatory monthly subscriptions",
+    },
+    {
+      metric: "Google Core Web Vitals (LCP/CLS)",
+      koop: "Strictly Passed (< 1.0s LCP)",
+      wordpress: "Frequently Fails without caching plugins",
+      wix: "Inconsistent across mobile networks",
+    },
+    {
+      metric: "Security & Vulnerabilities",
+      koop: "Static Edge Generation (Zero SQLi)",
+      wordpress: "High risk (Outdated plugins & themes)",
+      wix: "Closed environment (Limited customization)",
+    },
+    {
+      metric: "CRM & WhatsApp Instant Sync",
+      koop: "Native API Direct Hookups",
+      wordpress: "Requires third-party zapier/plugins",
+      wix: "Restricted to internal marketplace",
+    },
+  ];
+
+  const regionalHubs = [
+    {
+      city: "Delhi Commercial Hubs",
+      areas: ["Connaught Place", "Nehru Place", "Okhla Industrial Area", "Netaji Subhash Place", "Pitampura", "Laxmi Nagar", "Kirti Nagar"],
+    },
+    {
+      city: "Noida & Greater Noida",
+      areas: ["Sector 62 (IT Hub)", "Sector 18", "Sector 63", "Sector 132 (Expressway)", "Pari Chowk", "Knowledge Park"],
+    },
+    {
+      city: "Gurugram Business Centers",
+      areas: ["Cyber City (DLF)", "Udyog Vihar", "Golf Course Road", "Sohna Road", "Manesar Industrial Zone"],
+    },
+    {
+      city: "Pan-India Expansion",
+      areas: ["Mumbai", "Bengaluru", "Pune", "Hyderabad", "Ahmedabad", "Jaipur", "Lucknow", "Kolkata"],
+    },
+  ];
+
   const faqs = [
     {
-      q: "How fast can you deliver my website?",
-      a: "For Google Ads landing pages, we deliver in 3 to 5 business days. For full corporate business websites, turnaround is typically 5 to 8 business days. E-commerce portals and custom web applications take 10 to 18 days depending on the scope.",
+      q: "How is website development pricing decided at Koop India?",
+      a: "At Koop India, website development solutions are customized transparently based on your specific business requirements, design scope, integrations, and deliverables. There are zero hidden fees, and you receive 100% source code ownership. Contact us for a free technical consultation and customized proposal!",
     },
     {
-      q: "How do you ensure my website loads fast on mobile and desktop?",
-      a: "We build on Next.js with modern image compression (WebP/AVIF), lightweight semantic code, and edge CDN delivery. This avoids bulky bloated plugins and ensures your Core Web Vitals stay green for maximum ad conversion.",
+      q: "Why is a custom Next.js website better than a WordPress template?",
+      a: "Custom Next.js websites load up to 4x faster than WordPress, achieve 90+ Google PageSpeed scores, don't require expensive monthly paid plugins, and are virtually hack-proof because they do not rely on vulnerable PHP backends. Fast speed directly improves your Google rankings and ad conversions.",
     },
     {
-      q: "Where do customer leads go when someone submits a form?",
-      a: "Leads are instantly routed to your Koop India CRM dashboard, saved in your secure database, and can be configured to send instant WhatsApp and email notifications to your sales team.",
+      q: "How long does it take to develop and launch our website?",
+      a: "Standard business websites are designed, developed, and deployed within 5 to 7 business days. E-commerce portals typically take 10 to 14 days, while custom enterprise applications take 15 to 21 days with comprehensive staging and QA review.",
     },
     {
-      q: "Will I have full ownership of my website and source code?",
-      a: "Yes, absolutely. Once your project is completed, you own 100% of the intellectual property, source code, design assets, and content. There are zero proprietary lock-ins.",
+      q: "Will my website be search engine friendly (SEO-ready)?",
+      a: "Yes, 100%! Every website built by Koop India comes pre-configured with on-page SEO best practices: semantic HTML5 tags (H1–H4), structured JSON-LD schemas (Service, LocalBusiness, FAQ), fast Core Web Vitals, XML sitemaps, robots.txt, and canonical tags ready for Google indexation.",
     },
     {
-      q: "Can I easily update content, text, and images later?",
-      a: "Yes. We integrate easy-to-use content management systems (CMS) so your team can effortlessly edit text, add blog articles, update banners, and manage products without needing a developer.",
+      q: "Do I get full ownership of the website design and source code?",
+      a: "Yes. Once the project is completed and handed over, you own 100% of the intellectual property, design assets, database, and repository source code. There are zero vendor lock-ins.",
     },
     {
-      q: "What post-launch support and maintenance do you offer?",
-      a: "Every project includes complimentary post-launch developer support, bug fixing, and staff walkthrough training. We also provide ongoing maintenance for daily backups, security updates, and performance monitoring.",
+      q: "Can you integrate our website with our CRM or WhatsApp?",
+      a: "Absolutely. We specialize in automated lead funnels. Every lead submitted through your website forms can instantly trigger WhatsApp notifications to your sales team and sync in real time with Zoho, HubSpot, Salesforce, or your custom Koop India dashboard.",
+    },
+    {
+      q: "Can non-technical team members update content and products later?",
+      a: "Yes. We integrate clean, user-friendly CMS options (Headless CMS or visual admin panels) so your team can easily modify text, publish new blog articles, add products, or update banners without writing any code.",
+    },
+    {
+      q: "What post-launch support and warranty do you provide?",
+      a: "All web projects include complimentary 30 to 60 days of post-launch developer support covering bug fixes, minor design tweaks, and hands-on staff walkthrough training. We also offer affordable monthly maintenance plans.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#08090C] text-gray-100 font-sans antialiased selection:bg-orange-500 selection:text-white">
-      {/* ============================================================== */}
-      {/* 1. TOP STICKY HEADER (Official Koop India Logo + Dark Theme)  */}
-      {/* ============================================================== */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#08090C]/90 backdrop-blur-xl border-b border-white/10 transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
-          {/* Main Header Koop India Logo */}
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="z-[80] flex-shrink-0 text-2xl sm:text-3xl font-extrabold flex items-center tracking-tight cursor-pointer"
-            aria-label="Koop India"
-          >
-            <span className="text-orange-500">koop</span>
-            <span className="text-white">india</span>
-            <span className="text-orange-500">.</span>
-          </button>
-
-          {/* Desktop Nav Links (No Hash in URL) */}
-          <nav className="hidden lg:flex items-center gap-7 text-[13px] font-semibold text-gray-300">
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "services")}
-              className="hover:text-orange-400 transition-colors cursor-pointer"
-            >
-              Services
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "projects")}
-              className="hover:text-orange-400 transition-colors cursor-pointer"
-            >
-              Live Work
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "architecture")}
-              className="hover:text-orange-400 transition-colors cursor-pointer"
-            >
-              Blueprint
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "estimator")}
-              className="hover:text-orange-400 transition-colors cursor-pointer"
-            >
-              Scope Estimator
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "solutions")}
-              className="hover:text-orange-400 transition-colors cursor-pointer"
-            >
-              Solutions
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "process")}
-              className="hover:text-orange-400 transition-colors cursor-pointer"
-            >
-              Process
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "faqs")}
-              className="hover:text-orange-400 transition-colors cursor-pointer"
-            >
-              FAQs
-            </button>
-          </nav>
-
-          {/* Header Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3">
-            <a
-              href={`tel:${RAW_PHONE}`}
-              className="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-gray-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-all"
-            >
-              <Phone size={13} className="text-orange-400" />
-              <span>{PHONE_NUMBER}</span>
-            </a>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] transition-all flex items-center gap-1.5 cursor-pointer"
-            >
-              <span>Start Your Project</span>
-              <ArrowRight size={14} />
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen((p) => !p)}
-            className="lg:hidden p-2 text-gray-400 hover:text-white rounded-xl bg-white/5 border border-white/10"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+    <div className="bg-white text-gray-700 font-sans antialiased">
+      {/* ================= 1. HERO SECTION ================= */}
+      <section className="relative py-16 md:py-24 px-5 bg-gradient-to-br from-[#0F172A] via-[#141D32] to-[#1a2340] text-white overflow-hidden">
+        <div className="absolute inset-0 opacity-15">
+          <div className="absolute top-10 right-10 w-96 h-96 bg-[#F97316] rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-96 h-96 bg-blue-600 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Mobile Dropdown Drawer (No Hash in URL) */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-[#0A0B10] border-b border-white/10 px-5 py-6 space-y-4">
-            <nav className="flex flex-col gap-3 text-sm font-semibold text-gray-300">
-              <button
-                type="button"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, "services");
-                }}
-                className="py-1 text-left hover:text-orange-400 cursor-pointer"
-              >
-                Services
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, "projects");
-                }}
-                className="py-1 text-left hover:text-orange-400 cursor-pointer"
-              >
-                Live Work
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, "architecture");
-                }}
-                className="py-1 text-left hover:text-orange-400 cursor-pointer"
-              >
-                Web Blueprint
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, "estimator");
-                }}
-                className="py-1 text-left hover:text-orange-400 cursor-pointer"
-              >
-                Scope Estimator
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, "solutions");
-                }}
-                className="py-1 text-left hover:text-orange-400 cursor-pointer"
-              >
-                Solutions
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, "process");
-                }}
-                className="py-1 text-left hover:text-orange-400 cursor-pointer"
-              >
-                Process
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  scrollToSection(e, "faqs");
-                }}
-                className="py-1 text-left hover:text-orange-400 cursor-pointer"
-              >
-                FAQs
-              </button>
-            </nav>
-            <div className="pt-3 border-t border-white/10 flex flex-col gap-2.5">
-              <a
-                href={`tel:${RAW_PHONE}`}
-                className="w-full py-2.5 text-center rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-white flex items-center justify-center gap-2"
-              >
-                <Phone size={14} className="text-orange-400" />
-                <span>Call {PHONE_NUMBER}</span>
-              </a>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setModalOpen(true);
-                }}
-                className="w-full py-2.5 text-center rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold shadow-md shadow-orange-500/20"
-              >
-                Start Your Project ↗
-              </button>
-            </div>
-          </div>
-        )}
-      </header>
-
-      {/* ============================================================== */}
-      {/* 2. FIRST SECTION (HERO): Dedicated to Website Development      */}
-      {/* ============================================================== */}
-      <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden">
-        {/* Ambient Dark-Orange Glows */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[900px] h-[450px] sm:h-[550px] bg-gradient-to-b from-orange-500/20 via-orange-600/10 to-transparent rounded-full blur-[130px] pointer-events-none" />
-        <div className="absolute top-20 right-10 w-96 h-96 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-40" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Left Content Column */}
-            <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-              {/* Studio Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.05] border border-white/10 backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                <span className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-orange-400">
-                  HIGH-PERFORMANCE WEB ENGINEERING
-                </span>
-              </div>
-
-              {/* Main Headline for Website Development */}
-              <h1 className="text-3xl sm:text-4xl lg:text-[44px] xl:text-[48px] font-black text-white tracking-tight leading-[1.15]">
-                Custom Websites <br className="hidden sm:block" />
-                Engineered for <br className="hidden sm:block" />
-                Higher Conversions &{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-amber-400 drop-shadow-[0_4px_24px_rgba(249,115,22,0.35)]">
-                  Real Growth.
-                </span>
-              </h1>
-
-              {/* Subtitle Tailored to Commercial Web Development */}
-              <p className="text-sm sm:text-base text-gray-300 font-normal leading-relaxed max-w-xl mx-auto lg:mx-0">
-                We design, develop, and scale bespoke business websites, high-converting Google Ads landing pages, and fast e-commerce portals. Engineered for sub-second load times, high PageSpeed performance, and built-in lead generation—tailored for ambitious Indian brands.
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
-                <button
-                  onClick={() => setModalOpen(true)}
-                  className="px-7 py-4 rounded-full bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-[1.02] transition-all flex items-center gap-2.5 cursor-pointer"
-                >
-                  <span>Start Your Web Project</span>
-                  <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                    <ArrowRight size={14} className="text-white" />
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => scrollToSection(e, "architecture")}
-                  className="px-6 py-4 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/15 hover:border-white/30 text-white font-bold text-sm sm:text-base transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <span>Explore Web Blueprint</span>
-                  <ArrowRight size={15} className="text-gray-400" />
-                </button>
-              </div>
-
-              {/* Quick Trust Highlights */}
-              <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 text-xs font-semibold text-gray-400">
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 size={14} className="text-orange-400" />
-                  <span>5-7 Day Delivery Available</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 size={14} className="text-orange-400" />
-                  <span>Speed & Core Web Vitals Focused</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 size={14} className="text-orange-400" />
-                  <span>100% Full Code Ownership</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Showcase Column (Laptop + Floating Mobile Device Mockup) */}
-            <div className="lg:col-span-6 relative flex justify-center items-center mt-6 lg:mt-0">
-              {/* Outer decorative ambient backlight */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 via-amber-500/10 to-transparent rounded-3xl blur-2xl transform scale-95" />
-
-              {/* Laptop Mockup Wrapper */}
-              <div className="relative w-full max-w-[540px] rounded-2xl bg-[#0F1117] border border-white/15 p-2 shadow-2xl shadow-black/80">
-                {/* Laptop Top Chrome Bar */}
-                <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 bg-[#0B0D12] rounded-t-xl">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
-                  </div>
-                  <div className="px-3 py-0.5 rounded-md bg-white/5 border border-white/5 text-[10px] font-mono text-gray-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>koopindia.com/web-development</span>
-                  </div>
-                  <div className="w-10" />
-                </div>
-
-                {/* Laptop Screen Content (Live Web UI Preview) */}
-                <div className="bg-[#08090E] p-4 sm:p-5 rounded-b-xl space-y-4">
-                  {/* Inside Laptop Top Hero */}
-                  <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-md bg-orange-500 flex items-center justify-center font-black text-xs text-white">
-                        K
-                      </div>
-                      <span className="text-xs font-bold text-white tracking-wider">
-                        Koop India
-                      </span>
-                    </div>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                      Verified Next.js Build
-                    </span>
-                  </div>
-
-                  {/* Inside Mockup Headline */}
-                  <div className="space-y-1.5">
-                    <p className="text-[10px] font-bold text-orange-400 uppercase tracking-widest">
-                      Conversion-Engineered Architecture
-                    </p>
-                    <p className="text-lg sm:text-xl font-black text-white leading-tight">
-                      Engineered for Conversions. <br />
-                      Built to Scale Ambitious Brands.
-                    </p>
-                    <p className="text-[11px] text-gray-400 leading-relaxed max-w-sm">
-                      Zero slow templates. Hand-crafted responsive code with sub-second page loads, integrated lead forms, and seamless analytics.
-                    </p>
-                  </div>
-
-                  {/* Inside Mockup CTA & Badges */}
-                  <div className="flex items-center gap-2.5 pt-1">
-                    <span className="px-3 py-1.5 rounded-full bg-orange-500 text-white font-bold text-[10px]">
-                      Explore Scope ↗
-                    </span>
-                    <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 font-semibold text-[10px]">
-                      View Live Demos
-                    </span>
-                  </div>
-
-                  {/* Inside Mockup Mini Stats Strip */}
-                  <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/5">
-                    <div className="bg-white/[0.03] p-2 rounded-lg border border-white/5 text-center">
-                      <p className="text-sm font-extrabold text-orange-400">90+</p>
-                      <p className="text-[9px] text-gray-400 font-medium">Core Web Vitals</p>
-                    </div>
-                    <div className="bg-white/[0.03] p-2 rounded-lg border border-white/5 text-center">
-                      <p className="text-sm font-extrabold text-white">+240%</p>
-                      <p className="text-[9px] text-gray-400 font-medium">Lead Inquiries</p>
-                    </div>
-                    <div className="bg-white/[0.03] p-2 rounded-lg border border-white/5 text-center">
-                      <p className="text-sm font-extrabold text-emerald-400">&lt; 1.0s</p>
-                      <p className="text-[9px] text-gray-400 font-medium">Load Time</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Mobile Phone Mockup */}
-              <div className="absolute -bottom-6 -right-2 sm:-right-4 w-44 sm:w-48 rounded-[28px] bg-[#0E1017] border-2 border-white/20 p-2 shadow-2xl shadow-black">
-                {/* Dynamic Island / Notch */}
-                <div className="w-16 h-3 bg-black rounded-full mx-auto mb-2" />
-                {/* Mobile Screen */}
-                <div className="bg-[#090A0F] rounded-[20px] p-3 space-y-2 border border-white/5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] font-extrabold text-orange-400">
-                      KOOP INDIA
-                    </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  </div>
-                  <p className="text-xs font-black text-white leading-tight">
-                    Custom Web Solutions
-                  </p>
-                  <p className="text-[9px] text-gray-400">
-                    Fast mobile-first experiences built for higher ad ROI.
-                  </p>
-                  <div className="p-1.5 rounded-lg bg-orange-500/10 border border-orange-500/20 text-center">
-                    <span className="text-[9px] font-bold text-orange-400">
-                      Get Proposal ↗
-                    </span>
-                  </div>
-                  <div className="flex justify-end pt-1">
-                    <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-white text-[10px] shadow-md">
-                      💬
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="relative max-w-7xl mx-auto text-center">
+          {/* Top Pill */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-orange-400 mb-6 shadow-sm">
+            <Sparkles size={14} className="text-orange-400 animate-pulse" />
+            <span>Top-Rated Website Development Company in Delhi NCR • Pan-India</span>
           </div>
 
-          {/* ============================================================== */}
-          {/* 3. FOUR CORE STATS STRIP                                        */}
-          {/* ============================================================== */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-16 sm:mt-24">
-            {/* Stat 1 */}
-            <div className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-orange-500/30 rounded-2xl p-5 sm:p-6 transition-all duration-300 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0 text-orange-400">
-                <Users size={22} />
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  100+
-                </p>
-                <p className="text-xs font-semibold text-gray-400">Projects Delivered</p>
-              </div>
-            </div>
+          <h1 className="text-5xl  font-black mb-6 leading-tight tracking-tight text-white">
+            High-Performance{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] via-orange-400 to-amber-300">
+              Website Development
+            </span>
+            <br />
+            Built for Google Top Rankings & Sales
+          </h1>
 
-            {/* Stat 2 */}
-            <div className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-orange-500/30 rounded-2xl p-5 sm:p-6 transition-all duration-300 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0 text-orange-400">
-                <Layout size={22} />
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  8
-                </p>
-                <p className="text-xs font-semibold text-gray-400">Website Specializations</p>
-              </div>
-            </div>
+          <p className="text-lg sm:text-xl text-gray-300 mb-4 max-w-3xl mx-auto font-medium leading-relaxed">
+            Fast Next.js 15 Architecture • 90+ Google Core Web Vitals • 100% Source Code Ownership • Direct WhatsApp & CRM Lead Sync
+          </p>
 
-            {/* Stat 3 */}
-            <div className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-orange-500/30 rounded-2xl p-5 sm:p-6 transition-all duration-300 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0 text-orange-400">
-                <ShieldCheck size={22} />
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  100%
-                </p>
-                <p className="text-xs font-semibold text-gray-400">In-House Engineers</p>
-              </div>
-            </div>
+          <p className="text-sm sm:text-base text-gray-400 mb-10 max-w-2xl mx-auto">
+            Trusted by 500+ startups, MSMEs & established enterprises across Delhi, Noida, Gurugram and pan-India to turn visitors into high-paying customers.
+          </p>
 
-            {/* Stat 4 */}
-            <div className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-orange-500/30 rounded-2xl p-5 sm:p-6 transition-all duration-300 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center flex-shrink-0 text-orange-400">
-                <Clock size={22} />
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  Direct
-                </p>
-                <p className="text-xs font-semibold text-gray-400">Priority Support</p>
-              </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <button
+              onClick={onOpenModal}
+              className="w-full sm:w-auto px-8 py-4 bg-[#F97316] hover:bg-orange-600 text-white font-bold text-base rounded-2xl shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer group"
+            >
+              Get Free Website Proposal & Quote
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <a
+              href="tel:+919599826131"
+              className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/15 text-white font-bold text-base rounded-2xl border border-white/20 transition-all duration-200 flex items-center justify-center gap-2"
+            >
+              <Phone className="w-5 h-5 text-orange-400" />
+              <span>Talk to Tech Architect: +91 95998 26131</span>
+            </a>
+          </div>
+
+          {/* Trust Metrics Pill Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div className="bg-white/5 border border-white/10 backdrop-blur-sm p-4 rounded-2xl text-center">
+              <div className="text-2xl sm:text-3xl font-black text-orange-400">500+</div>
+              <div className="text-xs text-gray-300 mt-1">Websites Delivered</div>
+            </div>
+            <div className="bg-white/5 border border-white/10 backdrop-blur-sm p-4 rounded-2xl text-center">
+              <div className="text-2xl sm:text-3xl font-black text-orange-400">4.9 / 5.0</div>
+              <div className="text-xs text-gray-300 mt-1">Client Satisfaction (640+ Reviews)</div>
+            </div>
+            <div className="bg-white/5 border border-white/10 backdrop-blur-sm p-4 rounded-2xl text-center">
+              <div className="text-2xl sm:text-3xl font-black text-orange-400">90+</div>
+              <div className="text-xs text-gray-300 mt-1">Google PageSpeed Guaranteed</div>
+            </div>
+            <div className="bg-white/5 border border-white/10 backdrop-blur-sm p-4 rounded-2xl text-center">
+              <div className="text-2xl sm:text-3xl font-black text-orange-400">5–7 Days</div>
+              <div className="text-xs text-gray-300 mt-1">Average Turnaround Time</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ============================================================== */}
-      {/* 4. EIGHT TYPES OF WEBSITES WE BUILD (Commercial Specification)  */}
-      {/* ============================================================== */}
-      <section id="services" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5">
-        <div className="max-w-7xl mx-auto space-y-12">
-          {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wider uppercase">
-              Website Specializations
+      {/* ================= 2. TRUST & CREDENTIALS BANNER ================= */}
+      <section className="bg-slate-900 border-y border-slate-800 py-6 px-4">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs sm:text-sm font-semibold text-gray-300">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="text-orange-500 w-5 h-5 shrink-0" />
+            <span>100% Source Code Ownership</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Zap className="text-orange-500 w-5 h-5 shrink-0" />
+            <span>Zero Proprietary Lock-In</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Lock className="text-orange-500 w-5 h-5 shrink-0" />
+            <span>SSL 256-Bit Bank Grade Security</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Award className="text-orange-500 w-5 h-5 shrink-0" />
+            <span>ISO 9001:2015 Quality Standards</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe className="text-orange-500 w-5 h-5 shrink-0" />
+            <span>Global Edge CDN Deployment</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 3. SERVICES GRID ================= */}
+      <section className="py-20 px-5 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-orange-50 text-[#F97316] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+              Full Spectrum Web Services
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
-              Types of Websites We Build
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#141D32] mb-4 tracking-tight">
+              Comprehensive <span className="text-[#F97316]">Website Solutions</span> for Every Stage
             </h2>
-            <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-              From Shopify D2C stores and dynamic WordPress websites to manufacturing catalogs, corporate portals, and PPC landing pages—we engineer digital experiences tailored for real growth.
+            <p className="text-gray-600 max-w-2xl mx-auto text-base">
+              From early-stage MVP websites to complex B2B distributor portals and high-volume e-commerce storefronts.
             </p>
           </div>
 
-          {/* 8 Types of Websites Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {services.map((srv) => {
-              const Icon = srv.icon;
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((item, idx) => {
+              const Icon = item.icon;
               return (
                 <div
-                  key={srv.id}
-                  className={`group relative rounded-2xl p-6 sm:p-7 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 shadow-lg shadow-black/20 ${
-                    srv.highlight
-                      ? "bg-gradient-to-b from-orange-500/[0.08] via-white/[0.03] to-white/[0.02] border border-orange-500/40 hover:border-orange-500/70"
-                      : "bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-orange-500/30"
-                  }`}
+                  key={idx}
+                  className="bg-white rounded-3xl p-7 border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-orange-500/50 transition-all duration-300 flex flex-col justify-between group"
                 >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-mono font-extrabold text-gray-500 group-hover:text-orange-400 transition-colors">
-                        {srv.num}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-gray-400">
-                          {srv.category}
-                        </span>
-                        <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/25 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
-                          <Icon size={20} />
-                        </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-5">
+                      <div className="w-13 h-13 bg-orange-50 rounded-2xl flex items-center justify-center group-hover:bg-[#F97316] transition-colors duration-300">
+                        <Icon className="w-6 h-6 text-[#F97316] group-hover:text-white transition-colors duration-300" />
                       </div>
+                      <span className="text-[11px] font-bold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full border border-slate-200">
+                        {item.badge}
+                      </span>
                     </div>
 
-                    <div>
-                      <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors">
-                        {srv.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-gray-300 leading-relaxed mt-2 font-normal">
-                        {srv.desc}
-                      </p>
-                    </div>
+                    <h3 className="text-xl font-bold text-[#141D32] mb-3 group-hover:text-[#F97316] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 leading-relaxed mb-6">
+                      {item.desc}
+                    </p>
 
-                    {/* Features checklist */}
-                    <div className="pt-3 space-y-2 border-t border-white/5">
-                      {srv.features.map((feat, i) => (
-                        <div key={i} className="flex items-start gap-2 text-xs text-gray-300">
-                          <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0 mt-0.5" />
+                    <div className="border-t border-slate-100 pt-4 mb-6 space-y-2">
+                      {item.features.map((feat, fIdx) => (
+                        <div key={fIdx} className="flex items-center gap-2 text-xs font-medium text-gray-700">
+                          <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
                           <span>{feat}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between">
-                    <button
-                      onClick={() => {
-                        setFormData((p) => ({ ...p, serviceType: srv.title }));
-                        setModalOpen(true);
-                      }}
-                      className="text-xs font-bold text-orange-400 hover:text-orange-300 flex items-center gap-1.5 transition-colors cursor-pointer group/btn"
-                    >
-                      <span>Discuss this service</span>
-                      <ArrowRight size={13} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                    </button>
-                    <span className="text-[11px] font-mono text-gray-500">
-                      In-House
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================== */}
-      {/* 4B. FEATURED CLIENT DELIVERIES / LIVE PROJECT SAMPLES         */}
-      {/* ============================================================== */}
-      <section id="projects" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#090A0E]">
-        <div className="max-w-7xl mx-auto space-y-12">
-          {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wider uppercase">
-              Recent Client Deliveries
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
-              Real Websites Engineered for Real Growth
-            </h2>
-            <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-              Explore live projects delivered across financial advisory, industrial B2B manufacturing, D2C Ayurvedic wellness, architectural woodcraft, and authentic FMCG food brands.
-            </p>
-          </div>
-
-          {/* 6 Cards Grid (5 Live Projects + 1 Next Project CTA) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sampleProjects.map((proj) => {
-              const Icon = proj.icon;
-              return (
-                <div
-                  key={proj.id}
-                  className="group relative rounded-2xl p-6 sm:p-7 bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-orange-500/40 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 shadow-lg shadow-black/20"
-                >
-                  <div className="space-y-4">
-                    {/* Top bar with Live indicator & domain */}
-                    <div className="flex items-center justify-between pb-3 border-b border-white/5">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">
-                          Live Website
-                        </span>
-                      </div>
-                      <span className="text-[11px] font-mono text-gray-400 group-hover:text-gray-200 transition-colors">
-                        {proj.domain}
-                      </span>
-                    </div>
-
-                    {/* Icon & Category */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-orange-400">
-                        {proj.category}
-                      </span>
-                      <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/25 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
-                        <Icon size={20} />
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <div>
-                      <h3 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors">
-                        {proj.title}
-                      </h3>
-                      <p className="text-[11px] font-mono text-gray-400 mt-0.5">
-                        {proj.badge}
-                      </p>
-                    </div>
-
-                    {/* 2-Line Overview */}
-                    <div className="space-y-2 pt-2 border-t border-white/5 text-xs text-gray-300 leading-relaxed">
-                      <div className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0 mt-1.5" />
-                        <span>{proj.line1}</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0 mt-1.5" />
-                        <span>{proj.line2}</span>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-1.5 pt-2">
-                      {proj.tags.map((tag, i) => (
-                        <span
-                          key={i}
-                          className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-white/[0.03] border border-white/5 text-gray-400"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Actions: Visit Live Site & Get Similar Build */}
-                  <div className="pt-5 mt-5 border-t border-white/5 flex items-center justify-between gap-3">
-                    <a
-                      href={proj.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500 text-orange-400 hover:text-white border border-orange-500/25 text-xs font-bold transition-all group/btn"
-                    >
-                      <span>Visit Live Site</span>
-                      <ExternalLink size={12} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                    </a>
-
-                    <button
-                      onClick={() => {
-                        setFormData((p) => ({
-                          ...p,
-                          details: `Interested in website architecture similar to ${proj.title} (${proj.domain})`,
-                        }));
-                        setModalOpen(true);
-                      }}
-                      className="text-xs font-semibold text-gray-400 hover:text-white transition cursor-pointer"
-                    >
-                      Get Similar Build ↗
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* Card 6: Launch Your Project Next CTA */}
-            <div className="relative rounded-2xl p-6 sm:p-7 bg-gradient-to-br from-orange-500/15 via-[#12141C] to-[#0A0B10] border-2 border-orange-500/40 hover:border-orange-500 flex flex-col justify-between space-y-6 shadow-xl shadow-orange-500/10 transition-all duration-300 hover:-translate-y-1">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-orange-500/20 border border-orange-500/30 text-orange-400">
-                    YOUR PROJECT NEXT
-                  </span>
-                  <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center text-white font-black text-xs">
-                    ✦
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-bold text-white">
-                    Ready to Build Your Website?
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-300 leading-relaxed mt-2">
-                    Join ambitious Indian businesses that scale with Koop India's fast, mobile-first web engineering. Get a custom scope and transparent turnaround roadmap.
-                  </p>
-                </div>
-
-                <div className="pt-2 space-y-2 border-t border-white/10 text-xs text-gray-300">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Sub-second loading & Core Web Vitals optimized</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Direct WhatsApp & CRM lead synchronization</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>100% full source code & intellectual property ownership</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-white/10">
-                <button
-                  onClick={() => setModalOpen(true)}
-                  className="w-full py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>Request Custom Proposal ↗</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================== */}
-      {/* 5. INTERACTIVE PROJECT SCOPE & TIMELINE ESTIMATOR (NO PRICING)   */}
-      {/* ============================================================== */}
-      <section id="estimator" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#0A0B10]">
-        <div className="max-w-5xl mx-auto space-y-10">
-          <div className="text-center space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wider uppercase">
-              Project Architecture
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Project Scope & Timeline Estimator
-            </h2>
-            <p className="text-gray-400 text-sm max-w-2xl mx-auto">
-              Select your requirements to see estimated turnaround time, recommended architecture stack, and technical deliverables.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-white/[0.02] border border-white/10 rounded-3xl p-6 sm:p-8 backdrop-blur-xl">
-            {/* Options selection */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Type selection */}
-              <div>
-                <label className="block text-xs font-bold text-gray-300 mb-2.5 uppercase tracking-wider">
-                  1. Select Website Type
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {[
-                    { id: "business", label: "Business Websites", sub: "Startups & Services" },
-                    { id: "ecommerce", label: "E-commerce Websites", sub: "Store & Catalog" },
-                    { id: "corporate", label: "Corporate Websites", sub: "Company Profile" },
-                    { id: "manufacturing", label: "Manufacturing Websites", sub: "B2B & Distribution" },
-                    { id: "landing", label: "Landing Pages", sub: "Google Ads & PPC" },
-                    { id: "redesign", label: "Website Redesign", sub: "Modern UI & Usability" },
-                    { id: "shopify", label: "Shopify Websites", sub: "D2C Brand Store" },
-                    { id: "wordpress", label: "WordPress Websites", sub: "Dynamic Custom CMS" },
-                  ].map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => setCalcType(t.id)}
-                      className={`p-3.5 rounded-xl border text-left transition-all ${
-                        calcType === t.id
-                          ? "bg-orange-500/10 border-orange-500 text-white shadow-md shadow-orange-500/10"
-                          : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20"
-                      }`}
-                    >
-                      <p className="text-xs font-bold text-white">{t.label}</p>
-                      <p className="text-[10px] text-gray-400">{t.sub}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Page count */}
-              <div>
-                <label className="block text-xs font-bold text-gray-300 mb-2.5 uppercase tracking-wider">
-                  2. Number of Custom Pages
-                </label>
-                <div className="grid grid-cols-3 gap-2.5">
-                  {[
-                    { id: "1-4", label: "1 to 4 Pages" },
-                    { id: "5-8", label: "5 to 8 Pages" },
-                    { id: "10+", label: "10+ Pages" },
-                  ].map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setCalcPages(p.id)}
-                      className={`p-2.5 rounded-xl border text-center transition-all ${
-                        calcPages === p.id
-                          ? "bg-orange-500/10 border-orange-500 text-white font-bold"
-                          : "bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20 text-xs"
-                      }`}
-                    >
-                      <span className="text-xs font-semibold">{p.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Addon features */}
-              <div>
-                <label className="block text-xs font-bold text-gray-300 mb-2.5 uppercase tracking-wider">
-                  3. Key Technical Deliverables Included
-                </label>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/10 cursor-pointer hover:border-white/20 transition-all">
-                    <input
-                      type="checkbox"
-                      checked={calcSpeed}
-                      onChange={(e) => setCalcSpeed(e.target.checked)}
-                      className="w-4 h-4 rounded text-orange-500 border-gray-600 focus:ring-0 bg-transparent"
-                    />
-                    <div className="flex-1">
-                      <p className="text-xs font-bold text-white">Speed & Core Web Vitals Optimization</p>
-                      <p className="text-[10px] text-gray-400">Sub-second loading, image WebP compression & edge caching</p>
-                    </div>
-                  </label>
-
-                  <label className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/10 cursor-pointer hover:border-white/20 transition-all">
-                    <input
-                      type="checkbox"
-                      checked={calcSeo}
-                      onChange={(e) => setCalcSeo(e.target.checked)}
-                      className="w-4 h-4 rounded text-orange-500 border-gray-600 focus:ring-0 bg-transparent"
-                    />
-                    <div className="flex-1">
-                      <p className="text-xs font-bold text-white">Technical & Local On-Page SEO</p>
-                      <p className="text-[10px] text-gray-400">Meta tags, OpenGraph, JSON-LD Schema & XML sitemap generation</p>
-                    </div>
-                  </label>
-
-                  <label className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/10 cursor-pointer hover:border-white/20 transition-all">
-                    <input
-                      type="checkbox"
-                      checked={calcWhatsApp}
-                      onChange={(e) => setCalcWhatsApp(e.target.checked)}
-                      className="w-4 h-4 rounded text-orange-500 border-gray-600 focus:ring-0 bg-transparent"
-                    />
-                    <div className="flex-1">
-                      <p className="text-xs font-bold text-white">Instant WhatsApp & CRM Lead Sync</p>
-                      <p className="text-[10px] text-gray-400">Direct lead notifications and automated WhatsApp routing</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            {/* Scope Summary Card */}
-            <div className="lg:col-span-5 bg-gradient-to-b from-[#12141C] to-[#0A0B10] border border-orange-500/25 rounded-2xl p-6 sm:p-7 flex flex-col justify-between space-y-6 shadow-xl">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                    Turnaround Timeline
-                  </span>
-                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-extrabold flex items-center gap-1">
-                    <Clock size={12} /> {est.days}
-                  </span>
-                </div>
-
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
-                    Recommended Architecture
-                  </p>
-                  <p className="text-sm font-bold text-orange-400 font-mono">
-                    {est.stack}
-                  </p>
-                </div>
-
-                <div className="space-y-2 pt-2 border-t border-white/5">
-                  <p className="text-xs font-bold text-gray-300 uppercase tracking-wider">
-                    Included in Your Scope:
-                  </p>
-                  {est.highlights.map((h, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-gray-300">
-                      <Check size={13} className="text-orange-400 flex-shrink-0" />
-                      <span>{h}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-3 pt-4 border-t border-white/10">
-                <button
-                  onClick={() => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      serviceType:
-                        calcType === "business"
-                          ? "Business Websites"
-                          : calcType === "ecommerce"
-                          ? "E-commerce Websites"
-                          : calcType === "corporate"
-                          ? "Corporate Websites"
-                          : calcType === "manufacturing"
-                          ? "Manufacturing Websites"
-                          : calcType === "landing"
-                          ? "Landing Pages"
-                          : calcType === "redesign"
-                          ? "Website Redesign"
-                          : calcType === "shopify"
-                          ? "Shopify Websites"
-                          : "WordPress Websites",
-                      projectScope: `${calcPages} pages, ${est.days} estimated timeline`,
-                    }));
-                    setModalOpen(true);
-                  }}
-                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>Request Custom Proposal ↗</span>
-                </button>
-                <p className="text-[11px] text-center text-gray-500">
-                  Prompt consultation & customized scope delivered by our web team.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================== */}
-      {/* 6. HIGH-CONVERSION WEB BLUEPRINT                              */}
-      {/* ============================================================== */}
-      <section id="architecture" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#090A0E]">
-        <div className="max-w-7xl mx-auto space-y-12">
-          {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wider uppercase">
-              Engineered For Real Conversions
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
-              The High-Conversion Web Blueprint
-            </h2>
-            <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-              Why Koop India websites outperform standard generic templates. Explore our 6 architectural pillars engineered to turn paid Google ad clicks into real, qualified business inquiries.
-            </p>
-          </div>
-
-          {/* Interactive 6-Pillar Tab Selector */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 p-1.5 rounded-2xl bg-white/[0.02] border border-white/10">
-            {architecturePillars.map((p, idx) => {
-              const Icon = p.icon;
-              const isSelected = activePillar === idx;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => setActivePillar(idx)}
-                  className={`p-3 rounded-xl flex flex-col items-center gap-2 text-center transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-gradient-to-b from-orange-500/20 to-orange-500/5 border border-orange-500 text-white shadow-lg shadow-orange-500/10"
-                      : "text-gray-400 hover:text-white hover:bg-white/[0.03] border border-transparent"
-                  }`}
-                >
-                  <div
-                    className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${
-                      isSelected
-                        ? "bg-orange-500 text-white shadow-md shadow-orange-500/30"
-                        : "bg-white/5 text-gray-400"
-                    }`}
+                  <button
+                    onClick={onOpenModal}
+                    className="w-full py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-[#141D32] group-hover:bg-[#F97316] group-hover:text-white group-hover:border-[#F97316] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <Icon size={18} />
-                  </div>
-                  <span className="text-[11px] font-bold leading-tight">
-                    {p.title.split(" ")[0]} {p.title.split(" ")[1] || ""}
-                  </span>
-                </button>
+                    <span>Inquire About {item.title}</span>
+                    <ArrowRight size={13} />
+                  </button>
+                </div>
               );
             })}
           </div>
-
-          {/* Active Pillar Deep-Dive Display Card */}
-          {(() => {
-            const current = architecturePillars[activePillar] || architecturePillars[0];
-            const Icon = current.icon;
-            return (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/10 rounded-3xl p-6 sm:p-10 relative overflow-hidden backdrop-blur-xl">
-                {/* Glow accent */}
-                <div className="absolute top-0 right-1/4 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
-
-                {/* Left Details */}
-                <div className="lg:col-span-7 space-y-6 relative z-10">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                        {current.badge}
-                      </span>
-                      <span className="text-xs font-mono text-gray-400">
-                        Pillar 0{activePillar + 1} of 06
-                      </span>
-                    </div>
-
-                    <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-3">
-                      <Icon className="text-orange-400 flex-shrink-0" size={24} />
-                      <span>{current.title}</span>
-                    </h3>
-
-                    <p className="text-xs font-semibold text-orange-400/90 font-mono">
-                      {current.tagline}
-                    </p>
-
-                    <p className="text-sm text-gray-300 leading-relaxed pt-1">
-                      {current.desc}
-                    </p>
-                  </div>
-
-                  {/* Feature checklist */}
-                  <div className="space-y-2.5 pt-4 border-t border-white/10">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                      Technical Implementation:
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      {current.features.map((feat, i) => (
-                        <div
-                          key={i}
-                          className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-gray-300"
-                        >
-                          <CheckCircle2
-                            size={14}
-                            className="text-orange-400 flex-shrink-0 mt-0.5"
-                          />
-                          <span className="leading-snug">{feat}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Action button */}
-                  <div className="pt-2">
-                    <button
-                      onClick={() => {
-                        setFormData((p) => ({
-                          ...p,
-                          details: `Interested in Web Architecture: ${current.title}`,
-                        }));
-                        setModalOpen(true);
-                      }}
-                      className="px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-500/20 flex items-center gap-2 cursor-pointer transition-all"
-                    >
-                      <span>Request This Blueprint for Your Business</span>
-                      <ArrowRight size={14} />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Right Interactive Metrics & Live Benchmark Card */}
-                <div className="lg:col-span-5 flex flex-col justify-between space-y-6 bg-[#0E1017] border border-white/10 rounded-2xl p-6 sm:p-7 relative z-10 shadow-2xl">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                      <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                        Verified Benchmark
-                      </span>
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3">
-                      {current.metrics.map((m, i) => (
-                        <div
-                          key={i}
-                          className="p-3 rounded-xl bg-white/[0.03] border border-white/5 text-center space-y-1"
-                        >
-                          <p className="text-lg sm:text-xl font-black text-orange-400">
-                            {m.val}
-                          </p>
-                          <p className="text-[10px] text-gray-400 font-semibold leading-tight">
-                            {m.label}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Comparison Mini Box */}
-                    <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2.5">
-                      <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                        Standard Template vs Koop Platform:
-                      </p>
-                      <div className="flex items-center justify-between text-xs py-1 border-b border-white/5">
-                        <span className="text-gray-400">Standard Templates:</span>
-                        <span className="text-red-400 font-bold">Failed / Bloated</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs py-1">
-                        <span className="text-white font-semibold">Koop India Build:</span>
-                        <span className="text-emerald-400 font-bold">100% Optimized</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center">
-                    <p className="text-xs font-bold text-orange-400">
-                      Standard in Every Koop India Build
-                    </p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">
-                      Zero generic templates. Zero recurring platform licensing fees.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Side-by-Side Visual Transformation: Template vs Koop India Platform */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
-            {/* The Old Way / Generic Templates */}
-            <div className="rounded-2xl bg-white/[0.01] border border-red-500/20 p-6 sm:p-7 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-black uppercase tracking-wider">
-                  THE COMMON PITFALL
-                </span>
-                <span className="text-xs font-mono text-red-400">68% Drop-off</span>
-              </div>
-              <h4 className="text-xl font-bold text-white">
-                Generic Templates & Bloated Builders
-              </h4>
-              <p className="text-xs text-gray-400 leading-relaxed">
-                Most businesses use slow WordPress themes, heavy page builders, or cheap freelance templates that waste their Google Ads investment.
-              </p>
-              <div className="space-y-2 pt-2 border-t border-white/5 text-xs text-gray-400">
-                <div className="flex items-center gap-2 text-red-400">
-                  <span>✕</span>
-                  <span>5.8s - 8.2s average mobile load time</span>
-                </div>
-                <div className="flex items-center gap-2 text-red-400">
-                  <span>✕</span>
-                  <span>40+ bloated plugin scripts and CSS overhead</span>
-                </div>
-                <div className="flex items-center gap-2 text-red-400">
-                  <span>✕</span>
-                  <span>Generic forms that send inquiries into spam folders</span>
-                </div>
-                <div className="flex items-center gap-2 text-red-400">
-                  <span>✕</span>
-                  <span>Poor Google Quality Scores leading to higher cost-per-click</span>
-                </div>
-              </div>
-            </div>
-
-            {/* The Koop India High-Performance Way */}
-            <div className="rounded-2xl bg-gradient-to-b from-orange-500/10 to-[#10121A] border-2 border-orange-500/50 p-6 sm:p-7 space-y-4 relative shadow-xl shadow-orange-500/10">
-              <div className="flex items-center justify-between">
-                <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-black uppercase tracking-wider">
-                  THE KOOP ADVANTAGE
-                </span>
-                <span className="text-xs font-mono text-emerald-400">+240% Lift</span>
-              </div>
-              <h4 className="text-xl font-bold text-white">
-                Koop India Custom Web Engineering
-              </h4>
-              <p className="text-xs text-gray-300 leading-relaxed">
-                Handcrafted with Next.js 14, Tailwind CSS, and edge caching for sub-second page loads, instant WhatsApp routing, and higher ad ROI.
-              </p>
-              <div className="space-y-2 pt-2 border-t border-white/10 text-xs text-gray-200">
-                <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-                  <Check size={14} />
-                  <span>Fast sub-second loading with high PageSpeed score focus</span>
-                </div>
-                <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-                  <Check size={14} />
-                  <span>Direct 1-click WhatsApp & instant CRM lead synchronization</span>
-                </div>
-                <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-                  <Check size={14} />
-                  <span>High semantic relevancy boosting Google Ads Quality Scores</span>
-                </div>
-                <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-                  <Check size={14} />
-                  <span>100% full source code and intellectual property ownership</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* ============================================================== */}
-      {/* 7. TAILORED WEB SOLUTIONS (NO PRICING - Fully Custom Quotes)   */}
-      {/* ============================================================== */}
-      <section id="solutions" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#090A0E]">
-        <div className="max-w-7xl mx-auto space-y-12">
-          {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wider uppercase">
-              Project Delivery Tiers
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Tailored Solutions for Ambitious Brands
+      {/* ================= 4. COMPARISON TABLE (SEO AUTHORITY BOOSTER) ================= */}
+      <section className="py-20 px-5 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-14">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-orange-600 bg-orange-50 px-3 py-1 rounded-full mb-3">
+              Performance Benchmark
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#141D32] mb-4">
+              Why Next.js by Koop India Outperforms <span className="text-orange-500">WordPress & Templates</span>
             </h2>
-            <p className="text-gray-400 text-sm max-w-xl mx-auto">
-              Every build includes 100% custom UI/UX design, mobile responsiveness, fast cloud hosting setup, and dedicated engineer support.
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+              Google rewards websites that load under 1.5 seconds and pass all Core Web Vitals. See how our tech stack compares.
             </p>
           </div>
 
-          {/* 3 Solution Tiers */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Tier 1 */}
-            <div className="rounded-2xl bg-white/[0.02] border border-white/10 p-7 flex flex-col justify-between space-y-6 hover:border-white/20 transition-all">
-              <div className="space-y-4">
-                <span className="text-[11px] font-black uppercase tracking-wider text-gray-400">
-                  TIER 01 • HIGH CONVERSION
-                </span>
-                <h3 className="text-2xl font-black text-white">
-                  PPC & Ads Landing Page
-                </h3>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Engineered specifically for Google Ads and paid campaigns. Laser-focused on lead capture, sub-second speed, and high quality score.
-                </p>
-
-                <div className="py-2 px-3 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-between text-xs font-semibold text-gray-300">
-                  <span>Turnaround Time:</span>
-                  <span className="text-orange-400 font-bold">3 - 5 Business Days</span>
-                </div>
-
-                <div className="space-y-2.5 pt-2 border-t border-white/5 text-xs text-gray-300">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Single-Page Conversion Layout</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Direct WhatsApp & Phone Click Routing</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Google Ads Tag & UTM Tracking</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Speed & Core Web Vitals Optimization</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>14 Days Post-Launch Support</span>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  setFormData((p) => ({ ...p, serviceType: "PPC & Ads Landing Page" }));
-                  setModalOpen(true);
-                }}
-                className="w-full py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-bold text-xs transition-all cursor-pointer"
-              >
-                Request Landing Page Scope ↗
-              </button>
-            </div>
-
-            {/* Tier 2 (Highlighted) */}
-            <div className="rounded-2xl bg-gradient-to-b from-orange-500/10 via-[#12141D] to-[#0A0B10] border-2 border-orange-500 p-7 flex flex-col justify-between space-y-6 relative shadow-2xl shadow-orange-500/20">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[10px] uppercase tracking-wider shadow-md">
-                MOST POPULAR
-              </div>
-
-              <div className="space-y-4 pt-2">
-                <span className="text-[11px] font-black uppercase tracking-wider text-orange-400">
-                  TIER 02 • FULL SUITE
-                </span>
-                <h3 className="text-2xl font-black text-white">
-                  Corporate Business Website
-                </h3>
-                <p className="text-xs text-gray-300 leading-relaxed">
-                  Full-fledged multi-page company website designed in Figma, built with Next.js, and structured to establish market authority and generate B2B/B2C inquiries.
-                </p>
-
-                <div className="py-2 px-3 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-between text-xs font-semibold text-gray-200">
-                  <span>Turnaround Time:</span>
-                  <span className="text-orange-400 font-bold">5 - 8 Business Days</span>
-                </div>
-
-                <div className="space-y-2.5 pt-2 border-t border-white/10 text-xs text-gray-200">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>5 to 8 Custom Responsive Pages</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>CMS Integration for Easy Content Edits</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Full SEO Schema & Meta Architecture</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Interactive Contact & Quote Forms</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Domain, SSL & Corporate Email Setup</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>30 Days Post-Launch Maintenance</span>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  setFormData((p) => ({ ...p, serviceType: "Corporate Business Website" }));
-                  setModalOpen(true);
-                }}
-                className="w-full py-3.5 rounded-full bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-orange-500/30 transition-all cursor-pointer"
-              >
-                Request Corporate Scope ↗
-              </button>
-            </div>
-
-            {/* Tier 3 */}
-            <div className="rounded-2xl bg-white/[0.02] border border-white/10 p-7 flex flex-col justify-between space-y-6 hover:border-white/20 transition-all">
-              <div className="space-y-4">
-                <span className="text-[11px] font-black uppercase tracking-wider text-gray-400">
-                  TIER 03 • ENTERPRISE & SALES
-                </span>
-                <h3 className="text-2xl font-black text-white">
-                  E-Commerce & Custom App
-                </h3>
-                <p className="text-xs text-gray-400 leading-relaxed">
-                  Complete online store or bespoke web application. Payment gateway integrations, inventory, user accounts, and high-volume scalability.
-                </p>
-
-                <div className="py-2 px-3 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-between text-xs font-semibold text-gray-300">
-                  <span>Turnaround Time:</span>
-                  <span className="text-orange-400 font-bold">10 - 15 Business Days</span>
-                </div>
-
-                <div className="space-y-2.5 pt-2 border-t border-white/5 text-xs text-gray-300">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Comprehensive Product Catalog & Custom Filters</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Razorpay / Cashfree / Stripe Integration</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Automated WhatsApp Invoicing Alerts</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>User Auth & Order History Dashboard</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={13} className="text-orange-400 flex-shrink-0" />
-                    <span>Dedicated Developer Support</span>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  setFormData((p) => ({ ...p, serviceType: "E-Commerce & Custom App" }));
-                  setModalOpen(true);
-                }}
-                className="w-full py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-bold text-xs transition-all cursor-pointer"
-              >
-                Request E-Commerce Scope ↗
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================== */}
-      {/* 8. COMPARISON MATRIX (Koop India vs Freelancers vs Agencies)   */}
-      {/* ============================================================== */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5">
-        <div className="max-w-5xl mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Why Ambitious Brands Choose Koop India
-            </h2>
-            <p className="text-gray-400 text-sm">
-              See how our engineering-first team compares to traditional agencies and unreliable freelancers.
-            </p>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[600px]">
+          <div className="overflow-x-auto rounded-3xl border border-slate-200 shadow-lg">
+            <table className="w-full text-left border-collapse text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-xs font-bold uppercase tracking-wider text-gray-400">
-                  <th className="py-4 px-4">Feature / Standard</th>
-                  <th className="py-4 px-4 text-orange-400 bg-orange-500/10 rounded-t-xl font-extrabold">
-                    KOOP INDIA
+                <tr className="bg-slate-900 text-white border-b border-slate-800">
+                  <th className="py-4 px-6 font-bold text-xs uppercase tracking-wider">Evaluation Feature</th>
+                  <th className="py-4 px-6 font-bold text-xs uppercase tracking-wider text-orange-400 bg-slate-800/80">
+                    Koop India (Next.js 15)
                   </th>
-                  <th className="py-4 px-4 text-gray-400">Freelancers</th>
-                  <th className="py-4 px-4 text-gray-400">Traditional Agencies</th>
+                  <th className="py-4 px-6 font-bold text-xs uppercase tracking-wider text-gray-300">
+                    WordPress + Plugins
+                  </th>
+                  <th className="py-4 px-6 font-bold text-xs uppercase tracking-wider text-gray-300">
+                    Wix / Template Builders
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-xs text-gray-300">
-                <tr>
-                  <td className="py-3.5 px-4 font-semibold text-white">Core Web Vitals & Speed Focus</td>
-                  <td className="py-3.5 px-4 text-orange-400 bg-orange-500/5 font-bold">90+ High Speed Target</td>
-                  <td className="py-3.5 px-4 text-gray-500">Often &lt; 50 (Slow)</td>
-                  <td className="py-3.5 px-4 text-gray-400">60-80 Average</td>
-                </tr>
-                <tr>
-                  <td className="py-3.5 px-4 font-semibold text-white">Turnaround Delivery Speed</td>
-                  <td className="py-3.5 px-4 text-orange-400 bg-orange-500/5 font-bold">3 - 7 Business Days</td>
-                  <td className="py-3.5 px-4 text-gray-500">Unpredictable delays</td>
-                  <td className="py-3.5 px-4 text-gray-400">4 to 8 Weeks</td>
-                </tr>
-                <tr>
-                  <td className="py-3.5 px-4 font-semibold text-white">Code & Asset Ownership</td>
-                  <td className="py-3.5 px-4 text-orange-400 bg-orange-500/5 font-bold">100% Client Ownership</td>
-                  <td className="py-3.5 px-4 text-gray-400">Partial / Unclear</td>
-                  <td className="py-3.5 px-4 text-gray-500">Locked to agency servers</td>
-                </tr>
-                <tr>
-                  <td className="py-3.5 px-4 font-semibold text-white">Direct WhatsApp / CRM Lead Routing</td>
-                  <td className="py-3.5 px-4 text-orange-400 bg-orange-500/5 font-bold">Built-In Standard</td>
-                  <td className="py-3.5 px-4 text-gray-500">Requires extra cost</td>
-                  <td className="py-3.5 px-4 text-gray-400">Basic email forms only</td>
-                </tr>
-                <tr>
-                  <td className="py-3.5 px-4 font-semibold text-white">Post-Launch Developer Support</td>
-                  <td className="py-3.5 px-4 text-orange-400 bg-orange-500/5 font-bold">Dedicated Direct Support (Mon - Sat)</td>
-                  <td className="py-3.5 px-4 text-gray-500">Ghosting after payment</td>
-                  <td className="py-3.5 px-4 text-gray-400">Costly retainers required</td>
-                </tr>
+              <tbody className="divide-y divide-slate-100 bg-white">
+                {comparisonRows.map((row, idx) => (
+                  <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                    <td className="py-4 px-6 font-bold text-slate-800">{row.metric}</td>
+                    <td className="py-4 px-6 font-extrabold text-emerald-700 bg-orange-50/30 flex items-center gap-2">
+                      <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
+                      <span>{row.koop}</span>
+                    </td>
+                    <td className="py-4 px-6 text-slate-600">{row.wordpress}</td>
+                    <td className="py-4 px-6 text-slate-600">{row.wix}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
       </section>
 
-      {/* ============================================================== */}
-      {/* 9. 4-STEP AGILE DELIVERY PROCESS                               */}
-      {/* ============================================================== */}
-      <section id="process" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#0A0B10]">
-        <div className="max-w-7xl mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold tracking-wider uppercase">
-              How We Deliver
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              From Concept to Launch in 4 Steps
+      {/* ================= 5. TRANSPARENT PACKAGES & PRICING ================= */}
+      <section className="py-20 px-5 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-orange-600 bg-orange-50 px-3 py-1 rounded-full mb-3">
+              Clear & Upfront Pricing
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#141D32] mb-4">
+              Transparent <span className="text-[#F97316]">Website Development</span> Packages
             </h2>
-            <p className="text-gray-400 text-sm">
-              A streamlined, transparent development sprint designed to launch fast without compromising code quality.
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+              No hidden charges. Full source code ownership. Free domain & SSL setup with every package.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                step: "01",
-                title: "Discovery & Blueprint",
-                desc: "We analyze your business goals, target audience, and competition to architect an optimized sitemap and wireframe.",
-              },
-              {
-                step: "02",
-                title: "Conversion UI/UX Design",
-                desc: "We craft custom, high-fidelity UI designs in Figma tailored to your brand identity, emphasizing high visual trust.",
-              },
-              {
-                step: "03",
-                title: "Modern Web Engineering",
-                desc: "We develop your site using Next.js and Tailwind CSS with sub-second speeds, mobile responsiveness, and clean semantic code.",
-              },
-              {
-                step: "04",
-                title: "Testing, SEO & Launch",
-                desc: "Rigorous PageSpeed optimization, lead form testing, domain DNS mapping, and Google Search Console indexing.",
-              },
-            ].map((p, i) => (
+          <div className="grid md:grid-cols-3 gap-8 items-stretch">
+            {packages.map((pkg, idx) => (
               <div
-                key={i}
-                className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-orange-500/30 transition-all space-y-3 relative overflow-hidden"
+                key={idx}
+                className={`rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 relative ${
+                  pkg.popular
+                    ? "bg-slate-900 text-white shadow-2xl scale-105 border-2 border-orange-500"
+                    : "bg-white text-slate-800 border border-slate-200 shadow-md hover:shadow-xl"
+                }`}
               >
-                <span className="text-3xl font-black text-white/10 font-mono">
-                  {p.step}
-                </span>
-                <h3 className="text-lg font-bold text-white">{p.title}</h3>
-                <p className="text-xs text-gray-400 leading-relaxed">{p.desc}</p>
+                {pkg.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[11px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-md">
+                    Most Popular Choice
+                  </div>
+                )}
+
+                <div>
+                  <h3 className={`text-2xl font-black mb-2 ${pkg.popular ? "text-white" : "text-slate-900"}`}>
+                    {pkg.name}
+                  </h3>
+                  <p className={`text-xs mb-6 ${pkg.popular ? "text-gray-300" : "text-gray-500"}`}>
+                    {pkg.tagline}
+                  </p>
+
+                  <div className="mb-6 pb-6 border-b border-gray-200/20">
+                    <div className="flex items-baseline gap-2">
+                      <span className={`text-2xl sm:text-3xl font-black ${pkg.popular ? "text-orange-400" : "text-orange-600"}`}>
+                        {pkg.pricingType}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-2 font-semibold">
+                      <Clock size={13} className="text-orange-500" />
+                      <span>Estimated Timeline: {pkg.delivery}</span>
+                    </div>
+                  </div>
+
+                  <ul className="space-y-3 mb-8">
+                    {pkg.features.map((feat, fIdx) => (
+                      <li key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm font-medium">
+                        <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+                        <span className={pkg.popular ? "text-gray-200" : "text-slate-700"}>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  onClick={onOpenModal}
+                  className={`w-full py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-md ${
+                    pkg.popular
+                      ? "bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/30"
+                      : "bg-slate-900 hover:bg-orange-600 text-white"
+                  }`}
+                >
+                  <span>{pkg.buttonText}</span>
+                  <ArrowRight size={15} />
+                </button>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ============================================================== */}
-      {/* 10. FAST LEAD CAPTURE FORM SECTION (Direct to CRM & Firestore) */}
-      {/* ============================================================== */}
-      <section id="contact" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5">
-        <div className="max-w-4xl mx-auto">
-          <div className="rounded-3xl bg-gradient-to-b from-white/[0.04] to-white/[0.01] border border-white/15 p-8 sm:p-12 shadow-2xl relative overflow-hidden">
-            {/* Ambient Background Glow */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* ================= 6. 6-STAGE PROVEN PROCESS ================= */}
+      <section className="py-20 px-5 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-orange-600 bg-orange-50 px-3 py-1 rounded-full mb-3">
+              Transparent Roadmap
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#141D32] mb-4">
+              Our 6-Stage <span className="text-orange-500">Development Process</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+              From requirement gathering to live Google Search Console submission, we keep you updated at every milestone.
+            </p>
+          </div>
 
-            <div className="space-y-3 text-center max-w-xl mx-auto mb-8">
-              <span className="px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-bold uppercase tracking-wider">
-                Direct Engineering Consultation
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Ready to Build Your Website?
-              </h2>
-              <p className="text-gray-400 text-xs sm:text-sm">
-                Speak directly with our web engineering team. Get a detailed technical scope and proposal tailored to your business.
-              </p>
-            </div>
-
-            {submitSuccess ? (
-              <div className="py-12 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
-                  <CheckCircle2 size={32} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                step: "01",
+                title: "Discovery & Strategy",
+                desc: "We analyze your target market, competitor benchmarks, conversion goals, and technical requirements.",
+              },
+              {
+                step: "02",
+                title: "UI/UX Figma Architecture",
+                desc: "Creation of modern, conversion-focused interactive wireframes and mobile-first prototypes for your sign-off.",
+              },
+              {
+                step: "03",
+                title: "Full-Stack Development",
+                desc: "Clean code development using Next.js 15, Tailwind CSS, and optimized database hookups with zero bloat.",
+              },
+              {
+                step: "04",
+                title: "On-Page SEO & Schema",
+                desc: "Implementation of structured JSON-LD schemas, meta tags, OpenGraph previews, and image AVIF/WebP compression.",
+              },
+              {
+                step: "05",
+                title: "Cross-Device QA & Auditing",
+                desc: "Rigorous testing across iOS, Android, macOS, and Windows to verify 90+ Core Web Vitals speed.",
+              },
+              {
+                step: "06",
+                title: "Go-Live & Post-Launch Support",
+                desc: "Domain pointing, SSL activation, Google Search Console indexing, and 30-day developer support.",
+              },
+            ].map((p, idx) => (
+              <div
+                key={idx}
+                className="bg-slate-50 border border-slate-200/80 rounded-3xl p-6 relative hover:border-orange-500 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="w-10 h-10 rounded-xl bg-orange-500 text-white font-black text-sm flex items-center justify-center mb-4 shadow-sm">
+                  {p.step}
                 </div>
-                <h3 className="text-2xl font-bold text-white">Project Inquiry Received!</h3>
-                <p className="text-gray-300 text-sm max-w-md mx-auto">
-                  Thank you, <span className="text-orange-400 font-bold">{formData.name}</span>. Our senior web architect will review your requirements and connect with you shortly.
-                </p>
-                <div className="pt-4 flex justify-center gap-3">
-                  <a
-                    href={WHATSAPP_LINK}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-6 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs flex items-center gap-2"
-                  >
-                    <span>Chat on WhatsApp Directly</span>
-                  </a>
-                  <button
-                    onClick={() => {
-                      setSubmitSuccess(false);
-                      setFormData({
-                        name: "",
-                        company: "",
-                        phone: "",
-                        email: "",
-                        serviceType: "Business Websites",
-                        projectScope: "New Website from Scratch",
-                        details: "",
-                      });
-                      setFormErrors({ name: "", phone: "", email: "" });
-                      setSubmitError("");
-                    }}
-                    className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/15 text-white font-bold text-xs"
-                  >
-                    Submit Another Inquiry
-                  </button>
-                </div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{p.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{p.desc}</p>
               </div>
-            ) : (
-              <form onSubmit={(e) => handleSubmitLead(e, "google_ads_website_development")} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider">
-                      Your Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="e.g. Rahul Sharma"
-                      className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border ${
-                        formErrors.name ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
-                      } text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition`}
-                    />
-                    {formErrors.name && (
-                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.name}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider">
-                      Phone Number (WhatsApp Preferred) *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handlePhoneChange}
-                      onBlur={handlePhoneBlur}
-                      maxLength={14}
-                      placeholder="e.g. +91 98765 43210"
-                      className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border ${
-                        formErrors.phone ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
-                      } text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition`}
-                    />
-                    {formErrors.phone && (
-                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.phone}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider">
-                      Business or Brand Name
-                    </label>
-                    <input
-                      type="text"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      placeholder="Enter company or business name"
-                      className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      onBlur={handleEmailBlur}
-                      placeholder="rahul@company.com"
-                      className={`w-full px-4 py-3 rounded-xl bg-white/[0.04] border ${
-                        formErrors.email ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
-                      } text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition`}
-                    />
-                    {formErrors.email && (
-                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.email}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider">
-                      Website Service Needed
-                    </label>
-                    <select
-                      name="serviceType"
-                      value={formData.serviceType}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-[#141722] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm outline-none transition"
-                    >
-                      <option value="Business Websites">Business Websites</option>
-                      <option value="E-commerce Websites">E-commerce Websites</option>
-                      <option value="Corporate Websites">Corporate Websites</option>
-                      <option value="Manufacturing Websites">Manufacturing Websites</option>
-                      <option value="Landing Pages">Landing Pages</option>
-                      <option value="Website Redesign">Website Redesign</option>
-                      <option value="Shopify Websites">Shopify Websites / Stores</option>
-                      <option value="WordPress Websites">WordPress Websites / CMS</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider">
-                      Project Scope & Timeline
-                    </label>
-                    <select
-                      name="projectScope"
-                      value={formData.projectScope}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl bg-[#141722] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm outline-none transition"
-                    >
-                      <option value="New Website from Scratch">New Website from Scratch</option>
-                      <option value="Existing Website Redesign">Existing Website Redesign</option>
-                      <option value="Urgent Launch (Within 5 Days)">Urgent Launch (Within 5 Days)</option>
-                      <option value="Standard Launch (Within 2 Weeks)">Standard Launch (Within 2 Weeks)</option>
-                      <option value="Custom Long-Term Web Platform">Custom Long-Term Web Platform</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5 uppercase tracking-wider">
-                    Project Requirements / Reference Websites
-                  </label>
-                  <textarea
-                    name="details"
-                    rows={3}
-                    value={formData.details}
-                    onChange={handleChange}
-                    placeholder="Briefly describe what you want to achieve..."
-                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs sm:text-sm placeholder:text-gray-400 outline-none transition resize-none"
-                  />
-                </div>
-
-                {submitError && (
-                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center gap-2">
-                    <AlertCircle size={16} className="flex-shrink-0" />
-                    <span>{submitError}</span>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full py-4 rounded-full bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-sm sm:text-base shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-[1.01] transition-all flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50"
-                >
-                  {submitting ? (
-                    <span>Submitting Your Requirements...</span>
-                  ) : (
-                    <>
-                      <span>Get Free Project Scope & Consultation ↗</span>
-                      <ArrowRight size={16} />
-                    </>
-                  )}
-                </button>
-
-                <p className="text-[11px] text-center text-gray-500 pt-1">
-                  🔒 Strictly Confidential. No spam, ever. Leads stored directly in Koop India CRM.
-                </p>
-              </form>
-            )}
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ============================================================== */}
-      {/* 11. FAQ ACCORDION                                              */}
-      {/* ============================================================== */}
-      <section id="faqs" className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#0A0B10]">
-        <div className="max-w-4xl mx-auto space-y-10">
-          <div className="text-center space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              Frequently Asked Questions
+      {/* ================= 7. TECH STACK BLUEPRINT ================= */}
+      <section className="py-16 px-5 bg-slate-900 text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-extrabold mb-3">
+              Modern <span className="text-orange-400">Technology Stack</span>
             </h2>
-            <p className="text-gray-400 text-sm">
-              Clear answers to the most common questions regarding our web development process.
+            <p className="text-gray-400 text-sm max-w-xl mx-auto">
+              We build on world-class developer tools to guarantee long-term stability and unmatched performance.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
+            {[
+              { name: "Next.js 15", sub: "React Framework", icon: Code },
+              { name: "Tailwind CSS", sub: "Modern Styling", icon: Palette },
+              { name: "Node.js", sub: "Backend Engine", icon: Server },
+              { name: "Firebase / SQL", sub: "Cloud Database", icon: Database },
+              { name: "Vercel / Cloudflare", sub: "Global Edge CDN", icon: Globe },
+              { name: "Razorpay / UPI", sub: "Payment Gateways", icon: Lock },
+            ].map((tech, idx) => {
+              const Icon = tech.icon;
+              return (
+                <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center">
+                  <Icon className="w-6 h-6 text-orange-400 mb-2" />
+                  <div className="font-bold text-sm text-white">{tech.name}</div>
+                  <div className="text-[10px] text-gray-400">{tech.sub}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 8. LOCALIZED REGIONAL HUBS (DELHI NCR SEO) ================= */}
+      <section className="py-20 px-5 bg-white border-t border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-14">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-orange-600 bg-orange-50 px-3 py-1 rounded-full mb-3">
+              Local Authority
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#141D32] mb-4">
+              Website Development Across <span className="text-orange-500">Delhi NCR & Major Business Hubs</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+              Providing localized technical consulting, in-person discovery meetings, and fast turnarounds for businesses across key commercial zones.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {regionalHubs.map((hub, idx) => (
+              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-3xl p-6">
+                <div className="flex items-center gap-2 mb-4 font-bold text-slate-900 text-base">
+                  <MapPin size={18} className="text-orange-500 shrink-0" />
+                  <h4>{hub.city}</h4>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {hub.areas.map((area, aIdx) => (
+                    <span
+                      key={aIdx}
+                      className="inline-block px-2.5 py-1 bg-white border border-slate-200/80 rounded-lg text-xs font-medium text-slate-700"
+                    >
+                      {area}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 9. INTERNAL CROSS-LINKING ECOSYSTEM ================= */}
+      <section className="py-14 px-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl sm:text-3xl font-black mb-2">Explore Related Business Growth Services</h3>
+            <p className="text-white/90 text-sm max-w-2xl mx-auto">
+              Koop India is your 360° launchpad: from business incorporation and legal compliance to digital presence.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+            <Link
+              href="/gst-registration"
+              className="bg-white/10 hover:bg-white text-white hover:text-slate-900 border border-white/20 p-3.5 rounded-2xl transition-all duration-200 text-center flex flex-col items-center justify-center gap-1.5 font-bold text-xs"
+            >
+              <FileCheck size={18} />
+              <span>GST Registration</span>
+            </Link>
+            <Link
+              href="/trademark-registration"
+              className="bg-white/10 hover:bg-white text-white hover:text-slate-900 border border-white/20 p-3.5 rounded-2xl transition-all duration-200 text-center flex flex-col items-center justify-center gap-1.5 font-bold text-xs"
+            >
+              <ShieldCheck size={18} />
+              <span>Trademark Registration</span>
+            </Link>
+            <Link
+              href="/tech-solutions/crm-development"
+              className="bg-white/10 hover:bg-white text-white hover:text-slate-900 border border-white/20 p-3.5 rounded-2xl transition-all duration-200 text-center flex flex-col items-center justify-center gap-1.5 font-bold text-xs"
+            >
+              <Database size={18} />
+              <span>Custom CRM Systems</span>
+            </Link>
+            <Link
+              href="/tech-solutions/seo"
+              className="bg-white/10 hover:bg-white text-white hover:text-slate-900 border border-white/20 p-3.5 rounded-2xl transition-all duration-200 text-center flex flex-col items-center justify-center gap-1.5 font-bold text-xs"
+            >
+              <Search size={18} />
+              <span>SEO & Organic Growth</span>
+            </Link>
+            <Link
+              href="/custom-website-development"
+              className="bg-white/10 hover:bg-white text-white hover:text-slate-900 border border-white/20 p-3.5 rounded-2xl transition-all duration-200 text-center flex flex-col items-center justify-center gap-1.5 font-bold text-xs"
+            >
+              <Flame size={18} />
+              <span>PPC Google Ads Landing</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= 10. FAQS (SCHEMA MATCHED) ================= */}
+      <section className="py-20 px-5 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-orange-600 bg-orange-50 px-3 py-1 rounded-full mb-3">
+              Got Questions?
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#141D32] mb-4">
+              Frequently Asked <span className="text-orange-500">Questions</span>
+            </h2>
+            <p className="text-gray-600 text-sm sm:text-base">
+              Clear answers to the most common questions about website development, costs, timelines, and technology.
             </p>
           </div>
 
           <div className="space-y-3">
-            {faqs.map((faq, i) => (
+            {faqs.map((faq, idx) => (
               <div
-                key={i}
-                className="rounded-2xl bg-white/[0.02] border border-white/10 overflow-hidden transition-all"
+                key={idx}
+                className="border border-slate-200 rounded-2xl overflow-hidden transition-all duration-200 bg-slate-50/50"
               >
                 <button
-                  onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
-                  className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-white hover:text-orange-400 transition cursor-pointer"
+                  type="button"
+                  onClick={() => toggleFaq(idx)}
+                  className="w-full p-5 text-left font-bold text-slate-900 flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-100/50 transition-colors"
                 >
-                  <span>{faq.q}</span>
+                  <span className="text-sm sm:text-base">{faq.q}</span>
                   <ChevronDown
-                    size={16}
-                    className={`transition-transform duration-200 text-gray-400 ${
-                      openFaq === i ? "rotate-180 text-orange-400" : ""
+                    size={18}
+                    className={`text-orange-500 shrink-0 transition-transform duration-200 ${
+                      openFaq === idx ? "rotate-180" : ""
                     }`}
                   />
                 </button>
-                {openFaq === i && (
-                  <div className="px-6 pb-5 text-xs sm:text-sm text-gray-400 leading-relaxed border-t border-white/5 pt-3">
+                {openFaq === idx && (
+                  <div className="px-5 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3 bg-white">
                     {faq.a}
                   </div>
                 )}
@@ -2412,333 +765,43 @@ export default function WebsiteDevelopmentLanding() {
         </div>
       </section>
 
-      {/* ============================================================== */}
-      {/* 12. BOTTOM CTA BANNER                                          */}
-      {/* ============================================================== */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 overflow-hidden">
-        <div className="max-w-5xl mx-auto text-center space-y-6 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-transparent blur-3xl -z-10" />
-          <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Stop Losing Ad Clicks to Slow, Outdated Websites.
+      {/* ================= 11. FINAL CTA BANNER ================= */}
+      <section className="py-20 px-5 bg-gradient-to-br from-[#0F172A] via-[#141D32] to-[#1a2340] text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full text-xs font-bold text-orange-400 mb-6 border border-white/10">
+            <Clock size={13} />
+            <span>Fast Turnaround • Free Architecture Audit</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl font-black mb-6 leading-tight">
+            Ready to Build a Website That Dominates Google Top 5?
           </h2>
-          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
-            Talk directly with our web engineering team. Get a comprehensive technical scope, clear turnaround timeline, and tailored strategy.
+
+          <p className="text-gray-300 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
+            Schedule a free technical strategy call with our lead architect. We'll analyze your current site, review competitor strategies, and deliver a custom roadmap.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button
-              onClick={() => setModalOpen(true)}
-              className="px-8 py-4 rounded-full bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-orange-500/30 transition-all flex items-center gap-2 cursor-pointer"
+              onClick={onOpenModal}
+              className="w-full sm:w-auto px-8 py-4 bg-[#F97316] hover:bg-orange-600 text-white font-bold text-base rounded-2xl shadow-xl shadow-orange-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Get Your Custom Web Proposal</span>
-              <ArrowRight size={15} />
+              Start Your Website Project Today
+              <ArrowRight size={18} />
             </button>
             <a
-              href={`tel:${RAW_PHONE}`}
-              className="px-7 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-bold text-sm sm:text-base transition-all flex items-center gap-2"
+              href="tel:+919599826131"
+              className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/15 text-white font-bold text-base rounded-2xl border border-white/20 transition-all flex items-center justify-center gap-2"
             >
-              <Phone size={15} className="text-orange-400" />
-              <span>Call {PHONE_NUMBER}</span>
+              <Phone size={18} className="text-orange-400" />
+              <span>Call Us: +91 95998 26131</span>
             </a>
           </div>
         </div>
       </section>
 
-      {/* ============================================================== */}
-      {/* 13. FOOTER (Official Koop India Logo + Dark Theme)             */}
-      {/* ============================================================== */}
-      <footer className="relative z-10 py-12 px-4 sm:px-6 lg:px-8 border-t border-white/10 bg-[#060709] text-xs text-gray-500">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            {/* Main Header Koop India Logo */}
-            <button
-              type="button"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-2xl sm:text-3xl font-extrabold tracking-tight cursor-pointer"
-              aria-label="Koop India"
-            >
-              <span className="text-orange-500">koop</span>
-              <span className="text-white">india</span>
-              <span className="text-orange-500">.</span>
-            </button>
-            <p className="text-gray-400 text-center sm:text-left">
-              High-Performance Web Development • Koop India
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-6 text-gray-400">
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "services")}
-              className="hover:text-white transition cursor-pointer"
-            >
-              Services
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "projects")}
-              className="hover:text-white transition cursor-pointer"
-            >
-              Live Work
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "architecture")}
-              className="hover:text-white transition cursor-pointer"
-            >
-              Blueprint
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "estimator")}
-              className="hover:text-white transition cursor-pointer"
-            >
-              Estimator
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "solutions")}
-              className="hover:text-white transition cursor-pointer"
-            >
-              Solutions
-            </button>
-            <button
-              type="button"
-              onClick={(e) => scrollToSection(e, "faqs")}
-              className="hover:text-white transition cursor-pointer"
-            >
-              FAQs
-            </button>
-            <a href={`tel:${RAW_PHONE}`} className="text-orange-400 hover:underline">
-              {PHONE_NUMBER}
-            </a>
-          </div>
-
-          <p className="text-gray-600">
-            © {new Date().getFullYear()} Koop India. All rights reserved.
-          </p>
-        </div>
-      </footer>
-
-      {/* ============================================================== */}
-      {/* 14. MOBILE STICKY CONTACT BAR                                   */}
-      {/* ============================================================== */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0A0B10]/95 backdrop-blur-lg border-t border-white/10 p-2.5 flex items-center gap-2">
-        <a
-          href={`tel:${RAW_PHONE}`}
-          className="flex-1 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-1.5"
-        >
-          <Phone size={13} className="text-orange-400" />
-          <span>Call Now</span>
-        </a>
-        <a
-          href={WHATSAPP_LINK}
-          target="_blank"
-          rel="noreferrer"
-          className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/30"
-        >
-          <span>WhatsApp</span>
-        </a>
-        <button
-          onClick={() => setModalOpen(true)}
-          className="flex-[1.4] py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-xs shadow-md shadow-orange-500/30 flex items-center justify-center gap-1 cursor-pointer"
-        >
-          <span>Quote ↗</span>
-        </button>
-      </div>
-
-      {/* ============================================================== */}
-      {/* 15. QUICK QUOTE POPUP MODAL (Zero Pricing, Direct to CRM)      */}
-      {/* ============================================================== */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
-          <div className="relative w-full max-w-lg bg-[#0E1017] border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
-            {/* Close Button */}
-            <button
-              onClick={() => {
-                setModalOpen(false);
-                setSubmitSuccess(false);
-                setSubmitError("");
-                setFormErrors({ name: "", phone: "", email: "" });
-              }}
-              className="absolute top-5 right-5 p-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition cursor-pointer"
-              aria-label="Close modal"
-            >
-              <X size={18} />
-            </button>
-
-            <div className="space-y-1.5 pr-8">
-              <span className="text-[10px] font-black uppercase tracking-widest text-orange-400">
-                Direct Web Architect Consultation
-              </span>
-              <h3 className="text-xl sm:text-2xl font-black text-white">
-                Request a Custom Website Proposal
-              </h3>
-              <p className="text-xs text-gray-400">
-                Share your requirements. We will review your goals and deliver a detailed technical scope promptly.
-              </p>
-            </div>
-
-            {submitSuccess ? (
-              <div className="py-8 text-center space-y-3">
-                <div className="w-14 h-14 rounded-full bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
-                  <CheckCircle2 size={28} />
-                </div>
-                <h4 className="text-xl font-bold text-white">Inquiry Received!</h4>
-                <p className="text-gray-300 text-xs">
-                  Your inquiry has been recorded. Our web team will contact you shortly during business hours.
-                </p>
-                <div className="pt-3">
-                  <button
-                    onClick={() => {
-                      setSubmitSuccess(false);
-                      setModalOpen(false);
-                      setSubmitError("");
-                      setFormErrors({ name: "", phone: "", email: "" });
-                    }}
-                    className="px-6 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition cursor-pointer"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={(e) => handleSubmitLead(e, "google_ads_webdev_popup")} className="space-y-3.5">
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-300 mb-1 uppercase tracking-wider">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="e.g. Rahul Sharma"
-                    className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border ${
-                      formErrors.name ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
-                    } text-white text-xs placeholder:text-gray-400 outline-none`}
-                  />
-                  {formErrors.name && (
-                    <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.name}</p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-300 mb-1 uppercase tracking-wider">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handlePhoneChange}
-                      onBlur={handlePhoneBlur}
-                      maxLength={14}
-                      placeholder="e.g. +91 98765 43210"
-                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border ${
-                        formErrors.phone ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
-                      } text-white text-xs placeholder:text-gray-400 outline-none`}
-                    />
-                    {formErrors.phone && (
-                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.phone}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-300 mb-1 uppercase tracking-wider">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      onBlur={handleEmailBlur}
-                      placeholder="rahul@company.com"
-                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border ${
-                        formErrors.email ? "border-red-500 focus:border-red-500 ring-1 ring-red-500/20" : "border-white/15 focus:border-orange-500"
-                      } text-white text-xs placeholder:text-gray-400 outline-none`}
-                    />
-                    {formErrors.email && (
-                      <p className="text-[11px] text-red-400 mt-1 font-medium">{formErrors.email}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-300 mb-1 uppercase tracking-wider">
-                      Project Type
-                    </label>
-                    <select
-                      name="serviceType"
-                      value={formData.serviceType}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2.5 rounded-xl bg-[#141722] border border-white/15 focus:border-orange-500 text-white text-xs outline-none"
-                    >
-                      <option value="Business Websites">Business Websites</option>
-                      <option value="E-commerce Websites">E-commerce Websites</option>
-                      <option value="Corporate Websites">Corporate Websites</option>
-                      <option value="Manufacturing Websites">Manufacturing Websites</option>
-                      <option value="Landing Pages">Landing Pages</option>
-                      <option value="Website Redesign">Website Redesign</option>
-                      <option value="Shopify Websites">Shopify Websites / Stores</option>
-                      <option value="WordPress Websites">WordPress Websites / CMS</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-300 mb-1 uppercase tracking-wider">
-                      Target Scope
-                    </label>
-                    <select
-                      name="projectScope"
-                      value={formData.projectScope}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2.5 rounded-xl bg-[#141722] border border-white/15 focus:border-orange-500 text-white text-xs outline-none"
-                    >
-                      <option value="New Website from Scratch">New Website from Scratch</option>
-                      <option value="Existing Website Redesign">Existing Redesign</option>
-                      <option value="Urgent Launch (Within 5 Days)">Urgent (Within 5 Days)</option>
-                      <option value="Standard Launch (Within 2 Weeks)">Standard (Within 2 Weeks)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-300 mb-1 uppercase tracking-wider">
-                    Project Notes / Preferred Launch Date
-                  </label>
-                  <textarea
-                    name="details"
-                    rows={2}
-                    value={formData.details}
-                    onChange={handleChange}
-                    placeholder="Briefly describe what you want to achieve..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/15 focus:border-orange-500 text-white text-xs placeholder:text-gray-400 outline-none resize-none"
-                  />
-                </div>
-
-                {submitError && (
-                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center gap-2">
-                    <AlertCircle size={15} className="flex-shrink-0" />
-                    <span>{submitError}</span>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full py-3.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                >
-                  {submitting ? "Sending..." : "Submit Project Scope ↗"}
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
+      {/* ================= 12. ENQUIRY MODAL ================= */}
+      <EnquiryModal isOpen={isOpen} onClose={onCloseModal} />
     </div>
   );
 }

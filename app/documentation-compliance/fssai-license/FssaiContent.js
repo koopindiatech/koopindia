@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import {
   CheckCircle,
   ArrowRight,
@@ -1134,6 +1135,43 @@ const FSSAILicensePage = () => {
               </p>
             </div>
           </Fade>
+        </section>
+
+        {/* ══ RELATED BUSINESS SERVICES ══ */}
+        <section className="py-12 px-6 bg-slate-900 border-t border-slate-800">
+          <div className="max-w-5xl mx-auto text-center">
+            <h3 className="text-white text-lg font-bold mb-4">Complete Compliance & Digital Growth Ecosystem</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-bold">
+              <Link
+                href="/gst-registration"
+                className="p-3 bg-white/5 hover:bg-white text-slate-200 hover:text-slate-900 rounded-xl border border-white/10 transition-colors flex items-center justify-between"
+              >
+                <span>GST Registration</span>
+                <ChevronRight size={14} />
+              </Link>
+              <Link
+                href="/trademark-registration"
+                className="p-3 bg-white/5 hover:bg-white text-slate-200 hover:text-slate-900 rounded-xl border border-white/10 transition-colors flex items-center justify-between"
+              >
+                <span>Trademark Registration</span>
+                <ChevronRight size={14} />
+              </Link>
+              <Link
+                href="/website-development"
+                className="p-3 bg-white/5 hover:bg-white text-slate-200 hover:text-slate-900 rounded-xl border border-white/10 transition-colors flex items-center justify-between"
+              >
+                <span>Website Development</span>
+                <ChevronRight size={14} />
+              </Link>
+              <Link
+                href="/documentation-compliance/company-registration-services"
+                className="p-3 bg-white/5 hover:bg-white text-slate-200 hover:text-slate-900 rounded-xl border border-white/10 transition-colors flex items-center justify-between"
+              >
+                <span>Company Registration</span>
+                <ChevronRight size={14} />
+              </Link>
+            </div>
+          </div>
         </section>
 
         {/* ══ LOCAL BUSINESS SCHEMA ══ */}

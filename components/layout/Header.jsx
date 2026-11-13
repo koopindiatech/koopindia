@@ -37,7 +37,7 @@ const Header = ({ onOpenModal }) => {
       accent: "text-orange-600",
       dropdown: [
         { name: "GST Registration & Filing", href: "/gst-registration", icon: <FileCheck size={15} /> },
-        { name: "Trademark Registration", href: "/documentation-compliance/trademark-registration", icon: <FileCheck size={15} /> },
+        { name: "Trademark Registration", href: "/trademark-registration", icon: <FileCheck size={15} /> },
         { name: "FSSAI License", href: "/documentation-compliance/fssai-license", icon: <FileCheck size={15} /> },
         { name: "ISO Certification", href: "/documentation-compliance/iso-certification", icon: <FileCheck size={15} /> },
         { name: "Company Accounting", href: "/documentation-compliance/company-accounting", icon: <FileCheck size={15} /> },
@@ -50,7 +50,7 @@ const Header = ({ onOpenModal }) => {
       light: "bg-orange-50",
       accent: "text-orange-600",
       dropdown: [
-        { name: "Website Development", href: "/tech-solutions/website-development", icon: <Globe size={15} /> },
+        { name: "Website Development", href: "/website-development", icon: <Globe size={15} /> },
         { name: "CRM Development", href: "/tech-solutions/crm-development", icon: <MonitorSmartphone size={15} /> },
         { name: "SEO Services", href: "/tech-solutions/seo", icon: <Search size={15} /> },
         { name: "Social Media Marketing", href: "/digital-marketing/social-media-marketing", icon: <Share2 size={15} /> },

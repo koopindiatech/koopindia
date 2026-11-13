@@ -94,14 +94,18 @@ const formatTime = (ts) => {
 export const isEnquiryLead = (l) => {
   if (!l) return false;
   const pid = (l.profileId || l.id || "").toUpperCase().trim();
-  const cat = (l.category || l.service || l.productCategory || l.displayCategory || "").toLowerCase().trim();
+  const cat = (l.category || l.service || l.serviceType || l.productCategory || l.displayCategory || "").toLowerCase().trim();
   const src = (l.source || "").toLowerCase().trim();
+  const type = (l.type || "").toLowerCase().trim();
 
-  // Exclude website development enquiries (from website form/popups)
-  if (cat.includes("website development") || cat.includes("web dev") || cat.includes("web development")) return true;
-  if (src.includes("website_development") || src.includes("webdev") || src.includes("sidebar-floating") || src.includes("enquiry") || src.includes("enquiries")) return true;
+  // Exclude explicit enquiries or collection flags
+  if (type === "enquiry" || l.isEnquiry || l.collection === "enquiries" || l._collection === "enquiries") return true;
 
-  // Counter IDs like KI00072, KI00063 (numeric enquiry IDs without KIB or KIS)
+  // Exclude website development enquiries (from website forms, popups, and PPC)
+  if (cat.includes("website development") || cat.includes("web dev") || cat.includes("custom website") || cat.includes("web design")) return true;
+  if (src.includes("website_development") || src.includes("webdev") || src.includes("sidebar-floating") || src.includes("enquiry") || src.includes("enquiries") || src.includes("google_ads_webdev")) return true;
+
+  // Counter IDs like KI00072, KI00063 (numeric enquiry IDs from enquiryCounter without KIB or KIS)
   if (/^KI\d+$/i.test(pid) || pid.startsWith("KI0") || /^\d{4,6}$/.test(pid)) {
     if (!l.buyerId && !l.sellerId && !pid.startsWith("KIB") && !pid.startsWith("KIS")) {
       return true;
@@ -1649,7 +1653,7 @@ export default function LeadsPage() {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 bg-white border-t border-gray-100">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <span className="text-xs text-gray-500 font-medium">
-                      Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} leads
+                      Showing {filtered.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} leads
                     </span>
                     <span className="text-gray-300 hidden sm:inline">•</span>
                     <div className="flex items-center gap-1.5 text-xs text-gray-600">

@@ -58,7 +58,7 @@ const HeroSection = ({ onOpenModal }) => {
     },
     {
       img: "/services/trademark-registration.jpeg",
-      link: "/documentation-compliance/trademark-registration",
+      link: "/trademark-registration",
       alt: "Trademark Registration Services",
     },
     {
