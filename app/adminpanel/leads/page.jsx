@@ -90,6 +90,27 @@ const formatTime = (ts) => {
   return date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 };
 
+// Helper to strictly identify and exclude enquiries collection/website form leads
+export const isEnquiryLead = (l) => {
+  if (!l) return false;
+  const pid = (l.profileId || l.id || "").toUpperCase().trim();
+  const cat = (l.category || l.service || l.productCategory || l.displayCategory || "").toLowerCase().trim();
+  const src = (l.source || "").toLowerCase().trim();
+
+  // Exclude website development enquiries (from website form/popups)
+  if (cat.includes("website development") || cat.includes("web dev") || cat.includes("web development")) return true;
+  if (src.includes("website_development") || src.includes("webdev") || src.includes("sidebar-floating") || src.includes("enquiry") || src.includes("enquiries")) return true;
+
+  // Counter IDs like KI00072, KI00063 (numeric enquiry IDs without KIB or KIS)
+  if (/^KI\d+$/i.test(pid) || pid.startsWith("KI0") || /^\d{4,6}$/.test(pid)) {
+    if (!l.buyerId && !l.sellerId && !pid.startsWith("KIB") && !pid.startsWith("KIS")) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 // Resilient helper to match categories (handles plural, singular, subwords)
 const matchCategoryHelper = (itemCategory, selectedCategory) => {
   if (!selectedCategory || selectedCategory === "All") return true;
@@ -670,7 +691,7 @@ export default function LeadsPage() {
   const [filterAssignment, setFilterAssignment] = useState("All");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const [itemsPerPage, setItemsPerPage] = useState(50);
   const [selected, setSelected] = useState(null);
   const [delConfirm, setDelConfirm] = useState(null);
   const [adminUsers, setAdminUsers] = useState([]);
@@ -704,6 +725,9 @@ export default function LeadsPage() {
           snap = await getDocs(collection(db, "leads"));
         }
         let allLeads = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+        // Strictly exclude enquiries collection data (IDs starting with KI followed by numbers e.g. KI00072, or website form enquiries)
+        allLeads = allLeads.filter((l) => !isEnquiryLead(l));
         if (!isAdmin) {
           if (currentUser?.role === "seller") {
             allLeads = allLeads.filter((l) =>
@@ -1061,6 +1085,7 @@ export default function LeadsPage() {
   };
   // Comprehensive filter logic for enriched leads
   const filtered = leads.map(getEnrichedLead).filter((l) => {
+    if (isEnquiryLead(l)) return false;
     const s = search.toLowerCase().trim();
     const matchSearch =
       !s ||
@@ -1099,7 +1124,7 @@ export default function LeadsPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, filterStatus, filterSource, filterCategory, filterState, filterCity, filterAssignment]);
+  }, [search, filterStatus, filterSource, filterCategory, filterState, filterCity, filterAssignment, itemsPerPage]);
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const paginatedLeads = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -1620,42 +1645,66 @@ export default function LeadsPage() {
                 </tbody>
               </table>
 
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-100">
-                  <span className="text-xs text-gray-500 font-medium">
-                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} leads
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                      className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
-                    >
-                      Prev
-                    </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
-                      .map((p, i, arr) => (
-                        <span key={p} className="flex items-center">
-                          {i > 0 && p - arr[i - 1] > 1 && <span className="px-2 text-gray-400 text-xs">...</span>}
-                          <button
-                            onClick={() => setCurrentPage(p)}
-                            className={`w-7 h-7 rounded-lg text-xs font-bold transition flex items-center justify-center ${
-                              currentPage === p ? "bg-orange-500 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
-                            }`}
-                          >
-                            {p}
-                          </button>
-                        </span>
-                      ))}
-                    <button
-                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition"
-                    >
-                      Next
-                    </button>
+              {filtered.length > 0 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 bg-white border-t border-gray-100">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="text-xs text-gray-500 font-medium">
+                      Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} leads
+                    </span>
+                    <span className="text-gray-300 hidden sm:inline">•</span>
+                    <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <label htmlFor="items-per-page" className="font-medium text-gray-500">Show:</label>
+                      <select
+                        id="items-per-page"
+                        value={itemsPerPage}
+                        onChange={(e) => {
+                          setItemsPerPage(Number(e.target.value));
+                          setCurrentPage(1);
+                        }}
+                        className="bg-gray-50 border border-gray-200 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1 outline-none hover:border-gray-300 focus:border-orange-400 cursor-pointer transition shadow-xs"
+                      >
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                        <option value={150}>150</option>
+                        <option value={200}>200</option>
+                      </select>
+                      <span className="text-gray-400">per page</span>
+                    </div>
                   </div>
+
+                  {totalPages > 1 && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition cursor-pointer"
+                      >
+                        Prev
+                      </button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                        .map((p, i, arr) => (
+                          <span key={p} className="flex items-center">
+                            {i > 0 && p - arr[i - 1] > 1 && <span className="px-2 text-gray-400 text-xs">...</span>}
+                            <button
+                              onClick={() => setCurrentPage(p)}
+                              className={`w-7 h-7 rounded-lg text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+                                currentPage === p ? "bg-orange-500 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+                              }`}
+                            >
+                              {p}
+                            </button>
+                          </span>
+                        ))}
+                      <button
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-600 disabled:opacity-50 hover:bg-gray-50 transition cursor-pointer"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

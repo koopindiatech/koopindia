@@ -39,7 +39,16 @@ export default function AdminDashboard() {
         ]);
         setSellers(sellersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         setBuyers(buyersSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-        setLeads(leadsSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+        const validLeads = leadsSnap.docs.map(d => ({ id: d.id, ...d.data() })).filter(l => {
+          const pid = (l.profileId || l.id || "").toUpperCase().trim();
+          const cat = (l.category || l.service || l.productCategory || "").toLowerCase().trim();
+          const src = (l.source || "").toLowerCase().trim();
+          if (cat.includes("website development") || cat.includes("web dev")) return false;
+          if (src.includes("website") || src.includes("google_ads") || src.includes("sidebar-floating") || src.includes("enquiry")) return false;
+          if ((/^KI\d+$/i.test(pid) || pid.startsWith("KI0") || /^\d{4,6}$/.test(pid)) && !l.buyerId && !l.sellerId && !pid.startsWith("KIB") && !pid.startsWith("KIS")) return false;
+          return true;
+        });
+        setLeads(validLeads);
       } catch (e) {
         console.error("Dashboard load error:", e);
       } finally {

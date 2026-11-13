@@ -455,6 +455,18 @@ const formatListingDate = (item) => {
   }
 };
 
+const getLatestTimestamp = (item) => {
+  if (!item) return 0;
+  const val = item.updatedAt || item.createdAt;
+  if (!val) return 0;
+  if (typeof val === "number") return val;
+  if (val.toMillis && typeof val.toMillis === "function") return val.toMillis();
+  if (val.toDate && typeof val.toDate === "function") return val.toDate().getTime();
+  if (val.seconds) return val.seconds * 1000;
+  const d = new Date(val).getTime();
+  return isNaN(d) ? 0 : d;
+};
+
 // Sellers Management Component
 export default function SellersPage() {
   const [user, setUser] = useState(null);
@@ -571,10 +583,13 @@ export default function SellersPage() {
             const isCatMatch = isBuyerLive && isCategoryMatch(buyerCats, extractSellerCategories(s));
             return isCatMatch;
           });
+          matchedSellers.sort((a, b) => getLatestTimestamp(b) - getLatestTimestamp(a));
           setSellers(matchedSellers);
         } else {
           const snap = await getDocs(query(collection(db, "sellers"), orderBy("createdAt", "desc")));
-          setSellers(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          list.sort((a, b) => getLatestTimestamp(b) - getLatestTimestamp(a));
+          setSellers(list);
         }
       } catch (e) { console.error(e); }
       finally { setDbLoading(false); }
@@ -722,8 +737,13 @@ export default function SellersPage() {
         payload.status = asDraft ? "draft" : "live";
       }
       if (editing) {
+        const now = new Date();
         await updateDoc(doc(db, "sellers", editing.id), { ...payload, updatedAt: serverTimestamp() });
-        setSellers((p) => p.map((s) => s.id === editing.id ? { ...s, ...payload } : s));
+        const updatedSeller = { ...editing, ...payload, updatedAt: now };
+        setSellers((p) => {
+          const rest = p.filter((s) => s.id !== editing.id);
+          return [updatedSeller, ...rest];
+        });
 
         // Sync or Create seller_users credential
         if (payload.email) {
@@ -769,9 +789,16 @@ export default function SellersPage() {
       } else {
         const count = sellers.length + 1;
         const profileId = `KIS${String(count).padStart(5, '0')}`;
-        const newPayload = { ...payload, profileId, views: 0, createdAt: serverTimestamp() };
+        const now = new Date();
+        const newPayload = { ...payload, profileId, views: 0, createdAt: now, updatedAt: now };
 
-        const docRef = await addDoc(collection(db, "sellers"), newPayload);
+        const docRef = await addDoc(collection(db, "sellers"), {
+          ...payload,
+          profileId,
+          views: 0,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
         setSellers((p) => [{ id: docRef.id, ...newPayload }, ...p]);
 
         // Auto-generate a Lead from this Seller Listing
@@ -836,8 +863,15 @@ export default function SellersPage() {
 
   const toggleStatus = async (id, current) => {
     const next = current === "live" ? "paused" : "live";
-    await updateDoc(doc(db, "sellers", id), { status: next });
-    setSellers((p) => p.map((s) => s.id === id ? { ...s, status: next } : s));
+    const now = new Date();
+    await updateDoc(doc(db, "sellers", id), { status: next, updatedAt: serverTimestamp() });
+    setSellers((p) => {
+      const item = p.find((s) => s.id === id);
+      if (!item) return p;
+      const updated = { ...item, status: next, updatedAt: now };
+      const rest = p.filter((s) => s.id !== id);
+      return [updated, ...rest];
+    });
 
     // Sync linked seller_users status
     try {
@@ -865,8 +899,15 @@ export default function SellersPage() {
 
   const toggleFeatured = async (id, current) => {
     const next = !current;
-    await updateDoc(doc(db, "sellers", id), { isFeatured: next });
-    setSellers((p) => p.map((s) => s.id === id ? { ...s, isFeatured: next } : s));
+    const now = new Date();
+    await updateDoc(doc(db, "sellers", id), { isFeatured: next, updatedAt: serverTimestamp() });
+    setSellers((p) => {
+      const item = p.find((s) => s.id === id);
+      if (!item) return p;
+      const updated = { ...item, isFeatured: next, updatedAt: now };
+      const rest = p.filter((s) => s.id !== id);
+      return [updated, ...rest];
+    });
     setMenuId(null);
   };
 
@@ -930,7 +971,7 @@ export default function SellersPage() {
       matchCity(s.city, filterCity);
 
     return matchSearch && matchCat && matchSt && matchCt;
-  });
+  }).sort((a, b) => getLatestTimestamp(b) - getLatestTimestamp(a));
 
   useEffect(() => {
     setCurrentPage(1);

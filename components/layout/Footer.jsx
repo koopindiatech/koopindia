@@ -73,6 +73,11 @@ const Footer = ({ onOpenModal }) => {
                 Get Started
               </button>
             </li>
+            <li>
+              <Link href="/website-development" className="hover:text-[#F97316]">
+                Website Development
+              </Link>
+            </li>
           </ul>
         </div>
 

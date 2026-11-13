@@ -1151,6 +1151,18 @@ const formatListingDate = (item) => {
   }
 };
 
+const getLatestTimestamp = (item) => {
+  if (!item) return 0;
+  const val = item.updatedAt || item.createdAt;
+  if (!val) return 0;
+  if (typeof val === "number") return val;
+  if (val.toMillis && typeof val.toMillis === "function") return val.toMillis();
+  if (val.toDate && typeof val.toDate === "function") return val.toDate().getTime();
+  if (val.seconds) return val.seconds * 1000;
+  const d = new Date(val).getTime();
+  return isNaN(d) ? 0 : d;
+};
+
 // Buyer Listings Management Component
 export default function BuyersAdminPage() {
   const [user, setUser] = useState(null);
@@ -1281,10 +1293,13 @@ export default function BuyersAdminPage() {
 
             return isAssigned || isCatMatch;
           });
+          assignedOrMatched.sort((a, b) => getLatestTimestamp(b) - getLatestTimestamp(a));
           setBuyers(assignedOrMatched);
         } else {
           const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
-          setBuyers(snap.docs.map((d) => ({ ...d.data(), id: d.id })));
+          const list = snap.docs.map((d) => ({ ...d.data(), id: d.id }));
+          list.sort((a, b) => getLatestTimestamp(b) - getLatestTimestamp(a));
+          setBuyers(list);
         }
       } catch (e) { console.error("Error loading buyers:", e); }
       finally { setDbLoading(false); }
@@ -1391,8 +1406,13 @@ export default function BuyersAdminPage() {
       };
 
       if (editing) {
+        const now = new Date();
         await updateDoc(doc(db, "buyers", editing.id), { ...payload, updatedAt: serverTimestamp() });
-        setBuyers((p) => p.map((b) => b.id === editing.id ? { ...b, ...payload } : b));
+        const updatedBuyer = { ...editing, ...payload, updatedAt: now };
+        setBuyers((p) => {
+          const rest = p.filter((b) => b.id !== editing.id);
+          return [updatedBuyer, ...rest];
+        });
 
         // Sync or Create buyer_users credential
         if (emailToUse) {
@@ -1453,9 +1473,16 @@ export default function BuyersAdminPage() {
       } else {
         const count = buyers.length + 1;
         const profileId = `KIB${String(count).padStart(5, '0')}`;
-        const newPayload = { ...payload, profileId, views: 0, createdAt: serverTimestamp() };
+        const now = new Date();
+        const newPayload = { ...payload, profileId, views: 0, createdAt: now, updatedAt: now };
 
-        const docRef = await addDoc(collection(db, "buyers"), newPayload);
+        const docRef = await addDoc(collection(db, "buyers"), {
+          ...payload,
+          profileId,
+          views: 0,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
         setBuyers((p) => [{ ...newPayload, id: docRef.id }, ...p]);
 
         // Auto-generate a Lead from this Buyer
@@ -1518,9 +1545,16 @@ export default function BuyersAdminPage() {
   const toggleStatus = async (id, current) => {
     if (!id) return;
     const next = current === "live" ? "paused" : "live";
+    const now = new Date();
     try {
       await updateDoc(doc(db, "buyers", id), { status: next, updatedAt: serverTimestamp() });
-      setBuyers((p) => p.map((b) => b.id === id ? { ...b, status: next } : b));
+      setBuyers((p) => {
+        const item = p.find((b) => b.id === id);
+        if (!item) return p;
+        const updated = { ...item, status: next, updatedAt: now };
+        const rest = p.filter((b) => b.id !== id);
+        return [updated, ...rest];
+      });
     } catch (err) {
       console.error("Failed to update buyer listing status:", err);
       alert("Failed to update status: " + (err?.message || "Error occurred"));
@@ -1554,8 +1588,15 @@ export default function BuyersAdminPage() {
 
   const toggleFeatured = async (id, current) => {
     const next = !current;
-    await updateDoc(doc(db, "buyers", id), { isFeatured: next });
-    setBuyers((p) => p.map((b) => b.id === id ? { ...b, isFeatured: next } : b));
+    const now = new Date();
+    await updateDoc(doc(db, "buyers", id), { isFeatured: next, updatedAt: serverTimestamp() });
+    setBuyers((p) => {
+      const item = p.find((b) => b.id === id);
+      if (!item) return p;
+      const updated = { ...item, isFeatured: next, updatedAt: now };
+      const rest = p.filter((b) => b.id !== id);
+      return [updated, ...rest];
+    });
     setMenuId(null);
   };
 
@@ -1682,7 +1723,7 @@ export default function BuyersAdminPage() {
       matchCity(b.district, filterCity);
 
     return matchSearch && matchCat && matchSt && matchCt;
-  });
+  }).sort((a, b) => getLatestTimestamp(b) - getLatestTimestamp(a));
 
   useEffect(() => {
     setCurrentPage(1);
@@ -1741,7 +1782,14 @@ export default function BuyersAdminPage() {
   };
 
   const handleAssignSave = (buyerId, payload) => {
-    setBuyers((prev) => prev.map((b) => (b.id === buyerId ? { ...b, ...payload } : b)));
+    const now = new Date();
+    setBuyers((prev) => {
+      const item = prev.find((b) => b.id === buyerId);
+      if (!item) return prev;
+      const updated = { ...item, ...payload, updatedAt: now };
+      const rest = prev.filter((b) => b.id !== buyerId);
+      return [updated, ...rest];
+    });
     if (formOpen) {
       setForm((p) => ({ ...p, ...payload }));
     }
@@ -2869,7 +2917,9 @@ export default function BuyersAdminPage() {
             // Reload buyers list after successful import
             try {
               const snap = await getDocs(query(collection(db, "buyers"), orderBy("createdAt", "desc")));
-              setBuyers(snap.docs.map((d) => ({ ...d.data(), id: d.id })));
+              const reloaded = snap.docs.map((d) => ({ ...d.data(), id: d.id }));
+              reloaded.sort((a, b) => getLatestTimestamp(b) - getLatestTimestamp(a));
+              setBuyers(reloaded);
             } catch (e) {
               console.error("Reload error after import:", e);
             }
