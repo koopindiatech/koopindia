@@ -13,6 +13,9 @@ const STATIC_ROUTES = [
   "/startup-consulting", "/tech-solutions", "/term-services",
   "/terms-and-conditions", "/termsevices", "/website-development",
   "/custom-website-development", "/trademark-registration",
+  "/iso-certification", "/startup-india-registration",
+  "/crm-development", "/seo-services",
+  "/social-media-marketing", "/logo-design",
 ];
 
 function isSellerSlugRoute(pathname) {

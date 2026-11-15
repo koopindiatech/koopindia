@@ -136,7 +136,7 @@ const CompanyAccountingServicesPage = () => {
         <meta name="robots" content="index, follow" />
         <link
           rel="canonical"
-          href="https://www.koopindia.com/company-accounting-services"
+          href="https://www.koopindia.com/documentation-compliance/company-accounting"
         />
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

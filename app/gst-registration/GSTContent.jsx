@@ -31,7 +31,6 @@ import {
   BookOpen,
   CheckCircle2,
   XCircle,
-
 } from "lucide-react";
 
 // FAQ Data
@@ -180,7 +179,7 @@ const services = [
   },
   {
     name: "ISO Certification",
-    href: "/documentation-compliance/iso-certification",
+    href: "/iso-certification",
     icon: Award,
     color: "from-amber-500 to-yellow-400",
     lightBg: "#fffbeb",
@@ -188,7 +187,7 @@ const services = [
   },
   {
     name: "Startup India Registration",
-    href: "/documentation-compliance/startup-india-registration",
+    href: "/startup-india-registration",
     icon: Rocket,
     color: "from-pink-500 to-rose-400",
     lightBg: "#fff1f2",
@@ -419,9 +418,7 @@ const GSTContent = () => {
 
   return (
     <>
-
       <div className="bg-white text-gray-700 font-sans">
-
         {/* SEO Hero Banner */}
         <section className="bg-gradient-to-br from-[#0F172A] to-[#1E3A5F] text-white py-14 px-5">
           <div className="max-w-7xl mx-auto">
@@ -446,7 +443,7 @@ const GSTContent = () => {
                 <span key={badge} className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm font-semibold text-white">{badge}</span>
               ))}
             </div>
-                        <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={onOpenModal}
                 className="bg-[#F97316] hover:bg-orange-600 text-white font-bold px-7 py-3.5 rounded-xl inline-flex items-center gap-2 transition-all duration-200 shadow-lg shadow-orange-900/30 text-sm"
@@ -565,7 +562,7 @@ const GSTContent = () => {
               "linear-gradient(160deg, #fafafa 0%, #fff7ed 55%, #fafafa 100%)",
           }}
         >
-                    <div
+          <div
             className="absolute top-0 left-0 w-80 h-80 rounded-full pointer-events-none opacity-20"
             style={{
               background:
@@ -637,14 +634,14 @@ const GSTContent = () => {
                       e.currentTarget.style.background = "white";
                     }}
                   >
-                                        <span
+                    <span
                       className="absolute top-4 right-4 text-[10px] font-bold px-2.5 py-1 rounded-full"
                       style={tagStyle}
                     >
                       {tag}
                     </span>
 
-                                        <div
+                    <div
                       className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center mb-5 shadow-sm transition-transform duration-300 group-hover:scale-110`}
                     >
                       <Icon className="w-6 h-6 text-white" strokeWidth={2} />
@@ -657,7 +654,7 @@ const GSTContent = () => {
                       {desc}
                     </p>
 
-                                        <div
+                    <div
                       className={`absolute bottom-0 left-6 right-6 h-0.5 rounded-full bg-gradient-to-r ${color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                     />
                   </div>
@@ -744,7 +741,7 @@ const GSTContent = () => {
                         : "0 1px 3px rgba(0,0,0,0.05)",
                     }}
                   >
-                                        {badge && (
+                    {badge && (
                       <span
                         className="absolute -top-3 right-5 text-xs font-bold px-3 py-1 rounded-full shadow-md text-white"
                         style={{
@@ -779,7 +776,7 @@ const GSTContent = () => {
                       </div>
                     </div>
 
-                                        <div className="mb-3">
+                    <div className="mb-3">
                       <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold mb-1">
                         Suitable For
                       </p>
@@ -788,7 +785,7 @@ const GSTContent = () => {
                       </p>
                     </div>
 
-                                        <div className="mb-5">
+                    <div className="mb-5">
                       <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold mb-1">
                         Returns Required
                       </p>
@@ -824,7 +821,7 @@ const GSTContent = () => {
                       </div>
                     </div>
 
-                                        <div
+                    <div
                       className="absolute bottom-0 left-6 right-6 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                       style={{
                         background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
@@ -840,7 +837,7 @@ const GSTContent = () => {
         {/* Documents Required */}
         <section id="documents" className="pb-16 px-5 bg-slate-50">
           <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-12">
+            <div className="text-center mb-12">
               <span className="text-[#F97316] font-semibold text-sm uppercase tracking-widest">
                 Documentation
               </span>
@@ -854,8 +851,8 @@ const GSTContent = () => {
               </p>
             </div>
 
-                        <div className="grid md:grid-cols-3 gap-6">
-                            <div className="bg-white rounded-2xl border border-slate-400 p-6 hover:shadow-xl transition">
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-2xl border border-slate-400 p-6 hover:shadow-xl transition">
                 <div className="w-12 h-12 bg-orange-100 text-[#F97316] rounded-xl flex items-center justify-center mb-4">
                   <User className="w-6 h-6" />
                 </div>
@@ -907,7 +904,7 @@ const GSTContent = () => {
                 ))}
               </div>
 
-                            <div className="bg-white rounded-2xl border border-slate-400 p-6 hover:shadow-xl transition">
+              <div className="bg-white rounded-2xl border border-slate-400 p-6 hover:shadow-xl transition">
                 <div className="w-12 h-12 bg-orange-100 text-[#F97316] rounded-xl flex items-center justify-center mb-4">
                   <Building2 className="w-6 h-6" />
                 </div>
@@ -935,7 +932,7 @@ const GSTContent = () => {
               </div>
             </div>
 
-                        <div className="mt-10 text-center">
+            <div className="mt-10 text-center">
               <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-full px-6 py-3 text-sm text-[#141D32] font-semibold">
                 <ShieldCheck className="w-4 h-4 text-[#F97316]" />
                 All documents are verified by GST experts before submission to
@@ -963,7 +960,7 @@ const GSTContent = () => {
             </div>
 
             <div className="relative">
-                            <div className="hidden lg:block absolute top-8 left-[calc(8.33%+24px)] right-[calc(8.33%+24px)] h-0.5 bg-gradient-to-r from-orange-200 via-orange-400 to-orange-200" />
+              <div className="hidden lg:block absolute top-8 left-[calc(8.33%+24px)] right-[calc(8.33%+24px)] h-0.5 bg-gradient-to-r from-orange-200 via-orange-400 to-orange-200" />
 
               <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
                 {[
@@ -1068,7 +1065,7 @@ const GSTContent = () => {
               "linear-gradient(135deg, #fafafa 0%, #fff7ed 50%, #fafafa 100%)",
           }}
         >
-                    <div
+          <div
             className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-20 pointer-events-none"
             style={{
               background:
@@ -1086,7 +1083,7 @@ const GSTContent = () => {
           />
 
           <div className="relative max-w-7xl mx-auto">
-                        <div className="text-center mb-14">
+            <div className="text-center mb-14">
               <span
                 className="inline-block text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4"
                 style={{
@@ -1120,7 +1117,7 @@ const GSTContent = () => {
               </p>
             </div>
 
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {features.map(({ icon: Icon, title, desc, color, bg }, i) => (
                 <div
                   key={i}
@@ -1137,14 +1134,14 @@ const GSTContent = () => {
                     e.currentTarget.style.borderColor = "#f3f4f6";
                   }}
                 >
-                                    <span
+                  <span
                     className="absolute top-4 right-4 text-xs font-bold tabular-nums"
                     style={{ color: "#e5e7eb" }}
                   >
                     0{i + 1}
                   </span>
 
-                                    <div
+                  <div
                     className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-gradient-to-br ${bg} transition-all duration-300 group-hover:scale-110`}
                   >
                     <div
@@ -1164,7 +1161,7 @@ const GSTContent = () => {
                     {desc}
                   </p>
 
-                                    <div
+                  <div
                     className={`absolute bottom-0 left-6 right-6 h-0.5 rounded-full bg-gradient-to-r ${color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                   />
                 </div>
@@ -1305,7 +1302,7 @@ const GSTContent = () => {
               "linear-gradient(160deg, #f8fafc 0%, #fff7ed 60%, #f8fafc 100%)",
           }}
         >
-                    <div
+          <div
             className="absolute inset-0 pointer-events-none opacity-30"
             style={{
               backgroundImage:
@@ -1314,7 +1311,7 @@ const GSTContent = () => {
           />
 
           <div className="relative max-w-7xl mx-auto">
-                        <div className="text-center mb-14">
+            <div className="text-center mb-14">
               <span
                 className="inline-block text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4"
                 style={{
@@ -1346,7 +1343,7 @@ const GSTContent = () => {
               </p>
             </div>
 
-                        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {services.map(
                 ({ name, href, icon: Icon, color, lightBg, tag }, i) => (
                   <a
@@ -1367,7 +1364,7 @@ const GSTContent = () => {
                       e.currentTarget.style.background = "white";
                     }}
                   >
-                                        {tag && (
+                    {tag && (
                       <span
                         className="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded-full"
                         style={{
@@ -1379,13 +1376,13 @@ const GSTContent = () => {
                       </span>
                     )}
 
-                                        <div
+                    <div
                       className={`flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-110`}
                     >
                       <Icon className="w-5 h-5 text-white" strokeWidth={2} />
                     </div>
 
-                                        <span
+                    <span
                       className="font-semibold text-sm leading-snug flex-1 transition-colors duration-200"
                       style={{ color: "#141D32" }}
                       onMouseEnter={(e) => (e.target.style.color = "#F97316")}
@@ -1394,7 +1391,7 @@ const GSTContent = () => {
                       {name}
                     </span>
 
-                                        <ArrowRight
+                    <ArrowRight
                       className="w-4 h-4 flex-shrink-0 transition-all duration-300 group-hover:translate-x-1"
                       style={{ color: "#d1d5db" }}
                     />
@@ -1440,7 +1437,7 @@ const GSTContent = () => {
               </div>
             </div>
 
-                        <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 md:p-8 mb-6">
+            <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 md:p-8 mb-6">
               <h3 className="text-lg font-bold text-[#141D32] mb-3">
                 GST Registration Consultant in <span className="text-[#F97316]">Delhi</span> — Why Businesses Choose Koop India
               </h3>
@@ -1467,7 +1464,7 @@ const GSTContent = () => {
               </div>
             </div>
 
-                        <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-white border border-slate-200 rounded-2xl p-6">
                 <h3 className="text-base font-bold text-[#141D32] mb-2">
                   GST Registration Consultant in <span className="text-[#F97316]">Noida</span>

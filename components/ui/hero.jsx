@@ -53,7 +53,7 @@ const HeroSection = ({ onOpenModal }) => {
     },
     {
       img: "/services/startupindia-registration.jpeg",
-      link: "/documentation-compliance/startup-india-registration",
+      link: "/startup-india-registration",
       alt: "Startup India Registration Services",
     },
     {
@@ -63,32 +63,32 @@ const HeroSection = ({ onOpenModal }) => {
     },
     {
       img: "/services/socialmedia-marketing.jpeg",
-      link: "/digital-marketing/social-media-marketing",
+      link: "/social-media-marketing",
       alt: "Social Media Marketing Services",
     },
     {
       img: "/services/seo-optmization.jpeg",
-      link: "/tech-solutions/seo",
+      link: "/seo-services",
       alt: "SEO Optimization Services",
     },
     {
       img: "/services/crm-development.jpeg",
-      link: "/tech-solutions/crm-development",
+      link: "/crm-development",
       alt: "CRM Development Services",
     },
     {
       img: "/services/website-design.jpeg",
-      link: "/tech-solutions/website-development",
+      link: "/website-development",
       alt: "Website Development Services",
     },
     {
       img: "/services/iso-certificate.jpeg",
-      link: "/documentation-compliance/iso-certification",
+      link: "/iso-certification",
       alt: "ISO Certification Services",
     },
     {
       img: "/services/graphics-design.jpeg",
-      link: "/digital-marketing/logo-design",
+      link: "/logo-design",
 
       alt: "Logo Design Services",
     },

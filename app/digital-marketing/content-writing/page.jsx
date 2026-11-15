@@ -23,7 +23,7 @@ const ContentWritingPage = () => {
         <meta name="robots" content="index, follow" />
         <link
           rel="canonical"
-          href="https://www.koopindia.com/content-writing-services"
+          href="https://www.koopindia.com/digital-marketing/content-writing"
         />
       </Head>
 

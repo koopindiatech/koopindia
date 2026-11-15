@@ -151,7 +151,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/tech-solutions/crm-development"
+                  href="/crm-development"
                   className="hover:text-[#F97316]"
                 >
                   CRM Development
@@ -159,7 +159,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/tech-solutions/seo"
+                  href="/seo-services"
                   className="hover:text-[#F97316]"
                 >
                   SEO Services
@@ -239,7 +239,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/documentation-compliance/iso-certification"
+                  href="/iso-certification"
                   className="hover:text-[#F97316]"
                 >
                   ISO Certification
@@ -247,7 +247,15 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/digital-marketing/social-media-marketing"
+                  href="/startup-india-registration"
+                  className="hover:text-[#F97316]"
+                >
+                  Startup India Registration
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/social-media-marketing"
                   className="hover:text-[#F97316]"
                 >
                   Social Media Marketing
@@ -263,7 +271,7 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/digital-marketing/logo-design"
+                  href="/logo-design"
                   className="hover:text-[#F97316]"
                 >
                   Logo & Graphic Design

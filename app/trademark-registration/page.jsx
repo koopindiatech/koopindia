@@ -46,6 +46,47 @@ const serviceSchema = {
     availability: "https://schema.org/InStock",
     url: "https://www.koopindia.com/trademark-registration",
   },
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Trademark Registration Services Delhi",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "New Trademark Registration Delhi – Form TM-A",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Free Trademark Search & Availability Report Delhi",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Trademark Objection Reply & Hearing Delhi",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "MSME / Startup 50% Rebate TM Filing Delhi",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Trademark Renewal – Form TM-R Delhi",
+        },
+      },
+    ],
+  },
 };
 
 const faqSchema = {
@@ -305,11 +346,11 @@ const speakableSchema = {
 // SEO Metadata Configuration
 export const metadata = {
   title:
-    "Trademark Registration Consultant in Delhi | Online TM Filing India | Koop India",
+    "Trademark Registration Consultant in Delhi | Online TM Filing | Koop India",
   description:
     "Expert Trademark Registration Consultant in Delhi. Online TM-A filing in 24 hrs. Free brand search, MSME 50% rebate, objection handling & ® certificate. Call now!",
   keywords:
-    "trademark registration consultant in delhi, trademark registration in delhi, online trademark registration delhi, trademark filing delhi, tm registration near me, trademark registration consultant near me, brand registration delhi, logo trademark registration delhi, trademark search india, trademark objection reply delhi, tm-a filing india, trademark certificate consultant delhi, trademark registration for startups, msme trademark registration, trademark classes india",
+    "trademark registration consultant in delhi, trademark registration in delhi, online trademark registration delhi, trademark filing delhi, trademark consultant near me delhi, brand registration delhi, logo trademark registration delhi ncr, trademark search delhi, trademark objection reply delhi, tm-a filing delhi, trademark certificate consultant delhi, trademark registration for startups delhi, msme trademark registration delhi, trademark classes india, trademark registration noida, trademark consultant gurugram, trademark registration faridabad, trademark registration ghaziabad, how to register trademark in delhi, trademark registration near me, ip india trademark filing delhi, trade marks registry delhi, trademark registration 2025 india",
   alternates: {
     canonical: "https://www.koopindia.com/trademark-registration",
   },
@@ -379,9 +420,9 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
       />
 
-      {/* Hidden SEO H1 – crawlable, city-targeted */}
+      {/* Hidden SEO H1 – crawlable, Delhi-targeted */}
       <h1 className="sr-only">
-        Trademark Registration Consultant in Delhi – Online Brand & Logo Registration in India | Koop India
+        Trademark Registration Consultant in Delhi – Online Brand, Logo & Trademark Filing in Delhi NCR | Koop India
       </h1>
 
       <TrademarkContent />

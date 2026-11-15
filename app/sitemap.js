@@ -61,14 +61,14 @@ export default function sitemap() {
       priority: 0.85,
     },
     {
-      url: `${baseUrl}/tech-solutions/crm-development`,
+      url: `${baseUrl}/crm-development`,
       lastModified,
-      priority: 0.85,
+      priority: 0.9,
     },
     {
-      url: `${baseUrl}/tech-solutions/seo`,
+      url: `${baseUrl}/seo-services`,
       lastModified,
-      priority: 0.85,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/startup-consulting/business`,
@@ -111,14 +111,14 @@ export default function sitemap() {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/documentation-compliance/iso-certification`,
+      url: `${baseUrl}/iso-certification`,
       lastModified,
-      priority: 0.8,
+      priority: 0.85,
     },
     {
-      url: `${baseUrl}/documentation-compliance/startup-india-registration`,
+      url: `${baseUrl}/startup-india-registration`,
       lastModified,
-      priority: 0.8,
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/documentation-compliance/company-accounting`,
@@ -137,9 +137,9 @@ export default function sitemap() {
     },
 
     {
-      url: `${baseUrl}/digital-marketing/social-media-marketing`,
+      url: `${baseUrl}/social-media-marketing`,
       lastModified,
-      priority: 0.75,
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/digital-marketing/gmb`,
@@ -147,9 +147,9 @@ export default function sitemap() {
       priority: 0.75,
     },
     {
-      url: `${baseUrl}/digital-marketing/logo-design`,
+      url: `${baseUrl}/logo-design`,
       lastModified,
-      priority: 0.75,
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/digital-marketing/content-writing`,

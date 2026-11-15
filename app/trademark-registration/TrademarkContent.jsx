@@ -85,6 +85,18 @@ export const faqs = [
     q: "Can I trademark a name that is already in use but not registered?",
     a: "It is risky. If someone is using an unregistered mark as a prior user, they can oppose your application or file a passing-off action. A thorough trademark search before filing is essential. Koop India conducts comprehensive searches—including common law searches—to assess conflicts before you apply.",
   },
+  {
+    q: "Where can I find a trademark registration consultant near me in Delhi?",
+    a: "Koop India is one of Delhi NCR's most trusted trademark registration consultants, serving businesses across Connaught Place, Karol Bagh, Lajpat Nagar, Rohini, Dwarka, Pitampura, Nehru Place, Noida, Gurugram, Faridabad, and Ghaziabad. Our entire trademark filing process is 100% online — no physical visit required. We handle everything from trademark search to TM-A filing and ® certificate.",
+  },
+  {
+    q: "Is online trademark registration possible from Delhi without visiting any government office?",
+    a: "Yes. Trademark registration in Delhi is fully online via the official IP India portal (ipindiaonline.gov.in). Koop India manages the complete process digitally — trademark search, Form TM-A filing, government fee payment, TM-48 power of attorney, and monitoring your application status. No visit to the Trade Marks Registry in Dwarka or any government office is required.",
+  },
+  {
+    q: "What is the Trade Marks Registry jurisdiction for Delhi businesses?",
+    a: "Businesses operating from Delhi, Noida, Gurugram, Haryana, Punjab, Himachal Pradesh, Jammu & Kashmir, Chandigarh, Uttar Pradesh, and Uttarakhand fall under the jurisdiction of the Trade Marks Registry, Plot No. 32, Sector 14, Dwarka, New Delhi – 110078. All filings by Koop India for Delhi NCR clients are submitted to this registry.",
+  },
 ];
 
 const trademarkTypes = [
@@ -320,12 +332,20 @@ export default function TrademarkContent() {
     ({ onOpenModal } = useModal());
   } catch (_) {}
 
+  // Delhi NCR area coverage list (mirrors FSSAI pattern for local SEO)
+  const delhiAreas = [
+    "Connaught Place", "Karol Bagh", "Lajpat Nagar", "Saket", "Dwarka",
+    "Rohini", "Pitampura", "Janakpuri", "Nehru Place", "Okhla",
+    "Noida", "Greater Noida", "Gurugram", "Faridabad", "Ghaziabad",
+  ];
+
   return (
     <div className="bg-white text-gray-700 font-sans">
       {/* Hero Section */}
       <section
-        className="relative overflow-hidden py-20 px-5"
+        className="relative overflow-hidden py-20 px-5 bg-[#0F172A] text-white"
         style={{
+          backgroundColor: "#0F172A",
           background: "linear-gradient(135deg, #0F172A 0%, #1e293b 60%, #0F172A 100%)",
         }}
       >
@@ -336,19 +356,40 @@ export default function TrademarkContent() {
             backgroundSize: "28px 28px",
           }}
         />
+        <div className="pointer-events-none absolute -right-24 -top-24 w-96 h-96 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)" }}
+        />
+        <div className="pointer-events-none absolute -left-16 bottom-0 w-72 h-72 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)" }}
+        />
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-[#F97316] text-xs font-semibold uppercase tracking-wider mb-5">
-                <Shield className="w-3.5 h-3.5" />
-                <span>The Trade Marks Act, 1999 • Online Filing Across India</span>
+              {/* Delhi targeting badge — mirrors FSSAI exactly */}
+              <div className="inline-flex items-center gap-2 rounded-full bg-orange-500/15 border border-orange-500/20 px-4 py-1.5 mb-5">
+                <MapPin size={11} className="text-orange-400" />
+                <span className="text-[10.5px] font-bold uppercase tracking-[0.13em] text-orange-400">
+                  #1 Trademark Registration Consultant in Delhi
+                </span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight">
-                Protect Your Brand with{" "}
-                <span className="text-[#F97316]">Trademark Registration</span> in India
+              {/* H1 — Delhi keyword prominently in heading like FSSAI */}
+              <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-4">
+                Trademark Registration in{" "}
+                <span style={{ background: "linear-gradient(135deg, #F97316 0%, #fb923c 50%, #fbbf24 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Delhi</span>
+                {" "}& Brand Protection Consultant
               </h1>
-              <p className="mt-5 text-gray-300 text-base md:text-lg leading-relaxed">
-                Secure exclusive legal rights over your company name, logo, and slogan. File Form TM-A online in 24 hours and start using the <strong className="text-white">™</strong> symbol from Day 1. End-to-end IP assistance from comprehensive search to final <strong className="text-white">®</strong> registration certificate.
+              {/* Sub-services line — keyword density */}
+              <p className="mb-2 text-sm font-semibold text-slate-400">
+                Brand Name Registration &nbsp;•&nbsp; Logo Trademark Delhi &nbsp;•&nbsp; TM Objection Reply
+              </p>
+              <p className="mt-3 text-gray-300 text-base md:text-lg leading-relaxed">
+                Koop India is Delhi's most trusted{" "}
+                <strong className="text-white">trademark registration consultant</strong>{" "}
+                offering expert guidance on{" "}
+                <strong className="text-white">online trademark filing in Delhi</strong>{" "}
+                via the IP India portal. Whether you need{" "}
+                <strong className="text-white">brand name trademark registration in Delhi</strong>{" "}
+                for your startup, company, logo or tagline — we handle everything end-to-end with TM-A filing in 24 hours and ™ symbol from Day 1.
               </p>
 
               {/* Key Trust Signals */}
@@ -371,19 +412,44 @@ export default function TrademarkContent() {
                 ))}
               </div>
 
+              {/* Delhi coverage checkmarks — mirrors FSSAI pattern */}
+              <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2">
+                {[
+                  "✓ 100% Online IP India Filing",
+                  "✓ TM-A in 24 Hours",
+                  "✓ Delhi NCR Service Coverage",
+                  "✓ Objection & Hearing Support",
+                ].map((text) => (
+                  <span key={text} className="text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors">
+                    {text}
+                  </span>
+                ))}
+              </div>
+
+              {/* Star rating row — mirrors FSSAI */}
+              <div className="mt-5 inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-5 py-2">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={12} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <span className="text-xs text-slate-300 font-semibold">4.9 / 5.0 — 890+ Delhi clients</span>
+              </div>
+
               {/* CTAs */}
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-6 flex flex-wrap gap-4">
                 <button
                   onClick={onOpenModal}
                   className="flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold text-white bg-[#F97316] hover:bg-orange-600 shadow-lg shadow-orange-500/30 transition-all duration-200 cursor-pointer text-sm"
+                  style={{ boxShadow: "0 10px 28px -5px rgba(249,115,22,0.45)" }}
                 >
-                  Start Trademark Registration <ArrowRight className="w-4 h-4" />
+                  Apply for Trademark in Delhi <ArrowRight className="w-4 h-4" />
                 </button>
                 <button
                   onClick={onOpenModal}
                   className="flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-gray-200 bg-white/10 hover:bg-white/20 border border-white/20 transition-all duration-200 cursor-pointer text-sm"
                 >
-                  <Search className="w-4 h-4 text-[#F97316]" /> Free TM Availability Search
+                  <Search className="w-4 h-4 text-[#F97316]" /> Free TM Search Delhi
                 </button>
               </div>
             </div>
@@ -774,6 +840,34 @@ export default function TrademarkContent() {
         </div>
       </section>
 
+      {/* Delhi NCR Coverage Section — mirrors FSSAI pattern exactly */}
+      <section className="py-14 px-5 bg-slate-900 border-t border-slate-800">
+        <div className="max-w-6xl mx-auto text-center">
+          <span className="inline-block text-xs font-bold uppercase tracking-widest text-orange-400 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full mb-3">
+            Delhi NCR Coverage
+          </span>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
+            Trademark Registration Consultant <span className="text-[#F97316]">Near You in Delhi NCR</span>
+          </h2>
+          <p className="text-slate-400 text-sm mb-8 max-w-2xl mx-auto">
+            Koop India provides 100% online trademark filing services across all Delhi NCR localities — no physical visit required. We serve businesses in:
+          </p>
+          <div className="flex flex-wrap justify-center gap-2.5 max-w-3xl mx-auto">
+            {delhiAreas.map((area) => (
+              <span
+                key={area}
+                className="inline-block px-3 py-1.5 bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold rounded-full hover:bg-orange-500 hover:text-white hover:border-orange-500 transition-all cursor-default"
+              >
+                {area}
+              </span>
+            ))}
+          </div>
+          <p className="text-slate-500 text-xs mt-6">
+            + All areas of Delhi, Uttar Pradesh, Haryana, Punjab & pan-India online
+          </p>
+        </div>
+      </section>
+
       {/* Frequently Asked Questions */}
       <section
         className="py-20 px-5"
@@ -786,7 +880,7 @@ export default function TrademarkContent() {
               Frequently Asked <span className="text-[#F97316]">Questions</span>
             </h2>
             <p className="text-gray-500 mt-3 text-sm">
-              Everything you need to know about Trademark Registration in India
+              Everything you need to know about Trademark Registration in Delhi & India
             </p>
           </div>
           <div>

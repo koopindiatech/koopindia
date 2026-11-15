@@ -99,7 +99,7 @@ export default function SolutionsPage() {
           your success.
         </p>
         <Link
-          href="/contact"
+          href="/contactus"
           className="inline-block bg-white text-orange-500 font-bold px-8 py-3 rounded-full text-lg shadow-lg hover:bg-gray-100 transition"
         >
           Get Started

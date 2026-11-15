@@ -23,7 +23,7 @@ const GMBServicesPage = () => {
         <meta name="robots" content="index, follow" />
         <link
           rel="canonical"
-          href="https://www.koopindia.com/google-my-business-services"
+          href="https://www.koopindia.com/digital-marketing/gmb"
         />
       </Head>
 

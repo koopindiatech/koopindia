@@ -696,14 +696,14 @@ export default function WebsiteDevelopmentPage() {
               <span>Trademark Registration</span>
             </Link>
             <Link
-              href="/tech-solutions/crm-development"
+              href="/crm-development"
               className="bg-white/10 hover:bg-white text-white hover:text-slate-900 border border-white/20 p-3.5 rounded-2xl transition-all duration-200 text-center flex flex-col items-center justify-center gap-1.5 font-bold text-xs"
             >
               <Database size={18} />
               <span>Custom CRM Systems</span>
             </Link>
             <Link
-              href="/tech-solutions/seo"
+              href="/seo-services"
               className="bg-white/10 hover:bg-white text-white hover:text-slate-900 border border-white/20 p-3.5 rounded-2xl transition-all duration-200 text-center flex flex-col items-center justify-center gap-1.5 font-bold text-xs"
             >
               <Search size={18} />

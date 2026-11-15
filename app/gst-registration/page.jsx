@@ -1,4 +1,4 @@
-import GSTContent from "../documentation-compliance/gst-registration/GSTContent";
+import GSTContent from "./GSTContent";
 
 // Structured Data Schema (Service, FAQPage, LocalBusiness)
 const serviceSchema = {

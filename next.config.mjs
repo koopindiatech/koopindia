@@ -37,12 +37,67 @@ const nextConfig = {
       },
       {
         source: "/digital-marketing/social-media",
-        destination: "/digital-marketing/social-media-marketing",
+        destination: "/social-media-marketing",
         permanent: true,
       },
       {
         source: "/tech-solutions/website-development",
         destination: "/website-development",
+        permanent: true,
+      },
+      {
+        source: "/documentation-compliance/iso-certification",
+        destination: "/iso-certification",
+        permanent: true,
+      },
+      {
+        source: "/documentation-compliance/startup-india-registration",
+        destination: "/startup-india-registration",
+        permanent: true,
+      },
+      {
+        source: "/tech-solutions/crm-development",
+        destination: "/crm-development",
+        permanent: true,
+      },
+      {
+        source: "/tech-solutions/seo",
+        destination: "/seo-services",
+        permanent: true,
+      },
+      {
+        source: "/digital-marketing/social-media-marketing",
+        destination: "/social-media-marketing",
+        permanent: true,
+      },
+      {
+        source: "/digital-marketing/logo-design",
+        destination: "/logo-design",
+        permanent: true,
+      },
+      {
+        source: "/contact",
+        destination: "/contactus",
+        permanent: true,
+      },
+      {
+        source: "/company-accounting-services",
+        destination: "/documentation-compliance/company-accounting",
+        permanent: true,
+      },
+      {
+        source: "/content-writing-services",
+        destination: "/digital-marketing/content-writing",
+        permanent: true,
+      },
+      {
+        source: "/google-my-business-services",
+        destination: "/digital-marketing/gmb",
+        permanent: true,
+      },
+      {
+        source: "/logo-graphic-design",
+        destination: "/logo-design",
         permanent: true,
       },
     ];
