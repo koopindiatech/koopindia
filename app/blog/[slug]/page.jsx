@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs, limit } from "firebase/firestore";
 import BlogDetailClient from "./BlogDetailClient";
 
 function serialize(obj) {
@@ -88,6 +88,32 @@ export async function generateMetadata({ params }) {
   };
 }
 
+async function getRelatedBlogs(currentSlug, currentCategories = []) {
+  if (!currentSlug) return [];
+  try {
+    const q = query(collection(db, "blogs"), limit(12));
+    const qSnap = await getDocs(q);
+    if (qSnap.empty) return [];
+
+    let blogs = qSnap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((b) => b.slug !== currentSlug && b.id !== currentSlug);
+
+    if (currentCategories && currentCategories.length > 0) {
+      blogs.sort((a, b) => {
+        const aHas = (a.categories || []).some((c) => currentCategories.includes(c)) ? 1 : 0;
+        const bHas = (b.categories || []).some((c) => currentCategories.includes(c)) ? 1 : 0;
+        return bHas - aHas;
+      });
+    }
+
+    return blogs.slice(0, 3);
+  } catch (error) {
+    console.error("Error fetching related blogs:", error);
+    return [];
+  }
+}
+
 export default async function BlogDetailPage({ params }) {
   const resolvedParams = await params;
   const { slug } = resolvedParams || {};
@@ -95,5 +121,14 @@ export default async function BlogDetailPage({ params }) {
   const rawBlog = await getBlogBySlug(slug);
   const serializedBlog = serialize(rawBlog);
 
-  return <BlogDetailClient initialBlog={serializedBlog} slug={slug} />;
+  const rawRelated = await getRelatedBlogs(slug, rawBlog?.categories || []);
+  const serializedRelated = serialize(rawRelated);
+
+  return (
+    <BlogDetailClient
+      initialBlog={serializedBlog}
+      initialRelatedBlogs={serializedRelated}
+      slug={slug}
+    />
+  );
 }
