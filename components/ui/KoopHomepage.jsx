@@ -7,7 +7,7 @@ import MarketplaceFooter from "../layout/MarketplaceFooter";
 import SellerCard from "./cards/SellerCard";
 import BuyerCard from "./cards/BuyerCard";
 import { db } from "@/lib/firebase";
-import { matchCategory, matchState, matchCity, CATEGORY_MAP } from "@/lib/categoryAccess";
+import { matchCategory, matchState, matchCity, normalizeCategory, CATEGORY_MAP } from "@/lib/categoryAccess";
 import { collection, getDocs, query, orderBy, limit, where, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useModal } from "@/context/ModalContext";
 
@@ -161,6 +161,7 @@ export default function KoopIndiaHomepage() {
 
   // Buyer section filters
   const [buyerCatSel, setBuyerCatSel] = useState("All Categories");
+  const [buyerSubCatSel, setBuyerSubCatSel] = useState("All");
   const [buyerStateSel, setBuyerStateSel] = useState("All States");
   const [buyerSearchResults, setBuyerSearchResults] = useState([]);
   const buyerScrollRef = useRef(null);
@@ -343,11 +344,23 @@ export default function KoopIndiaHomepage() {
         );
       }
 
+      const matchSubcategory = (item, sub) => {
+        const normSub = normalizeCategory(sub);
+        if (!normSub) return true;
+        if (normalizeCategory(item.subcategory) === normSub) return true;
+        if (Array.isArray(item.productCategories) && item.productCategories.some(c => {
+          const val = typeof c === "string" ? c : (c?.name || c?.label || "");
+          return normalizeCategory(val) === normSub;
+        })) return true;
+        if (Array.isArray(item.products) && item.products.some(pr =>
+          normalizeCategory(pr?.subCategoryId) === normSub || normalizeCategory(pr?.category) === normSub
+        )) return true;
+        return false;
+      };
+
       if (currentSub && currentSub !== "All") {
-        results = results.filter(s =>
-          matchCategory(s.subcategory, currentSub) ||
-          matchCategory(s.productCategories, currentSub)
-        );
+        results = results.filter(s => matchSubcategory(s, currentSub));
+        bResults = bResults.filter(b => matchSubcategory(b, currentSub));
       }
 
       if (currentState && currentState !== "All States") {
@@ -366,7 +379,7 @@ export default function KoopIndiaHomepage() {
     finally { setSearching(false); }
   };
 
-  const isBuyerFiltered = buyerCatSel !== "All Categories" || buyerStateSel !== "All States";
+  const isBuyerFiltered = buyerCatSel !== "All Categories" || buyerSubCatSel !== "All" || buyerStateSel !== "All States";
 
   // Ensure full buyers catalog loads if user starts filtering buyers
   useEffect(() => {
@@ -395,6 +408,16 @@ export default function KoopIndiaHomepage() {
         matchCategory(b.requirements, buyerCatSel) ||
         matchCategory(b.businessType, buyerCatSel);
       if (!matchCat) match = false;
+    }
+    if (match && buyerSubCatSel !== "All") {
+      const normSub = normalizeCategory(buyerSubCatSel);
+      const matchSub =
+        normalizeCategory(b.subcategory) === normSub ||
+        (Array.isArray(b.productCategories) && b.productCategories.some(c => {
+          const val = typeof c === "string" ? c : (c?.name || c?.label || "");
+          return normalizeCategory(val) === normSub;
+        }));
+      if (!matchSub) match = false;
     }
     if (match && buyerStateSel !== "All States") {
       const matchPref = Array.isArray(b.preferredStates) && b.preferredStates.some(s => matchState(s, buyerStateSel));
@@ -671,6 +694,32 @@ export default function KoopIndiaHomepage() {
               ))}
             </div>
           </div>
+
+          {/* Subcategories Filter Bar */}
+          {selectedCatData?.subs?.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 mb-2">
+                {selectedCatData.emoji} {selectedCatData.label} Subcategories ({selectedCatData.subs.length})
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => { setSubCatSel("All"); performSearch(search, catSel, "All", stateSel); }}
+                  className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-all cursor-pointer ${subCatSel === "All" ? "border-orange-500 bg-orange-500 text-white shadow-xs" : "border-gray-200 bg-gray-50 text-gray-600 hover:border-orange-300 hover:text-orange-600"}`}
+                >
+                  All Subcategories
+                </button>
+                {selectedCatData.subs.map(sub => (
+                  <button
+                    key={sub}
+                    onClick={() => { setSubCatSel(sub); performSearch(search, catSel, sub, stateSel); }}
+                    className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${subCatSel === sub ? "border-orange-500 bg-orange-50 text-orange-600 shadow-xs" : "border-gray-200 bg-white text-gray-600 hover:border-orange-300 hover:text-orange-600"}`}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -770,7 +819,7 @@ export default function KoopIndiaHomepage() {
               style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
             >
               <button
-                onClick={() => setBuyerCatSel("All Categories")}
+                onClick={() => { setBuyerCatSel("All Categories"); setBuyerSubCatSel("All"); }}
                 className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border whitespace-nowrap transition-all font-bold text-xs ${buyerCatSel === "All Categories" ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
               >
                 <span>📁</span> All Categories
@@ -778,7 +827,7 @@ export default function KoopIndiaHomepage() {
               {CATEGORIES.map(cat => (
                 <button
                   key={cat.label}
-                  onClick={() => setBuyerCatSel(cat.label)}
+                  onClick={() => { setBuyerCatSel(cat.label); setBuyerSubCatSel("All"); }}
                   className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border whitespace-nowrap transition-all font-bold text-xs ${buyerCatSel === cat.label ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm" : "border-gray-200 bg-white text-gray-700 hover:border-orange-300 hover:bg-orange-50/50"}`}
                 >
                   <span>{cat.emoji}</span> {cat.label}
@@ -787,14 +836,40 @@ export default function KoopIndiaHomepage() {
             </div>
           </div>
 
+          {/* Subcategories Filter Bar for Buyers */}
+          {buyerCatSel !== "All Categories" && CATEGORY_MAP[buyerCatSel]?.subs?.length > 0 && (
+            <div className="mb-5 bg-white/80 rounded-xl p-3 border border-rose-100">
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 mb-2">
+                {CATEGORY_MAP[buyerCatSel].emoji} {buyerCatSel} Subcategories ({CATEGORY_MAP[buyerCatSel].subs.length})
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                <button
+                  onClick={() => setBuyerSubCatSel("All")}
+                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${buyerSubCatSel === "All" ? "border-orange-500 bg-orange-500 text-white" : "border-gray-200 bg-white text-gray-600 hover:border-orange-300 hover:text-orange-600"}`}
+                >
+                  All Subcategories
+                </button>
+                {CATEGORY_MAP[buyerCatSel].subs.map(sub => (
+                  <button
+                    key={sub}
+                    onClick={() => setBuyerSubCatSel(sub)}
+                    className={`px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${buyerSubCatSel === sub ? "border-orange-500 bg-orange-50 text-orange-600" : "border-gray-200 bg-white text-gray-600 hover:border-orange-300 hover:text-orange-600"}`}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Active Filter Badges */}
-          {(buyerCatSel !== "All Categories" || buyerStateSel !== "All States") && (
+          {(buyerCatSel !== "All Categories" || buyerSubCatSel !== "All" || buyerStateSel !== "All States") && (
             <div className="flex flex-wrap items-center gap-2 mb-6">
               <span className="text-xs text-gray-500 font-semibold">Active filters:</span>
               {buyerCatSel !== "All Categories" && (
                 <span className="text-[11px] font-bold bg-white text-orange-600 border border-orange-200 px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                  {buyerCatSel}
-                  <button onClick={() => setBuyerCatSel("All Categories")} className="ml-1 hover:text-orange-800">×</button>
+                  {buyerCatSel} {buyerSubCatSel !== "All" && `› ${buyerSubCatSel}`}
+                  <button onClick={() => { setBuyerCatSel("All Categories"); setBuyerSubCatSel("All"); }} className="ml-1 hover:text-orange-800">×</button>
                 </span>
               )}
               {buyerStateSel !== "All States" && (
@@ -804,7 +879,7 @@ export default function KoopIndiaHomepage() {
                 </span>
               )}
               <button 
-                onClick={() => { setBuyerCatSel("All Categories"); setBuyerStateSel("All States"); }}
+                onClick={() => { setBuyerCatSel("All Categories"); setBuyerSubCatSel("All"); setBuyerStateSel("All States"); }}
                 className="text-xs text-gray-400 hover:text-orange-500 font-bold underline ml-1"
               >
                 Clear filters
@@ -825,7 +900,7 @@ export default function KoopIndiaHomepage() {
                     <p className="text-xs text-gray-400 mt-1">Try changing category or state filter.</p>
                     {(buyerCatSel !== "All Categories" || buyerStateSel !== "All States") && (
                       <button
-                        onClick={() => { setBuyerCatSel("All Categories"); setBuyerStateSel("All States"); }}
+                        onClick={() => { setBuyerCatSel("All Categories"); setBuyerSubCatSel("All"); setBuyerStateSel("All States"); }}
                         className="mt-4 text-xs font-bold text-orange-500 hover:underline"
                       >
                         Reset Buyer Filters

@@ -6,12 +6,7 @@ import { useRouter } from "next/navigation";
 import { Menu, X, ChevronDown, User } from "lucide-react";
 import Image from "next/image";
 
-const CATEGORIES = [
-  "Food & Beverage", "Health & Beauty", "Pharmaceuticals",
-  "Apparel & Fashion", "Chemicals", "Home Supplies",
-  "Construction & Real Estate", "Electronics & Electrical Supplies",
-  "Agriculture", "Automobile", "Packaging & Paper", "Industrial Supplies"
-];
+import { CATEGORIES } from "@/lib/categoryAccess";
 
 const RESOURCES = [
   { label: "Blog", href: "/blog" },

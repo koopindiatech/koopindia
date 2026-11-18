@@ -5,7 +5,7 @@ import MarketplaceFooter from "@/components/layout/MarketplaceFooter";
 import SellerCard from "@/components/ui/cards/SellerCard";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
-import { matchCategory, matchState, matchCity, extractSellerCategories, FILTER_STATES } from "@/lib/categoryAccess";
+import { matchCategory, matchState, matchCity, extractSellerCategories, CATEGORY_MAP, FILTER_STATES } from "@/lib/categoryAccess";
 
 // SVG icon helpers
 const SearchIcon = () => (
@@ -30,46 +30,10 @@ const FilterIcon = () => (
   </svg>
 );
 
-const CATEGORIES = [
-  { label: "Food & Beverage", emoji: "🍱" },
-  { label: "Health & Beauty", emoji: "💄" },
-  { label: "Pharmaceuticals", emoji: "💊" },
-  { label: "Apparel & Fashion", emoji: "👗" },
-  { label: "Chemicals", emoji: "🧪" },
-  { label: "Home Supplies", emoji: "🧹" },
-  { label: "Construction & Real Estate", emoji: "🏗️" },
-  { label: "Electronics & Electrical Supplies", emoji: "⚡" },
-  { label: "Agriculture", emoji: "🌾" },
-  { label: "Automobile", emoji: "🚗" },
-  { label: "Packaging & Paper", emoji: "📦" },
-  { label: "Hospital & Medical Supplies", emoji: "🏥" },
-  { label: "Gifts & Crafts", emoji: "🎁" },
-  { label: "Consumer Electronics", emoji: "📱" },
-  { label: "Pipes, Tubes & Fittings", emoji: "🔧" },
-  { label: "Industrial Supplies", emoji: "🏭" },
-  { label: "Computer Hardware & Software", emoji: "💻" },
-  { label: "Energy & Power", emoji: "🔋" },
-  { label: "Furniture", emoji: "🪑" },
-  { label: "Home Textiles & Furnishings", emoji: "🛋️" },
-  { label: "Hotel Supplies & Equipment", emoji: "🏨" },
-  { label: "Jewelry & Gemstones", emoji: "💎" },
-  { label: "Leather & Leather Products", emoji: "👞" },
-  { label: "Machinery", emoji: "⚙️" },
-  { label: "Mineral & Metals", emoji: "⛏️" },
-  { label: "Plastics & Products", emoji: "🛞" },
-  { label: "Printing & Publishing", emoji: "🖨️" },
-  { label: "Security & Protection", emoji: "🛡️" },
-  { label: "Sports & Entertainment", emoji: "⚽" },
-  { label: "Telecommunications", emoji: "📡" },
-  { label: "Textiles & Fabrics", emoji: "🧵" },
-  { label: "Toys", emoji: "🧸" },
-  { label: "Transportation", emoji: "🚚" },
-  { label: "Brass Hardware & Components", emoji: "🔩" },
-  { label: "Environment & Pollution", emoji: "🌱" },
-  { label: "Office & School Supplies", emoji: "✏️" },
-  { label: "Scientific & Laboratory Instruments", emoji: "🔬" },
-  { label: "Business Services", emoji: "💼" },
-];
+const CATEGORIES = Object.entries(CATEGORY_MAP).map(([label, data]) => ({
+  label,
+  emoji: data.emoji,
+}));
 
 const STATES = [
   "All States", "Delhi", "Maharashtra", "Gujarat", "Karnataka", "Rajasthan",

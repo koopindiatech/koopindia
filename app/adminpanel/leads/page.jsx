@@ -8,7 +8,7 @@ import {
   Briefcase, Tag, MapPin
 } from "lucide-react";
 import { db } from "../../../lib/firebase";
-import { matchCategory, matchState, matchCity } from "../../../lib/categoryAccess";
+import { matchCategory, matchState, matchCity, CATEGORIES } from "../../../lib/categoryAccess";
 import {
   collection, getDocs, updateDoc, deleteDoc, doc,
   query, orderBy, serverTimestamp, where, arrayUnion
@@ -33,19 +33,6 @@ const NATURE_OF_BUSINESS_OPTIONS = [
   "Whole seller",
   "Trader",
   "Super Stockiest"
-];
-
-const CATEGORIES = [
-  "Food & Beverage", "Health & Beauty", "Pharmaceuticals", "Apparel & Fashion",
-  "Chemicals", "Home Supplies", "Construction & Real Estate", "Electronics & Electrical Supplies",
-  "Agriculture", "Automobile", "Packaging & Paper", "Hospital & Medical Supplies",
-  "Gifts & Crafts", "Consumer Electronics", "Pipes, Tubes & Fittings", "Industrial Supplies",
-  "Computer Hardware & Software", "Energy & Power", "Furniture", "Home Textiles & Furnishings",
-  "Hotel Supplies & Equipment", "Jewelry & Gemstones", "Leather & Leather Products", "Machinery",
-  "Mineral & Metals", "Plastics & Products", "Printing & Publishing", "Security & Protection",
-  "Sports & Entertainment", "Telecommunications", "Textiles & Fabrics", "Toys",
-  "Transportation", "Brass Hardware & Components", "Environment & Pollution", "Office & School Supplies",
-  "Scientific & Laboratory Instruments", "Business Services"
 ];
 
 const STATES = [
