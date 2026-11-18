@@ -13,7 +13,7 @@ import {
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getCurrentUser } from "../lib/auth";
 import imageCompression from 'browser-image-compression';
-import { extractSellerCategories, extractBuyerCategories, isCategoryMatch, matchCategory, matchState, matchCity, FILTER_STATES } from "../../../lib/categoryAccess";
+import { extractSellerCategories, extractBuyerCategories, isCategoryMatch, matchCategory, matchState, matchCity, CATEGORIES, CATEGORY_SUBCATEGORIES, FILTER_STATES } from "../../../lib/categoryAccess";
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
@@ -134,165 +134,6 @@ const SECTIONS = [
   { id: "contact", label: "Contact & Social", icon: Phone, desc: "Address, contact & social" },
   { id: "publish", label: "Publish", icon: Rocket, desc: "Footer badges" },
 ];
-
-const CATEGORIES = [
-  "Food & Beverage",
-  "Health & Beauty",
-  "Pharmaceuticals",
-  "Apparel & Fashion",
-  "Chemicals",
-  "Home Supplies",
-  "Construction & Real Estate",
-  "Electronics & Electrical Supplies",
-  "Agriculture",
-  "Automobile",
-  "Packaging & Paper",
-  "Hospital & Medical Supplies",
-  "Gifts & Crafts",
-  "Consumer Electronics",
-  "Pipes, Tubes & Fittings",
-  "Industrial Supplies",
-  "Computer Hardware & Software",
-  "Energy & Power",
-  "Furniture",
-  "Home Textiles & Furnishings",
-  "Hotel Supplies & Equipment",
-  "Jewelry & Gemstones",
-  "Leather & Leather Products",
-  "Machinery",
-  "Mineral & Metals",
-  "Plastics & Products",
-  "Printing & Publishing",
-  "Security & Protection",
-  "Sports & Entertainment",
-  "Telecommunications",
-  "Textiles & Fabrics",
-  "Toys",
-  "Transportation",
-  "Brass Hardware & Components",
-  "Environment & Pollution",
-  "Office & School Supplies",
-  "Scientific & Laboratory Instruments",
-  "Business Services",
-];
-
-const CATEGORY_SUBCATEGORIES = {
-  "Spices & Masala": [
-    "Whole Spices", "Ground Spices", "Blended Masala", "Curry Powder", "Chilli Products",
-    "Turmeric Products", "Coriander Products", "Cumin Products", "Pepper Products",
-    "Cardamom & Clove", "Garam Masala", "Kitchen King Masala", "Biryani Masala",
-    "Chat Masala", "Pickle Masala", "Meat Masala", "Sambar Masala", "Other Masala",
-  ],
-  "FMCG & Grocery": [
-    "Staples & Grains", "Pulses & Lentils", "Rice & Wheat", "Flour & Atta",
-    "Sugar & Salt", "Tea & Coffee", "Personal Care", "Home Care", "Baby Care",
-    "Oral Care", "Skin Care", "Hair Care", "Detergent & Soap", "Other FMCG",
-  ],
-  "Agriculture & Farming": [
-    "Seeds & Seedlings", "Fertilizers", "Pesticides & Herbicides", "Farm Equipment",
-    "Irrigation Products", "Crop Protection", "Organic Farming", "Horticulture",
-    "Agri Commodities", "Livestock Feed", "Poultry Products", "Fishery Products", "Other Agri",
-  ],
-  "Food & Beverages": [
-    "Soft Drinks & Juices", "Alcoholic Beverages", "Energy Drinks", "Mineral Water",
-    "Bakery & Confectionery", "Frozen Foods", "Ready to Eat", "Sauces & Condiments",
-    "Jam & Spreads", "Noodles & Pasta", "Breakfast Cereals", "Dry Fruits & Nuts",
-    "Honey & Sweeteners", "Other Food & Beverages",
-  ],
-  "Dairy & Dairy Products": [
-    "Milk & Cream", "Butter & Ghee", "Cheese", "Yogurt & Curd", "Paneer",
-    "Ice Cream", "Dairy Whitener", "Flavoured Milk", "Khoa & Mawa",
-    "Condensed Milk", "Dairy Blends", "Other Dairy",
-  ],
-  "Packaged Foods": [
-    "Canned Foods", "Pickles & Chutneys", "Papad & Fryums", "Mukhwas",
-    "Instant Mixes", "Health Foods", "Protein Supplements", "Ethnic Foods",
-    "Vegan & Organic", "Gluten Free", "Other Packaged Foods",
-  ],
-  "Snacks & Namkeen": [
-    "Chips & Wafers", "Namkeen & Bhujia", "Popcorn", "Extruded Snacks",
-    "Roasted Snacks", "Biscuits & Cookies", "Crackers", "Puff Snacks",
-    "Nuts & Seeds Snacks", "Chivda & Mixture", "Other Snacks",
-  ],
-  "Edible Oils": [
-    "Mustard Oil", "Sunflower Oil", "Soybean Oil", "Palm Oil", "Groundnut Oil",
-    "Rice Bran Oil", "Coconut Oil", "Sesame Oil", "Olive Oil", "Blended Oil",
-    "Vanaspati & Shortening", "Other Edible Oils",
-  ],
-  "Health & Wellness": [
-    "Vitamins & Minerals", "Protein Supplements", "Herbal Supplements", "Immunity Boosters",
-    "Weight Management", "Sports Nutrition", "Probiotics", "Omega & Fish Oil",
-    "Diabetic Care", "Women Health", "Kids Nutrition", "Other Health Products",
-  ],
-  "Ayurvedic & Herbal": [
-    "Ayurvedic Medicines", "Herbal Extracts", "Churna & Powder", "Kadha & Syrup",
-    "Herbal Tea", "Essential Oils", "Herbal Cosmetics", "Herbal Food Products",
-    "Ashwagandha Products", "Tulsi Products", "Amla Products", "Other Herbal",
-  ],
-  "Pharmaceuticals": [
-    "Tablets & Capsules", "Syrup & Liquid", "Injections", "Topical Creams",
-    "Surgical Disposables", "Diagnostic Products", "OTC Medicines", "Generic Medicines",
-    "Veterinary Medicines", "Hospital Supplies", "Other Pharma",
-  ],
-  "Chemicals & Fertilizers": [
-    "Industrial Chemicals", "Agricultural Chemicals", "Dyes & Pigments", "Adhesives & Sealants",
-    "Cleaning Chemicals", "Urea & DAP", "Micronutrients", "Bio Fertilizers",
-    "Water Treatment", "Coating & Paints", "Other Chemicals",
-  ],
-  "Textile & Garments": [
-    "Cotton Fabric", "Synthetic Fabric", "Knitted Fabric", "Woven Fabric",
-    "Ready Made Garments", "Sarees & Ethnic Wear", "Kids Wear", "Sportswear",
-    "Uniforms & Workwear", "Home Textiles", "Yarn & Thread", "Other Textile",
-  ],
-  "Electronics & Hardware": [
-    "Consumer Electronics", "Mobile Accessories", "LED & Lighting", "Cables & Wires",
-    "Switches & Sockets", "CCTV & Security", "Solar Products", "Computer Hardware",
-    "PCB & Components", "Industrial Electronics", "Other Electronics",
-  ],
-  "Construction Materials": [
-    "Cement & Concrete", "Steel & Iron", "Bricks & Tiles", "Paints & Varnish",
-    "Plumbing Materials", "Electrical Fittings", "Glass & Aluminum", "Waterproofing",
-    "Stone & Marble", "Plywood & Laminates", "Other Construction",
-  ],
-  "Machinery & Equipment": [
-    "Food Processing Machines", "Packaging Machines", "Agricultural Machines",
-    "Industrial Pumps", "Compressors", "CNC & Lathe", "Welding Equipment",
-    "Material Handling", "Generators", "HVAC Equipment", "Other Machinery",
-  ],
-  "Furniture & Interiors": [
-    "Wooden Furniture", "Metal Furniture", "Office Furniture", "Modular Kitchen",
-    "Sofa & Seating", "Beds & Mattresses", "Wardrobes & Cabinets", "Decor & Artifacts",
-    "Curtains & Blinds", "Flooring", "Other Furniture",
-  ],
-  "Automotive Parts": [
-    "Engine Parts", "Body Parts", "Electrical Parts", "Brake System",
-    "Transmission Parts", "Filters & Lubricants", "Tyres & Wheels", "Car Accessories",
-    "Two Wheeler Parts", "Heavy Vehicle Parts", "Other Auto Parts",
-  ],
-  "Handicrafts & Gifts": [
-    "Wooden Handicrafts", "Metal Handicrafts", "Textile Handicrafts", "Pottery & Ceramics",
-    "Jewellery & Accessories", "Decorative Items", "Gift Items", "Festive Products",
-    "Religious Items", "Wall Art", "Other Handicrafts",
-  ],
-  "Stationery & Paper": [
-    "Office Stationery", "School Stationery", "Paper Products", "Notebooks & Diaries",
-    "Pens & Writing Instruments", "Art & Craft Supplies", "Packaging Paper",
-    "Labels & Tags", "Printing Solutions", "Other Stationery",
-  ],
-  "Plastics & Rubber": [
-    "PET Products", "HDPE Products", "PP Products", "PVC Products",
-    "Rubber Products", "Silicone Products", "Plastic Packaging", "Plastic Components",
-    "Rubber Seals & Gaskets", "Other Plastics & Rubber",
-  ],
-  "Export & Import": [
-    "Agricultural Exports", "Food & Spice Exports", "Textile Exports", "Handicraft Exports",
-    "Chemical Exports", "Pharma Exports", "Import Trading", "Freight & Logistics",
-    "Customs Clearance", "Other Export & Import",
-  ],
-  "Other": [
-    "Other Products", "Other Services", "Other Businesses",
-  ],
-};
 
 // Tailwind UI style constants
 const inp = "w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm font-medium text-gray-800 outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 placeholder:text-gray-400 transition-all duration-150 shadow-sm hover:border-gray-300";
@@ -1624,22 +1465,33 @@ export default function SellersPage() {
                             <label className={fieldLabel}>Category / Industry</label>
                             <select value={form.category} onChange={e => { sf("category", e.target.value); sf("subcategory", ""); }} className={inp}>
                               <option value="">Select Category...</option>
+                              {form.category && !CATEGORIES.includes(form.category) && (
+                                <option value={form.category}>{form.category}</option>
+                              )}
                               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                           </div>
                         </div>
-                        {/* ── Subcategory: shown only when selected category has subcategories ── */}
-                        {form.category && CATEGORY_SUBCATEGORIES[form.category] && (
-                          <div>
-                            <label className={fieldLabel}>Subcategory</label>
-                            <select value={form.subcategory || ""} onChange={e => sf("subcategory", e.target.value)} className={inp}>
-                              <option value="">Select Subcategory...</option>
-                              {(CATEGORY_SUBCATEGORIES[form.category] || []).map(sc => (
-                                <option key={sc} value={sc}>{sc}</option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
+                        {/* ── Subcategory: complete subcategories matching Marketplace ── */}
+                        <div>
+                          <label className={fieldLabel}>Subcategory</label>
+                          <select
+                            value={form.subcategory || ""}
+                            onChange={e => sf("subcategory", e.target.value)}
+                            disabled={!form.category}
+                            className={`${inp} ${!form.category ? "bg-gray-50 text-gray-400 cursor-not-allowed" : ""}`}
+                          >
+                            <option value="">
+                              {form.category ? "Select Subcategory..." : "Select Category first..."}
+                            </option>
+                            {form.subcategory && !(CATEGORY_SUBCATEGORIES[form.category] || []).includes(form.subcategory) && (
+                              <option value={form.subcategory}>{form.subcategory}</option>
+                            )}
+                            {(CATEGORY_SUBCATEGORIES[form.category] || []).map(sc => (
+                              <option key={sc} value={sc}>{sc}</option>
+                            ))}
+                          </select>
+                        </div>
                         <div>
                           <label className={fieldLabel}>Business Type</label>
                           <select value={form.type} onChange={e => sf("type", e.target.value)} className={inp}>
@@ -2418,15 +2270,18 @@ export default function SellersPage() {
                                 className={inp + " flex-1"}
                               >
                                 <option value="">Select subcategory...</option>
-                                                                {form.category && CATEGORY_SUBCATEGORIES[form.category]
+                                {cat.name && !(form.category && CATEGORY_SUBCATEGORIES[form.category] ? CATEGORY_SUBCATEGORIES[form.category] : Object.values(CATEGORY_SUBCATEGORIES).flat()).includes(cat.name) && (
+                                  <option value={cat.name}>{cat.name}</option>
+                                )}
+                                {form.category && CATEGORY_SUBCATEGORIES[form.category]
                                   ? CATEGORY_SUBCATEGORIES[form.category].map(sc => (
                                       <option key={sc} value={sc}>{sc}</option>
                                     ))
-                                  : /* Fallback: all subcategories across categories */
-                                    CATEGORIES.map(cat => (
-                                      <optgroup key={cat} label={cat}>
-                                        {(CATEGORY_SUBCATEGORIES[cat] || []).map(sc => (
-                                          <option key={sc} value={sc}>{sc}</option>
+                                  : /* Fallback: all subcategories across all 38 marketplace categories */
+                                    CATEGORIES.map(cName => (
+                                      <optgroup key={cName} label={cName}>
+                                        {(CATEGORY_SUBCATEGORIES[cName] || []).map(sc => (
+                                          <option key={`${cName}-${sc}`} value={sc}>{sc}</option>
                                         ))}
                                       </optgroup>
                                     ))
@@ -2511,7 +2366,10 @@ export default function SellersPage() {
                                       className={inp_sm}
                                     >
                                       <option value="">Select Category</option>
-                                      {Object.keys(CATEGORY_SUBCATEGORIES).map(cat => (
+                                      {prod.categoryId && prod.categoryId !== "all" && !CATEGORIES.includes(prod.categoryId) && (
+                                        <option value={prod.categoryId}>{prod.categoryId}</option>
+                                      )}
+                                      {CATEGORIES.map(cat => (
                                         <option key={cat} value={cat}>{cat}</option>
                                       ))}
                                     </select>
@@ -2522,10 +2380,13 @@ export default function SellersPage() {
                                       value={prod.subCategoryId || ""} 
                                       onChange={e => setArr("products", i, "subCategoryId", e.target.value)} 
                                       className={inp_sm}
-                                      disabled={!prod.categoryId}
+                                      disabled={!prod.categoryId || prod.categoryId === "all"}
                                     >
                                       <option value="">Select Subcategory</option>
-                                      {prod.categoryId && CATEGORY_SUBCATEGORIES[prod.categoryId]?.map(sub => (
+                                      {prod.subCategoryId && !(CATEGORY_SUBCATEGORIES[prod.categoryId] || []).includes(prod.subCategoryId) && (
+                                        <option value={prod.subCategoryId}>{prod.subCategoryId}</option>
+                                      )}
+                                      {prod.categoryId && (CATEGORY_SUBCATEGORIES[prod.categoryId] || []).map(sub => (
                                         <option key={sub} value={sub}>{sub}</option>
                                       ))}
                                     </select>

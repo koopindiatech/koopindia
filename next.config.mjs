@@ -102,6 +102,22 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/rss.xml",
+        destination: "/feed.xml",
+      },
+      {
+        source: "/blog/feed.xml",
+        destination: "/feed.xml",
+      },
+      {
+        source: "/blog/rss.xml",
+        destination: "/feed.xml",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

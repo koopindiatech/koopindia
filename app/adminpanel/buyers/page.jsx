@@ -17,7 +17,7 @@ import { getCurrentUser } from "../lib/auth";
 import imageCompression from 'browser-image-compression';
 import dynamic from 'next/dynamic';
 import * as XLSX from 'xlsx';
-import { extractSellerCategories, extractBuyerCategories, isCategoryMatch, matchCategory, matchState, matchCity, CATEGORIES, FILTER_STATES } from "../../../lib/categoryAccess";
+import { extractSellerCategories, extractBuyerCategories, isCategoryMatch, matchCategory, matchState, matchCity, CATEGORIES, CATEGORY_SUBCATEGORIES, PRODUCT_CATEGORY_ICONS, FILTER_STATES } from "../../../lib/categoryAccess";
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
@@ -49,47 +49,6 @@ const BUYER_COLORS = [
   { name: "Amber", hex: "#d97706" }, { name: "Slate", hex: "#475569" },
 ];
 
-const PRODUCT_CATEGORY_ICONS = [
-  { label: "Food & Beverage", icon: "🍱" },
-  { label: "Health & Beauty", icon: "💄" },
-  { label: "Pharmaceuticals", icon: "💊" },
-  { label: "Apparel & Fashion", icon: "👗" },
-  { label: "Chemicals", icon: "🧪" },
-  { label: "Home Supplies", icon: "🧹" },
-  { label: "Construction & Real Estate", icon: "🏗️" },
-  { label: "Electronics & Electrical Supplies", icon: "⚡" },
-  { label: "Agriculture", icon: "🌾" },
-  { label: "Automobile", icon: "🚗" },
-  { label: "Packaging & Paper", icon: "📦" },
-  { label: "Hospital & Medical Supplies", icon: "🏥" },
-  { label: "Gifts & Crafts", icon: "🎁" },
-  { label: "Consumer Electronics", icon: "📱" },
-  { label: "Pipes, Tubes & Fittings", icon: "🔧" },
-  { label: "Industrial Supplies", icon: "🏭" },
-  { label: "Computer Hardware & Software", icon: "💻" },
-  { label: "Energy & Power", icon: "🔋" },
-  { label: "Furniture", icon: "🪑" },
-  { label: "Home Textiles & Furnishings", icon: "🛋️" },
-  { label: "Hotel Supplies & Equipment", icon: "🏨" },
-  { label: "Jewelry & Gemstones", icon: "💎" },
-  { label: "Leather & Leather Products", icon: "👞" },
-  { label: "Machinery", icon: "⚙️" },
-  { label: "Mineral & Metals", icon: "⛏️" },
-  { label: "Plastics & Products", icon: "🛞" },
-  { label: "Printing & Publishing", icon: "🖨️" },
-  { label: "Security & Protection", icon: "🛡️" },
-  { label: "Sports & Entertainment", icon: "⚽" },
-  { label: "Telecommunications", icon: "📡" },
-  { label: "Textiles & Fabrics", icon: "🧵" },
-  { label: "Toys", icon: "🧸" },
-  { label: "Transportation", icon: "🚚" },
-  { label: "Brass Hardware & Components", icon: "🔩" },
-  { label: "Environment & Pollution", icon: "🌱" },
-  { label: "Office & School Supplies", icon: "✏️" },
-  { label: "Scientific & Laboratory Instruments", icon: "🔬" },
-  { label: "Business Services", icon: "💼" },
-];
-
 const statusCfg = {
   live: { label: "Live", dot: "bg-emerald-400", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" },
   paused: { label: "Paused", dot: "bg-amber-400", badge: "bg-amber-50 text-amber-700 border-amber-200" },
@@ -98,7 +57,7 @@ const statusCfg = {
 
 // Default buyer data model
 const blank = () => ({
-  buyerName: "", tagline: "", category: "", businessType: "Manufacturer",
+  buyerName: "", tagline: "", category: "", subcategory: "", businessType: "Manufacturer",
   estYear: "", city: "", state: "", address: "",
   contactName: "", contactRole: "", contactPhone: "", contactEmail: "", contactPhotoUrl: "",
   phone: "", email: "", password: "", website: "", whatsapp: "",
@@ -281,7 +240,7 @@ const EXCEL_COLUMN_MAP = {
   "NATURE OF BUSINESS":            "businessType",
   "Year of Establishment":         "estYear",
 
-  // Category
+  // Category & Subcategory
   "Industry Category":             "category",
   "Category":                      "category",
   "CATEGORY":                      "category",
@@ -289,6 +248,10 @@ const EXCEL_COLUMN_MAP = {
   "Business Category":             "category",
   "Sector":                        "category",
   "Industry":                      "category",
+  "Subcategory":                   "subcategory",
+  "Sub Category":                  "subcategory",
+  "SUBCATEGORY":                   "subcategory",
+  "Sub-Category":                  "subcategory",
 
   // Location
   "State":                         "state",
@@ -2434,8 +2397,40 @@ export default function BuyersAdminPage() {
                           </div>
                           <div>
                             <label className={fieldLabel}>Category / Industry</label>
-                            <input type="text" list="category-list" value={form.category} onChange={(e) => sf("category", e.target.value)} placeholder="Enter category" className={inp} />
+                            <select
+                              value={form.category || ""}
+                              onChange={(e) => { sf("category", e.target.value); sf("subcategory", ""); }}
+                              className={inp}
+                            >
+                              <option value="">Select Category...</option>
+                              {form.category && !CATEGORIES.includes(form.category) && (
+                                <option value={form.category}>{form.category}</option>
+                              )}
+                              {CATEGORIES.map((c) => (
+                                <option key={c} value={c}>{c}</option>
+                              ))}
+                            </select>
                           </div>
+                        </div>
+                        {/* ── Subcategory: complete subcategories matching Marketplace ── */}
+                        <div>
+                          <label className={fieldLabel}>Subcategory</label>
+                          <select
+                            value={form.subcategory || ""}
+                            onChange={(e) => sf("subcategory", e.target.value)}
+                            disabled={!form.category}
+                            className={`${inp} ${!form.category ? "bg-gray-50 text-gray-400 cursor-not-allowed" : ""}`}
+                          >
+                            <option value="">
+                              {form.category ? "Select Subcategory..." : "Select Category first..."}
+                            </option>
+                            {form.subcategory && !(CATEGORY_SUBCATEGORIES[form.category] || []).includes(form.subcategory) && (
+                              <option value={form.subcategory}>{form.subcategory}</option>
+                            )}
+                            {(CATEGORY_SUBCATEGORIES[form.category] || []).map((sc) => (
+                              <option key={sc} value={sc}>{sc}</option>
+                            ))}
+                          </select>
                         </div>
                         <div>
                           <label className={fieldLabel}>Tagline</label>
@@ -2603,6 +2598,46 @@ export default function BuyersAdminPage() {
                           );
                         })}
                       </div>
+
+                      {/* Subcategories for selected categories */}
+                      {(() => {
+                        const activeCats = Array.from(new Set([
+                          ...(form.category && CATEGORY_SUBCATEGORIES[form.category] ? [form.category] : []),
+                          ...(form.productCategories || []).filter((c) => CATEGORY_SUBCATEGORIES[c]),
+                        ]));
+                        if (activeCats.length === 0) return null;
+                        return (
+                          <div className="pt-4 mt-4 border-t border-gray-100 space-y-3">
+                            <div>
+                              <h4 className="text-xs font-black text-gray-800 uppercase tracking-wider">Subcategories</h4>
+                              <p className="text-[11px] text-gray-400">Select specific subcategories under your chosen categories</p>
+                            </div>
+                            {activeCats.map((catName) => (
+                              <div key={catName} className="space-y-1.5">
+                                <p className="text-[11px] font-bold text-orange-600">{catName}</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {(CATEGORY_SUBCATEGORIES[catName] || []).map((sub) => {
+                                    const selected = (form.productCategories || []).includes(sub);
+                                    return (
+                                      <button
+                                        key={`${catName}-${sub}`}
+                                        type="button"
+                                        onClick={() => {
+                                          const curr = form.productCategories || [];
+                                          sf("productCategories", selected ? curr.filter((c) => c !== sub) : [...curr, sub]);
+                                        }}
+                                        className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${selected ? "border-orange-500 bg-orange-50 text-orange-700" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
+                                      >
+                                        {sub}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     <div className={sectionCard}>

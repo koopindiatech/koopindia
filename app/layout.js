@@ -17,6 +17,16 @@ export const metadata = {
   description:
     "Koop India is a business launchpad for startups and entrepreneurs...",
   icons: { icon: "/favican.png" },
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        {
+          url: "https://www.koopindia.com/feed.xml",
+          title: "Koop India Insights RSS Feed",
+        },
+      ],
+    },
+  },
 };
 
 export default function RootLayout({ children }) {

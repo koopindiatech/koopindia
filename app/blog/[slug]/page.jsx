@@ -52,6 +52,14 @@ export async function generateMetadata({ params }) {
       description,
       alternates: {
         canonical: canonicalUrl,
+        types: {
+          "application/rss+xml": [
+            {
+              url: "https://www.koopindia.com/feed.xml",
+              title: "Koop India Insights RSS Feed",
+            },
+          ],
+        },
       },
       openGraph: {
         title,

@@ -7,7 +7,7 @@ import MarketplaceFooter from "../layout/MarketplaceFooter";
 import SellerCard from "./cards/SellerCard";
 import BuyerCard from "./cards/BuyerCard";
 import { db } from "@/lib/firebase";
-import { matchCategory, matchState, matchCity } from "@/lib/categoryAccess";
+import { matchCategory, matchState, matchCity, CATEGORY_MAP } from "@/lib/categoryAccess";
 import { collection, getDocs, query, orderBy, limit, where, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useModal } from "@/context/ModalContext";
 
@@ -35,47 +35,6 @@ const proxyImg = (u) =>
     ? `/api/img?url=${encodeURIComponent(u)}` : u;
 
 const ini = (n = "") => n.split(" ").slice(0, 2).map(w => w[0] || "").join("").toUpperCase();
-
-const CATEGORY_MAP = {
-  "Food & Beverage": { emoji: "🍱", subs: ["Spices & Seasonings", "Bakery & Confectionery", "Beverages & Juices", "Dairy Products", "Grains & Cereals", "Edible Oils", "Snacks & Namkeen", "Packaged Foods", "Tea & Coffee", "Frozen Foods", "Organic Food", "Other Food & Beverage"] },
-  "Health & Beauty": { emoji: "💄", subs: ["Skin Care", "Hair Care", "Personal Hygiene", "Oral Care", "Cosmetics & Makeup", "Fragrances & Deodorants", "Herbal & Ayurvedic Beauty", "Salon & Spa Supplies", "Other Health & Beauty"] },
-  "Pharmaceuticals": { emoji: "💊", subs: ["Tablets & Capsules", "Syrups & Liquids", "Injections", "Ointments & Creams", "Generic Drugs", "OTC Medicines", "Ayurvedic & Herbal Medicines", "Nutraceuticals", "Veterinary Drugs", "Other Pharmaceuticals"] },
-  "Apparel & Fashion": { emoji: "👗", subs: ["Men's Wear", "Women's Wear", "Kids & Baby Wear", "Ethnic Wear", "Western Wear", "Footwear", "Fashion Accessories", "Uniforms & Workwear", "Sportswear", "Other Apparel"] },
-  "Chemicals": { emoji: "🧪", subs: ["Industrial Chemicals", "Agrochemicals", "Specialty Chemicals", "Dyes & Pigments", "Solvents", "Water Treatment Chemicals", "Cleaning Chemicals", "Polymers & Resins", "Other Chemicals"] },
-  "Home Supplies": { emoji: "🧹", subs: ["Cleaning Supplies", "Kitchenware", "Bathroom Accessories", "Storage & Organization", "Disposable Items", "Laundry Care", "Pest Control", "Other Home Supplies"] },
-  "Construction & Real Estate": { emoji: "🏗️", subs: ["Cement & Concrete", "Building Materials", "Tiles & Flooring", "Paints & Wall Finishes", "Roofing Materials", "Sanitaryware & Fittings", "Structural Steel", "Doors & Windows", "Other Construction"] },
-  "Electronics & Electrical Supplies": { emoji: "⚡", subs: ["Cables & Wires", "Switches & Sockets", "LED & Lighting", "Transformers & Switchgear", "Circuit Breakers", "Solar Panels & Systems", "Industrial Electricals", "Power Distribution", "Other Electricals"] },
-  "Agriculture": { emoji: "🌾", subs: ["Seeds & Saplings", "Fertilizers & Nutrients", "Pesticides & Bio-Pesticides", "Farming Equipment", "Irrigation Systems", "Animal Feed", "Horticulture", "Fresh Produce", "Other Agriculture"] },
-  "Automobile": { emoji: "🚗", subs: ["Spare Parts", "Auto Accessories", "Batteries", "Tires & Tubes", "Lubricants & Oils", "Two Wheeler Parts", "Commercial Vehicle Parts", "Electric Vehicle Components", "Other Automobile"] },
-  "Packaging & Paper": { emoji: "📦", subs: ["Corrugated Boxes", "Flexible Packaging", "Paper Bags & Pouches", "Bottles & Containers", "Labels & Tapes", "Packaging Films", "Cartons & Tubes", "Kraft Paper & Board", "Other Packaging"] },
-  "Hospital & Medical Supplies": { emoji: "🏥", subs: ["Medical Equipment", "Surgical Instruments", "Hospital Furniture", "Disposable Medical Supplies", "Diagnostic Equipment", "PPE & Masks", "Bandages & Dressings", "Laboratory Disposables", "Other Medical Supplies"] },
-  "Gifts & Crafts": { emoji: "🎁", subs: ["Handicrafts", "Corporate Gifts", "Decorative Items", "Festive Gifts", "Wooden Crafts", "Metal Crafts", "Candles & Scents", "Ceramic & Clay Crafts", "Other Gifts & Crafts"] },
-  "Consumer Electronics": { emoji: "📱", subs: ["Mobile Phones & Accessories", "Audio & Headphones", "Televisions & Home Theater", "Smart Home Devices", "Wearables & Smartwatches", "Cameras & Optics", "Power Banks & Chargers", "Other Consumer Electronics"] },
-  "Pipes, Tubes & Fittings": { emoji: "🔧", subs: ["PVC & CPVC Pipes", "GI & Steel Pipes", "Pipe Fittings & Flanges", "Valves & Cocks", "Hose Pipes", "Ductile Iron Pipes", "Industrial Tubing", "Other Pipes & Fittings"] },
-  "Industrial Supplies": { emoji: "🏭", subs: ["Fasteners & Bolts", "Bearings & Belts", "Welding Supplies", "Abrasives & Cutting Tools", "Safety Gear & PPE", "Material Handling", "Lubrication Equipment", "Pumps & Compressors", "Other Industrial Supplies"] },
-  "Computer Hardware & Software": { emoji: "💻", subs: ["Laptops & Desktops", "Monitors & Displays", "Networking Equipment", "Printers & Scanners", "Storage Devices", "Computer Peripherals", "Enterprise Software", "POS & Barcode Systems", "Other IT Products"] },
-  "Energy & Power": { emoji: "🔋", subs: ["Solar Energy Systems", "Generators & Inverters", "Batteries & UPS", "Wind & Renewable Energy", "Transformers", "Biofuel & Biomass", "Power Cables", "Other Energy Products"] },
-  "Furniture": { emoji: "🪑", subs: ["Office Furniture", "Home Furniture", "School & Institutional Furniture", "Outdoor Furniture", "Modular Furniture", "Beds & Mattresses", "Sofas & Chairs", "Tables & Desks", "Other Furniture"] },
-  "Home Textiles & Furnishings": { emoji: "🛋️", subs: ["Bed Linen & Sheets", "Curtains & Blinds", "Cushions & Covers", "Carpets & Rugs", "Towels & Bath Linen", "Table Linen", "Blankets & Quilts", "Upholstery Fabrics", "Other Home Textiles"] },
-  "Hotel Supplies & Equipment": { emoji: "🏨", subs: ["Commercial Kitchen Equipment", "Hotel Linen & Towels", "Guest Amenities", "Tableware & Crockery", "Buffet Equipment", "Housekeeping Equipment", "Hotel Uniforms", "Other Hotel Supplies"] },
-  "Jewelry & Gemstones": { emoji: "💎", subs: ["Fashion Jewelry", "Silver Jewelry", "Gold & Diamond Jewelry", "Precious & Semi-Precious Stones", "Beads & Findings", "Jewelry Packaging & Displays", "Traditional Indian Jewelry", "Other Jewelry"] },
-  "Leather & Leather Products": { emoji: "👞", subs: ["Leather Footwear", "Leather Bags & Wallets", "Leather Belts & Accessories", "Leather Garments", "Finished Leather Sheets", "Safety Leather Goods", "Other Leather Products"] },
-  "Machinery": { emoji: "⚙️", subs: ["Food Processing Machinery", "Packaging Machinery", "Agricultural Machinery", "Textile Machinery", "Woodworking Machinery", "CNC & Lathe Machines", "Printing Machinery", "Plastic Processing Machines", "Other Machinery"] },
-  "Mineral & Metals": { emoji: "⛏️", subs: ["Iron & Steel", "Aluminum Products", "Copper & Brass", "Industrial Minerals", "Ores & Concentrates", "Metal Sheets & Coils", "Scrap Metal", "Alloy Products", "Other Minerals & Metals"] },
-  "Plastics & Products": { emoji: "🛞", subs: ["Plastic Containers & Bottles", "Plastic Molded Components", "Plastic Sheets & Films", "Engineering Plastics", "Plastic Household Goods", "Recycled Plastic Granules", "Other Plastics"] },
-  "Printing & Publishing": { emoji: "🖨️", subs: ["Commercial Printing", "Offset Printing Services", "Digital Printing", "Screen Printing", "Books & Magazines", "Brochures & Flyers", "Printing Inks & Plates", "Binding & Finishing", "Other Printing"] },
-  "Security & Protection": { emoji: "🛡️", subs: ["CCTV Cameras & Systems", "Access Control & Biometrics", "Fire Safety & Extinguishers", "Security Alarms", "Safety Barriers & Locks", "Surveillance Systems", "Personal Protective Equipment", "Other Security"] },
-  "Sports & Entertainment": { emoji: "⚽", subs: ["Fitness & Gym Equipment", "Outdoor Sports Goods", "Indoor Games", "Playground Equipment", "Sports Apparel & Shoes", "Trophies & Medals", "Musical Instruments", "Other Sports & Entertainment"] },
-  "Telecommunications": { emoji: "📡", subs: ["Telecom Cables & Optical Fiber", "Towers & Antennas", "Wireless Equipment", "Networking Switches & Routers", "Telecom Power Systems", "Intercom & PBX", "RF Components", "Other Telecom"] },
-  "Textiles & Fabrics": { emoji: "🧵", subs: ["Cotton Fabrics", "Synthetic & Polyester Fabrics", "Silk & Wool Fabrics", "Yarn & Thread", "Knitted Fabrics", "Denim Fabrics", "Embroidered Fabrics", "Technical Textiles", "Other Fabrics"] },
-  "Toys": { emoji: "🧸", subs: ["Educational Toys", "Plastic & Action Toys", "Soft & Plush Toys", "Wooden Toys", "Board Games & Puzzles", "Baby & Toddler Toys", "Ride-on & Outdoor Toys", "Electronic Toys", "Other Toys"] },
-  "Transportation": { emoji: "🚚", subs: ["Logistics & Cargo Services", "Commercial Vehicles", "Trailers & Tankers", "E-Rickshaws & 3-Wheelers", "Material Handling Carts", "Fleet Management Devices", "Warehousing Equipment", "Other Transportation"] },
-  "Brass Hardware & Components": { emoji: "🔩", subs: ["Brass Screws & Fasteners", "Brass Precision Turned Parts", "Brass Electrical Components", "Brass Sanitary Fittings", "Brass Hinges & Door Hardware", "Brass Inserts & Anchors", "Brass Valves & Fittings", "Other Brass Hardware"] },
-  "Environment & Pollution": { emoji: "🌱", subs: ["Water & Wastewater Treatment", "Air Pollution Control Equipment", "Waste Management & Recycling", "Solar & Green Energy", "Biogas Systems", "Environmental Testing Equipment", "Eco-Friendly Products", "Other Environmental"] },
-  "Office & School Supplies": { emoji: "✏️", subs: ["Notebooks & Diaries", "Pens & Writing Instruments", "Files & Folders", "Office Paper Products", "Desk Organizers & Accessories", "Whiteboards & Presentation Tools", "School Bags & Pouches", "Other Stationery"] },
-  "Scientific & Laboratory Instruments": { emoji: "🔬", subs: ["Laboratory Glassware", "Microscopes & Optical Devices", "Testing & Measurement Equipment", "Analytical Instruments", "Chemical Lab Consumables", "Educational Lab Kits", "Cleanroom Equipment", "Other Scientific Instruments"] },
-  "Business Services": { emoji: "💼", subs: ["Company Registration & Legal", "Taxation & Accounting Services", "ISO & Compliance Certifications", "Digital Marketing & Branding", "Web & Software Development", "Franchise Consulting", "Export & Import Advisory", "Logistics & Supply Chain", "Other Business Services"] }
-};
 
 const CATEGORIES = Object.keys(CATEGORY_MAP).map(k => ({ label: k, emoji: CATEGORY_MAP[k].emoji, subs: CATEGORY_MAP[k].subs }));
 
