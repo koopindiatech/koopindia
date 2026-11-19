@@ -67,7 +67,7 @@ const Header = ({ onOpenModal }) => {
       dropdown: [
         { name: "Market Research", href: "/startup-consulting/market-analysis", icon: <BarChart2 size={15} /> },
         { name: "Product & Margin Valuation", href: "/startup-consulting/product-valuation", icon: <Package size={15} /> },
-        { name: "Distribution Consulting", href: "/startup-consulting/distribution-model", icon: <Truck size={15} /> },
+        { name: "Appoint Distributors", href: "/appoint-distributors", icon: <Truck size={15} /> },
         { name: "Franchise Consulting", href: "/startup-consulting/franchise-model", icon: <Network size={15} /> },
       ],
     },

@@ -2,24 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Menu, X, ChevronDown, User } from "lucide-react";
-import Image from "next/image";
+import { Menu, X, User } from "lucide-react";
 
-import { CATEGORIES } from "@/lib/categoryAccess";
-
-const RESOURCES = [
-  { label: "Blog", href: "/blog" },
-  { label: "Branding Guide", href: "/resources/branding-guide" },
-  { label: "Export Guide", href: "/resources/export-guide" },
-  { label: "Business Tools", href: "/resources/business-tools" },
-  { label: "Success Stories", href: "/resources/success-stories" },
-];
-
-const MarketplaceHeader = ({ onOpenModal }) => {
-  const router = useRouter();
+const MarketplaceHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -33,7 +19,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
     return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-  const close = () => { setIsOpen(false); setOpenDropdown(null); };
+  const close = () => setIsOpen(false);
 
   return (
     <>
@@ -43,8 +29,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-[64px] gap-4">
-
-                    <Link href="/marketplace" onClick={close} className="flex items-center gap-2 flex-shrink-0">
+          <Link href="/marketplace" onClick={close} className="flex items-center gap-2 flex-shrink-0">
             <div className="flex items-center gap-1.5">
               <div className="w-8 h-8 bg-[#1e3a5f] rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-black text-sm leading-none">K</span>
@@ -90,7 +75,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
             </div>
           </div>
 
-                    <button
+          <button
             onClick={() => setIsOpen(true)}
             className="lg:hidden p-2 rounded hover:bg-gray-100 transition-colors"
             aria-label="Open menu"
@@ -100,16 +85,16 @@ const MarketplaceHeader = ({ onOpenModal }) => {
         </div>
       </header>
 
-            {isOpen && (
+      {isOpen && (
         <div className="fixed inset-0 bg-black/60 z-[100] lg:hidden" onClick={close} />
       )}
 
-            <aside
+      <aside
         className={`fixed top-0 left-0 h-full w-[85%] max-w-[340px] bg-white z-[110] lg:hidden shadow-2xl transform transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-                <div className="flex items-center justify-between px-5 py-4 border-b bg-gradient-to-r from-[#1e3a5f] to-[#2d5a8f]">
+        <div className="flex items-center justify-between px-5 py-4 border-b bg-gradient-to-r from-[#1e3a5f] to-[#2d5a8f]">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center">
               <span className="text-white font-black text-sm">K</span>
@@ -128,7 +113,7 @@ const MarketplaceHeader = ({ onOpenModal }) => {
             <Link href="/buyers" onClick={close} className="flex items-center justify-between px-5 py-3.5 font-semibold text-gray-800 hover:bg-gray-50 border-b border-gray-100">Buyers</Link>
           </div>
 
-                    <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)] space-y-2">
+          <div className="px-5 py-4 border-t bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.06)] space-y-2">
             <Link
               href="/seller-buyer-registration"
               onClick={close}

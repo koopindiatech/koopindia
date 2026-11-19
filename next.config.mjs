@@ -100,6 +100,16 @@ const nextConfig = {
         destination: "/logo-design",
         permanent: true,
       },
+      {
+        source: "/startup-consulting/distribution-model",
+        destination: "/appoint-distributors",
+        permanent: true,
+      },
+      {
+        source: "/distribution-module",
+        destination: "/appoint-distributors",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {

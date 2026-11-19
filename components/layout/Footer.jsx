@@ -191,10 +191,10 @@ const Footer = ({ onOpenModal }) => {
               </li>
               <li>
                 <Link
-                  href="/startup-consulting/distribution-model"
+                  href="/appoint-distributors"
                   className="hover:text-[#F97316]"
                 >
-                  Distribution Module
+                  Appoint Distributors
                 </Link>
               </li>
               <li>

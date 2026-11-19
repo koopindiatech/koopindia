@@ -76,9 +76,9 @@ export default function sitemap() {
       priority: 0.85,
     },
     {
-      url: `${baseUrl}/startup-consulting/distribution-model`,
+      url: `${baseUrl}/appoint-distributors`,
       lastModified,
-      priority: 0.85,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/startup-consulting/franchise-model`,

@@ -16,6 +16,7 @@ const STATIC_ROUTES = [
   "/iso-certification", "/startup-india-registration",
   "/crm-development", "/seo-services",
   "/social-media-marketing", "/logo-design",
+  "/appoint-distributors",
 ];
 
 function isSellerSlugRoute(pathname) {

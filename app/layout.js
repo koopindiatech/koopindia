@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
       <head>
         <meta
           httpEquiv="Content-Security-Policy"
-          content="script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://www.google-analytics.com; img-src 'self' data: blob: https://www.facebook.com https://www.googletagmanager.com https://firebasestorage.googleapis.com;"
+          content="script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://www.google-analytics.com; img-src 'self' data: blob: https://www.facebook.com https://www.googletagmanager.com https://firebasestorage.googleapis.com https://*.firebasestorage.app https://images.unsplash.com;"
         />
         
                 <Script id="gtm-script" strategy="afterInteractive">
