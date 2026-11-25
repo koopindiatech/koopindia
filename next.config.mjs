@@ -110,10 +110,24 @@ const nextConfig = {
         destination: "/appoint-distributors",
         permanent: true,
       },
+      {
+        source: "/company-registration/bangalore",
+        destination: "/company-registration/bengaluru",
+        permanent: true,
+      },
+      {
+        source: "/company-registration",
+        destination: "/documentation-compliance/company-registration-services",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
     return [
+      {
+        source: "/company-registration-in-:city",
+        destination: "/company-registration/:city",
+      },
       {
         source: "/rss.xml",
         destination: "/feed.xml",

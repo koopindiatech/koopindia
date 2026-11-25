@@ -363,8 +363,41 @@ export default function AppointDistributorsClient() {
     }
   };
 
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Distributor Appointment Service India",
+    provider: {
+      "@type": "LocalBusiness",
+      name: "Koop India",
+      url: "https://www.koopindia.com",
+      logo: "https://www.koopindia.com/koopindia-logo.png",
+      telephone: "+91-9599826131",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "New Delhi",
+        addressRegion: "Delhi",
+        addressCountry: "IN",
+      },
+      areaServed: "IN",
+    },
+    serviceType: "Distributor Appointment",
+    description:
+      "Koop India helps manufacturers and brand owners appoint verified distributors across India through brand onboarding, digital presence, marketing, verified distributor leads and relationship management.",
+    offers: {
+      "@type": "Offer",
+      availability: "https://schema.org/InStock",
+      areaServed: "IN",
+      url: "https://www.koopindia.com/appoint-distributors",
+    },
+  };
+
   return (
     <div className="bg-white text-[#17243b] leading-[1.6] pb-16 md:pb-0 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
       <main>
         {/* ── HERO ── */}
         <section

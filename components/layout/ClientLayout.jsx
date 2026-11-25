@@ -17,6 +17,7 @@ const STATIC_ROUTES = [
   "/crm-development", "/seo-services",
   "/social-media-marketing", "/logo-design",
   "/appoint-distributors",
+  "/company-registration",
 ];
 
 function isSellerSlugRoute(pathname) {
@@ -24,9 +25,15 @@ function isSellerSlugRoute(pathname) {
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) return false;
   const topLevel = "/" + segments[0];
-  // If not a known static route and not admin/sellers/marketplace prefix, treat as seller slug
+  // If not a known static route and not admin/sellers/marketplace/buyers/registration prefix, treat as seller slug
   const isKnownStatic = STATIC_ROUTES.some(r => pathname === r || pathname.startsWith(r + "/"));
-  const isKnownPrefix = pathname.startsWith("/adminpanel") || pathname.startsWith("/sellers") || pathname.startsWith("/marketplace") || pathname.startsWith("/api");
+  const isKnownPrefix =
+    pathname.startsWith("/adminpanel") ||
+    pathname.startsWith("/sellers") ||
+    pathname.startsWith("/buyers") ||
+    pathname.startsWith("/marketplace") ||
+    pathname.startsWith("/seller-buyer-registration") ||
+    pathname.startsWith("/api");
   return !isKnownStatic && !isKnownPrefix;
 }
 
@@ -36,9 +43,17 @@ export default function ClientLayout({ children }) {
 
   const isAdmin = pathname.startsWith("/adminpanel");
   const isSeller = pathname.startsWith("/sellers") || isSellerSlugRoute(pathname);
+  const isBuyer = pathname.startsWith("/buyers");
   const isMarketplace = pathname.startsWith("/marketplace");
+  const isSellerBuyerReg = pathname.startsWith("/seller-buyer-registration");
   const isCustomLanding = pathname.startsWith("/custom-website-development");
-  const hideGlobalLayout = isAdmin || isSeller || isMarketplace || isCustomLanding;
+  const hideGlobalLayout =
+    isAdmin ||
+    isSeller ||
+    isBuyer ||
+    isMarketplace ||
+    isSellerBuyerReg ||
+    isCustomLanding;
 
   useEffect(() => {
     if (hideGlobalLayout) {

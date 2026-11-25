@@ -78,7 +78,32 @@ export default function sitemap() {
     {
       url: `${baseUrl}/appoint-distributors`,
       lastModified,
+      changeFrequency: "monthly",
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/marketplace`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/sellers`,
+      lastModified,
+      changeFrequency: "daily",
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/buyers`,
+      lastModified,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/seller-buyer-registration`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/startup-consulting/franchise-model`,
@@ -161,6 +186,67 @@ export default function sitemap() {
       url: `${baseUrl}/blog`,
       lastModified,
       priority: 0.7,
+    },
+    // Company Registration City Landing Pages (Programmatic SEO)
+    {
+      url: `${baseUrl}/company-registration/noida`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/delhi`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/gurugram`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/ghaziabad`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/faridabad`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/bengaluru`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/mumbai`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/pune`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/hyderabad`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/company-registration/bhubaneswar`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.85,
     },
   ];
 }

@@ -8,6 +8,12 @@ const STATIC_ROUTES = [
   "/privacy", "/seller-onboarding", "/services", "/solutions",
   "/startup-consulting", "/tech-solutions", "/term-services",
   "/terms-and-conditions", "/termsevices", "/website-development",
+  "/custom-website-development", "/trademark-registration",
+  "/iso-certification", "/startup-india-registration",
+  "/crm-development", "/seo-services",
+  "/social-media-marketing", "/logo-design",
+  "/appoint-distributors",
+  "/company-registration",
 ];
 
 function isSellerSlugRoute(pathname) {
@@ -15,7 +21,14 @@ function isSellerSlugRoute(pathname) {
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) return false;
   const isKnownStatic = STATIC_ROUTES.some(r => pathname === r || pathname.startsWith(r + "/"));
-  const isKnownPrefix = pathname.startsWith("/adminpanel") || pathname.startsWith("/sellers") || pathname.startsWith("/marketplace") || pathname.startsWith("/api");
+  const isKnownPrefix =
+    pathname.startsWith("/adminpanel") ||
+    pathname.startsWith("/sellers") ||
+    pathname.startsWith("/buyers") ||
+    pathname.startsWith("/marketplace") ||
+    pathname.startsWith("/company-registration") ||
+    pathname.startsWith("/seller-buyer-registration") ||
+    pathname.startsWith("/api");
   return !isKnownStatic && !isKnownPrefix;
 }
 

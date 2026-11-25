@@ -10,13 +10,26 @@ const STATIC_ROUTES_MODAL = [
   "/documentation-compliance", "/gst-registration", "/marketplace",
   "/privacy", "/seller-onboarding", "/services", "/solutions",
   "/startup-consulting", "/tech-solutions", "/term-services",
-  "/terms-and-conditions", "/termsevices",
+  "/terms-and-conditions", "/termsevices", "/website-development",
+  "/custom-website-development", "/trademark-registration",
+  "/iso-certification", "/startup-india-registration",
+  "/crm-development", "/seo-services",
+  "/social-media-marketing", "/logo-design",
+  "/appoint-distributors",
+  "/company-registration",
 ];
 
 function isSellerPage(path) {
   if (!path) return false;
   const isKnownStatic = STATIC_ROUTES_MODAL.some(r => path === r || path.startsWith(r + "/"));
-  const isKnownPrefix = path.startsWith("/adminpanel") || path.startsWith("/sellers") || path.startsWith("/marketplace") || path.startsWith("/api");
+  const isKnownPrefix =
+    path.startsWith("/adminpanel") ||
+    path.startsWith("/sellers") ||
+    path.startsWith("/buyers") ||
+    path.startsWith("/marketplace") ||
+    path.startsWith("/company-registration") ||
+    path.startsWith("/seller-buyer-registration") ||
+    path.startsWith("/api");
   return !isKnownStatic && !isKnownPrefix;
 }
 

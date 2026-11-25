@@ -2,18 +2,45 @@ import { Suspense } from "react";
 import KoopHomepage from "@/components/ui/KoopHomepage";
 
 export const metadata = {
-  title: "Buyer Directory — Discover Trusted Indian Buyers | Koop India",
-  description: "Explore 1000+ verified Indian manufacturers, MSME buyers and startups across Food, Spices, Healthcare, Industrial and more categories on Koop India.",
+  title: "B2B Marketplace India — Connect Buyers, Sellers & Distributors | Koop India",
+  description:
+    "India's leading B2B marketplace. Discover 1000+ verified manufacturers, MSME sellers, distributors and buyers across FMCG, Food, Pharma, Textiles, Industrial and 38+ categories. Register free today.",
+  keywords: [
+    "B2B marketplace India",
+    "buyer seller platform India",
+    "manufacturers India",
+    "distributors India",
+    "MSME B2B India",
+    "FMCG marketplace India",
+    "wholesale buyer India",
+    "online B2B platform India",
+  ],
   alternates: {
     canonical: "https://www.koopindia.com/marketplace",
   },
   openGraph: {
-    title: "Buyer Directory — Discover Trusted Indian Buyers | Koop India",
-    description: "Explore 1000+ verified Indian manufacturers, MSME buyers and startups across Food, Spices, Healthcare, Industrial and more categories on Koop India.",
+    title: "B2B Marketplace India — Connect Buyers, Sellers & Distributors | Koop India",
+    description:
+      "India's leading B2B marketplace. Discover 1000+ verified manufacturers, MSME sellers, distributors and buyers across 38+ categories.",
     url: "https://www.koopindia.com/marketplace",
     siteName: "Koop India",
-    locale: "en_US",
+    locale: "en_IN",
     type: "website",
+    images: [
+      {
+        url: "https://www.koopindia.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Koop India B2B Marketplace India",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "B2B Marketplace India — Connect Buyers, Sellers & Distributors",
+    description:
+      "India's leading B2B marketplace connecting manufacturers, distributors, and buyers across 38+ categories.",
+    images: ["https://www.koopindia.com/og-image.png"],
   },
 };
 
