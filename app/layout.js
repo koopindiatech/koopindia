@@ -13,10 +13,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   metadataBase: new URL("https://www.koopindia.com"),
-  title: {
-    default: "Koop India — B2B Marketplace & Business Services India",
-    template: "%s | Koop India",
-  },
+  title: "Koop India — B2B Marketplace & Business Services India",
   description:
     "Koop India is India's B2B marketplace connecting manufacturers, suppliers, buyers & distributors. GST Registration, Trademark, FSSAI, Website Development, SEO & Distributor Appointment services — all in one place.",
   keywords: [

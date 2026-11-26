@@ -34,11 +34,11 @@ const Footer = ({ onOpenModal }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 grid grid-cols-1 md:grid-cols-5 gap-8">
                 <div className="text-center md:text-left">
           <Link href="/">
-            <h1 className="text-3xl font-extrabold">
+            <div className="text-3xl font-extrabold">
               <span className="text-[#F97316]">koop</span>
               <span className="text-white">india</span>
               <span className="text-[#F97316]">.</span>
-            </h1>
+            </div>
           </Link>
           <p className="text-[#94A3B8] mt-3">
             Koop India is a business launchpad for startups and entrepreneurs,
@@ -51,12 +51,12 @@ const Footer = ({ onOpenModal }) => {
           <h3 className="font-bold text-lg mb-4 text-[#F97316]">PRODUCT</h3>
           <ul className="space-y-2">
             <li>
-              <Link href=" " className="hover:text-[#F97316]">
+              <Link href="/marketplace" className="hover:text-[#F97316]">
                 For Products
               </Link>
             </li>
             <li>
-              <Link href=" " className="hover:text-[#F97316]">
+              <Link href="/appoint-distributors" className="hover:text-[#F97316]">
                 For Distributors
               </Link>
             </li>

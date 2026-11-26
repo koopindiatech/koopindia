@@ -1,6 +1,9 @@
- import { db } from "../../lib/firebase";
+import { notFound } from "next/navigation";
+import { db } from "../../lib/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import SellerClientPage from "./SellerClientPage";
+
+const ASSET_EXT_REGEX = /\.(png|jpe?g|gif|webp|svg|ico|css|js|map|json|xml|txt|php|html|env|woff2?|ttf)$/i;
 
 function serialize(obj) {
   if (obj === null || obj === undefined) return obj;
@@ -15,8 +18,15 @@ function serialize(obj) {
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const { slug } = resolvedParams;
-  
+  const { slug } = resolvedParams || {};
+
+  if (!slug || ASSET_EXT_REGEX.test(slug)) {
+    return {
+      title: "Page Not Found | Koop India",
+      robots: { index: false, follow: false },
+    };
+  }
+
   try {
     const q = query(collection(db, "sellers"), where("slug", "==", slug));
     const snap = await getDocs(q);
@@ -25,6 +35,9 @@ export async function generateMetadata({ params }) {
       return {
         title: `${data.companyName} | Koop India B2B Marketplace`,
         description: data.aboutText || `Check out ${data.companyName} on Koop India. Connect for B2B trade, distributorship, and wholesale inquiries.`,
+        alternates: {
+          canonical: `https://www.koopindia.com/${slug}`,
+        },
         openGraph: {
           title: data.companyName,
           description: data.aboutText,
@@ -33,19 +46,28 @@ export async function generateMetadata({ params }) {
       };
     }
   } catch (error) {}
-  
-  return { title: 'Seller Profile | Koop India' };
+
+  return {
+    title: "Seller Profile | Koop India",
+    robots: { index: false, follow: false },
+  };
 }
 
 export default async function SellerPage({ params }) {
   const resolvedParams = await params;
-  const { slug } = resolvedParams;
+  const { slug } = resolvedParams || {};
+
+  if (!slug || ASSET_EXT_REGEX.test(slug)) {
+    notFound();
+  }
 
   let initialSeller = null;
+  let querySucceeded = false;
 
   try {
     const q = query(collection(db, "sellers"), where("slug", "==", slug));
     const snap = await getDocs(q);
+    querySucceeded = true;
 
     if (!snap.empty) {
       const d = snap.docs[0];
@@ -76,6 +98,10 @@ export default async function SellerPage({ params }) {
     }
   } catch (error) {
     console.error("Error fetching seller:", error);
+  }
+
+  if (querySucceeded && !initialSeller) {
+    notFound();
   }
 
   return <SellerClientPage initialSeller={initialSeller} />;

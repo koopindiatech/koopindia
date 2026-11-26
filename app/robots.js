@@ -4,10 +4,15 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/_next/", "/adminpanel/"],
+        disallow: [
+          "/api/",
+          "/adminpanel/",
+          "/seller-portal/",
+          "/buyer-portal/",
+          "/seller-onboarding",
+        ],
       },
     ],
     sitemap: "https://www.koopindia.com/sitemap.xml",
-    host: "https://www.koopindia.com",
   };
 }

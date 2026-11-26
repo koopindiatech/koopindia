@@ -120,6 +120,21 @@ const nextConfig = {
         destination: "/documentation-compliance/company-registration-services",
         permanent: true,
       },
+      {
+        source: "/fssai-registration/bangalore",
+        destination: "/fssai-registration/bengaluru",
+        permanent: true,
+      },
+      {
+        source: "/fssai-registration/delhi",
+        destination: "/documentation-compliance/fssai-license",
+        permanent: true,
+      },
+      {
+        source: "/fssai-registration",
+        destination: "/documentation-compliance/fssai-license",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
@@ -127,6 +142,10 @@ const nextConfig = {
       {
         source: "/company-registration-in-:city",
         destination: "/company-registration/:city",
+      },
+      {
+        source: "/fssai-registration-in-:city",
+        destination: "/fssai-registration/:city",
       },
       {
         source: "/rss.xml",

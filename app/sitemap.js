@@ -1,6 +1,50 @@
-export default function sitemap() {
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { CITIES_LIST } from "@/lib/companyRegistrationCities";
+import { FSSAI_CITIES_LIST } from "@/lib/fssaiRegistrationCities";
+
+export const revalidate = 3600;
+
+export default async function sitemap() {
   const baseUrl = "https://www.koopindia.com";
-  const lastModified = new Date();
+  const lastModified = new Date("2026-11-26T00:00:00.000Z");
+
+  let blogEntries = [];
+  try {
+    const snap = await Promise.race([
+      getDocs(collection(db, "blogs")),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 3500)),
+    ]);
+    blogEntries = snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((b) => {
+        if (!b.title && !b.seo?.metaTitle) return false;
+        if (b.status && String(b.status).toLowerCase() === "draft") return false;
+        return true;
+      })
+      .map((b) => ({
+        url: `${baseUrl}/blog/${b.slug || b.id}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.75,
+      }));
+  } catch {
+    blogEntries = [];
+  }
+
+  const cityEntries = CITIES_LIST.map((c) => ({
+    url: `${baseUrl}/company-registration/${c.slug}`,
+    lastModified: new Date("2026-11-26T00:00:00.000Z"),
+    changeFrequency: "weekly",
+    priority: 0.9,
+  }));
+
+  const fssaiCityEntries = FSSAI_CITIES_LIST.map((c) => ({
+    url: `${baseUrl}/fssai-registration/${c.slug}`,
+    lastModified: new Date("2026-11-26T00:00:00.000Z"),
+    changeFrequency: "weekly",
+    priority: 0.9,
+  }));
 
   return [
 
@@ -185,68 +229,11 @@ export default function sitemap() {
     {
       url: `${baseUrl}/blog`,
       lastModified,
-      priority: 0.7,
+      changeFrequency: "daily",
+      priority: 0.75,
     },
-    // Company Registration City Landing Pages (Programmatic SEO)
-    {
-      url: `${baseUrl}/company-registration/noida`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/delhi`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/gurugram`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/ghaziabad`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/faridabad`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/bengaluru`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/mumbai`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/pune`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/hyderabad`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
-    {
-      url: `${baseUrl}/company-registration/bhubaneswar`,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 0.85,
-    },
+    ...cityEntries,
+    ...fssaiCityEntries,
+    ...blogEntries,
   ];
 }

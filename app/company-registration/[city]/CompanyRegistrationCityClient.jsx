@@ -22,6 +22,7 @@ import {
   Layers,
   ArrowRight,
   Zap,
+  X,
 } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -46,6 +47,15 @@ export default function CompanyRegistrationCityClient({ city }) {
   const [midSubmitting, setMidSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [midSubmitted, setMidSubmitted] = useState(false);
+  const [quickModalOpen, setQuickModalOpen] = useState(false);
+  const [modalForm, setModalForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    companyType: "Private Limited Company (Pvt Ltd)",
+  });
+  const [modalSubmitting, setModalSubmitting] = useState(false);
+  const [modalSubmitted, setModalSubmitted] = useState(false);
   const [enquiryId, setEnquiryId] = useState("");
   const [activeTab, setActiveTab] = useState("directors");
   const [openFaq, setOpenFaq] = useState(null);
@@ -151,9 +161,37 @@ export default function CompanyRegistrationCityClient({ city }) {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
-  const whatsappUrl = `https://wa.me/919599826131?text=${encodeURIComponent(
-    `Hi Koop India, I want to register a company in ${city.name} (${city.state}). Please share details and pricing.`
-  )}`;
+  const openLeadModal = (selectedType) => {
+    if (selectedType) {
+      setModalForm((prev) => ({ ...prev, companyType: selectedType }));
+      setFormData((prev) => ({ ...prev, companyType: selectedType }));
+    }
+    setModalSubmitted(false);
+    setQuickModalOpen(true);
+  };
+
+  const handleModalSubmit = async (e) => {
+    e.preventDefault();
+    if (!modalForm.name || !modalForm.phone) {
+      alert("Please provide your name and mobile number.");
+      return;
+    }
+    setModalSubmitting(true);
+    try {
+      const id = await processSubmission({
+        ...modalForm,
+        city: city.name,
+        message: `Quick Modal CTA (${modalForm.companyType})`,
+      });
+      setEnquiryId(id);
+      setModalSubmitted(true);
+    } catch (err) {
+      console.error("Error submitting modal lead:", err);
+      alert("Something went wrong. Please call us directly.");
+    } finally {
+      setModalSubmitting(false);
+    }
+  };
 
   const otherCities = CITIES_LIST.filter((c) => c.slug !== city.slug);
 
@@ -173,6 +211,21 @@ export default function CompanyRegistrationCityClient({ city }) {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+          {/* SEO Breadcrumb Navigation */}
+          <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-slate-400">
+            <Link href="/" className="hover:text-orange-400 transition-colors">
+              Home
+            </Link>
+            <span>/</span>
+            <Link href="/documentation-compliance/company-registration-services" className="hover:text-orange-400 transition-colors">
+              Company Registration Services
+            </Link>
+            <span>/</span>
+            <span className="text-orange-300 font-semibold">
+              Company Registration in {city.name}
+            </span>
+          </nav>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Hero Content */}
             <div className="lg:col-span-7 space-y-6">
@@ -214,15 +267,14 @@ export default function CompanyRegistrationCityClient({ city }) {
 
               {/* Instant Contact Actions */}
               <div className="flex flex-wrap items-center gap-4 pt-2">
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm px-5 py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/30 hover:scale-105"
+                <button
+                  type="button"
+                  onClick={() => openLeadModal("Private Limited Company (Pvt Ltd)")}
+                  className="inline-flex items-center gap-2.5 bg-[#F97316] hover:bg-orange-600 text-white font-extrabold text-sm px-6 py-3 rounded-xl transition-all shadow-lg shadow-orange-500/30 hover:scale-105 cursor-pointer"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp with CA Expert</span>
-                </a>
+                  <Zap className="w-4 h-4" />
+                  <span>Get Free CA Consultation ➔</span>
+                </button>
                 <a
                   href="tel:+919599826131"
                   className="inline-flex items-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm px-5 py-3 rounded-xl border border-white/20 transition-all hover:scale-105"
@@ -238,9 +290,9 @@ export default function CompanyRegistrationCityClient({ city }) {
               <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 text-slate-900 relative">
                 <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                   <div>
-                    <h3 className="text-lg font-black text-[#0F172A] tracking-tight">
+                    <p className="text-lg font-black text-[#0F172A] tracking-tight">
                       Get Free CA Consultation
-                    </h3>
+                    </p>
                     <p className="text-xs text-slate-500">
                       Instant Callback &amp; MCA Quotation for {city.name}
                     </p>
@@ -262,13 +314,11 @@ export default function CompanyRegistrationCityClient({ city }) {
                       Our CA/CS compliance advisor for {city.name} will call you within 15 minutes.
                     </p>
                     <a
-                      href={whatsappUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-[#25D366] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md"
+                      href="tel:+919599826131"
+                      className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition-all"
                     >
-                      <MessageCircle className="w-4 h-4" />
-                      <span>Chat on WhatsApp Now</span>
+                      <PhoneCall className="w-4 h-4 text-orange-400" />
+                      <span>Urgent Query? Call +91-9599826131</span>
                     </a>
                   </div>
                 ) : (
@@ -389,13 +439,18 @@ export default function CompanyRegistrationCityClient({ city }) {
               <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                 {city.overview}
               </p>
+              {city.localAdvantage && (
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  {city.localAdvantage}
+                </p>
+              )}
               <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="text-xs font-bold text-slate-800 flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-orange-500" />
-                  <span>ROC Jurisdiction: {city.roc.name}</span>
+                  <span>ROC Jurisdiction: {city.roc.name} ({city.roc.jurisdiction})</span>
                 </div>
                 <p className="text-xs text-slate-500 pl-6">
-                  {city.roc.address}
+                  {city.roc.address} &bull; Pin Codes Covered: {city.pincodes}
                 </p>
               </div>
             </div>
@@ -434,6 +489,75 @@ export default function CompanyRegistrationCityClient({ city }) {
           </div>
         </div>
       </section>
+
+      {/* ── STATE STAMP DUTY & LOCAL COMPLIANCE IN CITY ── */}
+      {city.stampDuty && (
+        <section className="py-16 bg-white border-b border-slate-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="max-w-3xl mx-auto text-center mb-10 space-y-2">
+              <span className="text-xs font-extrabold text-orange-600 uppercase tracking-widest bg-orange-100/60 px-3 py-1 rounded-full">
+                {city.state} ROC &amp; Fee Breakdown
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Company Registration Stamp Duty &amp; Compliance in {city.name}
+              </h2>
+              <p className="text-sm text-slate-600">
+                State-specific MCA SPICe+ e-stamping, Professional Tax rules, and post-incorporation requirements applicable under {city.roc.name}.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-2">
+                <h3 className="text-sm font-black text-slate-900">
+                  {city.state} e-MoA &amp; e-AoA Stamp Duty
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  <strong>e-MoA:</strong> {city.stampDuty.moaDuty}
+                  <br />
+                  <strong>e-AoA:</strong> {city.stampDuty.aoaDuty}
+                </p>
+                <p className="text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+                  {city.stampDuty.rocFeeNote}
+                </p>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-2">
+                <h3 className="text-sm font-black text-slate-900">
+                  Professional Tax &amp; Shop Act ({city.name})
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  <strong>Professional Tax:</strong> {city.stampDuty.professionalTax}
+                </p>
+                <p className="text-[11px] text-slate-500 pt-1 border-t border-slate-200">
+                  <strong>Shop Act Portal:</strong> {city.stampDuty.shopActPortal}
+                </p>
+              </div>
+
+              <div className="bg-orange-50/60 border border-orange-200 rounded-2xl p-5 space-y-2 md:col-span-2 lg:col-span-1">
+                <h3 className="text-sm font-black text-slate-900">
+                  State Startup Policy &amp; Subsidies
+                </h3>
+                <p className="text-xs text-slate-700 leading-relaxed">
+                  {city.stampDuty.startupPolicy}
+                </p>
+                <div className="pt-2 flex flex-wrap gap-2 text-[11px] font-bold">
+                  <Link href="/gst-registration" className="text-orange-600 hover:underline">
+                    GST Registration →
+                  </Link>
+                  <span className="text-slate-300">|</span>
+                  <Link href="/trademark-registration" className="text-orange-600 hover:underline">
+                    Trademark →
+                  </Link>
+                  <span className="text-slate-300">|</span>
+                  <Link href="/startup-india-registration" className="text-orange-600 hover:underline">
+                    DPIIT Startup India →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── 4 TYPES OF COMPANY STRUCTURES ── */}
       <section className="py-20 bg-white">
@@ -483,12 +607,13 @@ export default function CompanyRegistrationCityClient({ city }) {
                   <span>High credibility with Banks &amp; MNCs</span>
                 </li>
               </ul>
-              <a
-                href={whatsappUrl}
-                className="w-full text-center bg-slate-900 hover:bg-orange-600 text-white font-bold text-xs py-2.5 rounded-xl transition-all"
+              <button
+                type="button"
+                onClick={() => openLeadModal("Private Limited (Pvt Ltd)")}
+                className="w-full text-center bg-slate-900 hover:bg-orange-600 text-white font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
               >
                 Incorporate Pvt Ltd
-              </a>
+              </button>
             </div>
 
             {/* OPC */}
@@ -520,12 +645,13 @@ export default function CompanyRegistrationCityClient({ city }) {
                   <span>Convertible to Pvt Ltd later</span>
                 </li>
               </ul>
-              <a
-                href={whatsappUrl}
-                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition-all"
+              <button
+                type="button"
+                onClick={() => openLeadModal("One Person Company (OPC)")}
+                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
               >
                 Incorporate OPC
-              </a>
+              </button>
             </div>
 
             {/* LLP */}
@@ -557,12 +683,13 @@ export default function CompanyRegistrationCityClient({ city }) {
                   <span>Lower Annual ROC Compliances</span>
                 </li>
               </ul>
-              <a
-                href={whatsappUrl}
-                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition-all"
+              <button
+                type="button"
+                onClick={() => openLeadModal("Limited Liability (LLP)")}
+                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
               >
                 Incorporate LLP
-              </a>
+              </button>
             </div>
 
             {/* Section 8 / Partnership */}
@@ -594,12 +721,13 @@ export default function CompanyRegistrationCityClient({ city }) {
                   <span>Zero Share Capital requirement</span>
                 </li>
               </ul>
-              <a
-                href={whatsappUrl}
-                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition-all"
+              <button
+                type="button"
+                onClick={() => openLeadModal("Partnership / Sole Prop")}
+                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
               >
                 Inquire Section 8
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -884,12 +1012,13 @@ export default function CompanyRegistrationCityClient({ city }) {
                   <span>Certificate of Incorporation</span>
                 </li>
               </ul>
-              <a
-                href={whatsappUrl}
-                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition-all"
+              <button
+                type="button"
+                onClick={() => openLeadModal("LLP / OPC Starter Package")}
+                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition-all cursor-pointer"
               >
                 Inquire Starter Plan
-              </a>
+              </button>
             </div>
 
             {/* Standard Pvt Ltd (Highlighted) */}
@@ -938,12 +1067,13 @@ export default function CompanyRegistrationCityClient({ city }) {
                   <span>Corporate Current Account Opening Assistance</span>
                 </li>
               </ul>
-              <a
-                href={whatsappUrl}
-                className="w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-black text-sm py-3.5 rounded-xl transition-all shadow-lg shadow-orange-500/30"
+              <button
+                type="button"
+                onClick={() => openLeadModal("Private Limited Company (Pvt Ltd)")}
+                className="w-full text-center bg-orange-500 hover:bg-orange-600 text-white font-black text-sm py-3.5 rounded-xl transition-all shadow-lg shadow-orange-500/30 cursor-pointer"
               >
                 Incorporate Pvt Ltd Today ➔
-              </a>
+              </button>
             </div>
 
             {/* Premium Growth Package */}
@@ -981,12 +1111,13 @@ export default function CompanyRegistrationCityClient({ city }) {
                   <span>Dedicated Senior CA/CS Relationship Manager</span>
                 </li>
               </ul>
-              <a
-                href={whatsappUrl}
-                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition-all"
+              <button
+                type="button"
+                onClick={() => openLeadModal("Startup Launchpad (Company + GST + TM)")}
+                className="w-full text-center bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition-all cursor-pointer"
               >
                 Inquire Launchpad Plan
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -1089,15 +1220,14 @@ export default function CompanyRegistrationCityClient({ city }) {
             Join 500+ startups and established enterprises that registered their business with Koop India. Zero office visits, 100% online, guaranteed compliance.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#0F172A] hover:bg-black text-white font-extrabold text-sm px-6 py-3 rounded-xl transition-all shadow-lg hover:scale-105"
+            <button
+              type="button"
+              onClick={() => openLeadModal("Private Limited Company (Pvt Ltd)")}
+              className="inline-flex items-center gap-2 bg-[#0F172A] hover:bg-black text-white font-extrabold text-sm px-7 py-3.5 rounded-xl transition-all shadow-lg hover:scale-105 cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
-              <span>Connect on WhatsApp</span>
-            </a>
+              <Zap className="w-4 h-4 text-orange-400" />
+              <span>Book Free CA Consultation Now ➔</span>
+            </button>
             <a
               href="tel:+919599826131"
               className="inline-flex items-center gap-2 bg-white text-slate-900 hover:bg-slate-100 font-extrabold text-sm px-6 py-3 rounded-xl transition-all shadow-lg hover:scale-105"
@@ -1113,28 +1243,149 @@ export default function CompanyRegistrationCityClient({ city }) {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200 px-3 py-2.5 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex items-center justify-between gap-2 md:hidden">
         <a
           href="tel:+919599826131"
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all"
+          className="w-1/3 flex items-center justify-center gap-1.5 py-3 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all"
         >
           <PhoneCall className="w-3.5 h-3.5 text-orange-500" />
           <span>Call CA</span>
         </a>
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold transition-all shadow-sm"
-        >
-          <MessageCircle className="w-3.5 h-3.5" />
-          <span>WhatsApp</span>
-        </a>
         <button
-          onClick={scrollToHeroForm}
-          className="flex-[1.2] flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black transition-all shadow-md shadow-orange-500/20 cursor-pointer"
+          type="button"
+          onClick={() => openLeadModal("Private Limited Company (Pvt Ltd)")}
+          className="flex-1 flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-black transition-all shadow-md shadow-orange-500/25 cursor-pointer"
         >
           <Zap className="w-3.5 h-3.5" />
-          <span>Free Quote</span>
+          <span>Get Free Quote &amp; Callback ➔</span>
         </button>
       </div>
+
+      {/* ── INSTANT QUOTE & CALLBACK MODAL ── */}
+      {quickModalOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4"
+          onClick={() => setQuickModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-100 relative text-slate-900"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setQuickModalOpen(false)}
+              aria-label="Close modal"
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {modalSubmitted ? (
+              <div className="py-6 text-center space-y-3">
+                <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                  <Check className="w-8 h-8 stroke-[3]" />
+                </div>
+                <h4 className="text-xl font-black text-slate-900">Enquiry Confirmed!</h4>
+                <p className="text-xs text-slate-600">
+                  Reference ID: <strong className="text-orange-600">{enquiryId}</strong>. Our CA/CS advisor for {city.name} will call you within 15 minutes with the complete fee breakup.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setQuickModalOpen(false)}
+                  className="mt-2 bg-slate-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl cursor-pointer"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="mb-4 pb-3 border-b border-slate-100">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">
+                    {city.name} CA Consultation
+                  </span>
+                  <h4 className="text-lg font-black text-slate-900 mt-2">
+                    Get Instant Company Registration Quote
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    Selected: <strong className="text-slate-700">{modalForm.companyType}</strong>
+                  </p>
+                </div>
+
+                <form onSubmit={handleModalSubmit} className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Full Name <span className="text-orange-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={modalForm.name}
+                      onChange={(e) => setModalForm({ ...modalForm, name: e.target.value })}
+                      placeholder="Enter your name"
+                      className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 focus:bg-white text-slate-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Mobile / WhatsApp Number <span className="text-orange-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={modalForm.phone}
+                      onChange={(e) => setModalForm({ ...modalForm, phone: e.target.value })}
+                      placeholder="+91 9876543210"
+                      className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 focus:bg-white text-slate-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Business Email (Optional)
+                    </label>
+                    <input
+                      type="email"
+                      value={modalForm.email}
+                      onChange={(e) => setModalForm({ ...modalForm, email: e.target.value })}
+                      placeholder="founder@company.com"
+                      className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 focus:bg-white text-slate-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Company Structure / Package
+                    </label>
+                    <select
+                      value={modalForm.companyType}
+                      onChange={(e) => setModalForm({ ...modalForm, companyType: e.target.value })}
+                      className="w-full text-xs px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-500 text-slate-800 font-semibold"
+                    >
+                      <option>Private Limited Company (Pvt Ltd)</option>
+                      <option>Private Limited (Pvt Ltd)</option>
+                      <option>One Person Company (OPC)</option>
+                      <option>Limited Liability (LLP)</option>
+                      <option>LLP / OPC Starter Package</option>
+                      <option>Startup Launchpad (Company + GST + TM)</option>
+                      <option>Partnership / Sole Prop</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={modalSubmitting}
+                    className="w-full bg-[#F97316] hover:bg-orange-600 disabled:opacity-60 text-white font-extrabold text-sm py-3 rounded-xl transition-all shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 cursor-pointer mt-2"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>{modalSubmitting ? "Submitting..." : "Submit & Get 15-Min Callback"}</span>
+                  </button>
+                  <p className="text-[10px] text-center text-slate-400">
+                    🔒 Free CA Consultation • Zero Spam • Direct CRM Priority Queue
+                  </p>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -17,6 +17,7 @@ const STATIC_ROUTES_MODAL = [
   "/social-media-marketing", "/logo-design",
   "/appoint-distributors",
   "/company-registration",
+  "/fssai-registration",
 ];
 
 function isSellerPage(path) {
@@ -28,6 +29,7 @@ function isSellerPage(path) {
     path.startsWith("/buyers") ||
     path.startsWith("/marketplace") ||
     path.startsWith("/company-registration") ||
+    path.startsWith("/fssai-registration") ||
     path.startsWith("/seller-buyer-registration") ||
     path.startsWith("/api");
   return !isKnownStatic && !isKnownPrefix;

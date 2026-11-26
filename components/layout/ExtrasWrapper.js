@@ -14,6 +14,7 @@ const STATIC_ROUTES = [
   "/social-media-marketing", "/logo-design",
   "/appoint-distributors",
   "/company-registration",
+  "/fssai-registration",
 ];
 
 function isSellerSlugRoute(pathname) {
@@ -27,6 +28,7 @@ function isSellerSlugRoute(pathname) {
     pathname.startsWith("/buyers") ||
     pathname.startsWith("/marketplace") ||
     pathname.startsWith("/company-registration") ||
+    pathname.startsWith("/fssai-registration") ||
     pathname.startsWith("/seller-buyer-registration") ||
     pathname.startsWith("/api");
   return !isKnownStatic && !isKnownPrefix;
@@ -41,6 +43,8 @@ export default function ExtrasWrapper() {
     pathname.startsWith("/adminpanel") ||
     pathname.startsWith("/sellers") ||
     pathname.startsWith("/website-development") ||
+    pathname.startsWith("/company-registration") ||
+    pathname.startsWith("/fssai-registration") ||
     isSellerSlugRoute(pathname);
 
   if (hideExtras) return null;

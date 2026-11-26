@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import {
-  COMPANY_REGISTRATION_CITIES,
   CITIES_LIST,
   getCityBySlug,
 } from "@/lib/companyRegistrationCities";
@@ -24,8 +23,8 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const title = `Company Registration in ${city.name} | Online Pvt Ltd, OPC & LLP | Koop India`;
-  const description = `Register your Private Limited Company, OPC or LLP in ${city.name}, ${city.state}. 100% online MCA filing, DSC, DIN, SPICe+, COI in ${city.timeline} with Koop India CA/CS experts.`;
+  const title = `Company Registration in ${city.name} – Pvt Ltd, OPC & LLP | Koop India`;
+  const description = `Register your Private Limited Company, OPC or LLP in ${city.name}, ${city.state}. 100% online MCA SPICe+ filing, ${city.state} stamp duty, COI in ${city.timeline} by Koop India CA/CS experts.`;
   const canonicalUrl = `https://www.koopindia.com/company-registration/${city.slug}`;
 
   return {
@@ -36,6 +35,7 @@ export async function generateMetadata({ params }) {
       `pvt ltd company registration ${city.name}`,
       `register private limited company ${city.name}`,
       `online company registration ${city.name}`,
+      `company registration fees in ${city.name}`,
       `OPC registration ${city.name}`,
       `LLP registration in ${city.name}`,
       `company registration consultant ${city.name}`,
@@ -43,7 +43,6 @@ export async function generateMetadata({ params }) {
       `ROC ${city.name}`,
       `startup registration ${city.name}`,
       `business registration in ${city.name} ${city.state}`,
-      `Koop India ${city.name}`,
     ],
     alternates: {
       canonical: canonicalUrl,
@@ -93,18 +92,23 @@ export default async function CompanyRegistrationCityPage({ params }) {
     notFound();
   }
 
+  const pageUrl = `https://www.koopindia.com/company-registration/${city.slug}`;
+
   const serviceSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
+    "@id": `${pageUrl}#service`,
     name: `Company Registration in ${city.name}`,
-    serviceType: "Company Registration",
+    serviceType: "Company Registration & MCA Incorporation",
+    url: pageUrl,
     provider: {
-      "@type": "LocalBusiness",
+      "@type": "ProfessionalService",
       name: "Koop India",
       url: "https://www.koopindia.com",
       logo: "https://www.koopindia.com/koopindia-logo.png",
       telephone: "+91-9599826131",
       email: "koopindiadl@gmail.com",
+      priceRange: "₹₹",
       address: {
         "@type": "PostalAddress",
         addressLocality: city.name,
@@ -122,11 +126,11 @@ export default async function CompanyRegistrationCityPage({ params }) {
       "@type": "City",
       name: city.name,
     },
-    description: `Professional online company registration services in ${city.name}, ${city.state}. Fast Private Limited, OPC, and LLP incorporation under MCA v3 with complete legal compliance.`,
+    description: `Professional online company registration services in ${city.name}, ${city.state}. Fast Private Limited, OPC, and LLP incorporation under ${city.roc.name} with complete legal compliance.`,
     offers: {
       "@type": "Offer",
       availability: "https://schema.org/InStock",
-      url: `https://www.koopindia.com/company-registration/${city.slug}`,
+      url: pageUrl,
       priceCurrency: "INR",
     },
   };
@@ -144,6 +148,31 @@ export default async function CompanyRegistrationCityPage({ params }) {
     })),
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.koopindia.com/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Company Registration Services",
+        item: "https://www.koopindia.com/documentation-compliance/company-registration-services",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: `Company Registration in ${city.name}`,
+        item: pageUrl,
+      },
+    ],
+  };
+
   return (
     <>
       <script
@@ -153,6 +182,10 @@ export default async function CompanyRegistrationCityPage({ params }) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <CompanyRegistrationCityClient city={city} />
     </>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Head from "next/head";
+import Link from "next/link";
 import { CheckCircle2, ChevronDown, ArrowRight, Clock, Shield, FileText, Users, Building2, Briefcase, Star, Phone, Mail, MapPin, BadgeCheck, Zap, TrendingUp, Lock } from "lucide-react";
 
 import EnquiryModal from "@/components/forms/EnquiryForm";
@@ -61,7 +61,7 @@ export default function CompanyRegistration() {
     "@type": "LegalService",
     "name": "Koop India - Company Registration Consultant in Delhi, Noida & Gurugram",
     "description": "Expert company registration consultant in Delhi — Private Limited Company, OPC, LLP & GST registration online. Koop India's CA/CS team delivers 100% online company registration in Delhi with zero hidden charges and 7-day turnaround. Also serving Noida & Gurugram.",
-    "url": "https://koopindia.com/documentation-compliance/company-registration-services",
+    "url": "https://www.koopindia.com/documentation-compliance/company-registration-services",
     "telephone": "+91-9599826131",
     "priceRange": "₹₹",
     "areaServed": [
@@ -99,7 +99,7 @@ export default function CompanyRegistration() {
     "provider": {
       "@type": "Organization",
       "name": "Koop India",
-      "url": "https://koopindia.com"
+      "url": "https://www.koopindia.com"
     },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
@@ -226,50 +226,25 @@ export default function CompanyRegistration() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://koopindia.com/"
+        "item": "https://www.koopindia.com/"
       },
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Documentation & Compliance",
-        "item": "https://koopindia.com/documentation-compliance"
+        "name": "Services",
+        "item": "https://www.koopindia.com/services"
       },
       {
         "@type": "ListItem",
         "position": 3,
-        "name": "Company Registration Consultant in Delhi, Noida & Gurugram",
-        "item": "https://koopindia.com/documentation-compliance/company-registration-services"
+        "name": "Company Registration Services",
+        "item": "https://www.koopindia.com/documentation-compliance/company-registration-services"
       }
     ]
   };
 
   return (
     <div className="font-sans text-slate-700 bg-white antialiased">
-      <Head>
-        <title>Best Company Registration Consultant in Noida & Delhi | Private Limited Company Registration Online | Koop India</title>
-        <meta
-          name="description"
-          content="Looking for the best company registration consultant in Noida, Delhi, or Gurugram? Koop India offers 100% online Private Limited Company Registration, OPC, LLP, ROC Compliance & GST Registration. Expert CA/CS team. No hidden charges."
-        />
-        <meta
-          name="keywords"
-          content="Company Registration Consultant in Noida, Best Company Registration Consultant in Noida, Company Registration Consultant in Delhi, Private Limited Company Registration Online, Register Private Limited Company in India, Company Registration with GST, Online Company Registration Consultant, Affordable Company Registration Services India, Company Registration Consultant Near Me, Company Registration for Startups, ROC Compliance Services, Annual Compliance Services, Business Compliance Services, Company Compliance Consultant, Startup Compliance Consultant, MCA Compliance Consultant, Company Registration Consultant in Gurugram, Company Registration Consultant in Ghaziabad"
-        />
-        <meta name="robots" content="index, follow" />
-        <meta name="author" content="Koop India" />
-        <link rel="canonical" href="https://koopindia.com/documentation-compliance/company-registration-services" />
-        <meta property="og:title" content="Company Registration Consultant in Delhi, Noida & Gurugram | Koop India" />
-        <meta
-          property="og:description"
-          content="Trusted company registration consultant in Delhi, Noida, Gurugram & across India. 100% online Private Limited Company Registration, OPC, LLP, GST. CA/CS supervised. No hidden charges."
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://koopindia.com/documentation-compliance/company-registration-services" />
-        <meta property="og:site_name" content="Koop India" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Company Registration Consultant in Delhi, Noida & Gurugram | Koop India" />
-        <meta name="twitter:description" content="100% online company registration in Delhi, Noida, Gurugram & across India. Private Limited, OPC, LLP, GST. CA/CS supervised. Contact Koop India today." />
-      </Head>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
@@ -1151,64 +1126,65 @@ export default function CompanyRegistration() {
             </p>
                         <div className="flex flex-wrap justify-center gap-2">
               {[
-                { label: "Delhi", hot: true },
-                { label: "Noida", hot: true },
-                { label: "Gurugram", hot: true },
-                { label: "Faridabad", hot: false },
-                { label: "Ghaziabad", hot: false },
-                { label: "Greater Noida", hot: false },
-                { label: "Bengaluru", hot: false },
-                { label: "Mumbai", hot: false },
-                { label: "Pune", hot: false },
-                { label: "Hyderabad", hot: false },
-                { label: "Bhubaneswar", hot: false },
-                { label: "All India", hot: false },
-              ].map(({ label, hot }) => (
-                <span
+                { label: "Delhi", slug: "delhi", hot: true },
+                { label: "Noida", slug: "noida", hot: true },
+                { label: "Gurugram", slug: "gurugram", hot: true },
+                { label: "Faridabad", slug: "faridabad", hot: false },
+                { label: "Ghaziabad", slug: "ghaziabad", hot: false },
+                { label: "Greater Noida", slug: "noida", hot: false },
+                { label: "Bengaluru", slug: "bengaluru", hot: false },
+                { label: "Mumbai", slug: "mumbai", hot: false },
+                { label: "Pune", slug: "pune", hot: false },
+                { label: "Hyderabad", slug: "hyderabad", hot: false },
+                { label: "Bhubaneswar", slug: "bhubaneswar", hot: false },
+              ].map(({ label, slug, hot }) => (
+                <Link
                   key={label}
+                  href={`/company-registration/${slug}`}
                   className={`inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
                     hot
-                      ? "bg-orange-500 text-white border-orange-500"
+                      ? "bg-orange-500 text-white border-orange-500 hover:bg-orange-600"
                       : "bg-white text-slate-600 border-slate-200 hover:border-orange-300 hover:text-orange-500"
                   }`}
                 >
                   {hot && <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse inline-block" />}
                   {label}
-                </span>
+                </Link>
               ))}
             </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-10">
             {[
-              { city: "Delhi", tag: "⭐ #1 Rated" },
-              { city: "Noida", tag: "⭐ Top Rated" },
-              { city: "Gurugram", tag: "⭐ Top Rated" },
-              { city: "Ghaziabad", tag: "" },
-              { city: "Faridabad", tag: "" },
-              { city: "Greater Noida", tag: "" },
-              { city: "Bengaluru", tag: "" },
-              { city: "Mumbai", tag: "" },
-              { city: "Pune", tag: "" },
-              { city: "Hyderabad", tag: "" },
-            ].map(({ city, tag }, i) => (
-              <div
-                key={i}
-                className="bg-white border border-slate-200 rounded-xl p-4 text-center hover:border-orange-300 hover:shadow-md transition-all duration-200 group"
+              { city: "Delhi", slug: "delhi", tag: "⭐ #1 Rated" },
+              { city: "Noida", slug: "noida", tag: "⭐ Top Rated" },
+              { city: "Gurugram", slug: "gurugram", tag: "⭐ Top Rated" },
+              { city: "Ghaziabad", slug: "ghaziabad", tag: "" },
+              { city: "Faridabad", slug: "faridabad", tag: "" },
+              { city: "Bengaluru", slug: "bengaluru", tag: "" },
+              { city: "Mumbai", slug: "mumbai", tag: "" },
+              { city: "Pune", slug: "pune", tag: "" },
+              { city: "Hyderabad", slug: "hyderabad", tag: "" },
+              { city: "Bhubaneswar", slug: "bhubaneswar", tag: "" },
+            ].map(({ city, slug, tag }) => (
+              <Link
+                key={slug}
+                href={`/company-registration/${slug}`}
+                className="bg-white border border-slate-200 rounded-xl p-4 text-center hover:border-orange-400 hover:shadow-md transition-all duration-200 group block"
               >
                 <MapPin className="w-4 h-4 text-orange-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
                 <p className="text-sm font-semibold text-[#0F172A]">
                   Company Registration
                 </p>
                 <p className="text-xs text-orange-500 font-bold mt-0.5">
-                  Consultant in {city}
+                  in {city} →
                 </p>
                 {tag && (
                   <span className="inline-block text-[9px] font-bold bg-orange-50 text-orange-500 px-2 py-0.5 rounded-full mt-1">
                     {tag}
                   </span>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -1220,7 +1196,10 @@ export default function CompanyRegistration() {
               Delhi is India's commercial capital — home to thousands of startups, MSMEs, and established enterprises registered every year. Whether you are in Connaught Place, Saket, Dwarka, Rohini, Preet Vihar, Lajpat Nagar, or any other part of Delhi, Koop India makes company registration fast, simple, and completely online.
             </p>
             <p className="text-sm text-slate-600 leading-relaxed mb-4">
-              As a specialist <strong className="text-[#0F172A]">company registration consultant in Delhi</strong>, we help entrepreneurs register Private Limited Companies, One Person Companies (OPC), LLPs, and Partnership Firms under the Ministry of Corporate Affairs (MCA). Our CA/CS team handles name approval, DSC, DIN, SPICe+ form filing, MOA/AOA drafting, and GST registration — all in one seamless service.
+              As a specialist <strong className="text-[#0F172A]">company registration consultant in Delhi</strong>, we help entrepreneurs register Private Limited Companies, One Person Companies (OPC), LLPs, and Partnership Firms under the Ministry of Corporate Affairs (MCA). Our CA/CS team handles name approval, DSC, DIN, SPICe+ form filing, MOA/AOA drafting, and GST registration — all in one seamless service.{" "}
+              <Link href="/company-registration/delhi" className="text-orange-600 font-bold hover:underline">
+                View Delhi Company Registration Guide →
+              </Link>
             </p>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
               {[
@@ -1250,7 +1229,7 @@ export default function CompanyRegistration() {
               <p className="text-xs text-slate-600 leading-relaxed mb-3">
                 Noida is home to India's fastest-growing startup ecosystem — from Sector 18 and 62 to Techzone and Expressway. Koop India is the most trusted company registration consultant in Noida, having helped 2,000+ Noida founders register their businesses. We offer Private Limited, OPC, and LLP registrations with GST bundled — all 100% online.
               </p>
-              <ul className="space-y-1.5">
+              <ul className="space-y-1.5 mb-4">
                 {["Private Limited Company in Noida", "OPC Registration Noida", "LLP Registration Noida", "GST + Company Registration Noida"].map((item, i) => (
                   <li key={i} className="flex items-center gap-2 text-xs text-slate-600">
                     <CheckCircle2 className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
@@ -1258,6 +1237,9 @@ export default function CompanyRegistration() {
                   </li>
                 ))}
               </ul>
+              <Link href="/company-registration/noida" className="inline-flex items-center gap-1 text-xs font-bold text-orange-600 hover:underline">
+                View Noida Company Registration Fees &amp; Process <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
             <div className="bg-white border border-slate-200 rounded-2xl p-6">
               <h3 className="text-base font-bold text-[#0F172A] mb-2">
@@ -1266,7 +1248,7 @@ export default function CompanyRegistration() {
               <p className="text-xs text-slate-600 leading-relaxed mb-3">
                 Gurugram (Gurgaon) — India's corporate hub with companies from Fortune 500s to high-growth startups in Cyber City, DLF, Golf Course Road, and Udyog Vihar. Koop India is a leading company registration consultant in Gurugram, providing fast and affordable Private Limited, LLP, and OPC registration with complete compliance support.
               </p>
-              <ul className="space-y-1.5">
+              <ul className="space-y-1.5 mb-4">
                 {["Private Limited Company in Gurugram", "LLP Registration Gurugram", "GST + Company Registration Gurgaon", "Annual Compliance Gurugram"].map((item, i) => (
                   <li key={i} className="flex items-center gap-2 text-xs text-slate-600">
                     <CheckCircle2 className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
@@ -1274,6 +1256,9 @@ export default function CompanyRegistration() {
                   </li>
                 ))}
               </ul>
+              <Link href="/company-registration/gurugram" className="inline-flex items-center gap-1 text-xs font-bold text-orange-600 hover:underline">
+                View Gurugram Company Registration Fees &amp; Process <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
 
